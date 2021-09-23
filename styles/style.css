@@ -1,0 +1,74 @@
+#tracker-app {
+  width: 900px;
+  height: 40vh;
+}
+#tracker-app *,
+#tracker-app *::before,
+#tracker-app *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+#tracker-app .button-wrapper {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 0.5rem 0;
+}
+#tracker-app .tracker-title {
+  padding: 0.5rem 1rem;
+}
+#tracker-app .btn {
+  display: inline;
+  width: 4rem !important;
+  height: 4rem;
+  border-style: none;
+  border-radius: 10px;
+  background: none;
+}
+#tracker-app .btn:hover {
+  cursor: pointer;
+}
+#tracker-app .addItem {
+  border: 2px solid #F90;
+  color: #F90;
+}
+#tracker-app .addDivider {
+  border: 2px solid #09F;
+  color: #09F;
+}
+#tracker-app .tracker .lineWrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+#tracker-app .container {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  height: 9rem;
+  background-color: #161a1d;
+}
+#tracker-app .container .divider {
+  background-color: antiquewhite;
+}
+#tracker-app .container .draggie {
+  position: absolute;
+  float: left;
+  width: 4rem;
+  height: 4rem;
+  background-color: #F90;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+#tracker-app .container .draggie.draggie.is-pointer-down {
+  background-color: #09F !important;
+  z-index: 2;
+}
+#tracker-app .container .draggie .dragImg {
+  height: 20px;
+  width: 20px;
+  border-style: none;
+}/*# sourceMappingURL=style.css.map */

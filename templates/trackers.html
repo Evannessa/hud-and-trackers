@@ -1,0 +1,22 @@
+<form action="" class="flexcol">
+	<div class="trackerWrapper" name="trackerWrapper">
+		{{#each trackerCollection}}
+		<div class="tracker" id={{this.id}} name={{this.name}}>
+			<h1 class="tracker-title">{{this.name}}</h1>
+			<div class="container">
+				{{#each this.trackedItems}}
+					<div class="draggie" name={{this.name}} id={{this.id}}>
+						<img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">
+					</div>
+				{{/each}}
+			</div>
+		<div class="button-wrapper">
+			<button class="btn addDivider">+ Divider</button>
+			<button class="btn addItem">+ <br>Item</button>
+		</div>
+		</div>
+		<hr>
+		{{/each}}
+		<button class="btn addTracker">+ Tracker</button>
+	</div>
+</form>
