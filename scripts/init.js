@@ -1,3 +1,4 @@
+"use strict";
 import {
 	Tracker
 } from "./classes/Tracker.js";
@@ -8,13 +9,7 @@ import {
 	TrackerCollection
 } from "./classes/TrackerCollection.js";
 
-import {
-	Waypoint
-} from "./classes/Waypoint.js"
 
-import {
-	Section
-} from "./classes/Section.js"
 
 var myApp;
 //this array will keep track of all of the trackers during the session
@@ -89,36 +84,7 @@ function makeElementDraggable(draggableElem) {
  */
 function setDraggable() {
 	var draggableElements = document.querySelectorAll('.draggie');
-	var draggableWaypointElements = document.querySelectorAll('.draggableWaypoint');
 	var draggies = []
-	var waypoints = []
-
-	for (var draggableElem of draggableWaypointElements) {
-		var draggie = new Draggabilly(draggableElem, {
-			axis: 'x',
-			containment: true
-
-		});
-		waypoints.push(draggie);
-		//find the tracker element, use its id to find the tracker object
-		//and then the tracked item element within that tracker object
-		let trackerElement = draggableElem.closest(".tracker");
-
-		let trackerObject = trackerCollection.getTrackerById(trackerElement.id);
-
-		let trackerObject2 = new Tracker(trackerObject.id, trackerObject.name, trackerObject.trackedItems);
-
-		let trackedItemObject = trackerObject2.getWaypointById(draggableElem.id);
-		let trackedItemObject2 = new Waypoint(trackedItemObject.id, trackedItemObject.name, trackedItemObject.imageSource, trackedItemObject.draggie, trackedItemObject.color, trackedItemObject.position);
-
-		//if the tracker object isn't null
-		if (trackerObject) {
-			//get the tracked item from this tracker object
-
-			//set the position to reflect the position we have stored
-			draggie.setPosition(trackedItemObject2.position.x, trackedItemObject2.position.y);
-		}
-	}
 
 	for (var draggableElem of draggableElements) {
 		var draggie = new Draggabilly(draggableElem, {
@@ -133,23 +99,30 @@ function setDraggable() {
 		let trackerElement = draggableElem.closest(".tracker");
 		console.log(trackerCollection);
 		let trackerObject = trackerCollection.getTrackerById(trackerElement.id);
+		console.log(trackerObject);
 		let trackerObject2 = new Tracker(trackerObject.id, trackerObject.name, trackerObject.trackedItems);
+		console.log("Tracker Object 2");
+		console.log(trackerObject2);
 		let trackedItemObject = trackerObject2.getTrackedItemById(draggableElem.id);
-		let trackedItemObject2 = new TrackedItem(trackedItemObject.id, trackedItemObject.name, trackedItemObject.imageSource, trackedItemObject.draggie, trackedItemObject.color, trackedItemObject.position);
+		console.log("Tracked Item Object");
 		console.log(trackedItemObject);
+		let trackedItemObject2 = new TrackedItem(trackedItemObject.id, trackedItemObject.name, trackedItemObject.imageSource, trackedItemObject.color, trackedItemObject.type, trackedItemObject.position);
+		console.log("Tracked Item Object 2");
+		console.log(trackedItemObject2);
 		//if the tracker object isn't null
 		if (trackerObject) {
 			//get the tracked item from this tracker object
+			console.log(trackerObject2);
+			console.log(trackedItemObject2);
 
 			//set the position to reflect the position we have stored
 			draggie.setPosition(trackedItemObject2.position.x, trackedItemObject2.position.y);
 		}
 	}
 	for (var draggie of draggies) {
-		draggie.setPosition(draggie.position.x, 40);
-		draggie.on('dragEnd', storePosition);
-	}
-	for (var draggie of waypoints) {
+		if(draggie.element.classList.contains("draggableItem")){
+			draggie.setPosition(draggie.position.x, 40);
+		}
 		draggie.on('dragEnd', storePosition);
 	}
 }
@@ -163,14 +136,9 @@ function convertAllToObjects() {
 		let storedObject = trackerCollection.trackerCollection[trackerObjectID];
 		trackerCollection.trackerCollection[trackerObjectID] = new Tracker(storedObject.id, storedObject.name, storedObject.trackedItems)
 		let updatedObject = trackerCollection.trackerCollection[trackerObjectID];
-
 		for (let trackedItemID in trackerCollection.trackerCollection[trackerObjectID].trackedItems) {
 			let storedItemObject = trackerCollection.trackerCollection[trackerObjectID].trackedItems[trackedItemID];
-			trackerCollection.trackerCollection[trackerObjectID].trackedItems[trackedItemID] = new TrackedItem(storedItemObject.id, storedItemObject.name, storedItemObject.imageSource, storedItemObject.draggie, storedItemObject.color, storedItemObject.position);
-		}
-		for (let waypointID in trackerCollection.trackerCollection[trackerObjectID].trackedWaypoints) {
-			let storedWaypointObject = trackerCollection.trackerCollection[trackerObjectID].trackedWaypoints[waypointID];
-			trackerCollection.trackerCollection[trackerObjectID].trackedWaypoints[waypointID] = new Waypoint(storedWaypointObject.id, storedWaypointObject.name, storedWaypointObject.imageSource, storedWaypointObject.color, storedWaypointObject.position);
+			trackerCollection.trackerCollection[trackerObjectID].trackedItems[trackedItemID] = new TrackedItem(storedItemObject.id, storedItemObject.name, storedItemObject.imageSource, storedItemObject.color, storedItemObject.type, storedItemObject.position);
 		}
 
 	}
@@ -181,176 +149,23 @@ function convertAllToObjects() {
 function storePosition(event, pointer) {
 	let position = this.position;
 	let dragElement = this.element; //event.target;
-	let type = "item";
-	console.log(dragElement.classList);
-	if(dragElement.classList.contains("draggableWaypoint")){
-		type = "waypoint";
-	}
 	let trackerElement = dragElement.closest(".tracker");
 	let trackerObject = trackerCollection.getTrackerById(trackerElement.id);
 	if (trackerObject) {
-		if(type=="item"){
-			let trackedItemObject = trackerObject.getTrackedItemById(dragElement.id);
-			trackedItemObject.position = position;
-			trackerCollection.updateCollection();
-		}
-		else if(type=="waypoint"){
-			let trackedWaypointObject = trackerObject.getWaypointById(dragElement.id);
-			console.log("DEBUGGING")
-			console.log(dragElement);
-			console.log(dragElement.id);
-			console.log(trackedWaypointObject);
-			console.log(trackerObject.trackedWaypoints);
-			trackedWaypointObject.position = position;
-			trackerCollection.updateCollection();
-
-		}
+		let trackedItemObject = trackerObject.getTrackedItemById(dragElement.id);
+		trackedItemObject.position = position;
+		trackerCollection.updateCollection();
 	}
 }
 
-function addNewSection(name, container) {
 
-}
-
-function renderNewSectionCofig(event) {
-	event.preventDefault();
+function addNewDivider(name, container) {
+	console.log("Adding new divider");
 	let button = event.currentTarget;
-	let trackerContainer = button.closest(".tracker");
-	let d = new Dialog({
-		title: "Config New Tracked Item",
-		content: `
-				<form class="flexcol>
-					<div class="form-group">
-						<label for="item">Item Name</label>
-						<input type="text" name="itemName" placeHolder="Enter a name">
-					</div>
-					<div class="form-group">
-        				<label for="itemColor">Item Color</label>
-        				<input class="color" type="text" name="itemColor" value="#ff6400">
-        				<input type="color" value="#ff6400" data-edit="itemColor">
-      				</div>
-				</form>
-			`,
-		buttons: {
-			no: {
-				label: 'Cancel'
-			},
-			yes: {
-				label: 'Submit',
-				callback: (html) => {
-					let color = html.find('input[name="itemColor"]').val();
-					let name = html.find('input[name="itemName"]').val();
-					addNewItem(color, name, trackerContainer);
-				}
-			}
-		}
-	});
-	d.render(true);
+	// let container = button.closest(".container");
+	let dividerTemplate = `<div class="divider"></div>`;
+	button.insertAdjacentHTML('beforebegin', dividerTemplate);
 }
-
-function addNewTrackerChild(type, color, name, trackerContainer, template) {
-	//generate an new random unique id
-	let generatedID = idGenerator();
-	let trackerChild = document.createElement('div');
-	let className = "";
-	switch (type) {
-		case "item":
-			className = "draggie";
-			break;
-		case "waypoint":
-			className = "draggableWaypoint";
-			break;
-		case "section":
-			className = "section";
-			break;
-		default:
-			break;
-	}
-	trackerChild.className = className;
-	trackerChild.innerHTML = template;
-	trackerContainer.querySelector(".container").append(trackerChild);
-	trackerChild.setAttribute("name", name);
-	trackerChild.setAttribute("id", generatedID);
-	let ourDraggie;
-	if (type == "waypoint" || type == "item") {
-		ourDraggie = makeElementDraggable(trackerChild);
-	}
-
-	let newItem;
-	if (type == "item") {
-		newItem = new TrackedItem(generatedID, name, "blep", ourDraggie, ourDraggie.position);
-	} else if (type == "waypoint") {
-		newItem = new Waypoint(generatedID, name, "blep", ourDraggie.position);
-	} else if (type == "section"){
-		newItem = new Section(name, "blep");
-	}
-
-
-	//find the tracker object stored in the collection from the element's id which should be equivalent
-	let ourTracker = trackerCollection.getTrackerById(trackerContainer.id);
-	if (type == "item") {
-		ourTracker.addTrackedItem(newItem);
-	} else if (type == "waypoint") {
-		console.log("New waypoint addded")
-		ourTracker.addNewWaypoint(newItem);
-		console.log(ourTracker.trackedWaypoints);
-	}
-	//update the collection, which stores everything in the settings
-	trackerCollection.updateCollection();
-
-}
-
-function addNewWaypoint(color, name, container) {
-	let waypointTemplate = `
-		<div class="handle">    
-			<h1 class="waypointLabel">${name}</h1>
-		</div>
-		<div class="line"></div>
-	`
-	addNewTrackerChild("waypoint", color, name, container, waypointTemplate);
-}
-
-/**
- * 
- * @param {event} event - the event
- */
-function renderNewWaypointConfig(event) {
-	event.preventDefault();
-	let button = event.currentTarget;
-	let trackerContainer = button.closest(".tracker");
-	let d = new Dialog({
-		title: "Config New Waypoint",
-		content: `
-				<form class="flexcol>
-					<div class="form-group">
-						<label for="item">Waypoint Name</label>
-						<input type="text" name="itemName" placeHolder="Enter a name">
-					</div>
-					<div class="form-group">
-        				<label for="itemColor">Waypoint Color</label>
-        				<input class="color" type="text" name="itemColor" value="#ff6400">
-        				<input type="color" value="#ff6400" data-edit="itemColor">
-      				</div>
-				</form>
-			`,
-		buttons: {
-			no: {
-				label: 'Cancel'
-			},
-			yes: {
-				label: 'Submit',
-				callback: (html) => {
-					let color = html.find('input[name="itemColor"]').val();
-					let name = html.find('input[name="itemName"]').val();
-					addNewWaypoint(color, name, trackerContainer);
-				}
-			}
-		}
-	});
-	d.render(true);
-}
-
-
 
 function addNewTracker(name, container) {
 	console.log("Adding new Tracker")
@@ -367,7 +182,6 @@ function addNewTracker(name, container) {
 				</div>
 			</div>
 			<button class="btn addDivider">Add Divider</button>
-			<button class="btn addWaypoint">+ <br> Waypoint</button>
 			<button class="btn addItem">Add Item</button>`;
 	// </div>`;
 	let div = document.createElement('div');
@@ -414,7 +228,7 @@ function renderNewTrackerConfig(event) {
 	d.render(true);
 }
 
-function addNewItem(color, name, trackerContainer) {
+function addNewItem(color, name, type, trackerContainer) {
 	console.log("Adding new item")
 
 	//generate an new random unique id
@@ -423,12 +237,23 @@ function addNewItem(color, name, trackerContainer) {
 
 
 	//crate the item's display in html, and add it to the formapplication
-	let itemTemplate =
-		`<img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">`;
-	// `<div class="draggie" name=${name} id=${generatedID} style="background-color:${color}">
-	// </div>`
+	let itemTemplate = `<img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">`;
+	if (type == "waypoint") {
+		itemTemplate = `
+    		<div class="handle">    
+				<h1 class="waypointLabel">${name}</h1>
+			</div>
+    		<div class="line"></div>`
+	}
+
 	let trackedItem = document.createElement('div');
 	trackedItem.className = "draggie";
+	if(type=="waypoint"){
+		trackedItem.classList.add("draggableWaypoint")
+	}
+	else if(type=="item"){
+		trackedItem.classList.add("draggableItem");
+	}
 	trackedItem.innerHTML = itemTemplate;
 	trackerContainer.querySelector(".container").append(trackedItem);
 	// // trackerContainer.append(trackedItem);
@@ -441,8 +266,9 @@ function addNewItem(color, name, trackerContainer) {
 	//make the element draggable, and return the Draggabilly object
 	let ourDraggie = makeElementDraggable(trackedItem);
 
+	console.log("Our type is " + type);
 	//create a TrackedItem, passing in the draggableItem and imangesource, and add it to the tracker
-	let newItem = new TrackedItem(generatedID, name, "blep", ourDraggie, ourDraggie.position);
+	let newItem = new TrackedItem(generatedID, name, "blep", "#FFF", type, ourDraggie.position);
 	console.log(newItem);
 
 	let ourTracker = trackerCollection.getTrackerById(trackerContainer.id);
@@ -468,6 +294,13 @@ function renderNewItemConfig(event) {
         				<input class="color" type="text" name="itemColor" value="#ff6400">
         				<input type="color" value="#ff6400" data-edit="itemColor">
       				</div>
+				 <div class="form-group">
+        			<label for="typeSelect">Select Type</label>
+        			<select name="typeSelect">
+          				<option value="item">Tracked Item</option>
+          				<option value="waypoint">Waypoint</option>
+        			</select>
+      			</div>
 				</form>
 			`,
 		buttons: {
@@ -477,9 +310,10 @@ function renderNewItemConfig(event) {
 			yes: {
 				label: 'Submit',
 				callback: (html) => {
+					let type = html.find('[name="typeSelect"]').val();
 					let color = html.find('input[name="itemColor"]').val();
 					let name = html.find('input[name="itemName"]').val();
-					addNewItem(color, name, trackerContainer);
+					addNewItem(color, name, type, trackerContainer);
 				}
 			}
 		}
@@ -518,7 +352,10 @@ class TrackerApp extends FormApplication {
 
 	async _updateObject(event, formData) {
 
-	
+		// console.log(formData);
+		// console.log(formData.trackerWrapper);
+		// const xPosition = formData.xPosition;
+		// const yPosition = formData.yPosition;
 		this.render();
 	}
 
@@ -537,11 +374,7 @@ class TrackerApp extends FormApplication {
 		}
 		let addDividerButtons = html.find(".addDivider");
 		for (var btn of addDividerButtons) {
-			btn.addEventListener("click", addNewSection);
-		}
-		let addWaypointButtons = html.find(".addWaypoint");
-		for ( var btn of addWaypointButtons){
-			btn.addEventListener("click", renderNewWaypointConfig);
+			btn.addEventListener("click", addNewDivider);
 		}
 		let addItemButtons = html.find(".addItem");
 		for (var btn of addItemButtons) {

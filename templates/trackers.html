@@ -5,18 +5,19 @@
 			<h1 class="tracker-title">{{this.name}}</h1>
 			<div class="container">
 				{{#each this.trackedItems}}
-				<div class="draggie" name={{this.name}} id={{this.id}}>
+				{{#if (eq this.type "item")}}
+				{{log OUR TYPE IS this.type level="debug"}}
+				<div class="draggie draggableItem" name={{this.name}} id={{this.id}}>
 					<img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">
 				</div>
-				{{/each}}
-				{{#each this.trackedWaypoints}}
-				<div class="draggableWaypoint" name={{this.name}} id={{this.id}}>
+				{{else}}
+				<div class="draggie draggableWaypoint" name={{this.name}} id={{this.id}}>
 					<div class="handle">
-						<img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">
 						<h1 class="waypointLabel">{{this.name}}</h1>
 					</div>
 					<div class="line"></div>
 				</div>
+				{{/if}}
 				{{/each}}
 			</div>
 			<div class="button-wrapper">

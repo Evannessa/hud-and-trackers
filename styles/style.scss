@@ -73,9 +73,7 @@
 			background-color: antiquewhite;
 		}
 
-
-
-		.draggie {
+		.draggableItem {
 			position: absolute;
 			float: left;
 			width: 4rem;
@@ -87,6 +85,58 @@
 			align-items: center;
 			justify-content: center;
 			margin: 0 auto;
+		}
+
+		.draggableWaypoint {
+			position: absolute;
+			height: 100%;
+			width: 50px;
+			display: flex;
+			justify-content: flex-start;
+			margin: auto 0;
+
+			.waypointLabel {
+				z-index: 2;
+				text-align: center;
+				transform: translatey(-3rem);
+				font-size: 1.5rem;
+			}
+
+			.line {
+				width: 2px;
+				height: 100%;
+				position: absolute;
+				border-left: 6px dotted cornflowerblue;
+				left: 50%;
+				margin-left: -3px;
+			}
+
+			.handle {
+				position: absolute;
+				left: 50%;
+				transform: translatex(-50%);
+				width: 4rem;
+				height: 4rem;
+				border-radius: 100%;
+				background-color: cornflowerblue;
+				z-index: 2;
+
+			}
+		}
+
+
+		.draggie {
+			// position: absolute;
+			// float: left;
+			// width: 4rem;
+			// height: 4rem;
+			// background-color: #F90;
+			// box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+			// border-radius: 10px;
+			// display: flex;
+			// align-items: center;
+			// justify-content: center;
+			// margin: 0 auto;
 
 
 			&.draggie.is-pointer-down {
@@ -101,48 +151,10 @@
 				border-style: none;
 			}
 
-			.draggableWaypoint {
-				position: absolute;
-				height: 100%;
-				width: 50px;
-				display: flex;
-				justify-content: flex-start;
-				margin: auto 0;
-
-				.waypointLabel {
-					z-index: 2;
-					text-align: center;
-					transform: translatey(-3rem);
-					font-size: 1.5rem;
-				}
-
-				.line {
-					height: 100%;
-					position: absolute;
-					border-left: 6px dotted cornflowerblue;
-					left: 50%;
-					margin-left: -3px;
-				}
-
-				.handle {
-					position: absolute;
-					left: 50%;
-					transform: translatex(-50%);
-					width: 4rem;
-					height: 4rem;
-					border-radius: 100%;
-					background-color: cornflowerblue;
-					z-index: 2;
-
-				}
-			}
-
-
-
-
 		}
+
+
+
+
 	}
-
-
-
 }
