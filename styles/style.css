@@ -36,6 +36,10 @@
   border: 2px solid #09F;
   color: #09F;
 }
+#tracker-app .addWaypoint {
+  border: 2px solid cornflowerblue;
+  color: cornflowerblue;
+}
 #tracker-app .tracker .lineWrapper {
   display: flex;
   justify-content: flex-end;
@@ -71,4 +75,35 @@
   height: 20px;
   width: 20px;
   border-style: none;
+}
+#tracker-app .container .draggie .draggableWaypoint {
+  position: absolute;
+  height: 100%;
+  width: 50px;
+  display: flex;
+  justify-content: flex-start;
+  margin: auto 0;
+}
+#tracker-app .container .draggie .draggableWaypoint .waypointLabel {
+  z-index: 2;
+  text-align: center;
+  transform: translatey(-3rem);
+  font-size: 1.5rem;
+}
+#tracker-app .container .draggie .draggableWaypoint .line {
+  height: 100%;
+  position: absolute;
+  border-left: 6px dotted cornflowerblue;
+  left: 50%;
+  margin-left: -3px;
+}
+#tracker-app .container .draggie .draggableWaypoint .handle {
+  position: absolute;
+  left: 50%;
+  transform: translatex(-50%);
+  width: 4rem;
+  height: 4rem;
+  border-radius: 100%;
+  background-color: cornflowerblue;
+  z-index: 2;
 }/*# sourceMappingURL=style.css.map */

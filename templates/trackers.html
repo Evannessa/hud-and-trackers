@@ -5,15 +5,25 @@
 			<h1 class="tracker-title">{{this.name}}</h1>
 			<div class="container">
 				{{#each this.trackedItems}}
-					<div class="draggie" name={{this.name}} id={{this.id}}>
+				<div class="draggie" name={{this.name}} id={{this.id}}>
+					<img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">
+				</div>
+				{{/each}}
+				{{#each this.trackedWaypoints}}
+				<div class="draggableWaypoint" name={{this.name}} id={{this.id}}>
+					<div class="handle">
 						<img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">
+						<h1 class="waypointLabel">{{this.name}}</h1>
 					</div>
+					<div class="line"></div>
+				</div>
 				{{/each}}
 			</div>
-		<div class="button-wrapper">
-			<button class="btn addDivider">+ Divider</button>
-			<button class="btn addItem">+ <br>Item</button>
-		</div>
+			<div class="button-wrapper">
+				<button class="btn addDivider">+ Divider</button>
+				<button class="btn addWaypoint">+ <br> Waypoint</button>
+				<button class="btn addItem">+ <br>Item</button>
+			</div>
 		</div>
 		<hr>
 		{{/each}}

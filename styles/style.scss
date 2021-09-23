@@ -48,6 +48,11 @@
 		color: #09F;
 	}
 
+	.addWaypoint {
+		border: 2px solid cornflowerblue;
+		color: cornflowerblue;
+	}
+
 	.addTracker {}
 
 	.tracker {
@@ -95,6 +100,44 @@
 				width: 20px;
 				border-style: none;
 			}
+
+			.draggableWaypoint {
+				position: absolute;
+				height: 100%;
+				width: 50px;
+				display: flex;
+				justify-content: flex-start;
+				margin: auto 0;
+
+				.waypointLabel {
+					z-index: 2;
+					text-align: center;
+					transform: translatey(-3rem);
+					font-size: 1.5rem;
+				}
+
+				.line {
+					height: 100%;
+					position: absolute;
+					border-left: 6px dotted cornflowerblue;
+					left: 50%;
+					margin-left: -3px;
+				}
+
+				.handle {
+					position: absolute;
+					left: 50%;
+					transform: translatex(-50%);
+					width: 4rem;
+					height: 4rem;
+					border-radius: 100%;
+					background-color: cornflowerblue;
+					z-index: 2;
+
+				}
+			}
+
+
 
 
 		}

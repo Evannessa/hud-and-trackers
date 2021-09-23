@@ -26,8 +26,12 @@ export class Tracker{
 		return this.trackedItems[id];
 	}
 
-	addNewWaypoing(){
+	addNewWaypoint(waypoint){
+		this.trackedWaypoints[waypoint.id] = waypoint;
+	}
 
+	getWaypointById(id){
+		return this.trackedWaypoints[id];
 	}
 
 	addNewSection(){
