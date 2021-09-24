@@ -41,17 +41,21 @@ Hooks.once('ready', async () => {
 	await game.settings.set("hud-and-trackers", "trackers", {});
 })
 
-Hooks.on("closeApplication", (app) => {
-	if(app instanceof TrackedItemConfig){
+Hooks.on("closeFormApplication", (app) => {
+	// console.log(app);
+	if (app instanceof TrackedItemConfig) {
 		console.log("Closed Item Config")
 		console.log(app)
-	
+
 		//TODO: REFACTOR THIS
+		let id = app.trackerID;
 		let name = app.form[0].value;
 		let imagePath = app.form[1].value;
 		let color = app.form[3].value;
 		let type = app.form[4].value;
-		console.log(name + ", " + imagePath + ", " + color + ", " +  type);
+		console.log(name + ", " + imagePath + ", " + color + ", " + type);
+		console.log(myApp.element);
+		console.log(myApp.element[0].querySelector(id));
 		// addNewItem(color, name, type, )
 	}
 })
@@ -92,9 +96,9 @@ function makeElementDraggable(draggableElem) {
 		axis: 'x',
 		containment: true
 	});
-	if(draggableElem.classList.contains("draggableItem")){
-			draggie.setPosition(draggie.position.x, 40);
-		}
+	if (draggableElem.classList.contains("draggableItem")) {
+		draggie.setPosition(draggie.position.x, 40);
+	}
 	draggie.on('dragEnd', storePosition);
 	return draggie;
 }
@@ -140,7 +144,7 @@ function setDraggable() {
 		}
 	}
 	for (var draggie of draggies) {
-		if(draggie.element.classList.contains("draggableItem")){
+		if (draggie.element.classList.contains("draggableItem")) {
 			draggie.setPosition(draggie.position.x, 40);
 		}
 		draggie.on('dragEnd', storePosition);
@@ -210,10 +214,18 @@ function addNewTracker(name, container) {
 
 	//add event listener for the addItem button
 	//TODO: Put this back in 
-	// div.querySelector(".addItem").addEventListener("click", (event)=> {
-	// 		let config = new TrackedItemConfig().render(true);
-	// });
-	div.querySelector(".addItem").addEventListener("click", renderNewItemConfig);
+	div.querySelector(".addItem").addEventListener("click", (event) => {
+		event.preventDefault();
+		let btn = event.currentTarget;
+		let trackerContainer = btn.closest(".tracker");
+		// let id = trackerContainer.id;
+		let configData = {
+			trackerElement: trackerContainer,
+			app: myApp
+		}
+		let config = new TrackedItemConfig(configData).render(true);
+	});
+	// div.querySelector(".addItem").addEventListener("click", renderNewItemConfig);
 	div.querySelector(".tracker-title").innerText = name;
 	div.setAttribute("name", name);
 	div.setAttribute("id", generatedID);
@@ -260,8 +272,8 @@ function addNewItem(color, name, type, trackerContainer) {
 
 
 	//crate the item's display in html, and add it to the formapplication
-	let itemTemplate = 	`<h1 class="itemLabel">${name}</h1><img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">`;
-			
+	let itemTemplate = `<h1 class="itemLabel">${name}</h1><img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">`;
+
 	if (type == "waypoint") {
 		itemTemplate = `
     		<div class="handle">    
@@ -272,10 +284,9 @@ function addNewItem(color, name, type, trackerContainer) {
 
 	let trackedItem = document.createElement('div');
 	trackedItem.className = "draggie";
-	if(type=="waypoint"){
+	if (type == "waypoint") {
 		trackedItem.classList.add("draggableWaypoint")
-	}
-	else if(type=="item"){
+	} else if (type == "item") {
 		trackedItem.classList.add("draggableItem");
 	}
 	trackedItem.innerHTML = itemTemplate;
@@ -290,7 +301,6 @@ function addNewItem(color, name, type, trackerContainer) {
 	//make the element draggable, and return the Draggabilly object
 	let ourDraggie = makeElementDraggable(trackedItem);
 
-	console.log("Our type is " + type);
 	//create a TrackedItem, passing in the draggableItem and imangesource, and add it to the tracker
 	let newItem = new TrackedItem(generatedID, name, "blep", "#FFF", type, ourDraggie.position);
 	console.log(newItem);
@@ -366,6 +376,7 @@ class TrackerApp extends FormApplication {
 			template: 'modules/hud-and-trackers/templates/trackers.html',
 			id: 'tracker-app',
 			title: 'Tracker',
+			onSubmit: (e) => e.preventDefault(),
 			dragDrop: [{
 				dragSelector: ".item",
 				dropSelector: ".container"
@@ -401,10 +412,17 @@ class TrackerApp extends FormApplication {
 		}
 		let addItemButtons = html.find(".addItem");
 		for (var btn of addItemButtons) {
-			btn.addEventListener("click", renderNewItemConfig);
-			// btn.addEventListener("click", (event)=>{
-			// 	let config = new TrackedItemConfig().render(true);
-			// });
+			// btn.addEventListener("click", renderNewItemConfig);
+			btn.addEventListener("click", (event) => {
+				event.preventDefault();
+				let btn = event.currentTarget;
+				let trackerContainer = btn.closest(".tracker");
+				let configData = {
+					trackerElement: trackerContainer,
+					app: myApp
+				}
+				let config = new TrackedItemConfig(configData).render(true);
+			});
 		}
 
 		setDraggable();
@@ -414,5 +432,85 @@ class TrackerApp extends FormApplication {
 			type: type,
 			payload: payload,
 		});
+	}
+
+	/**
+	 * This will add a new item to the tracker
+	 * @param {color} color - the color to apply to the object
+	 * @param {name} name the name to give the object and label
+	 * @param {type} type whether the object is an item or a waypoint
+	 * @param {trackerContainer} trackerContainer the particular tracker we want to add this item to
+	 */
+	addNewItem(color, name, type, trackerContainer) {
+		//if the user didn't input a name
+		if(name==""){
+			if(type=="item"){
+				name="Tracked Item"
+			}
+			else if(type=="waypoint"){
+				name="Waypoint"
+			}
+		}
+		console.log("Adding new item")
+
+		//generate an new random unique id
+		let generatedID = idGenerator();
+
+		//crate the item's display in html, and add it to the formapplication
+		let itemTemplate = `<h1 class="itemLabel">${name}</h1><img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">`;
+
+		if (type == "waypoint") {
+			itemTemplate = `
+    		<div class="handle">    
+				<h1 class="waypointLabel">${name}</h1>
+			</div>
+    		<div class="line"></div>`
+		}
+
+		//create the item and give it the 'draggie' class
+		//so that a draggable item can be created from itt
+		let trackedItem = document.createElement('div');
+		trackedItem.className = "draggie";
+
+		//give it a particular extra class for styling
+		//to see whether it's a waypoint or not
+		if (type == "waypoint") {
+			trackedItem.classList.add("draggableWaypoint")
+		} else if (type == "item") {
+			trackedItem.classList.add("draggableItem");
+		}
+		trackedItem.innerHTML = itemTemplate;
+		trackerContainer.querySelector(".container").append(trackedItem);
+		// // trackerContainer.append(trackedItem);
+		if(type=="item"){
+		trackedItem.css({
+			backgroundColor: color
+		})
+	}
+	else if(type=="waypoint"){
+		let handle = trackedItem.querySelector(".handle");
+		let line = trackedItem.querySelector(".line");
+		handle.css({
+			backgroundColor: color
+		})
+		line.css({
+			"border-left": `6px dotted ${color}`,
+		})
+	}
+		trackedItem.setAttribute("name", name);
+		trackedItem.setAttribute("id", generatedID);
+
+
+		//make the element draggable, and return the Draggabilly object
+		let ourDraggie = makeElementDraggable(trackedItem);
+
+		//create a TrackedItem, passing in the draggableItem and imangesource, and add it to the tracker
+		let newItem = new TrackedItem(generatedID, name, "blep", "#FFF", type, ourDraggie.position);
+		console.log(newItem);
+
+		let ourTracker = trackerCollection.getTrackerById(trackerContainer.id);
+		ourTracker.addTrackedItem(newItem);
+		//update the collection, which stores everything in the settings
+		trackerCollection.updateCollection();
 	}
 }

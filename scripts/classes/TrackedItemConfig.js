@@ -1,6 +1,8 @@
 export class TrackedItemConfig extends FormApplication{
 	constructor(...args) {
 		super(...args);
+		this.trackerApp = this.object.app;
+		this.trackerContainer = this.object.trackerElement;
 		// this.stuff = {
 		// 	type: "image",
 		// 	colorPickerName: "background-color",
@@ -19,12 +21,17 @@ export class TrackedItemConfig extends FormApplication{
 			template: 'modules/hud-and-trackers/templates/tracked-item-config.html',
 			id: 'tracked-item-config',
 			title: 'Tracked Item Config',
-			onSubmit: (e) => e.preventDefault()
+			// onSubmit: (e) => e.preventDefault()
 		});
 	}
 
 	async _updateObject(event, formData) {
 		console.log(formData);
+		let imagePath = formData.imagePicker;
+		let name = formData.itemName;
+		let color = formData.itemColor;
+		let type = formData.typeSelect;
+		this.trackerApp.addNewItem(color, name, type, this.trackerContainer);
 		this.render();
 	}
 
@@ -60,8 +67,6 @@ async pickFile(event) {
     const imagePicker = await new FilePicker({
       type: 'image',
       callback: path => {
-		  console.log(event.target)
-		  console.log(event.target.previousElementSibling);
 		event.target.previousElementSibling.value = path;}
       })
 	return imagePicker.browse();
