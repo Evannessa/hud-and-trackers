@@ -260,7 +260,8 @@ function addNewItem(color, name, type, trackerContainer) {
 
 
 	//crate the item's display in html, and add it to the formapplication
-	let itemTemplate = `<img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">`;
+	let itemTemplate = 	`<h1 class="itemLabel">${name}</h1><img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">`;
+			
 	if (type == "waypoint") {
 		itemTemplate = `
     		<div class="handle">    
@@ -280,7 +281,7 @@ function addNewItem(color, name, type, trackerContainer) {
 	trackedItem.innerHTML = itemTemplate;
 	trackerContainer.querySelector(".container").append(trackedItem);
 	// // trackerContainer.append(trackedItem);
-	trackedItem.style.backgroundColor = color;
+	// trackedItem.style.backgroundColor = color;
 	// setDraggable();
 	trackedItem.setAttribute("name", name);
 	trackedItem.setAttribute("id", generatedID);
@@ -314,8 +315,7 @@ function renderNewItemConfig(event) {
 					</div>
 					<div class="form-group">
         				<label for="itemColor">Item Color</label>
-        				<input class="color" type="text" name="itemColor" value="#ff6400">
-        				<input type="color" value="#ff6400" data-edit="itemColor">
+        				<input type="color" name="itemColor" value="#ff6400" data-edit="itemColor">
       				</div>
 				 <div class="form-group">
         			<label for="typeSelect">Select Type</label>

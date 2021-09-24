@@ -86,6 +86,10 @@
 			justify-content: center;
 			margin: 0 auto;
 
+			&.draggableItem.is-pointer-down {
+				background-color: #09F !important;
+			}
+
 			.itemLabel {
 				z-index: 2;
 				text-align: center;
@@ -101,6 +105,12 @@
 			display: flex;
 			justify-content: flex-start;
 			margin: auto 0;
+
+			&.draggableWaypoint.is-pointer-down {
+				.handle {
+					background-color: #09F !important;
+				}
+			}
 
 			.waypointLabel {
 				z-index: 2;
@@ -147,11 +157,11 @@
 			// margin: 0 auto;
 
 
-			&.draggie.is-pointer-down {
-				background-color: #09F !important;
-				z-index: 2;
+			// &.draggie.is-pointer-down {
+			// 	background-color: #09F !important;
+			// 	z-index: 2;
 
-			}
+			// }
 
 			.dragImg {
 				height: 20px;

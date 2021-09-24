@@ -67,6 +67,9 @@
   justify-content: center;
   margin: 0 auto;
 }
+#tracker-app .container .draggableItem.draggableItem.is-pointer-down {
+  background-color: #09F !important;
+}
 #tracker-app .container .draggableItem .itemLabel {
   z-index: 2;
   text-align: center;
@@ -80,6 +83,9 @@
   display: flex;
   justify-content: flex-start;
   margin: auto 0;
+}
+#tracker-app .container .draggableWaypoint.draggableWaypoint.is-pointer-down .handle {
+  background-color: #09F !important;
 }
 #tracker-app .container .draggableWaypoint .waypointLabel {
   z-index: 2;
@@ -102,10 +108,6 @@
   height: 4rem;
   border-radius: 100%;
   background-color: cornflowerblue;
-  z-index: 2;
-}
-#tracker-app .container .draggie.draggie.is-pointer-down {
-  background-color: #09F !important;
   z-index: 2;
 }
 #tracker-app .container .draggie .dragImg {
