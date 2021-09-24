@@ -80,9 +80,22 @@ Hooks.on("renderTrackerApp", (app, html) => {
 			//get the element by its id using query selector, and fix the background color
 			//to equal the stored color
 			let elem = element.querySelector("#" + trackedItemID);
+			let type = trackedItemObject.type
+			if(type == "item"){
 			$(elem).css({
 				"background-color": trackedItemObject.color
 			})
+		}
+		else if(type == "waypoint"){
+			let line = elem.querySelector(".line");
+			let handle = elem.querySelector(".handle");
+			$(line).css({
+				"border-color": trackedItemObject.color
+			})
+			$(handle).css({
+				"background-color": trackedItemObject.color
+			})
+		}
 		}
 	}
 });
