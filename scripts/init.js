@@ -8,7 +8,9 @@ import {
 import {
 	TrackerCollection
 } from "./classes/TrackerCollection.js";
-
+import {
+	TrackedItemConfig
+} from "./classes/TrackedItemConfig.js"
 
 
 var myApp;
@@ -37,6 +39,21 @@ Hooks.once('init', async () => {
 Hooks.once('ready', async () => {
 	//TODO: Take this out later
 	await game.settings.set("hud-and-trackers", "trackers", {});
+})
+
+Hooks.on("closeApplication", (app) => {
+	if(app instanceof TrackedItemConfig){
+		console.log("Closed Item Config")
+		console.log(app)
+	
+		//TODO: REFACTOR THIS
+		let name = app.form[0].value;
+		let imagePath = app.form[1].value;
+		let color = app.form[3].value;
+		let type = app.form[4].value;
+		console.log(name + ", " + imagePath + ", " + color + ", " +  type);
+		// addNewItem(color, name, type, )
+	}
 })
 
 Hooks.on('canvasReady', () => {
@@ -75,6 +92,9 @@ function makeElementDraggable(draggableElem) {
 		axis: 'x',
 		containment: true
 	});
+	if(draggableElem.classList.contains("draggableItem")){
+			draggie.setPosition(draggie.position.x, 40);
+		}
 	draggie.on('dragEnd', storePosition);
 	return draggie;
 }
@@ -175,21 +195,24 @@ function addNewTracker(name, container) {
 	trackerCollection.addNewTracker(newTracker);
 
 	let trackerTemplate =
-		// `<div class="tracker" name=${name} id=${generatedID}>
-		`<h1 class="tracker-title">Chase Scene</h1>
+		`<h1 class="tracker-title">${name}</h1>
 			<div class="container">
-				<div class="divider">
-				</div>
 			</div>
-			<button class="btn addDivider">Add Divider</button>
-			<button class="btn addItem">Add Item</button>`;
-	// </div>`;
+			<div class="button-wrapper">
+				<button class="btn addDivider">+ <br>Divider</button>
+				<button class="btn addItem">+ <br>Item</button>
+			</div>
+		`;
 	let div = document.createElement('div');
 	div.className = "tracker";
 	div.innerHTML = trackerTemplate;
 	container.prepend(div);
 
 	//add event listener for the addItem button
+	//TODO: Put this back in 
+	// div.querySelector(".addItem").addEventListener("click", (event)=> {
+	// 		let config = new TrackedItemConfig().render(true);
+	// });
 	div.querySelector(".addItem").addEventListener("click", renderNewItemConfig);
 	div.querySelector(".tracker-title").innerText = name;
 	div.setAttribute("name", name);
@@ -284,7 +307,7 @@ function renderNewItemConfig(event) {
 	let d = new Dialog({
 		title: "Config New Tracked Item",
 		content: `
-				<form class="flexcol>
+				<form class="flexcol">
 					<div class="form-group">
 						<label for="item">Item Name</label>
 						<input type="text" name="itemName" placeHolder="Enter a name">
@@ -379,6 +402,9 @@ class TrackerApp extends FormApplication {
 		let addItemButtons = html.find(".addItem");
 		for (var btn of addItemButtons) {
 			btn.addEventListener("click", renderNewItemConfig);
+			// btn.addEventListener("click", (event)=>{
+			// 	let config = new TrackedItemConfig().render(true);
+			// });
 		}
 
 		setDraggable();

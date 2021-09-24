@@ -67,6 +67,12 @@
   justify-content: center;
   margin: 0 auto;
 }
+#tracker-app .container .draggableItem .itemLabel {
+  z-index: 2;
+  text-align: center;
+  transform: translatey(-3rem);
+  font-size: 1.5rem;
+}
 #tracker-app .container .draggableWaypoint {
   position: absolute;
   height: 100%;
@@ -78,7 +84,6 @@
 #tracker-app .container .draggableWaypoint .waypointLabel {
   z-index: 2;
   text-align: center;
-  transform: translatey(-3rem);
   font-size: 1.5rem;
 }
 #tracker-app .container .draggableWaypoint .line {
@@ -92,7 +97,7 @@
 #tracker-app .container .draggableWaypoint .handle {
   position: absolute;
   left: 50%;
-  transform: translatex(-50%);
+  transform: translate(-50%, -2rem);
   width: 4rem;
   height: 4rem;
   border-radius: 100%;

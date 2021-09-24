@@ -85,6 +85,13 @@
 			align-items: center;
 			justify-content: center;
 			margin: 0 auto;
+
+			.itemLabel {
+				z-index: 2;
+				text-align: center;
+				transform: translatey(-3rem);
+				font-size: 1.5rem;
+			}
 		}
 
 		.draggableWaypoint {
@@ -98,7 +105,7 @@
 			.waypointLabel {
 				z-index: 2;
 				text-align: center;
-				transform: translatey(-3rem);
+				// transform: translatey(-3rem);
 				font-size: 1.5rem;
 			}
 
@@ -114,7 +121,8 @@
 			.handle {
 				position: absolute;
 				left: 50%;
-				transform: translatex(-50%);
+				transform: translate(-50%, -2rem);
+				// transform: translateY(-3rem);
 				width: 4rem;
 				height: 4rem;
 				border-radius: 100%;
