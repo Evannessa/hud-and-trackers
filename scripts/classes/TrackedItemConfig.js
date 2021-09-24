@@ -31,7 +31,7 @@ export class TrackedItemConfig extends FormApplication{
 		let name = formData.itemName;
 		let color = formData.itemColor;
 		let type = formData.typeSelect;
-		this.trackerApp.addNewItem(color, name, type, this.trackerContainer);
+		this.trackerApp.addNewItem(color, name, type, this.trackerContainer, imagePath);
 		this.render();
 	}
 

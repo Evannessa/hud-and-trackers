@@ -59,7 +59,6 @@
   float: left;
   width: 4rem;
   height: 4rem;
-  background-color: #F90;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   border-radius: 10px;
   display: flex;
@@ -69,12 +68,14 @@
 }
 #tracker-app .container .draggableItem.draggableItem.is-pointer-down {
   background-color: #09F !important;
+  z-index: 3;
 }
 #tracker-app .container .draggableItem .itemLabel {
+  position: absolute;
   z-index: 2;
   text-align: center;
   transform: translatey(-3rem);
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 #tracker-app .container .draggableWaypoint {
   position: absolute;
@@ -86,11 +87,14 @@
 }
 #tracker-app .container .draggableWaypoint.draggableWaypoint.is-pointer-down .handle {
   background-color: #09F !important;
+  z-index: 3;
 }
 #tracker-app .container .draggableWaypoint .waypointLabel {
   z-index: 2;
   text-align: center;
-  font-size: 1.5rem;
+  position: absolute;
+  transform: translatey(-2rem);
+  font-size: 1.25rem;
 }
 #tracker-app .container .draggableWaypoint .line {
   width: 2px;
@@ -102,6 +106,9 @@
 }
 #tracker-app .container .draggableWaypoint .handle {
   position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   left: 50%;
   transform: translate(-50%, -2rem);
   width: 4rem;
@@ -109,6 +116,11 @@
   border-radius: 100%;
   background-color: cornflowerblue;
   z-index: 2;
+}
+#tracker-app .container .draggableWaypoint .handleImg {
+  height: 20px;
+  width: 20px;
+  border-style: none;
 }
 #tracker-app .container .draggie .dragImg {
   height: 20px;

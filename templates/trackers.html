@@ -9,12 +9,13 @@
 				{{log OUR TYPE IS this.type level="debug"}}
 				<div class="draggie draggableItem" name={{this.name}} id={{this.id}}>
 					<h1 class="itemLabel">{{this.name}}</h1>
-					<img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">
+					<img class="dragImg" src={{this.imageSource}} alt="chosen image">
 				</div>
 				{{else}}
 				<div class="draggie draggableWaypoint" name={{this.name}} id={{this.id}}>
 					<div class="handle">
 						<h1 class="waypointLabel">{{this.name}}</h1>
+						<img class="handleImg" src={{this.imageSource}} alt="chosen image">
 					</div>
 					<div class="line"></div>
 				</div>

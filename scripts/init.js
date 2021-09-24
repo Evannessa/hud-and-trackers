@@ -17,6 +17,8 @@ var myApp;
 //this array will keep track of all of the trackers during the session
 let trackerCollection;
 
+
+
 Hooks.once('init', async () => {
 	loadHandleBarTemplates();
 
@@ -44,19 +46,15 @@ Hooks.once('ready', async () => {
 Hooks.on("closeFormApplication", (app) => {
 	// console.log(app);
 	if (app instanceof TrackedItemConfig) {
-		console.log("Closed Item Config")
-		console.log(app)
+		// console.log("Closed Item Config")
+		// console.log(app)
 
-		//TODO: REFACTOR THIS
-		let id = app.trackerID;
-		let name = app.form[0].value;
-		let imagePath = app.form[1].value;
-		let color = app.form[3].value;
-		let type = app.form[4].value;
-		console.log(name + ", " + imagePath + ", " + color + ", " + type);
-		console.log(myApp.element);
-		console.log(myApp.element[0].querySelector(id));
-		// addNewItem(color, name, type, )
+		// //TODO: REFACTOR THIS
+		// let id = app.trackerID;
+		// let name = app.form[0].value;
+		// let imagePath = app.form[1].value;
+		// let color = app.form[3].value;
+		// let type = app.form[4].value;
 	}
 })
 
@@ -66,9 +64,27 @@ Hooks.on('canvasReady', () => {
 	myApp = new TrackerApp(collection).render(true);
 });
 
-Hooks.on("renderTrackerApp", (html) => {
-	let collection = game.settings.get("hud-and-trackers", "trackers")
+Hooks.on("renderTrackerApp", (app, html) => {
 
+	let element = html[0];
+	let collection = app.collection;
+
+	//go through the collection and such
+	for (let trackerID in collection) {
+		let tracker = collection[trackerID];
+
+		for (let trackedItemID in tracker.trackedItems) {
+			console.log(tracker.trackedItems[trackedItemID]);
+			let trackedItemObject = tracker.trackedItems[trackedItemID];
+
+			//get the element by its id using query selector, and fix the background color
+			//to equal the stored color
+			let elem = element.querySelector("#" + trackedItemID);
+			$(elem).css({
+				"background-color": trackedItemObject.color
+			})
+		}
+	}
 });
 
 async function loadHandleBarTemplates() {
@@ -83,7 +99,7 @@ function idGenerator() {
 	var S4 = function () {
 		return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 	};
-	return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+	return ("id" + S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
 
 /**
@@ -193,6 +209,9 @@ function addNewDivider(name, container) {
 
 function addNewTracker(name, container) {
 	console.log("Adding new Tracker")
+	if (name == "") {
+		name = "New Tracker"
+	}
 
 	let generatedID = idGenerator();
 	let newTracker = new Tracker(generatedID, name);
@@ -263,53 +282,53 @@ function renderNewTrackerConfig(event) {
 	d.render(true);
 }
 
-function addNewItem(color, name, type, trackerContainer) {
-	console.log("Adding new item")
+// function addNewItem(color, name, type, trackerContainer) {
+// 	console.log("Adding new item")
 
-	//generate an new random unique id
-	let generatedID = idGenerator();
-
-
-
-	//crate the item's display in html, and add it to the formapplication
-	let itemTemplate = `<h1 class="itemLabel">${name}</h1><img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">`;
-
-	if (type == "waypoint") {
-		itemTemplate = `
-    		<div class="handle">    
-				<h1 class="waypointLabel">${name}</h1>
-			</div>
-    		<div class="line"></div>`
-	}
-
-	let trackedItem = document.createElement('div');
-	trackedItem.className = "draggie";
-	if (type == "waypoint") {
-		trackedItem.classList.add("draggableWaypoint")
-	} else if (type == "item") {
-		trackedItem.classList.add("draggableItem");
-	}
-	trackedItem.innerHTML = itemTemplate;
-	trackerContainer.querySelector(".container").append(trackedItem);
-	// // trackerContainer.append(trackedItem);
-	// trackedItem.style.backgroundColor = color;
-	// setDraggable();
-	trackedItem.setAttribute("name", name);
-	trackedItem.setAttribute("id", generatedID);
+// 	//generate an new random unique id
+// 	let generatedID = idGenerator();
 
 
-	//make the element draggable, and return the Draggabilly object
-	let ourDraggie = makeElementDraggable(trackedItem);
 
-	//create a TrackedItem, passing in the draggableItem and imangesource, and add it to the tracker
-	let newItem = new TrackedItem(generatedID, name, "blep", "#FFF", type, ourDraggie.position);
-	console.log(newItem);
+// 	//crate the item's display in html, and add it to the formapplication
+// 	let itemTemplate = `<h1 class="itemLabel">${name}</h1><img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">`;
 
-	let ourTracker = trackerCollection.getTrackerById(trackerContainer.id);
-	ourTracker.addTrackedItem(newItem);
-	//update the collection, which stores everything in the settings
-	trackerCollection.updateCollection();
-}
+// 	if (type == "waypoint") {
+// 		itemTemplate = `
+//     		<div class="handle">    
+// 				<h1 class="waypointLabel">${name}</h1>
+// 			</div>
+//     		<div class="line"></div>`
+// 	}
+
+// 	let trackedItem = document.createElement('div');
+// 	trackedItem.className = "draggie";
+// 	if (type == "waypoint") {
+// 		trackedItem.classList.add("draggableWaypoint")
+// 	} else if (type == "item") {
+// 		trackedItem.classList.add("draggableItem");
+// 	}
+// 	trackedItem.innerHTML = itemTemplate;
+// 	trackerContainer.querySelector(".container").append(trackedItem);
+// 	// // trackerContainer.append(trackedItem);
+// 	// trackedItem.style.backgroundColor = color;
+// 	// setDraggable();
+// 	trackedItem.setAttribute("name", name);
+// 	trackedItem.setAttribute("id", generatedID);
+
+
+// 	//make the element draggable, and return the Draggabilly object
+// 	let ourDraggie = makeElementDraggable(trackedItem);
+
+// 	//create a TrackedItem, passing in the draggableItem and imangesource, and add it to the tracker
+// 	let newItem = new TrackedItem(generatedID, name, "blep", "#FFF", type, ourDraggie.position);
+// 	console.log(newItem);
+
+// 	let ourTracker = trackerCollection.getTrackerById(trackerContainer.id);
+// 	ourTracker.addTrackedItem(newItem);
+// 	//update the collection, which stores everything in the settings
+// 	trackerCollection.updateCollection();
+// }
 
 function renderNewItemConfig(event) {
 	event.preventDefault();
@@ -441,28 +460,32 @@ class TrackerApp extends FormApplication {
 	 * @param {type} type whether the object is an item or a waypoint
 	 * @param {trackerContainer} trackerContainer the particular tracker we want to add this item to
 	 */
-	addNewItem(color, name, type, trackerContainer) {
+	addNewItem(color, name, type, trackerContainer, imageSource) {
 		//if the user didn't input a name
-		if(name==""){
-			if(type=="item"){
-				name="Tracked Item"
-			}
-			else if(type=="waypoint"){
-				name="Waypoint"
+		if (name == "") {
+			if (type == "item") {
+				name = "Tracked Item"
+			} else if (type == "waypoint") {
+				name = "Waypoint"
 			}
 		}
+		if (imageSource == "") {
+			imageSource = "Icons/foundry icons/tinker.svg"
+		}
+		imageSource = imageSource.replace(/ /g, '%20');
 		console.log("Adding new item")
 
 		//generate an new random unique id
 		let generatedID = idGenerator();
 
 		//crate the item's display in html, and add it to the formapplication
-		let itemTemplate = `<h1 class="itemLabel">${name}</h1><img class="dragImg" src="Icons/foundry icons/tinker.svg" alt="">`;
+		let itemTemplate = `<h1 class="itemLabel">${name}</h1><img class="dragImg" src=${imageSource} alt="">`;
 
 		if (type == "waypoint") {
 			itemTemplate = `
     		<div class="handle">    
 				<h1 class="waypointLabel">${name}</h1>
+				<img class="handleImg" src=${imageSource} alt="">
 			</div>
     		<div class="line"></div>`
 		}
@@ -481,22 +504,24 @@ class TrackerApp extends FormApplication {
 		}
 		trackedItem.innerHTML = itemTemplate;
 		trackerContainer.querySelector(".container").append(trackedItem);
-		// // trackerContainer.append(trackedItem);
-		if(type=="item"){
-		trackedItem.css({
-			backgroundColor: color
-		})
-	}
-	else if(type=="waypoint"){
-		let handle = trackedItem.querySelector(".handle");
-		let line = trackedItem.querySelector(".line");
-		handle.css({
-			backgroundColor: color
-		})
-		line.css({
-			"border-left": `6px dotted ${color}`,
-		})
-	}
+
+		if (type == "item") {
+
+			$(trackedItem).css({
+				backgroundColor: color
+			})
+		} else if (type == "waypoint") {
+
+			let handle = trackedItem.querySelector(".handle");
+			let line = trackedItem.querySelector(".line");
+
+			$(handle).css({
+				backgroundColor: color
+			})
+			$(line).css({
+				"border-left": `6px dotted ${color}`,
+			})
+		}
 		trackedItem.setAttribute("name", name);
 		trackedItem.setAttribute("id", generatedID);
 
@@ -505,7 +530,7 @@ class TrackerApp extends FormApplication {
 		let ourDraggie = makeElementDraggable(trackedItem);
 
 		//create a TrackedItem, passing in the draggableItem and imangesource, and add it to the tracker
-		let newItem = new TrackedItem(generatedID, name, "blep", "#FFF", type, ourDraggie.position);
+		let newItem = new TrackedItem(generatedID, name, imageSource, color, type, ourDraggie.position);
 		console.log(newItem);
 
 		let ourTracker = trackerCollection.getTrackerById(trackerContainer.id);
