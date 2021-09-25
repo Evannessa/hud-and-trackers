@@ -32,6 +32,11 @@ export class TrackerCollection{
 		return this.trackerCollection[id];
 	}
 
+	deleteTrackerById(id){
+		delete this.trackerCollection[id];
+		this.updateCollection();
+	}
+
 	getAllTrackers(){
 
 	}

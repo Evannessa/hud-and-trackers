@@ -26,13 +26,10 @@ export class Tracker{
 		return this.trackedItems[id];
 	}
 
-	addNewWaypoint(waypoint){
-		this.trackedWaypoints[waypoint.id] = waypoint;
+	deleteTrackedItemById(id){
+		delete this.trackedItems[id];
 	}
 
-	getWaypointById(id){
-		return this.trackedWaypoints[id];
-	}
 
 	addNewSection(){
 

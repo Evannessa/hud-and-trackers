@@ -11,6 +11,10 @@
 		padding: 0;
 	}
 
+	.deleteModeWarning {
+		color: red;
+	}
+
 	// hr{
 	// 	border-top: 1px solid 
 	// }
@@ -91,6 +95,12 @@
 				z-index: 3;
 			}
 
+			&.delete-mode {
+				&:hover {
+					background-color: red;
+				}
+			}
+
 			.itemLabel {
 				position: absolute;
 				z-index: 2;
@@ -107,6 +117,13 @@
 			display: flex;
 			justify-content: flex-start;
 			margin: auto 0;
+
+			&.delete-mode {
+				.handle:hover {
+					background-color: red;
+					opacity: 50%;
+				}
+			}
 
 			&.draggableWaypoint.is-pointer-down {
 				.handle {
@@ -156,24 +173,6 @@
 
 
 		.draggie {
-			// position: absolute;
-			// float: left;
-			// width: 4rem;
-			// height: 4rem;
-			// background-color: #F90;
-			// box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-			// border-radius: 10px;
-			// display: flex;
-			// align-items: center;
-			// justify-content: center;
-			// margin: 0 auto;
-
-
-			// &.draggie.is-pointer-down {
-			// 	background-color: #09F !important;
-			// 	z-index: 2;
-
-			// }
 
 			.dragImg {
 				height: 20px;

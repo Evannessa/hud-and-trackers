@@ -9,6 +9,9 @@
   margin: 0;
   padding: 0;
 }
+#tracker-app .deleteModeWarning {
+  color: red;
+}
 #tracker-app .button-wrapper {
   display: flex;
   justify-content: space-evenly;
@@ -70,6 +73,9 @@
   background-color: #09F !important;
   z-index: 3;
 }
+#tracker-app .container .draggableItem.delete-mode:hover {
+  background-color: red;
+}
 #tracker-app .container .draggableItem .itemLabel {
   position: absolute;
   z-index: 2;
@@ -84,6 +90,10 @@
   display: flex;
   justify-content: flex-start;
   margin: auto 0;
+}
+#tracker-app .container .draggableWaypoint.delete-mode .handle:hover {
+  background-color: red;
+  opacity: 50%;
 }
 #tracker-app .container .draggableWaypoint.draggableWaypoint.is-pointer-down .handle {
   background-color: #09F !important;

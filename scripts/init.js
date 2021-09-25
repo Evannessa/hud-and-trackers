@@ -11,6 +11,10 @@ import {
 import {
 	TrackedItemConfig
 } from "./classes/TrackedItemConfig.js"
+import {
+	ContextMenu
+} from "./classes/context-menu.js"
+
 
 
 var myApp;
@@ -81,21 +85,20 @@ Hooks.on("renderTrackerApp", (app, html) => {
 			//to equal the stored color
 			let elem = element.querySelector("#" + trackedItemID);
 			let type = trackedItemObject.type
-			if(type == "item"){
-			$(elem).css({
-				"background-color": trackedItemObject.color
-			})
-		}
-		else if(type == "waypoint"){
-			let line = elem.querySelector(".line");
-			let handle = elem.querySelector(".handle");
-			$(line).css({
-				"border-color": trackedItemObject.color
-			})
-			$(handle).css({
-				"background-color": trackedItemObject.color
-			})
-		}
+			if (type == "item") {
+				$(elem).css({
+					"background-color": trackedItemObject.color
+				})
+			} else if (type == "waypoint") {
+				let line = elem.querySelector(".line");
+				let handle = elem.querySelector(".handle");
+				$(line).css({
+					"border-color": trackedItemObject.color
+				})
+				$(handle).css({
+					"background-color": trackedItemObject.color
+				})
+			}
 		}
 	}
 });
@@ -184,8 +187,18 @@ function setDraggable() {
  * This method should go through the collection and reconvert everything 
  * to Tracker and TrackedItem objects if they aren't
  */
-function convertAllToObjects() {
+function convertAllToObjects(ourCollection) {
 	for (let trackerObjectID in trackerCollection.trackerCollection) {
+		let storedObject = trackerCollection.trackerCollection[trackerObjectID];
+		trackerCollection.trackerCollection[trackerObjectID] = new Tracker(storedObject.id, storedObject.name, storedObject.trackedItems)
+		let updatedObject = trackerCollection.trackerCollection[trackerObjectID];
+		for (let trackedItemID in trackerCollection.trackerCollection[trackerObjectID].trackedItems) {
+			let storedItemObject = trackerCollection.trackerCollection[trackerObjectID].trackedItems[trackedItemID];
+			trackerCollection.trackerCollection[trackerObjectID].trackedItems[trackedItemID] = new TrackedItem(storedItemObject.id, storedItemObject.name, storedItemObject.imageSource, storedItemObject.color, storedItemObject.type, storedItemObject.position);
+		}
+
+	}
+	for (let trackerObjectID in ourCollection.trackerCollection) {
 		let storedObject = trackerCollection.trackerCollection[trackerObjectID];
 		trackerCollection.trackerCollection[trackerObjectID] = new Tracker(storedObject.id, storedObject.name, storedObject.trackedItems)
 		let updatedObject = trackerCollection.trackerCollection[trackerObjectID];
@@ -257,6 +270,8 @@ function addNewTracker(name, container) {
 		}
 		let config = new TrackedItemConfig(configData).render(true);
 	});
+
+	div.addEventListener("contextmenu", myApp.deleteTracker, false);
 	// div.querySelector(".addItem").addEventListener("click", renderNewItemConfig);
 	div.querySelector(".tracker-title").innerText = name;
 	div.setAttribute("name", name);
@@ -392,8 +407,9 @@ class TrackerApp extends FormApplication {
 		super(...args);
 		this.collection = game.settings.get("hud-and-trackers", "trackers");
 		console.log(this.collection);
-		convertAllToObjects();
+		convertAllToObjects(this.collection);
 		console.log(this.collection);
+		this.inDeleteMode = false;
 
 	}
 
@@ -418,30 +434,34 @@ class TrackerApp extends FormApplication {
 
 	async _updateObject(event, formData) {
 
-		// console.log(formData);
-		// console.log(formData.trackerWrapper);
-		// const xPosition = formData.xPosition;
-		// const yPosition = formData.yPosition;
+		console.log(formData);
+		// this.inDeleteMode = formData.deleteModeInput.checked; 
 		this.render();
 	}
 
 
 	getData() {
 		return {
-			trackerCollection: this.collection
+			trackerCollection: this.collection,
+			inDeleteMode: this.inDeleteMode
 		};
 	}
 
 	activateListeners(html) {
 		super.activateListeners(html);
+
+		//*Add button for adding tracker
 		let addTrackerButtons = html.find(".addTracker");
 		for (var btn of addTrackerButtons) {
 			btn.addEventListener("click", renderNewTrackerConfig);
 		}
+		//add buttons for adding dividers
 		let addDividerButtons = html.find(".addDivider");
 		for (var btn of addDividerButtons) {
 			btn.addEventListener("click", addNewDivider);
 		}
+
+		//add event listernrs for add items buttons
 		let addItemButtons = html.find(".addItem");
 		for (var btn of addItemButtons) {
 			// btn.addEventListener("click", renderNewItemConfig);
@@ -457,6 +477,29 @@ class TrackerApp extends FormApplication {
 			});
 		}
 
+		//get draggable items
+		let draggies = html.find(".draggie");
+		let trackers = html.find(".tracker");
+
+		//add right click event listener to add context menu
+		for (var draggie of draggies) {
+			draggie.addEventListener("contextmenu", this.deleteItem, false);
+			// draggie.addEventListener("contextmenu", this.showContextMenu, false);
+		}
+		for (var tracker of trackers) {
+			tracker.addEventListener("contextmenu", this.deleteTracker, false);
+		}
+
+
+		//toggle delete mode
+		let deleteModeButton = html.find(".toggleDeleteMode")[0];
+		console.log(deleteModeButton);
+		deleteModeButton.addEventListener("click", (event) => {
+			event.preventDefault();
+			this.inDeleteMode = !this.inDeleteMode;
+			console.log(this.inDeleteMode);
+		})
+
 		setDraggable();
 	}
 	static emitSocket(type, payload) {
@@ -465,6 +508,29 @@ class TrackerApp extends FormApplication {
 			payload: payload,
 		});
 	}
+
+	// showContextMenu(event) {
+	// 	console.log("Right clicked on " + event.target);
+	// 	// event.stopPropogation();
+	// 	event.preventDefault();
+	// 	let draggie = event.currentTarget;
+	// 	new ContextMenu()
+	// 		.setCallback(this._contextMenuCallback.bind(this))
+	// 		.addMenuItem("Edit Item", {
+	// 			data: [bodypart, ""]
+	// 		})
+	// 		.addMenuItem("Delete Item", {
+	// 			data: [bodypart, "bruise"],
+	// 			callback: this.deleteItem(draggie.id)
+	// 		})
+	// 		.show({
+	// 			position: {
+	// 				x: hitCoords.x,
+	// 				y: hitCoords.y
+	// 			}
+	// 		})
+	// 		return false;
+	// }
 
 	/**
 	 * This will add a new item to the tracker
@@ -537,6 +603,7 @@ class TrackerApp extends FormApplication {
 		}
 		trackedItem.setAttribute("name", name);
 		trackedItem.setAttribute("id", generatedID);
+		trackedItem.addEventListener("contextmenu", this.deleteItem, false);
 
 
 		//make the element draggable, and return the Draggabilly object
@@ -550,5 +617,58 @@ class TrackerApp extends FormApplication {
 		ourTracker.addTrackedItem(newItem);
 		//update the collection, which stores everything in the settings
 		trackerCollection.updateCollection();
+	}
+
+
+
+	deleteItem(event) {
+
+		//equivalent of stop propgation V V 
+		event.cancelBubble = true;
+
+		let itemElement = event.currentTarget;
+		let trackerElement = itemElement.closest(".tracker")
+
+		let trackerObject = trackerCollection.getTrackerById(trackerElement.id);
+		trackerObject.deleteTrackedItemById(itemElement.id);
+
+		//update the collection, which stores everything in the settings
+		trackerCollection.updateCollection();
+
+		//remove the element
+		itemElement.remove();
+
+	}
+
+	promptForComfirmation(callbackMethod, event) {
+		let d = new Dialog({
+			title: 'Confirm',
+			content: `Are you sure you want to delete ${event.currentTarget}?`,
+			buttons: {
+				yes: {
+					icon: '<i class="fas fa-check"></i>',
+					label: 'Ok',
+					callback: () => {
+						callbackMethod(event);
+					}
+				},
+				no: {
+					label: 'No',
+				}
+			}
+		}).render(true);
+	}
+
+	deleteTracker(event) {
+		console.log("TESTING TRACKER DELETE")
+		let trackerElement = event.currentTarget;
+
+		//*Note: this method already updates the collection, so no need to call it
+		trackerCollection.deleteTrackerById(trackerElement.id);
+
+		//remove the element
+		trackerElement.remove();
+
+
 	}
 }

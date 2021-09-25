@@ -1,4 +1,11 @@
 <form action="" class="flexcol">
+	<button class="btn toggleDeleteMode">Toggle Delete Mode</button>
+	<input type="checkbox" name="deleteModeInput" id="deleteModeInput" style="display: none">
+	{{log "Are we in delete mode?" inDeleteMode}}
+	{{#if inDeleteMode}}
+	<h1 class="deleteModeWarning">Warning: Delete Mode Active</h1>
+	<p class="deleteModeWarning">Right Clicking Trackers and Items Will Delete Them</p>
+	{{/if}}
 	<div class="trackerWrapper" name="trackerWrapper">
 		{{#each trackerCollection}}
 		<div class="tracker" id={{this.id}} name={{this.name}}>
