@@ -1,0 +1,10 @@
+
+<div id="hud">
+<ol>
+	{{#each attacks}}
+	<li class="hud-item">{{this.data.name}} -- Damage: {{this.data.data.damage}}
+		<div class="hud-item__description">{{this.data.data.description}}</div>
+	</li>
+	{{/each}}
+</ol>
+</div>

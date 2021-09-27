@@ -21,7 +21,8 @@
   ],
   "scripts": ["scripts/draggabilly.min.js"],
   "esmodules": [
-    "./scripts/init.js"
+    "./scripts/init.js",
+	"./scripts/hud.js"
   ],
   "styles": ["styles/style.css"],
   "dependencies": [],

@@ -48,17 +48,8 @@ Hooks.once('ready', async () => {
 })
 
 Hooks.on("closeFormApplication", (app) => {
-	// console.log(app);
 	if (app instanceof TrackedItemConfig) {
-		// console.log("Closed Item Config")
-		// console.log(app)
-
-		// //TODO: REFACTOR THIS
-		// let id = app.trackerID;
-		// let name = app.form[0].value;
-		// let imagePath = app.form[1].value;
-		// let color = app.form[3].value;
-		// let type = app.form[4].value;
+	
 	}
 })
 
