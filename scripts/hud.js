@@ -17,52 +17,59 @@ let controlled = false;
 // 		}
 // 	}
 // });
-Hooks.on("renderHud", (app, html) => {
-	console.log(app);
-	console.log(html);
-	let hudItems = html[0].querySelectorAll(".hud-item");
-	for (let hudItem of hudItems) {
-		//if we have an actor connected, get it
-		let actor = hud.getActor(hud.ourToken);
-		if (actor) {
-			if (actor.data.type == "PC") {
+// Hooks.on("renderHud", (app, html) => {
+// 	console.log(app);
+// 	console.log(html);
 
-			} else if (actor.data.type == "NPC") {
-				hudItem.addEventListener("click", (event) => {
-					event.preventDefault();
-					console.log(event.currentTarget.id);
-					let item = actor.data.items.find(i => i.id === event.currentTarget.id);
-					if (item) {
-						item.sheet.render(true);
-					}
-				})
-			}
-		}
-	}
-	let attackButton = html[0].querySelector(".showAttacks");
-		console.log(attackButton);
-		attackButton.addEventListener("click", (event)=> {
-			event.preventDefault();
-			hud.showTab = "attacks";
-			lastTab = "attacks";
-			hud.render(true);
-		})
-		let skillsButton = html[0].querySelector(".showSkills");
-		skillsButton.addEventListener("click", (event)=>{
-			// event.preventDefault();
-			console.log("SKILLS")
-			hud.showTab = "skills";
-			lastTab = "skills";
-			hud.render(true);
-		})
-		let abilitiesButton = html[0].querySelector(".showAbilities");
-		abilitiesButton.addEventListener("click", (event)=>{
-			event.preventDefault();
-			hud.showTab = "abilities";
-			lastTab = "abilities";
-			hud.render(true);
-		})
-});
+// 	let hudItems = html[0].querySelectorAll(".hud-item");
+// 	for (let hudItem of hudItems) {
+// 		//if we have an actor connected, get it
+// 		let actor = hud.getActor(hud.ourToken);
+// 		if (actor) {
+// 			if (actor.data.type == "PC") {
+
+// 			} else if (actor.data.type == "NPC") {
+// 				hudItem.addEventListener("click", (event) => {
+// 					event.preventDefault();
+// 					console.log(event.currentTarget.id);
+// 					let item = actor.data.items.find(i => i.id === event.currentTarget.id);
+// 					if (item) {
+// 						item.sheet.render(true);
+// 					}
+// 				})
+// 			}
+// 		}
+// 	}
+
+// 	let attackButton = html[0].querySelector(".showAttacks");
+// 		console.log(attackButton);
+
+// 		attackButton.addEventListener("click", (event)=> {
+// 			event.preventDefault();
+// 			hud.showTab = "attacks";
+// 			lastTab = "attacks";
+// 			hud.render(true);
+// 		})
+
+// 		let skillsButton = html[0].querySelector(".showSkills");
+
+// 		skillsButton.addEventListener("click", (event)=>{
+// 			// event.preventDefault();
+// 			console.log("SKILLS")
+// 			hud.showTab = "skills";
+// 			lastTab = "skills";
+// 			hud.render(true);
+// 		});
+
+// 		let abilitiesButton = html[0].querySelector(".showAbilities");
+// 		abilitiesButton.addEventListener("click", (event)=>{
+// 			event.preventDefault();
+// 			hud.showTab = "abilities";
+// 			lastTab = "abilities";
+// 			hud.render(true);
+// 		})
+// });
+
 Hooks.on("controlToken", (token, isControlled) => {
 	let ourToken = token;
 	if (isControlled) {
@@ -146,15 +153,37 @@ export class Hud extends Application {
 	}
 
 	activateListeners(html) {
-		super.activateListeners(html);
+		// super.activateListeners(html);
+		let windowContent = html.closest(".window-content");
+		let attackButton = windowContent.find(".showAttacks")[0];
+		let skillsButton = windowContent.find(".showSkills")[0];
+		let abilitiesButton = windowContent.find(".showAbilities")[0];
 
-		let attackButton = html.find(".showAttacks");
-		console.log(attackButton);
-		let skillsButton = html.find(".showSkills");
-		let abilitiesButton = html.find(".showAbilities");
 
-		let hudItems = html.find("div.hud-item");
-		console.log(hudItems);
+		attackButton.addEventListener("click", (event)=> {
+			event.preventDefault();
+			this.showTab = "attacks";
+			lastTab = "attacks";
+			this.render(true);
+		})
+
+
+		skillsButton.addEventListener("click", (event)=>{
+			event.preventDefault();
+			// event.preventDefault();
+			this.showTab = "skills";
+			lastTab = "skills";
+			this.render(true);
+		});
+
+		abilitiesButton.addEventListener("click", (event)=>{
+			event.preventDefault();
+			event.preventDefault();
+			this.showTab = "abilities";
+			lastTab = "abilities";
+			this.render(true);
+		})
+		let hudItems = windowContent.find("div.hud-item");
 		for (let hudItem of hudItems) {
 			//if we have an actor connected, get it
 			let actor = this.getActor(this.ourToken);
