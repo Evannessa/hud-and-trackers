@@ -188,20 +188,63 @@
 	}
 }
 
-#hud {
-	position: absolute;
-	top: 300px;
-	left: 300px;
+#tokenHud {
+	.window-header {
+		display: none;
+	}
+
+	display: flex;
+	// position: absolute;
+	// top: 300px;
+	// left: 300px;
+	width: fit-content !important;
+	height: fit-content !important;
+	// height: -mz-fit-content;
+	overflow-y: visible;
+	overflow-x: visible;
+	background-color: transparent;
+	box-shadow:none;
+
+	.window-content {
+		display: flex;
+		flex-direction: row;
+		overflow-y: visible;
+		overflow-x: visible;
+		background-color: transparent;
+	}
+
+
 
 	.hud-item {
+		flex: 0 0 auto;
+		position: relative;
+		height: max-content;
+
+		* {
+			overflow-y: visible;
+			overflow-x: visible;
+		}
+
 		background: #161a1d;
 		color: white;
 		padding: 1rem;
-		width: 300px;
-		height: auto;
+		margin: 1rem;
+		border-radius: 10px;
+		// width: max-content;
+		// height: max-content;
 
-		.hud-item__description {
+		&__title {
+			font-size: 1rem;
+		}
+
+		&__description {
 			display: none;
+			width: fit-content;
+			max-width: 50ch;
+		}
+
+		&__damage {
+			color: #e76f51;
 		}
 
 		&:hover {

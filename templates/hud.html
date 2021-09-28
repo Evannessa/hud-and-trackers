@@ -1,10 +1,17 @@
 
-<div id="hud">
-<ol>
+<!-- <form class="flexcol"> -->
+	{{#each attacks}}
+	<div class="hud-item">
+		<h1 class="hud-item__title">{{this.data.name}} <br><span class="hud-item__damage">Damage: {{this.data.data.damage}}</span></h1>
+		<div class="hud-item__description"><p>{{this.data.data.description}}</p></div>
+		<hr>
+	</div>
+	{{/each}}
+<!-- <ol>
 	{{#each attacks}}
 	<li class="hud-item">{{this.data.name}} -- Damage: {{this.data.data.damage}}
 		<div class="hud-item__description">{{this.data.data.description}}</div>
 	</li>
 	{{/each}}
-</ol>
-</div>
+</ol> -->
+<!-- </form> -->
