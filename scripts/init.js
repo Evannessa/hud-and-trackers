@@ -56,7 +56,8 @@ Hooks.on("closeFormApplication", (app) => {
 Hooks.on('canvasReady', () => {
 	//render the application
 	let collection = game.settings.get("hud-and-trackers", "trackers");
-	myApp = new TrackerApp(collection).render(true);
+	//TODO: PUT THIS BACK
+	// myApp = new TrackerApp(collection).render(true);
 });
 
 Hooks.on("renderTrackerApp", (app, html) => {

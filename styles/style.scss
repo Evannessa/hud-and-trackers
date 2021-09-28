@@ -208,6 +208,7 @@
 	.window-content {
 		display: flex;
 		flex-direction: row;
+		flex-wrap: wrap;
 		overflow-y: visible;
 		overflow-x: visible;
 		background-color: transparent;
@@ -249,6 +250,7 @@
 
 		&:hover {
 			background: #424e57;
+			cursor: pointer;
 
 			.hud-item__description {
 				display: block;
