@@ -1,6 +1,7 @@
 "use strict";
 
 let hud;
+let lastTab = "attacks";
 let controlled = false;
 // Hooks.on("hoverToken", (token, mouseIn) => {
 // 	let ourToken = token;
@@ -38,6 +39,29 @@ Hooks.on("renderHud", (app, html) => {
 			}
 		}
 	}
+	let attackButton = html[0].querySelector(".showAttacks");
+		console.log(attackButton);
+		attackButton.addEventListener("click", (event)=> {
+			event.preventDefault();
+			hud.showTab = "attacks";
+			lastTab = "attacks";
+			hud.render(true);
+		})
+		let skillsButton = html[0].querySelector(".showSkills");
+		skillsButton.addEventListener("click", (event)=>{
+			// event.preventDefault();
+			console.log("SKILLS")
+			hud.showTab = "skills";
+			lastTab = "skills";
+			hud.render(true);
+		})
+		let abilitiesButton = html[0].querySelector(".showAbilities");
+		abilitiesButton.addEventListener("click", (event)=>{
+			event.preventDefault();
+			hud.showTab = "abilities";
+			lastTab = "abilities";
+			hud.render(true);
+		})
 });
 Hooks.on("controlToken", (token, isControlled) => {
 	let ourToken = token;
@@ -87,6 +111,8 @@ export class Hud extends Application {
 		this.attacks = this.getAttacks(this.ourToken);
 		this.skills = this.getSkills(this.ourToken);
 		this.abilities = this.getAbilities(this.ourToken);
+		this.showTab = lastTab;
+		console.log(this.showTab);
 	}
 	/** @override */
 	static get defaultOptions() {
@@ -106,6 +132,7 @@ export class Hud extends Application {
 	}
 	async _updateObject(event, formData) {
 
+		console.log(formData);
 		this.render();
 	}
 
@@ -114,17 +141,23 @@ export class Hud extends Application {
 			attacks: this.attacks,
 			skills: this.skills,
 			abilities: this.abilities,
+			showTab: this.showTab
 		};
 	}
 
 	activateListeners(html) {
 		super.activateListeners(html);
+
+		let attackButton = html.find(".showAttacks");
+		console.log(attackButton);
+		let skillsButton = html.find(".showSkills");
+		let abilitiesButton = html.find(".showAbilities");
+
 		let hudItems = html.find("div.hud-item");
 		console.log(hudItems);
 		for (let hudItem of hudItems) {
 			//if we have an actor connected, get it
 			let actor = this.getActor(this.ourToken);
-			console.log(actor);
 			if (actor) {
 				if (actor.data.type == "PC") {
 

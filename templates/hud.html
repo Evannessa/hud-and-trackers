@@ -1,4 +1,9 @@
 
+	<button class="showAttacks"> Attacks </button>
+	<button class="showSkills"> Skills </button>
+	<button class="showAbilities"> Abilities </button>
+	<br>
+	{{#if (eq showTab "attacks")}}
 	{{#each attacks}}
 	<div class="hud-item" id={{this.id}}>
 		<h1 class="hud-item__title">{{this.data.name}} <br><span class="hud-item__damage">Damage: {{this.data.data.damage}}</span></h1>
@@ -6,7 +11,9 @@
 		<hr>
 	</div>
 	{{/each}}
+	{{/if}}
 
+	{{#if (eq showTab "skills")}}
 	{{#each skills}}
 	<div class="hud-item" id={{this.id}}>
 		<h1 class="hud-item__title">{{this.data.name}} <br><span class="hud-item__damage">Rating: {{this.data.data.skillLevel}}</span></h1>
@@ -14,7 +21,9 @@
 		<hr>
 	</div>
 	{{/each}}
+	{{/if}}
 
+	{{#if (eq showTab "abilities")}}
 	{{#each abilities}}
 	<div class="hud-item" id={{this.id}}>
 		<h1 class="hud-item__title">{{this.data.name}} <br><span class="hud-item__damage"> Cost: {{this.data.data.costPoints}} {{this.data.data.costPool}}</span></h1>
@@ -22,3 +31,4 @@
 		<hr>
 	</div>
 	{{/each}}
+	{{/if}}
