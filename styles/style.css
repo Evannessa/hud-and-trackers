@@ -155,14 +155,20 @@
   display: none;
 }
 #tokenHud .window-content {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
   overflow-y: visible;
   overflow-x: visible;
   background-color: transparent;
 }
-#tokenHud .hud-item {
+#tokenHud .button-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+#tokenHud .hud-item-wrapper {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  max-width: 50vw;
+}
+#tokenHud .hud-item-wrapper .hud-item {
   flex: 0 0 auto;
   position: relative;
   height: -webkit-max-content;
@@ -171,30 +177,30 @@
   background: #161a1d;
   color: white;
   padding: 1rem;
-  margin: 1rem;
+  margin: 0.2rem;
   border-radius: 10px;
 }
-#tokenHud .hud-item * {
+#tokenHud .hud-item-wrapper .hud-item * {
   overflow-y: visible;
   overflow-x: visible;
 }
-#tokenHud .hud-item__title {
-  font-size: 1rem;
+#tokenHud .hud-item-wrapper .hud-item__title {
+  font-size: 0.8rem;
 }
-#tokenHud .hud-item__description {
+#tokenHud .hud-item-wrapper .hud-item__description {
   display: none;
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
   max-width: 50ch;
 }
-#tokenHud .hud-item__damage {
+#tokenHud .hud-item-wrapper .hud-item__damage {
   color: #e76f51;
 }
-#tokenHud .hud-item:hover {
+#tokenHud .hud-item-wrapper .hud-item:hover {
   background: #424e57;
   cursor: pointer;
 }
-#tokenHud .hud-item:hover .hud-item__description {
+#tokenHud .hud-item-wrapper .hud-item:hover .hud-item__description {
   display: block;
 }/*# sourceMappingURL=style.css.map */
