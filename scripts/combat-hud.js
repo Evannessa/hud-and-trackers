@@ -9,6 +9,12 @@ let addedRepTokens = false;
 let initializedRepTokens = false;
 let turnReset = false;
 
+Hooks.on("ready", ()=> {
+	if(game.combat){
+		game.combat.endCombat();
+	}
+})
+
 function getEnemyLevels() {
 
 }
@@ -156,7 +162,9 @@ async function moveToPreviousTurn(combat){
 	await combat.setFlag("world", "turnReset", turnReset);
 }
 
+Hooks.on("renderCombatHud", async(app, html) => {
 
+});
 Hooks.on("updateCombat", async (combat, roundData, diff) => {
 	ourCombat = combat;
 
@@ -238,22 +246,40 @@ export class CombatHud extends Application {
 		this.currentPhase = whoseTurn
 		this.slowPlayers = ourCombat.getFlag("world", "slowPlayers");
 		this.fastPlayers = ourCombat.getFlag("world", "fastPlayers");
+		console.log(this.fastPlayers);
 		this.enemies = ourCombat.getFlag("world", "enemies");
 		this.npcAllies = ourCombat.getFlag("world", "npcAllies");
 		this.combatActive = inCombat;
 
-		this.fastPlayersActivation = setActivations(this.fastPlayers, this.phases.FASTPC);
-		this.slowPlayersActivation = setActivations(this.slowPlayers, this.phases.SLOWPC);
-		this.enemiesActivation = setActivations(this.enemies, this.phases.ENEMY);
-		this.npcAlliesActivation = setActivations(this.npcAllies, this.phases.NPC);
+		this.fastPlayersActivation = this.setActivations(this.fastPlayers, this.phases.FASTPC);
+		this.slowPlayersActivation = this.setActivations(this.slowPlayers, this.phases.SLOWPC);
+		this.enemiesActivation = this.setActivations(this.enemies, this.phases.ENEMY);
+		this.npcAlliesActivation = this.setActivations(this.npcAllies, this.phases.NPC);
 	}
 
-	setActivations(tokenArray, phase){
+	async checkIfAllHaveActed(event){
+		let element = event.currentTarget;
+		let currentPhase = this.ourCombat.getFlag("world", "whoseTurn")
+		let phaseName = element.dataset.phase;
+		let map = ourCombat.getFlag("world", phaseName+"Activation");
+		let allActed = true;
+		for(let mapItem in map){
+			if(map[mapItem] == false){
+				allActed = false;
+			}
+		}
+		if(allActed){
+			ourCombat.nextTurn();
+		}
+	}
+
+	async setActivations(tokenArray, phase){
 		let activationMap = {}
 		for(let item of tokenArray){
-			activationMap[item.id] = false;
+			activationMap[item._id] = false;
 		}
 		await ourCombat.setFlag("world", phase+"Activation", activationMap)
+		console.log(ourCombat.getFlag("world", phase+"Activation", activationMap));
 	}
 
 	/** @override */
@@ -285,10 +311,10 @@ export class CombatHud extends Application {
 			currentPhase: whoseTurn,//TODO: Set this to below
 			// currentPhase: this.ourCombat.getFlag("world", "whoseTurn"),
 			combatActive: this.combatActive,
-			fastPlayersActivation = this.ourCombat.getFlag("world", "fastPlayersActivation"),
-			slowPlayersActivation = this.ourCombat.getFlag("world", "slowPlayersActivation"),
-			enemiesActivation = this.ourCombat.getFlag("world", "enemiesActivation"),
-			npcAlliesActivation = this.ourCombat.getFlag("world", "npcAlliesActivation"),
+			fastPlayersActivation: this.ourCombat.getFlag("world", "fastPlayersActivation"),
+			slowPlayersActivation:  this.ourCombat.getFlag("world", "slowPlayersActivation"),
+			enemiesActivation: this.ourCombat.getFlag("world", "enemiesActivation"),
+			npcAlliesActivation:  this.ourCombat.getFlag("world", "npcAlliesActivation"),
 		};
 	}
 
@@ -296,33 +322,71 @@ export class CombatHud extends Application {
 		// super.activateListeners(html);
 		let windowContent = html.closest(".window-content");
 		let combatantDivs = windowContent.find(".combatant-div");
+		console.log(combatantDivs);
 		for (let combatantDiv of combatantDivs) {
-			combatantDiv.addEventListener("click", this.setTokenHasActed(e))
+			combatantDiv.addEventListener("click", (event) => {this.setTokenHasActed(event); this.checkIfAllHaveActed(event)})
+
+			let activationMapString;
+			switch (combatantDiv.dataset.phase) {
+				case this.phases.FASTPC:
+					activationMapString = this.phases.FASTPC;
+					break;
+				case this.phases.SLOWPC:
+					activationMapString = this.phases.SLOWPC;
+					break;
+				case this.phases.ENEMY:
+					activationMapString = this.phases.ENEMY;
+					break;
+				case this.phases.NPC:
+					activationMapString = this.phases.NPC;
+					break;
+				default:
+					break;
+			}
+			console.log(activationMapString+"Activation");
+			let activationMap = this.ourCombat.getFlag("world", activationMapString+"Activation");
+			console.log(activationMap);
+			if(activationMap[combatantDiv.dataset.id] == true){
+				$(combatantDiv).addClass("activated");
+			}
 		}
 	}
 
-	setTokenHasActed(event){
+	getElementFromParent(element, elementSelector){
+		let windowContent = element.closest(".window-content");
+		return windowContent.querySelector(elementSelector);
+	}
+
+	async setTokenHasActed(event){
 		let element = event.currentTarget;
-		let phase = element.closest(".phaseName").textContent;
+		$(element).addClass("activated")
+		let phaseEl = this.getElementFromParent(element, ".phaseName");
+		let phase = phaseEl.textContent;
+		let phaseString;
 		let activationMap;
 
 		switch (phase) {
 			case "fastPlayerTurn":
 				activationMap = this.ourCombat.getFlag("world", "fastPlayersActivation")
+				phaseString = this.phases.FASTPC;
 				break;
 			case "slowPlayerTurn":
 				activationMap = this.ourCombat.getFlag("world", "slowPlayersActivation")
+				phaseString = this.phases.SLOWPC;
 				break;
 			case "enemyTurn":
 				activationMap = this.ourCombat.getFlag("world", "enemiesActivation")
+				phaseString = this.phases.ENEMY;
 				break;
 			case "npcAlliesTurn":
 				activationMap = this.ourCombat.getFlag("world", "npcAlliesActivation")
-				break
+				phaseString = this.phases.NPC;
+				break;
 		}
-
-
-
+		//set the activation for this token id in the map to true
+		activationMap[element.dataset.id] = true;
+		await this.ourCombat.setFlag("world", phaseString+"Activation", activationMap);
+		this.render();
 	}
 
 	getActor(ourToken) {

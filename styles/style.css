@@ -232,16 +232,24 @@
 #combatHud .combatant-wrapper {
   display: flex;
   flex-direction: row;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 }
 #combatHud .combatant-wrapper .combatant-div {
+  border-radius: 2px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   text-align: center;
+  background-color: #F90;
 }
 #combatHud .combatant-wrapper .combatant-div img {
+  padding: 0.5rem;
   width: 3rem;
   height: 3rem;
+}
+#combatHud .combatant-wrapper .combatant-div.activated {
+  background-color: #8a590f;
+  box-shadow: rgba(21, 21, 39, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.582) 0px 18px 36px -18px inset;
 }
 #combatHud .combatant-wrapper .combatant-div:hover {
   cursor: pointer;

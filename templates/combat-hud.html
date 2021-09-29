@@ -2,9 +2,11 @@
 	
 	<h1 class="phaseName">{{currentPhase}}</h1>
 	{{#if (eq currentPhase "fastPlayerTurn")}}
-		<div class="combatant-wrapper"id={{this.id}}>
+		<div class="combatant-wrapper">
 			{{#each fastPlayers}}
-				<div class="combatant-div">
+				<div class="combatant-div" 
+				data-id={{this._id}}
+				data-phase="fastPlayers">
 					<p>{{this.name}}</p>
 					<img src={{this.img}}>
 				</div>
@@ -17,7 +19,9 @@
 	{{#if (eq currentPhase "slowPlayerTurn")}}
 		<div class="combatant-wrapper">
 			{{#each slowPlayers}}
-				<div class="combatant-div"id={{this.id}}>
+				<div class="combatant-div" 
+				data-id={{this._id}} 
+				data-phase="slowPlayers">
 					<p>{{this.name}}</p>
 					<img src={{this.img}}>
 				</div>
@@ -30,7 +34,9 @@
 	{{#if (eq currentPhase "enemyTurn")}}
 		<div class="combatant-wrapper">
 			{{#each enemies}}
-				<div class="combatant-div"id={{this.id}}>
+				<div class="combatant-div" 
+				data-id={{this._id}} 
+				data-phase="enemies">
 					<p>{{this.name}}</p>
 					<img src={{this.img}}>
 				</div>
@@ -41,7 +47,9 @@
 	{{#if (eq currentPhase "npcAlliesTurn")}}
 		<div class="combatant-wrapper">
 			{{#each npcAllies}}
-				<div class="combatant-div" id={{this.id}}>
+				<div class="combatant-div" 
+				data-id={{this._id}} 
+				data-phase="npcAllies">
 					<p>{{this.name}}</p>
 					<img src={{this.img}}>
 				</div>
