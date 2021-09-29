@@ -10,8 +10,9 @@
 		{{#each attacks}}
 		<div class="hud-item" id={{this.id}}>
 			<h1 class="hud-item__title">{{this.data.name}} <br><span class="hud-item__damage">Damage: {{this.data.data.damage}}</span></h1>
-			<div class="hud-item__description"><p>{{this.data.data.description}}</p></div>
-			<hr>
+			{{#unless (eq this.data.data.description "")}}
+			<div class="hud-item__description"><p>{{clean this.data.data.description}}</p></div>
+			{{/unless}}
 		</div>
 		{{/each}}
 		{{/if}}
@@ -19,8 +20,9 @@
 		{{#each skills}}
 		<div class="hud-item" id={{this.id}}>
 			<h1 class="hud-item__title">{{this.data.name}} <br><span class="hud-item__damage">Rating: {{this.data.data.skillLevel}}</span></h1>
-			<div class="hud-item__description"><p>{{this.data.data.description}}</p></div>
-			<hr>
+			{{#unless (eq this.data.data.description "")}}
+			<div class="hud-item__description"><p>{{clean this.data.data.description}}</p></div>
+			{{/unless}}
 		</div>
 		{{/each}}
 		{{/if}}
@@ -28,8 +30,9 @@
 		{{#each abilities}}
 		<div class="hud-item" id={{this.id}}>
 			<h1 class="hud-item__title">{{this.data.name}} <br><span class="hud-item__damage"> Cost: {{this.data.data.costPoints}} {{this.data.data.costPool}}</span></h1>
-			<div class="hud-item__description"><p>{{this.data.data.description}}</p></div>
-			<hr>
+			{{#unless (eq this.data.data.description "")}}
+			<div class="hud-item__description"><p>{{clean this.data.data.description}}</p></div>
+			{{/unless}}
 		</div>
 		{{/each}}
 		{{/if}}

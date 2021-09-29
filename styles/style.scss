@@ -214,15 +214,19 @@
 	.button-wrapper {
 		display: flex;
 		flex-direction: row;
+
+		button {
+			background-color: #09F;
+		}
 	}
 
 
 	.hud-item-wrapper {
-		display: grid;
-		grid-template-columns: repeat(5, 1fr);
-		// display: flex;
-		// flex-direction: row;
-		// flex-wrap: wrap;
+		// display: grid;
+		// grid-template-columns: repeat(5, 1fr);
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
 		max-width: 50vw;
 
 
@@ -250,13 +254,24 @@
 			}
 
 			&__description {
+				position: absolute;
+				background-color: rgba(66, 78, 87, 0.9);
+				border: 2px solid white;
+				padding: 1rem;
+				border-radius: 10px;
+				line-height: 1.5;
 				display: none;
-				width: fit-content;
+				width: max-content;
+				z-index: 3;
 				max-width: 50ch;
 			}
 
 			&__damage {
 				color: #e76f51;
+			}
+
+			&:active {
+				background: #424e57;
 			}
 
 			&:hover {

@@ -10,6 +10,18 @@ let controlled = false;
  * controlling it
  */
 
+Handlebars.registerHelper("clean", function(strInputCode){
+	let cleanText = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
+	cleanText = cleanText.replace("&quot;","\"");
+
+    cleanText = cleanText.replace("&amp;","&");
+
+    cleanText = cleanText.replace("&rsquo;","’");
+	cleanText = cleanText.replace("&nbsp;", " ");
+
+	return cleanText;
+});
+
 Hooks.on("controlToken", (token, isControlled) => {
 
 	let ourToken = token;
