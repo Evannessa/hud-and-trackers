@@ -9,12 +9,7 @@ let fastPlayers = []
 let enemies = []
 let npcAllies = []
 let slowPlayers = []
-
-/**
- * @param token - the token we've selected
- * @param isControlled - if the token is controlled or we've stopped
- * controlling it
- */
+let addedRepTokens = false;
 
 
 
@@ -54,9 +49,16 @@ function findInFolder(folder, name) {
 	return item;
 }
 
+async function createToken(ourActor){
+	let tokenDoc = await Token.create(ourActor.data.token);
+	let tokenObject = tokenDoc[0]._object;
+	return tokenObject;
+}
+
 Hooks.on("updateCombat", async (combat, roundData, diff) => {
 	//first round, categories all the combatants
-	if (game.combat.current.round == 1) {
+	if (game.combat.current.round == 1 && !addedRepTokens) {
+		await combat.rollAll();
 		let enemies = combat.turns.filter((combatant) => {
 			let token = combatant._token;
 			if (token.data.disposition == -1) {
@@ -93,33 +95,59 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 		//delete the combatants
 		await combat.deleteEmbeddedDocuments("Combatant", playersToRemove);
 
+		//set level to NPC level
 		//TODO: Add representative tokens
 		let repTokens = game.folders.getName("RepTokens");
+		let representativeTokens = []
+		for(let repTokenActor of repTokens.content){
+			let newToken;
+			if(repTokenActor.name == "FastPlayer" && fastPlayers.length > 0){
+				newToken = createToken(repTokenActor);
+			}
+			else if(repTokenActor.name == "SlowPlayer" && slowPlayers.length > 0){
+				newToken = createToken(repTokenActor);
+			}
+			else if(repTokenActor.name == "NPCAllies" && npcAllies.length > 0){
+				newToken = createToken(repTokenActor);
+			}
+			if(newToken){
+				representativeTokens.push(newToken);
+			}
+		}
+		for(let token of representativeTokens){
+			token.toggleCombat();
+		}
 
 		if (fastPlayers.length > 0) {
-			let fastPlayerToken = findInFolder(repTokens, "FastPlayer");
-			console.log(fastPlayerToken);
-			if(fastPlayerToken){
-				await Token.create(fastPlayerToken);
+			let fastPlayerTK = findInFolder(repTokens, "FastPlayer");
+			console.log(fastPlayerTK);
+			if(fastPlayerTK){
+				let fastPlayerToken = createToken(fastPlayerTK);
+				fastPlayerToken.toggleCombat();
 			}
 		}
 		if (slowPlayers.length > 0) {
 			let slowPlayerTK = findInFolder(repTokens, "SlowPlayer");
 			console.log(slowPlayerTK);
 			if(slowPlayerTK){
-				await Token.create(slowPlayerTK);
+				let slowPlayerTokenDoc = await Token.create(slowPlayerTK.data.token);
+				let slowPlayerToken = slowPlayerTokenDoc[0]._object;
+				slowPlayerToken.toggleCombat();
 			}
 		}
 		if (npcAllies.length > 0) {
 			let npcAlliesTK = findInFolder(repTokens, "NPCAllies");
 			console.log(npcAlliesTK);
 			if(npcAlliesTK){
-				await Token.create(npcAlliesTK);
+				let npcTokenDoc = await Token.create(npcAlliesTK.data.token);
+				let npcToken = npcToken[0]._object;
+				npcToken.toggleCombat();
 			}
 		}
 		let enemiesTK = findInFolder(repTokens, "Enemies");
-		let enemyToken = await Token.create(enemiesTK);
+		let enemyToken = await Token.create(enemiesTK.data.token);
 		console.log(enemyToken);
+		enemyToken[0]._object.toggleCombat();
 
 	}
 
@@ -155,6 +183,13 @@ Hooks.on("deleteCombat", (combat) => {
 	inCombat = false;
 })
 
+/**
+ * @param token - the token we've selected
+ * @param isControlled - if the token is controlled or we've stopped
+ * controlling it
+ */
+
+
 Hooks.on("controlToken", (token, isControlled) => {
 
 	let ourToken = token;
@@ -162,7 +197,8 @@ Hooks.on("controlToken", (token, isControlled) => {
 	if (isControlled) {
 
 		//if we're controlling the token, render a new token hud
-		hud = new Hud(ourToken).render(true);
+		//TODO: PUT THIS BACK IN 
+		// hud = new Hud(ourToken).render(true);
 
 	} else {
 		//if we're no  longer controlling the token, and hud has been
