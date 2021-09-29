@@ -9,6 +9,7 @@ let whoseTurn = "fastPlayerTurn";
 let initializationStarted = false;
 let addedRepTokens = false;
 let initializedRepTokens = false;
+let turnReset = false;
 
 
 
@@ -54,6 +55,7 @@ async function createToken(ourActor) {
 
 async function rollAllInitiatives(combat) {
 	initializationStarted = true;
+	await combat.setFlag("world", "initializationStarted", initializationStarted);
 	await combat.rollAll();
 }
 
@@ -137,6 +139,7 @@ async function createRepTokens(combat) {
 	}
 	console.log(tokenData);
 	addedRepTokens = true;
+	await combat.setFlag("world", "addedRepTokens", addedRepTokens);
 	//create all of the representative combatants
 	let combatantTest = await combat.createEmbeddedDocuments("Combatant", tokenData);
 }
@@ -158,6 +161,13 @@ async function setRepTokenInitiative(combat) {
 		}
 	}
 	initializedRepTokens = true;
+	await combat.setFlag("world", "initializedRepTokens", initializedRepTokens);
+}
+
+async function moveToPreviousTurn(combat){
+	await combat.previousTurn()
+	turnReset = true;
+	await combat.setFlag("world", "turnReset", turnReset);
 }
 
 
@@ -170,7 +180,9 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 			categorizeCombatants(combat).then(() => {
 				deleteCombatants(combat).then(() => {
 					createRepTokens(combat).then(() => {
-						setRepTokenInitiative(combat);
+						setRepTokenInitiative(combat).then(()=>{
+							moveToPreviousTurn(combat);
+						});
 					})
 				})
 			})
@@ -183,22 +195,23 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 		inCombat = true;
 	}
 
-	if (round == 1 && addedRepTokens && initializedRepTokens) {
-		let token = canvas.tokens.get(combat.current.tokenId);
-		let actor = game.actors.get(token.data.actorId);
-		let combatant = game.combat.combatant;
-		if (token.name == "FastPlayer") {
+	if (round > 0 && addedRepTokens && initializedRepTokens && turnReset) {
+		let name = combat.combatant.name;
+		// let token = canvas.tokens.get(combat.current.tokenId);
+		// let actor = game.actors.get(token.data.actorId);
+		// let combatant = game.combat.combatant;
+		if (name == "FastPlayer") {
 			whoseTurn = "fastPlayerTurn"
 			console.log("It's the fast players' turn!");
-		} else if (token.name == "Enemies") {
+		} else if (name == "Enemies") {
 			whoseTurn = "enemyTurn"
 			console.log("It's the enemies' turn!");
-		} else if (token.name == "SlowPlayer") {
+		} else if (name == "SlowPlayer") {
 			whoseTurn = "slowPlayerTurn"
 			console.log("It's the slow players' turn!")
-		} else if (token.name == "NPCAllies") {
+		} else if (name == "NPCAllies") {
 			whoseTurn = "npcAlliesTurn"
-			console.log("It's the slow players' turn!")
+			console.log("It's the NPC allies turn!")
 		}
 	}
 
