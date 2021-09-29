@@ -257,9 +257,9 @@ export class CombatHud extends Application {
 		this.npcAlliesActivation = this.setActivations(this.npcAllies, this.phases.NPC);
 	}
 
+	//each time an actor is clicked on, 
 	async checkIfAllHaveActed(event){
 		let element = event.currentTarget;
-		let currentPhase = this.ourCombat.getFlag("world", "whoseTurn")
 		let phaseName = element.dataset.phase;
 		let map = ourCombat.getFlag("world", phaseName+"Activation");
 		let allActed = true;
@@ -269,7 +269,17 @@ export class CombatHud extends Application {
 			}
 		}
 		if(allActed){
-			ourCombat.nextTurn();
+			this.ourCombat.nextTurn();
+			this.resetActivations();
+		}
+	}
+
+	resetActivations(){
+		for(let phase in this.phases){
+			let map = ourCombat.getFlag("world", this.phases[phase]+"Activation");
+			for(let item in map){
+				map[item] = false
+			}
 		}
 	}
 
@@ -279,7 +289,7 @@ export class CombatHud extends Application {
 			activationMap[item._id] = false;
 		}
 		await ourCombat.setFlag("world", phase+"Activation", activationMap)
-		console.log(ourCombat.getFlag("world", phase+"Activation", activationMap));
+		console.log(ourCombat.getFlag("world", phase+"Activation"));
 	}
 
 	/** @override */
