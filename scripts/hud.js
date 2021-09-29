@@ -4,7 +4,7 @@ let hud;
 let lastTab = "attacks";
 let controlled = false;
 let inCombat = false;
-let whoseTurn = "fastPlayerTurn"; 
+let whoseTurn = "fastPlayerTurn";
 let fastPlayers = []
 let enemies = []
 let npcAllies = []
@@ -20,98 +20,138 @@ let slowPlayers = []
 
 
 
-Handlebars.registerHelper("clean", function(strInputCode){
+Handlebars.registerHelper("clean", function (strInputCode) {
 	let cleanText = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
-	cleanText = cleanText.replace("&quot;","\"");
+	cleanText = cleanText.replace("&quot;", "\"");
 
-    cleanText = cleanText.replace("&amp;","&");
+	cleanText = cleanText.replace("&amp;", "&");
 
-    cleanText = cleanText.replace("&rsquo;","’");
+	cleanText = cleanText.replace("&rsquo;", "’");
 	cleanText = cleanText.replace("&nbsp;", " ");
 
 	return cleanText;
 });
 
-function getEnemyLevels(){
+function getEnemyLevels() {
 
 }
 
-function getCanvasToken(id){
+function getCanvasToken(id) {
 	return canvas.tokens.get(id);
 }
 
-function getGameActor(id){
+function getGameActor(id) {
 	return game.actors.get(id);
 }
 
-Hooks.on("updateCombat", (combat, roundData, diff) => {
-	//first round, categories all the combatants
-	if(roundData.round == 1)
-	{
-	let enemies = combat.turns.filter((combatant)=> {
-		let token = combatant._token;
-		if(token.data.disposition == -1){
-			return true;
-		}
-	});
-	let npcAllies = combat.turns.filter((combatant) => {
-		let token = combatant._token;
-		if(token.data.disposition == -1){
-			return true;
-		}
+function findInFolder(folder, name) {
+	console.log(folder.content)
+	let item = folder.content.find((actor) => {
+		console.log(actor);
+		return actor.name == name
 	})
-	let highestEnemyInitiative = 0;
-	for(let enemy of enemies){
-		enemies.push(enemy);
-		if(enemy.initiative > highestEnemyInitiative ){
-			highestEnemyInitiative = enemy.initiative;
-		}
-	}
-	for(let combatant of combat.turns){
-		if(!combatant.isNPC){
-			if(combatant.initiative >= highestEnemyInitiative){
-				fastPlayers.push(combatant._token);
-			}
-			else if(combatant.initiative < highestEnemyInitiative){
-				slowPlayers.push(combatant._token);
-		}
-	}
-		console.log(fastPlayers);
-		console.log(slowPlayers);
-	}	
+	console.log(item);
+	return item;
 }
 
-	//if we're in combat but we haven't toggled inCombat to true
-	if(roundData.round > 0 && !inCombat){
-		inCombat = true;	
+Hooks.on("updateCombat", async (combat, roundData, diff) => {
+	//first round, categories all the combatants
+	if (game.combat.current.round == 1) {
+		let enemies = combat.turns.filter((combatant) => {
+			let token = combatant._token;
+			if (token.data.disposition == -1) {
+				return true;
+			}
+		});
+		let npcAllies = combat.turns.filter((combatant) => {
+			let token = combatant._token;
+			if (token.data.disposition == 0) {
+				return true;
+			}
+		})
+		let highestEnemyInitiative = 0;
+		for (let enemy of enemies) {
+			if (enemy.initiative > highestEnemyInitiative) {
+				highestEnemyInitiative = enemy.initiative;
+			}
+		}
+		let playersToRemove = [];
+		for (let combatant of combat.turns) {
+			if (!combatant.isNPC) {
+				if (combatant.initiative >= highestEnemyInitiative) {
+					fastPlayers.push(combatant._token);
+					playersToRemove.push(combatant.id);
+				} else if (combatant.initiative < highestEnemyInitiative) {
+					slowPlayers.push(combatant._token);
+					playersToRemove.push(combatant.id);
+				}
+			}
+			//TODO: maybe store these in a flag on the combat?
+			console.log(fastPlayers);
+			console.log(slowPlayers);
+		}
+		//delete the combatants
+		await combat.deleteEmbeddedDocuments("Combatant", playersToRemove);
+
+		//TODO: Add representative tokens
+		let repTokens = game.folders.getName("RepTokens");
+
+		if (fastPlayers.length > 0) {
+			let fastPlayerToken = findInFolder(repTokens, "FastPlayer");
+			console.log(fastPlayerToken);
+			if(fastPlayerToken){
+				await Token.create(fastPlayerToken);
+			}
+		}
+		if (slowPlayers.length > 0) {
+			let slowPlayerTK = findInFolder(repTokens, "SlowPlayer");
+			console.log(slowPlayerTK);
+			if(slowPlayerTK){
+				await Token.create(slowPlayerTK);
+			}
+		}
+		if (npcAllies.length > 0) {
+			let npcAlliesTK = findInFolder(repTokens, "NPCAllies");
+			console.log(npcAlliesTK);
+			if(npcAlliesTK){
+				await Token.create(npcAlliesTK);
+			}
+		}
+		let enemiesTK = findInFolder(repTokens, "Enemies");
+		let enemyToken = await Token.create(enemiesTK);
+		console.log(enemyToken);
+
 	}
-	let token =  canvas.tokens.get(combat.current.tokenId);
+
+
+
+	//if we're in combat but we haven't toggled inCombat to true
+	if (combat.current.round > 0 && !inCombat) {
+		inCombat = true;
+	}
+	let token = canvas.tokens.get(combat.current.tokenId);
 	let actor = game.actors.get(token.data.actorId);
-	if(actor){
-		if(actor.data.type == "PC"){
+	if (actor) {
+		if (actor.data.type == "PC") {
 			console.log("Player turn!");
 			whoseTurn = "fastPlayerTurn"
-		}
-		else{
+		} else {
 			console.log(token.data.disposition);
-			if(token.data.disposition == -1){
+			if (token.data.disposition == -1) {
 				console.log("Enemy turn!");
 				whoseTurn = "enemyTurn"
-			}
-			else if(token.data.disposition == 0){
+			} else if (token.data.disposition == 0) {
 				console.log("Neutral turn!");
-			}
-			else if(token.data.disposition == 1){
+			} else if (token.data.disposition == 1) {
 				console.log("Ally turn!");
 			}
 		}
-	}
-	else{
+	} else {
 		console.log("Combatant has no actor");
 	}
 });
 
-Hooks.on("deleteCombat", (combat)=> {
+Hooks.on("deleteCombat", (combat) => {
 	inCombat = false;
 })
 
@@ -238,7 +278,7 @@ function itemRollMacro(actor, itemID, pool, skill, assets, effort1, effort2, add
 }
 
 /*APPLY TURN FINISHED OVERLAY */
-function turnFinishedOverlay(){
+function turnFinishedOverlay() {
 	const effect = "icons/svg/skull.svg";
 	canvas.tokens.controlled.forEach(token => {
 		token.toggleOverlay(effect);
