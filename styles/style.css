@@ -227,4 +227,23 @@
 }
 #tokenHud .hud-item-wrapper .hud-item:hover .hud-item__description {
   display: block;
+}
+
+#combatHud .combatant-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+#combatHud .combatant-wrapper .combatant-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+#combatHud .combatant-wrapper .combatant-div img {
+  width: 3rem;
+  height: 3rem;
+}
+#combatHud .combatant-wrapper .combatant-div:hover {
+  cursor: pointer;
+  background-color: #09F;
 }/*# sourceMappingURL=style.css.map */

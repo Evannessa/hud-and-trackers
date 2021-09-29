@@ -1,33 +1,30 @@
 {
-  "name": "hud-and-trackers",
-  "title": "HUD and Trackers",
-  "description": "An attempt to make tracking stuff easier for me.",
-  "version": "1.0.0",
-  "minimumCoreVersion": "0.7.9",
-  "compatibleCoreVersion": "0.8.9",
-  "author": "Eva",
-  "authors": [
-    {
-      "name": "Eva"
-    }
-  ],
-  "packs": [
-    {
-      "name": "macros",
-      "label": "HUD and Trackers",
-      "path": "/packs/macros.db",
-      "entity": "Macro"
-    }
-  ],
-  "scripts": ["scripts/draggabilly.min.js"],
-  "esmodules": [
-    "./scripts/init.js",
-	"./scripts/hud.js"
-  ],
-  "styles": ["styles/style.css"],
-  "dependencies": [],
-  "url": "",
-  "manifest": "",
-  "download": "",
-  "manifestPlusVersion": "1.2.0"
+	"name": "hud-and-trackers",
+	"title": "HUD and Trackers",
+	"description": "An attempt to make tracking stuff easier for me.",
+	"version": "1.0.0",
+	"minimumCoreVersion": "0.7.9",
+	"compatibleCoreVersion": "0.8.9",
+	"author": "Eva",
+	"authors": [{
+		"name": "Eva"
+	}],
+	"packs": [{
+		"name": "macros",
+		"label": "HUD and Trackers",
+		"path": "/packs/macros.db",
+		"entity": "Macro"
+	}],
+	"scripts": ["scripts/draggabilly.min.js"],
+	"esmodules": [
+		"./scripts/init.js",
+		"./scripts/hud.js",
+		"./scripts/combat-hud.js"
+	],
+	"styles": ["styles/style.css"],
+	"dependencies": [],
+	"url": "",
+	"manifest": "",
+	"download": "",
+	"manifestPlusVersion": "1.2.0"
 }

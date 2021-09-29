@@ -294,3 +294,28 @@
 		}
 	}
 }
+
+#combatHud {
+	.combatant-wrapper {
+		display: flex;
+		flex-direction: row;
+
+		.combatant-div {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			text-align: center;
+
+			img {
+				width: 3rem;
+				height: 3rem;
+			}
+
+			&:hover {
+				cursor: pointer;
+				background-color: #09F;
+			}
+		}
+	}
+
+}

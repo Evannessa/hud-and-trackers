@@ -1,0 +1,52 @@
+{{#if combatActive}}
+	
+	<h1 class="phaseName">{{currentPhase}}</h1>
+	{{#if (eq currentPhase "fastPlayerTurn")}}
+		<div class="combatant-wrapper"id={{this.id}}>
+			{{#each fastPlayers}}
+				<div class="combatant-div">
+					<p>{{this.name}}</p>
+					<img src={{this.img}}>
+				</div>
+			{{/each}}
+		</div>
+		<p>It's the fast players' turn. Have you acted?</p>
+		<button class="combatAction"><i class="fas fa-power-off"></i> I've Acted</button>
+		<input type="checkbox" name="combatActed" id="combatActed">
+	{{/if}}
+	{{#if (eq currentPhase "slowPlayerTurn")}}
+		<div class="combatant-wrapper">
+			{{#each slowPlayers}}
+				<div class="combatant-div"id={{this.id}}>
+					<p>{{this.name}}</p>
+					<img src={{this.img}}>
+				</div>
+			{{/each}}
+		</div>
+		<p>It's the slow players' turn. Have you acted?</p>
+		<button class="combatAction"><i class="fas fa-power-off"></i> I've Acted</button>
+		<input type="checkbox" name="combatActed" id="combatActed">
+	{{/if}}
+	{{#if (eq currentPhase "enemyTurn")}}
+		<div class="combatant-wrapper">
+			{{#each enemies}}
+				<div class="combatant-div"id={{this.id}}>
+					<p>{{this.name}}</p>
+					<img src={{this.img}}>
+				</div>
+			{{/each}}
+		</div>
+		<p>It's the enemy's turn. Have you acted?</p>
+	{{/if}}
+	{{#if (eq currentPhase "npcAlliesTurn")}}
+		<div class="combatant-wrapper">
+			{{#each npcAllies}}
+				<div class="combatant-div" id={{this.id}}>
+					<p>{{this.name}}</p>
+					<img src={{this.img}}>
+				</div>
+			{{/each}}
+		</div>
+		<p>It's the allies' turn. Have you acted?</p>
+	{{/if}}
+{{/if}}
