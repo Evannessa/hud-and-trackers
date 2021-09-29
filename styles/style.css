@@ -166,6 +166,16 @@
 #tokenHud .button-wrapper button {
   background-color: #09F;
 }
+#tokenHud .combatAction {
+  background-color: #e76f51;
+  color: white;
+  border-radius: 80px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  padding: 1rem;
+  font-size: 2rem;
+}
 #tokenHud .hud-item-wrapper {
   display: flex;
   flex-direction: row;

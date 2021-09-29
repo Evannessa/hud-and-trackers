@@ -3,12 +3,22 @@
 let hud;
 let lastTab = "attacks";
 let controlled = false;
+let inCombat = false;
+let whoseTurn = "fastPlayerTurn"; 
+let fastPlayers = []
+let enemies = []
+let npcAllies = []
+let slowPlayers = []
 
 /**
  * @param token - the token we've selected
  * @param isControlled - if the token is controlled or we've stopped
  * controlling it
  */
+
+
+
+
 
 Handlebars.registerHelper("clean", function(strInputCode){
 	let cleanText = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
@@ -21,6 +31,89 @@ Handlebars.registerHelper("clean", function(strInputCode){
 
 	return cleanText;
 });
+
+function getEnemyLevels(){
+
+}
+
+function getCanvasToken(id){
+	return canvas.tokens.get(id);
+}
+
+function getGameActor(id){
+	return game.actors.get(id);
+}
+
+Hooks.on("updateCombat", (combat, roundData, diff) => {
+	//first round, categories all the combatants
+	if(roundData.round == 1)
+	{
+	let enemies = combat.turns.filter((combatant)=> {
+		let token = combatant._token;
+		if(token.data.disposition == -1){
+			return true;
+		}
+	});
+	let npcAllies = combat.turns.filter((combatant) => {
+		let token = combatant._token;
+		if(token.data.disposition == -1){
+			return true;
+		}
+	})
+	let highestEnemyInitiative = 0;
+	for(let enemy of enemies){
+		enemies.push(enemy);
+		if(enemy.initiative > highestEnemyInitiative ){
+			highestEnemyInitiative = enemy.initiative;
+		}
+	}
+	for(let combatant of combat.turns){
+		if(!combatant.isNPC){
+			if(combatant.initiative >= highestEnemyInitiative){
+				fastPlayers.push(combatant._token);
+			}
+			else if(combatant.initiative < highestEnemyInitiative){
+				slowPlayers.push(combatant._token);
+		}
+	}
+		console.log(fastPlayers);
+		console.log(slowPlayers);
+	}	
+}
+
+	//if we're in combat but we haven't toggled inCombat to true
+	if(roundData.round > 0 && !inCombat){
+		inCombat = true;	
+	}
+	let token =  canvas.tokens.get(combat.current.tokenId);
+	let actor = game.actors.get(token.data.actorId);
+	if(actor){
+		if(actor.data.type == "PC"){
+			console.log("Player turn!");
+			whoseTurn = "fastPlayerTurn"
+		}
+		else{
+			console.log(token.data.disposition);
+			if(token.data.disposition == -1){
+				console.log("Enemy turn!");
+				whoseTurn = "enemyTurn"
+			}
+			else if(token.data.disposition == 0){
+				console.log("Neutral turn!");
+			}
+			else if(token.data.disposition == 1){
+				console.log("Ally turn!");
+			}
+		}
+	}
+	else{
+		console.log("Combatant has no actor");
+	}
+});
+
+Hooks.on("deleteCombat", (combat)=> {
+	inCombat = false;
+})
 
 Hooks.on("controlToken", (token, isControlled) => {
 
@@ -144,16 +237,25 @@ function itemRollMacro(actor, itemID, pool, skill, assets, effort1, effort2, add
 	// Parse data to All-in-One Dialog
 }
 
+/*APPLY TURN FINISHED OVERLAY */
+function turnFinishedOverlay(){
+	const effect = "icons/svg/skull.svg";
+	canvas.tokens.controlled.forEach(token => {
+		token.toggleOverlay(effect);
+	});
+}
 
 export class Hud extends Application {
 	constructor(object) {
 		// super(object);
 		super();
 		this.ourToken = object;
+		this.ourActor = this.getActor(this.ourToken);
 		this.attacks = this.getAttacks(this.ourToken);
 		this.skills = this.getSkills(this.ourToken);
 		this.abilities = this.getAbilities(this.ourToken);
 		this.showTab = lastTab;
+		this.combatActive = inCombat;
 	}
 	/** @override */
 	static get defaultOptions() {
@@ -179,10 +281,13 @@ export class Hud extends Application {
 
 	getData() {
 		return {
+			ourToken: this.ourToken,
+			ourActor: this.ourActor,
 			attacks: this.attacks,
 			skills: this.skills,
 			abilities: this.abilities,
-			showTab: this.showTab
+			showTab: this.showTab,
+			combatActive: this.combatActive
 		};
 	}
 
@@ -244,10 +349,7 @@ export class Hud extends Application {
 	}
 
 	rollAllInOne(foundItem, actor) {
-		// const item = duplicate(actor.items.get(foundItem.data("itemId")));
 		itemRollMacro(actor, foundItem.id, "", "", "", "", "", "", "", "", "", "", "", "", false);
-		// game.macros.getName("All-in-One Roll").execute();
-		// game.cyphersystem.allInOneRollDialog(actor, pool, skill, assets, effortTask, effortOther, poolPointCost, modifier, stepModifier, title, damage, effortDamage, damagePerLevel, teen, skipDialog);
 	}
 
 	getActor(ourToken) {
@@ -265,7 +367,7 @@ export class Hud extends Application {
 			let attacks = actor.data.items.contents.filter((item) => {
 				return item.data.type === "attack";
 			});
-			return attacks;
+			return attacks.sort();
 		}
 	}
 	getSkills(ourToken) {
@@ -275,7 +377,7 @@ export class Hud extends Application {
 			let skills = actor.data.items.contents.filter((item) => {
 				return item.data.type === "skill";
 			});
-			return skills;
+			return skills.sort();
 		}
 	}
 	getAbilities(ourToken) {
@@ -285,7 +387,7 @@ export class Hud extends Application {
 			let abilities = actor.data.items.contents.filter((item) => {
 				return item.data.type === "ability";
 			});
-			return abilities;
+			return abilities.sort();
 		}
 	}
 }

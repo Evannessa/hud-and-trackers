@@ -36,4 +36,10 @@
 		</div>
 		{{/each}}
 		{{/if}}
+
+		{{#if combatActive}}
+		<p>It's the player's turn. Have you acted?</p>
+		<button class="combatAction"><i class="fas fa-power-off"></i> I've Acted</button>
+		<input type="checkbox" name="combatActed" id="combatActed">
+		{{/if}}
 	</div>
