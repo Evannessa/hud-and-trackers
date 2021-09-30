@@ -1,4 +1,3 @@
-
 import registerSettings from './settings.js'
 
 let ourCombat;
@@ -26,27 +25,27 @@ Hooks.once("socketlib.ready", () => {
 
 })
 
-Hooks.on("init", ()=> {
+Hooks.on("init", () => {
 	game.combatHud = {};
 	game.combatHud.startCombat = startCombat;
 })
 
-Hooks.on("ready", ()=> {
+Hooks.on("ready", () => {
 	registerSettings();
 	// startCombat();
 })
 
 Hooks.on("renderSidebarTab", (app, html) => {
 	console.log(app.options.id)
-	if(!game.user.isGM){
+	if (!game.user.isGM) {
 		return;
 	}
-	if(app.options.id == "combat"){
+	if (app.options.id == "combat") {
 		let button = $("<button>Start Combat</button>");
 		button.click(startCombat);
 		html.find(".directory-footer").prepend(button);
 	}
-	
+
 });
 
 
@@ -96,7 +95,14 @@ async function startCombat() {
 		game.combat.endCombat();
 	} else {
 		if (canvas.tokens.controlled.length === 0) {
-			ui.notifications.error("No tokens selected");
+			let allTokens = game.canvas.tokens.placeables;
+			allTokens.forEach((item) => {
+				item.control({
+					releaseOthers: false
+				});
+			})
+			startCombat(); //TODO: hopefully this recursion is okay
+			// ui.notifications.error("No tokens selected");
 		} else {
 			var combat = ui.combat.combat;
 			if (!combat) {
@@ -109,14 +115,14 @@ async function startCombat() {
 			} else {
 				combat = game.combat;
 			}
-			await rollNonCombatInitiative(combat).then(()=>{
-				createRepTokens(combat).then(()=>{
-					setRepTokenInitiative(combat).then(()=>{
+			await rollNonCombatInitiative(combat).then(() => {
+				createRepTokens(combat).then(() => {
+					setRepTokenInitiative(combat).then(() => {
 						combat.startCombat();
 					})
 				})
 			});
-	 	
+
 		}
 	}
 }
@@ -174,25 +180,25 @@ async function rollNonCombatInitiative(combat) {
 		//if the initiative is higher than the enemy
 		if (tokensWithInitiative[tokenId] >= highestEnemyInitiative) {
 			//push this particular token to the fast players
-			if(tokenId in unfilteredPlayers){
+			if (tokenId in unfilteredPlayers) {
 				fastPlayers.push(unfilteredPlayers[tokenId]);
 			}
 		} else if (tokensWithInitiative[tokenId] < highestEnemyInitiative) {
-			if(tokenId in unfilteredPlayers){
+			if (tokenId in unfilteredPlayers) {
 				slowPlayers.push(unfilteredPlayers[tokenId]);
 			}
 		}
 	}
-	
+
 	slowPlayersStore = slowPlayers;
 	fastPlayersStore = fastPlayers;
 	npcAlliesStore = npcAllies;
 	enemiesStore = enemies;
 	let activeCategories = {
-		slowPlayers: convertToArrayOfIDs(slowPlayers), 
+		slowPlayers: convertToArrayOfIDs(slowPlayers),
 		fastPlayers: convertToArrayOfIDs(fastPlayers),
 		npcAllies: convertToArrayOfIDs(npcAllies),
-		enemies:  convertToArrayOfIDs(enemies)
+		enemies: convertToArrayOfIDs(enemies)
 	}
 	CombatHud.setSetting("activeCategories", activeCategories);
 	// console.log(slowPlayersStore)
@@ -205,31 +211,33 @@ async function rollNonCombatInitiative(combat) {
 	// let enemy =  await combat.setFlag("hud-and-trackers", "enemies", enemies);
 }
 
-function convertToArrayOfIDs(array){
-	return array.map(item => {return item.id})
+function convertToArrayOfIDs(array) {
+	return array.map(item => {
+		return item.id
+	})
 }
 
-function convertToArrayOfTokens(array){
+function convertToArrayOfTokens(array) {
 	return array.map(id => {
 		return game.canvas.tokens.objects.children.find(token => token.id == id)
 	})
 }
 
-function simpleStringify (object){
-    var simpleObject = {};
-    for (var prop in object ){
-        if (!object.hasOwnProperty(prop)){
-            continue;
-        }
-        if (typeof(object[prop]) == 'object'){
-            continue;
-        }
-        if (typeof(object[prop]) == 'function'){
-            continue;
-        }
-        simpleObject[prop] = object[prop];
-    }
-    return JSON.stringify(simpleObject); // returns cleaned up JSON
+function simpleStringify(object) {
+	var simpleObject = {};
+	for (var prop in object) {
+		if (!object.hasOwnProperty(prop)) {
+			continue;
+		}
+		if (typeof (object[prop]) == 'object') {
+			continue;
+		}
+		if (typeof (object[prop]) == 'function') {
+			continue;
+		}
+		simpleObject[prop] = object[prop];
+	}
+	return JSON.stringify(simpleObject); // returns cleaned up JSON
 };
 
 function getActor(ourToken) {
@@ -394,7 +402,7 @@ async function moveToPreviousTurn(combat) {
 Hooks.on("renderCombatHud", async (app, html) => {
 
 });
-Hooks.on("updateCombat",  (combat, roundData, diff) => {
+Hooks.on("updateCombat", (combat, roundData, diff) => {
 	// if (!game.user.isGM) {
 	// 	game.socket.emit("module.hud-and-trackers", {
 	// 		operation: 'renderCombatHud',
@@ -407,30 +415,17 @@ Hooks.on("updateCombat",  (combat, roundData, diff) => {
 
 	let round = combat.current.round;
 
-	// if (!addedRepTokens && !initializedRepTokens && !initializationStarted) {
-	// 	await rollAllInitiatives(combat).then(() => {
-	// 		categorizeCombatants(combat).then(() => {
-	// 			deleteCombatants(combat).then(() => {
-	// 				createRepTokens(combat).then(() => {
-	// 					setRepTokenInitiative(combat).then(() => {
-	// 						moveToPreviousTurn(combat);
-	// 					});
-	// 				})
-	// 			})
-	// 		})
-	// 	})
-	// }
 
 
 	//if we're in combat but we haven't toggled inCombat to true
 	if (combat.current.round > 0 && !inCombat) {
 		// combat.setFlag("hud-and-trackers", "slowPlayers", slowPlayersStore);
-	 	// combat.setFlag("hud-and-trackers", "fastPlayers", fastPlayersStore);
-	 	// combat.combatant.setFlag("hud-and-trackers", "fastPlayers", fastPlayersStore);
-	 	// combat.combatant.setFlag("hud-and-trackers", "npcAllies", npcAlliesStore);
-	 	// combat.combatant.setFlag("hud-and-trackers", "enemies", enemiesStore);
+		// combat.setFlag("hud-and-trackers", "fastPlayers", fastPlayersStore);
+		// combat.combatant.setFlag("hud-and-trackers", "fastPlayers", fastPlayersStore);
+		// combat.combatant.setFlag("hud-and-trackers", "npcAllies", npcAlliesStore);
+		// combat.combatant.setFlag("hud-and-trackers", "enemies", enemiesStore);
 		inCombat = true;
-	
+
 	}
 
 	if (round > 0) {
@@ -472,6 +467,19 @@ Hooks.on("updateCombat",  (combat, roundData, diff) => {
 
 Hooks.on("deleteCombat", async (combat) => {
 	inCombat = false;
+
+	if (game.user.isGM) {
+		//here we're gonna delete the phase rep tokens
+		let allTokens = game.canvas.tokens.placeables
+		let tokensToDelete = [];
+		allTokens.forEach((token) => {
+			if (token.name == "Enemies" || token.name == "FastPlayer" || token.name == "NPCAllies" || token.name == "SlowPlayer") {
+				tokensToDelete.push(token.id);
+			}
+		})
+		game.canvas.tokens.deleteMany(tokensToDelete);
+	}
+
 	// await socket.executeAsGM("close-combat-hud")
 })
 
@@ -488,53 +496,53 @@ function turnFinishedOverlay() {
 }
 export default class CombatHud extends Application {
 
-// static phases = {
-// 	FASTPC: "fastPlayers",
-// 	SLOWPC: "slowPlayers",
-// 	ENEMY: "enemies",
-// 	NPC: "npcAllies"
-// }
+	// static phases = {
+	// 	FASTPC: "fastPlayers",
+	// 	SLOWPC: "slowPlayers",
+	// 	ENEMY: "enemies",
+	// 	NPC: "npcAllies"
+	// }
 
-static currentPhase = 1;
+	static currentPhase = 1;
 
-static currentRound = 1;
+	static currentRound = 1;
 
-static inCombat = false;
+	static inCombat = false;
 
-static ID = "combat-hud";
+	static ID = "combat-hud";
 
-static manageDisplay(html){
-	Hooks.on("renderCombatHud", ()=> {
+	static manageDisplay(html) {
+		Hooks.on("renderCombatHud", () => {
 
-	})
-}
-
-static pullValues(){
-	CombatHud.currentPhase = this.getSetting("currentPhase");
-	CombatHud.currentRound = game.combat ? game.combat.round : this.getSetting("currentRound"); // get the current round getSetting("currentRound");
-	CombatHud.activeCategories = this.getSetting("activeCategories");
-}
-
-
-static updateApp(){
-	//save the values
-	const combas = document.querySelectorAll(".combatant-div");
-	if(game.user.isGM){
-		this.setSetting("currentPhase", CombatHud.currentPhase);
-		this.setSetting("currentRound", CombatHud.currentRound);
-		this.setSetting("activeCategories", CombatHud.activeCategories);
-		//TODO: Put game settings here
+		})
 	}
-	combas.forEach(current => current.classList.remove("activated"))
-	document.querySelector(".roundNumber").innerText = CombatHud.currentRound;
-}
 
-static setSetting(settingName, value){
-	game.settings.set(CombatHud.ID, settingName, value);
-}
-static getSetting(settingName){
-	return game.settings.get(CombatHud.ID, settingName);
-}
+	static pullValues() {
+		CombatHud.currentPhase = this.getSetting("currentPhase");
+		CombatHud.currentRound = game.combat ? game.combat.round : this.getSetting("currentRound"); // get the current round getSetting("currentRound");
+		CombatHud.activeCategories = this.getSetting("activeCategories");
+	}
+
+
+	static updateApp() {
+		//save the values
+		const combas = document.querySelectorAll(".combatant-div");
+		if (game.user.isGM) {
+			this.setSetting("currentPhase", CombatHud.currentPhase);
+			this.setSetting("currentRound", CombatHud.currentRound);
+			this.setSetting("activeCategories", CombatHud.activeCategories);
+			//TODO: Put game settings here
+		}
+		combas.forEach(current => current.classList.remove("activated"))
+		document.querySelector(".roundNumber").innerText = CombatHud.currentRound;
+	}
+
+	static setSetting(settingName, value) {
+		game.settings.set(CombatHud.ID, settingName, value);
+	}
+	static getSetting(settingName) {
+		return game.settings.get(CombatHud.ID, settingName);
+	}
 
 	constructor(object) {
 		super();
@@ -546,19 +554,13 @@ static getSetting(settingName){
 		}
 		this.ourCombat = ourCombat;
 		this.currentPhase = whoseTurn
-		console.log(CombatHud.getSetting("activeCategories"))
 		this.slowPlayers = convertToArrayOfTokens(CombatHud.getSetting("activeCategories").slowPlayers); //slowPlayersStore;
 		this.fastPlayers = convertToArrayOfTokens(CombatHud.getSetting("activeCategories").fastPlayers); //fastPlayersStore;
 		this.npcAllies = convertToArrayOfTokens(CombatHud.getSetting("activeCategories").npcAllies); //npcAlliesStore;
 		this.enemies = convertToArrayOfTokens(CombatHud.getSetting("activeCategories").enemies); //enemiesStore;
-		console.log(this.enemies);
-		// this.slowPlayers = ourCombat.getFlag("hud-and-trackers", "slowPlayers");
-		// this.fastPlayers = ourCombat.getFlag("hud-and-trackers", "fastPlayers");
-		// this.enemies = ourCombat.getFlag("hud-and-trackers", "enemies");
-		// this.npcAllies = ourCombat.getFlag("hud-and-trackers", "npcAllies");
+
 		this.combatActive = inCombat;
 
-		console.log(this.fastPlayers);
 		this.fastPlayersActivation = this.setActivations(this.fastPlayers, this.phases.FASTPC);
 		this.slowPlayersActivation = this.setActivations(this.slowPlayers, this.phases.SLOWPC);
 		this.enemiesActivation = this.setActivations(this.enemies, this.phases.ENEMY);
