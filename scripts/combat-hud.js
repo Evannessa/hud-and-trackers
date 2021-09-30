@@ -1,4 +1,3 @@
-
 let ourCombat;
 let combatHud;
 let inCombat = false;
@@ -8,12 +7,67 @@ let initializationStarted = false;
 let addedRepTokens = false;
 let initializedRepTokens = false;
 let turnReset = false;
+let socket;
 
-Hooks.on("ready", ()=> {
-	if(game.combat){
+Hooks.once("socketlib.ready", () => {
+	socket = socketlib.registerModule("hud-and-trackers");
+	socket.register("show-combat-hud", renderCombatHud);
+	socket.register("update-combat-hud", updateCombatHud);
+	socket.register("close-combat-hud", updateCombatHud);
+
+})
+
+function rollNonCombatInitiative(){
+	let tokens = game.canvas.tokens.controlled;
+
+}
+
+function renderCombatHud(combat) {
+	combatHud = new CombatHud(combat).render(true);
+	console.log(combat);
+}
+
+function updateCombatHud() {
+	if (combatHud) {
+		combatHud.render();
+	}
+}
+
+function closeCombatHud() {
+	if (combatHud) {
+		combatHud.close();
+	}
+}
+
+Hooks.on("ready", () => {
+	game.socket.on("module.hud-and-trackers", (data) => {
+		if (data.operation == "renderCombatHud") {
+			console.log("WE SHOULD BE RENDERING HUD IS THIS SOCKET WORKINGAAAH")
+			renderCombatHud();
+			console.log("THIS IS OUR DATA");
+			console.log(data);
+		}
+	});
+	// game.socket.on('module.hud-and-trackers', (data) => {
+	// 	if(data.operation == "render")
+	// })
+
+	async function handleSocket(data) {
+
+	}
+
+	if (game.combat) {
 		game.combat.endCombat();
 	}
 })
+
+function getActor(ourToken) {
+		if (ourToken.data.actorLink) {
+			return game.actors.get(ourToken.data.actorId);
+		} else {
+			return null;
+		}
+	}
 
 function getEnemyLevels() {
 
@@ -156,16 +210,26 @@ async function setRepTokenInitiative(combat) {
 	await combat.setFlag("world", "initializedRepTokens", initializedRepTokens);
 }
 
-async function moveToPreviousTurn(combat){
+async function moveToPreviousTurn(combat) {
 	await combat.previousTurn()
 	turnReset = true;
 	await combat.setFlag("world", "turnReset", turnReset);
 }
 
-Hooks.on("renderCombatHud", async(app, html) => {
+
+
+Hooks.on("renderCombatHud", async (app, html) => {
 
 });
 Hooks.on("updateCombat", async (combat, roundData, diff) => {
+	if(!game.user.isGM){
+			game.socket.emit("module.hud-and-trackers", {
+					operation: 'renderCombatHud',
+					user: game.user.id,
+					content: "Sup"
+				});
+		return
+	}
 	ourCombat = combat;
 
 	let round = combat.current.round;
@@ -175,7 +239,7 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 			categorizeCombatants(combat).then(() => {
 				deleteCombatants(combat).then(() => {
 					createRepTokens(combat).then(() => {
-						setRepTokenInitiative(combat).then(()=>{
+						setRepTokenInitiative(combat).then(() => {
 							moveToPreviousTurn(combat);
 						});
 					})
@@ -191,11 +255,20 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 	}
 
 	if (round > 0 && addedRepTokens && initializedRepTokens && turnReset) {
-		if(!combatHud){
-			combatHud = new CombatHud(combat).render(true);
-		}
-		else{
+		if (!combatHud) {
+			await socket.executeForOthers("show-combat-hud", combat)
+			if (game.user.isGM) {
+				combatHud = new CombatHud(combat).render(true);
+			} else {
+				game.socket.emit("module.hud-and-trackers", {
+					operation: 'renderCombatHud',
+					user: game.user.id,
+					content: combatHud
+				});
+			}
+		} else {
 			console.log("RE-RENDERING HUD");
+			await socket.executeForOthers("update-combat-hud", combat)
 			combatHud.render();
 		}
 
@@ -218,8 +291,9 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 
 });
 
-Hooks.on("deleteCombat", (combat) => {
+Hooks.on("deleteCombat", async (combat) => {
 	inCombat = false;
+	// await socket.executeAsGM("close-combat-hud")
 })
 
 Hooks.on("canvasReady", () => {
@@ -258,38 +332,38 @@ export class CombatHud extends Application {
 	}
 
 	//each time an actor is clicked on, 
-	async checkIfAllHaveActed(event){
+	async checkIfAllHaveActed(event) {
 		let element = event.currentTarget;
 		let phaseName = element.dataset.phase;
-		let map = ourCombat.getFlag("world", phaseName+"Activation");
+		let map = ourCombat.getFlag("world", phaseName + "Activation");
 		let allActed = true;
-		for(let mapItem in map){
-			if(map[mapItem] == false){
+		for (let mapItem in map) {
+			if (map[mapItem] == false) {
 				allActed = false;
 			}
 		}
-		if(allActed){
+		if (allActed) {
 			this.ourCombat.nextTurn();
 			this.resetActivations();
 		}
 	}
 
-	resetActivations(){
-		for(let phase in this.phases){
-			let map = ourCombat.getFlag("world", this.phases[phase]+"Activation");
-			for(let item in map){
+	resetActivations() {
+		for (let phase in this.phases) {
+			let map = ourCombat.getFlag("world", this.phases[phase] + "Activation");
+			for (let item in map) {
 				map[item] = false
 			}
 		}
 	}
 
-	async setActivations(tokenArray, phase){
+	async setActivations(tokenArray, phase) {
 		let activationMap = {}
-		for(let item of tokenArray){
+		for (let item of tokenArray) {
 			activationMap[item._id] = false;
 		}
-		await ourCombat.setFlag("world", phase+"Activation", activationMap)
-		console.log(ourCombat.getFlag("world", phase+"Activation"));
+		await ourCombat.setFlag("world", phase + "Activation", activationMap)
+		console.log(ourCombat.getFlag("world", phase + "Activation"));
 	}
 
 	/** @override */
@@ -318,13 +392,13 @@ export class CombatHud extends Application {
 			fastPlayers: this.fastPlayers,
 			enemies: this.enemies,
 			npcAllies: this.npcAllies,
-			currentPhase: whoseTurn,//TODO: Set this to below
+			currentPhase: whoseTurn, //TODO: Set this to below
 			// currentPhase: this.ourCombat.getFlag("world", "whoseTurn"),
 			combatActive: this.combatActive,
 			fastPlayersActivation: this.ourCombat.getFlag("world", "fastPlayersActivation"),
-			slowPlayersActivation:  this.ourCombat.getFlag("world", "slowPlayersActivation"),
+			slowPlayersActivation: this.ourCombat.getFlag("world", "slowPlayersActivation"),
 			enemiesActivation: this.ourCombat.getFlag("world", "enemiesActivation"),
-			npcAlliesActivation:  this.ourCombat.getFlag("world", "npcAlliesActivation"),
+			npcAlliesActivation: this.ourCombat.getFlag("world", "npcAlliesActivation"),
 		};
 	}
 
@@ -334,7 +408,10 @@ export class CombatHud extends Application {
 		let combatantDivs = windowContent.find(".combatant-div");
 		console.log(combatantDivs);
 		for (let combatantDiv of combatantDivs) {
-			combatantDiv.addEventListener("click", (event) => {this.setTokenHasActed(event); this.checkIfAllHaveActed(event)})
+			combatantDiv.addEventListener("click", (event) => {
+				this.setTokenHasActed(event);
+				this.checkIfAllHaveActed(event)
+			})
 
 			let activationMapString;
 			switch (combatantDiv.dataset.phase) {
@@ -353,21 +430,21 @@ export class CombatHud extends Application {
 				default:
 					break;
 			}
-			console.log(activationMapString+"Activation");
-			let activationMap = this.ourCombat.getFlag("world", activationMapString+"Activation");
+			console.log(activationMapString + "Activation");
+			let activationMap = this.ourCombat.getFlag("world", activationMapString + "Activation");
 			console.log(activationMap);
-			if(activationMap[combatantDiv.dataset.id] == true){
+			if (activationMap[combatantDiv.dataset.id] == true) {
 				$(combatantDiv).addClass("activated");
 			}
 		}
 	}
 
-	getElementFromParent(element, elementSelector){
+	getElementFromParent(element, elementSelector) {
 		let windowContent = element.closest(".window-content");
 		return windowContent.querySelector(elementSelector);
 	}
 
-	async setTokenHasActed(event){
+	async setTokenHasActed(event) {
 		let element = event.currentTarget;
 		$(element).addClass("activated")
 		let phaseEl = this.getElementFromParent(element, ".phaseName");
@@ -395,7 +472,7 @@ export class CombatHud extends Application {
 		}
 		//set the activation for this token id in the map to true
 		activationMap[element.dataset.id] = true;
-		await this.ourCombat.setFlag("world", phaseString+"Activation", activationMap);
+		await this.ourCombat.setFlag("world", phaseString + "Activation", activationMap);
 		this.render();
 	}
 

@@ -26,5 +26,6 @@
 	"url": "",
 	"manifest": "",
 	"download": "",
-	"manifestPlusVersion": "1.2.0"
+	"manifestPlusVersion": "1.2.0",
+	"socket": true
 }
