@@ -1,10 +1,9 @@
-import { CombatHud } from "./combat-hud";
-
+import CombatHud from "./combat-hud.js";
 export default function registerSettings(){
 	game.settings.register(CombatHud.ID, "currentPhase", {
 		scope: "client",
 		config: false,
-		type: number,
+		type: Number,
 		onChange: currentPhase => {
 			if(!game.user.isGM) Hooks.call("combatHudPhaseChanged", currentPhase);
 		}
@@ -12,7 +11,7 @@ export default function registerSettings(){
 	game.settings.register(CombatHud.ID, "currentRound", {
 		scope: "client",
 		config: false,
-		type: number,
+		type: Number,
 		onChange: currentRound => {
 			if(!game.user.isGM) Hooks.call("combatHudRoundChanged", currentRound);
 		}

@@ -1,5 +1,5 @@
 
-import {registerSettings} from './settings.js'
+import registerSettings from './settings.js'
 
 let ourCombat;
 let combatHud;
@@ -27,8 +27,8 @@ Hooks.once("socketlib.ready", () => {
 })
 
 Hooks.on("init", ()=> {
-	// game.combatHud = {};
-	// game.combatHud.startCombat = startCombat;
+	game.combatHud = {};
+	game.combatHud.startCombat = startCombat;
 })
 
 Hooks.on("ready", ()=> {
@@ -189,10 +189,10 @@ async function rollNonCombatInitiative(combat) {
 	npcAlliesStore = npcAllies;
 	enemiesStore = enemies;
 	let activeCategories = {
-		slowPlayers: slowPlayers, 
-		fastPlayers: fastPlayers,
-		npcAllies: npcAllies,
-		enemies:  enemies
+		slowPlayers: convertToArrayOfIDs(slowPlayers), 
+		fastPlayers: convertToArrayOfIDs(fastPlayers),
+		npcAllies: convertToArrayOfIDs(npcAllies),
+		enemies:  convertToArrayOfIDs(enemies)
 	}
 	CombatHud.setSetting("activeCategories", activeCategories);
 	// console.log(slowPlayersStore)
@@ -204,6 +204,33 @@ async function rollNonCombatInitiative(combat) {
 	// let npc =  await combat.setFlag("hud-and-trackers", "npcAllies", npcAllies);
 	// let enemy =  await combat.setFlag("hud-and-trackers", "enemies", enemies);
 }
+
+function convertToArrayOfIDs(array){
+	return array.map(item => {return item.id})
+}
+
+function convertToArrayOfTokens(array){
+	return array.map(id => {
+		return game.canvas.tokens.objects.children.find(token => token.id == id)
+	})
+}
+
+function simpleStringify (object){
+    var simpleObject = {};
+    for (var prop in object ){
+        if (!object.hasOwnProperty(prop)){
+            continue;
+        }
+        if (typeof(object[prop]) == 'object'){
+            continue;
+        }
+        if (typeof(object[prop]) == 'function'){
+            continue;
+        }
+        simpleObject[prop] = object[prop];
+    }
+    return JSON.stringify(simpleObject); // returns cleaned up JSON
+};
 
 function getActor(ourToken) {
 	console.log(ourToken);
@@ -459,14 +486,14 @@ function turnFinishedOverlay() {
 		token.toggleOverlay(effect);
 	});
 }
-export class CombatHud extends Application {
+export default class CombatHud extends Application {
 
-static phases = {
-	FASTPC: "fastPlayers",
-	SLOWPC: "slowPlayers",
-	ENEMY: "enemies",
-	NPC: "npcAllies"
-}
+// static phases = {
+// 	FASTPC: "fastPlayers",
+// 	SLOWPC: "slowPlayers",
+// 	ENEMY: "enemies",
+// 	NPC: "npcAllies"
+// }
 
 static currentPhase = 1;
 
@@ -519,10 +546,12 @@ static getSetting(settingName){
 		}
 		this.ourCombat = ourCombat;
 		this.currentPhase = whoseTurn
-		this.slowPlayers = CombatHud.getSetting("activeCategories").slowPlayers; //slowPlayersStore;
-		this.fastPlayers = CombatHud.getSetting("activeCategories").fastPlayers; //fastPlayersStore;
-		this.npcAllies = CombatHud.getSetting("activeCategories").npcAllies;; //npcAlliesStore;
-		this.enemies = CombatHud.getSetting("activeCategories").enemies; //enemiesStore;
+		console.log(CombatHud.getSetting("activeCategories"))
+		this.slowPlayers = convertToArrayOfTokens(CombatHud.getSetting("activeCategories").slowPlayers); //slowPlayersStore;
+		this.fastPlayers = convertToArrayOfTokens(CombatHud.getSetting("activeCategories").fastPlayers); //fastPlayersStore;
+		this.npcAllies = convertToArrayOfTokens(CombatHud.getSetting("activeCategories").npcAllies); //npcAlliesStore;
+		this.enemies = convertToArrayOfTokens(CombatHud.getSetting("activeCategories").enemies); //enemiesStore;
+		console.log(this.enemies);
 		// this.slowPlayers = ourCombat.getFlag("hud-and-trackers", "slowPlayers");
 		// this.fastPlayers = ourCombat.getFlag("hud-and-trackers", "fastPlayers");
 		// this.enemies = ourCombat.getFlag("hud-and-trackers", "enemies");
@@ -565,10 +594,11 @@ static getSetting(settingName){
 	async setActivations(tokenArray, phase) {
 		let activationMap = {}
 		for (let item of tokenArray) {
-			activationMap[item._id] = false;
+			console.log(item)
+			activationMap[item.id] = false;
 		}
-		await ourCombat.setFlag("hud-and-trackers", phase + "Activation", activationMap)
-		console.log(ourCombat.getFlag("hud-and-trackers", phase + "Activation"));
+		await this.ourCombat.setFlag("hud-and-trackers", phase + "Activation", activationMap)
+		console.log(this.ourCombat.getFlag("hud-and-trackers", phase + "Activation"));
 	}
 
 	/** @override */

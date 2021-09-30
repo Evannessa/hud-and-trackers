@@ -6,10 +6,10 @@
 		<div class="combatant-wrapper">
 			{{#each fastPlayers}}
 				<div class="combatant-div" 
-				data-id={{this._id}}
+				data-id={{this.id}}
 				data-phase="fastPlayers">
 					<p>{{this.name}}</p>
-					<img src={{this.img}}>
+					<img src={{this.data.img}}>
 				</div>
 			{{/each}}
 		</div>
@@ -21,10 +21,10 @@
 		<div class="combatant-wrapper">
 			{{#each slowPlayers}}
 				<div class="combatant-div" 
-				data-id={{this._id}} 
+				data-id={{this.id}} 
 				data-phase="slowPlayers">
 					<p>{{this.name}}</p>
-					<img src={{this.img}}>
+					<img src={{this.data.img}}>
 				</div>
 			{{/each}}
 		</div>
@@ -36,10 +36,10 @@
 		<div class="combatant-wrapper">
 			{{#each enemies}}
 				<div class="combatant-div" 
-				data-id={{this._id}} 
+				data-id={{this.id}} 
 				data-phase="enemies">
 					<p>{{this.name}}</p>
-					<img src={{this.img}}>
+					<img src={{this.data.img}}>
 				</div>
 			{{/each}}
 		</div>
@@ -49,10 +49,10 @@
 		<div class="combatant-wrapper">
 			{{#each npcAllies}}
 				<div class="combatant-div" 
-				data-id={{this._id}} 
+				data-id={{this.id}} 
 				data-phase="npcAllies">
 					<p>{{this.name}}</p>
-					<img src={{this.img}}>
+					<img src={{this.data.img}}>
 				</div>
 			{{/each}}
 		</div>
