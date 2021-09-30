@@ -7,14 +7,28 @@ let initializationStarted = false;
 let addedRepTokens = false;
 let initializedRepTokens = false;
 let turnReset = false;
-let socket;
+// let socket;
+
+let slowPlayersStore;
+let fastPlayersStore;
+let enemiesStore;
+let npcAlliesStore;
 
 Hooks.once("socketlib.ready", () => {
-	socket = socketlib.registerModule("hud-and-trackers");
-	socket.register("show-combat-hud", renderCombatHud);
-	socket.register("update-combat-hud", updateCombatHud);
-	socket.register("close-combat-hud", updateCombatHud);
+	// socket = socketlib.registerModule("hud-and-trackers");
+	// socket.register("show-combat-hud", renderCombatHud);
+	// socket.register("update-combat-hud", updateCombatHud);
+	// socket.register("close-combat-hud", updateCombatHud);
 
+})
+
+Hooks.on("init", () => {
+	game.combatHud = {};
+	game.combatHud.startCombat = startCombat;
+})
+
+Hooks.on("ready", () => {
+	// startCombat();
 })
 
 
@@ -37,14 +51,14 @@ function closeCombatHud() {
 }
 
 Hooks.on("ready", () => {
-	game.socket.on("module.hud-and-trackers", (data) => {
-		if (data.operation == "renderCombatHud") {
-			console.log("WE SHOULD BE RENDERING HUD IS THIS SOCKET WORKINGAAAH")
-			renderCombatHud();
-			console.log("THIS IS OUR DATA");
-			console.log(data);
-		}
-	});
+	// game.socket.on("module.hud-and-trackers", (data) => {
+	// 	if (data.operation == "renderCombatHud") {
+	// 		console.log("WE SHOULD BE RENDERING HUD IS THIS SOCKET WORKINGAAAH")
+	// 		renderCombatHud();
+	// 		console.log("THIS IS OUR DATA");
+	// 		console.log(data);
+	// 	}
+	// });
 	// game.socket.on('module.hud-and-trackers', (data) => {
 	// 	if(data.operation == "render")
 	// })
@@ -58,29 +72,139 @@ Hooks.on("ready", () => {
 	}
 })
 
-function rollNonCombatInitiative() {
-	let tokens = game.canvas.tokens.controlled;
-	let tokensWithInitiative = {}
-	for (let token in tokens) {
+async function startCombat() {
+	if (game.combat) {
+		game.combat.endCombat();
+	} else {
+		if (canvas.tokens.controlled.length === 0) {
+			ui.notifications.error("No tokens selected");
+		} else {
+			var combat = ui.combat.combat;
+			if (!combat) {
+				if (game.user.isGM) {
+					combat = await game.combats.documentClass.create({
+						scene: canvas.scene.id,
+						active: true
+					}).then((newCombat) => {
+						console.log(newCombat);
+						rollNonCombatInitiative(newCombat).then(() => {
+							createRepTokens(newCombat).then(() => {
+								setRepTokenInitiative(newCombat).then(() => {
+									newCombat.startCombat();
+								})
+							})
+						});
+					});
+				}
+			} else {
+				combat = game.combat;
+			}
+			// await rollNonCombatInitiative(combat).then(() => {
+			// 	createRepTokens(combat).then(() => {
+			// 		setRepTokenInitiative(combat).then(() => {
+			// 			combat.startCombat();
+			// 		})
+			// 	})
+			// });
 
-		let actor = getActor(token);
-		let initiative = 0;
-		if (actor) {
-			initiative = actor.data.data.settings.initiative.initiativeBonus;
-			if (actor.data.type == "PC") {
-				let r = new Roll('1d20').evaluate().result;
-				initiative += r;
-				tokensWithInitiative[token.id] = initiative;
-			}
-			else if(actor.data.type == "NPC" || actor.data.type == "Companion"){
-				initiative = actor.data.data.level * 3 + (initiative - 0.5)
-				tokensWithInitiative[token.id] = initiative; 
-			}
 		}
 	}
 }
 
+async function rollNonCombatInitiative(combat) {
+	let fastPlayers = []
+	let slowPlayers = []
+	let enemies = []
+	let npcAllies = []
+	fastPlayers.push(canvas.tokens.controlled[0])
+	enemies.push(canvas.tokens.controlled[1])
+	enemies.push(canvas.tokens.controlled[2])
+	npcAllies.push(canvas.tokens.controlled[3])
+	combat.setFlag("world", "slowPlayers", slowPlayers);
+	combat.setFlag("world", "fastPlayers", fastPlayers);
+	combat.setFlag("world", "npcAllies", npcAllies);
+	combat.setFlag("world", "enemies", enemies);
+
+}
+
+async function rollNonCombatInitiative_(combat) {
+	let tokens = game.canvas.tokens.controlled;
+	let tokensWithInitiative = {}
+	let justTokens = {}
+	let fastPlayers = []
+	let slowPlayers = []
+	let enemies = []
+	let npcAllies = []
+	let unfilteredPlayers = {}
+	for (let token of tokens) {
+		console.log("TOKENS")
+		let actor = getActor(token);
+		let initiative = 0;
+		if (actor) {
+			initiative = parseInt(actor.data.data.settings.initiative.initiativeBonus);
+			if (actor.data.type == "PC") {
+				unfilteredPlayers[token.id] = token;
+				let r = new Roll('1d20').evaluate().result;
+				initiative += parseInt(r);
+				tokensWithInitiative[token.id] = initiative;
+			} else if (actor.data.type == "NPC" || actor.data.type == "Companion") {
+				initiative = parseInt(actor.data.data.level) * 3 + (initiative - 0.5)
+				tokensWithInitiative[token.id] = initiative;
+			}
+		}
+		justTokens[token.id] = token;
+	}
+	//get the enemies by filtering the tokens by disposition 
+	enemies = tokens.filter((token) => {
+		console.log("ENEMY FILTER")
+		return token.data.disposition == -1
+	})
+	npcAllies = tokens.filter((token) => {
+		console.log("ALLY FILTER")
+		return token.data.disposition == 0
+	})
+
+	//find the highest enemy initiative
+	let highestEnemyInitiative = 0;
+	for (let enemy of enemies) {
+		console.log("HIGHEST INITIATIVE")
+		let ini = tokensWithInitiative[enemy.id];
+		if (ini > highestEnemyInitiative) {
+			highestEnemyInitiative = ini;
+		}
+	}
+
+	for (let tokenId in tokensWithInitiative) {
+		console.log("TOKENS WITH INITIATIVE")
+		//if the initiative is higher than the enemy
+		if (tokensWithInitiative[tokenId] >= highestEnemyInitiative) {
+			//push this particular token to the fast players
+			if (tokenId in unfilteredPlayers) {
+				fastPlayers.push(unfilteredPlayers[tokenId]);
+			}
+		} else if (tokensWithInitiative[tokenId] < highestEnemyInitiative) {
+			if (tokenId in unfilteredPlayers) {
+				slowPlayers.push(unfilteredPlayers[tokenId]);
+			}
+		}
+	}
+
+	slowPlayersStore = slowPlayers;
+	fastPlayersStore = fastPlayers;
+	npcAlliesStore = npcAllies;
+	enemiesStore = enemies;
+	console.log(slowPlayersStore)
+	console.log(fastPlayersStore)
+	console.log(npcAlliesStore)
+	console.log(enemiesStore)
+	// combat.setFlag("world", "slowPlayers", slowPlayers);
+	// combat.setFlag("world", "fastPlayers", fastPlayers);
+	// combat.setFlag("world", "npcAllies", npcAllies);
+	// combat.setFlag("world", "enemies", enemies);
+}
+
 function getActor(ourToken) {
+	console.log(ourToken);
 	return game.actors.get(ourToken.data.actorId);
 }
 
@@ -172,16 +296,19 @@ async function deleteCombatants(combat) {
 }
 
 async function createRepTokens(combat) {
-	//set level to NPC level
-	//TODO: Add representative tokens
+
 	let repTokens = game.folders.getName("RepTokens");
 	let representativeTokens = []
 	let tokenData = []
 
-	let enemies = await combat.getFlag("world", "enemies");
-	let npcAllies = await combat.getFlag("world", "npcAllies");
-	let fastPlayers = await combat.getFlag("world", "fastPlayers");
-	let slowPlayers = await combat.getFlag("world", "slowPlayers");
+	let enemies = enemiesStore;
+	let npcAllies = npcAlliesStore;
+	let fastPlayers = fastPlayersStore;
+	let slowPlayers = slowPlayersStore;
+	// let enemies = await combat.getFlag("world", "enemies");
+	// let npcAllies = await combat.getFlag("world", "npcAllies");
+	// let fastPlayers = await combat.getFlag("world", "fastPlayers");
+	// let slowPlayers = await combat.getFlag("world", "slowPlayers");
 
 	//create all the tokens representing the different "Sides"
 	for (let repTokenActor of repTokens.content) {
@@ -192,7 +319,7 @@ async function createRepTokens(combat) {
 			newToken = await createToken(repTokenActor);
 		} else if (repTokenActor.name == "NPCAllies" && npcAllies.length > 0) {
 			newToken = await createToken(repTokenActor);
-		} else if (repTokenActor.name == "Enemies") {
+		} else if (repTokenActor.name == "Enemies" && enemies.length > 0) {
 			newToken = await createToken(repTokenActor);
 		}
 		if (newToken) {
@@ -200,10 +327,11 @@ async function createRepTokens(combat) {
 			tokenData.push(newToken.data);
 		}
 	}
+	console.log(representativeTokens);
 	addedRepTokens = true;
 	await combat.setFlag("world", "addedRepTokens", addedRepTokens);
 	//create all of the representative combatants
-	let combatantTest = await combat.createEmbeddedDocuments("Combatant", tokenData);
+	await combat.createEmbeddedDocuments("Combatant", tokenData);
 }
 
 async function setRepTokenInitiative(combat) {
@@ -237,54 +365,60 @@ async function moveToPreviousTurn(combat) {
 Hooks.on("renderCombatHud", async (app, html) => {
 
 });
-Hooks.on("updateCombat", async (combat, roundData, diff) => {
-	if (!game.user.isGM) {
-		game.socket.emit("module.hud-and-trackers", {
-			operation: 'renderCombatHud',
-			user: game.user.id,
-			content: "Sup"
-		});
-		return
-	}
+Hooks.on("updateCombat", (combat, roundData, diff) => {
+	// if (!game.user.isGM) {
+	// 	game.socket.emit("module.hud-and-trackers", {
+	// 		operation: 'renderCombatHud',
+	// 		user: game.user.id,
+	// 		content: "Sup"
+	// 	});
+	// 	return
+	// }
 	ourCombat = combat;
 
 	let round = combat.current.round;
 
-	if (!addedRepTokens && !initializedRepTokens && !initializationStarted) {
-		await rollAllInitiatives(combat).then(() => {
-			categorizeCombatants(combat).then(() => {
-				deleteCombatants(combat).then(() => {
-					createRepTokens(combat).then(() => {
-						setRepTokenInitiative(combat).then(() => {
-							moveToPreviousTurn(combat);
-						});
-					})
-				})
-			})
-		})
-	}
+	// if (!addedRepTokens && !initializedRepTokens && !initializationStarted) {
+	// 	await rollAllInitiatives(combat).then(() => {
+	// 		categorizeCombatants(combat).then(() => {
+	// 			deleteCombatants(combat).then(() => {
+	// 				createRepTokens(combat).then(() => {
+	// 					setRepTokenInitiative(combat).then(() => {
+	// 						moveToPreviousTurn(combat);
+	// 					});
+	// 				})
+	// 			})
+	// 		})
+	// 	})
+	// }
 
 
 	//if we're in combat but we haven't toggled inCombat to true
 	if (combat.current.round > 0 && !inCombat) {
+		// combat.setFlag("hud-and-trackers", "slowPlayers", slowPlayersStore);
+		// combat.setFlag("hud-and-trackers", "fastPlayers", fastPlayersStore);
+		// combat.combatant.setFlag("hud-and-trackers", "fastPlayers", fastPlayersStore);
+		// combat.combatant.setFlag("hud-and-trackers", "npcAllies", npcAlliesStore);
+		// combat.combatant.setFlag("hud-and-trackers", "enemies", enemiesStore);
 		inCombat = true;
+
 	}
 
-	if (round > 0 && addedRepTokens && initializedRepTokens && turnReset) {
+	if (round > 0) {
 		if (!combatHud) {
-			await socket.executeForOthers("show-combat-hud", combat)
+			// await socket.executeForOthers("show-combat-hud", combat)
 			if (game.user.isGM) {
 				combatHud = new CombatHud(combat).render(true);
 			} else {
-				game.socket.emit("module.hud-and-trackers", {
-					operation: 'renderCombatHud',
-					user: game.user.id,
-					content: combatHud
-				});
+				// game.socket.emit("module.hud-and-trackers", {
+				// 	operation: 'renderCombatHud',
+				// 	user: game.user.id,
+				// 	content: combatHud
+				// });
 			}
 		} else {
 			console.log("RE-RENDERING HUD");
-			await socket.executeForOthers("update-combat-hud", combat)
+			// await socket.executeForOthers("update-combat-hud", combat)
 			combatHud.render();
 		}
 
@@ -302,7 +436,7 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 			whoseTurn = "npcAlliesTurn"
 			console.log("It's the NPC allies turn!")
 		}
-		await combat.setFlag("world", "whoseTurn", whoseTurn);
+		combat.setFlag("world", "whoseTurn", whoseTurn);
 	}
 
 });
@@ -333,14 +467,22 @@ export class CombatHud extends Application {
 			NPC: "npcAllies"
 		}
 		this.ourCombat = ourCombat;
+		ourCombat.setFlag("world", "slowPlayers", slowPlayersStore);
+		ourCombat.setFlag("world", "fastPlayers", fastPlayersStore);
+		ourCombat.setFlag("world", "npcAllies", npcAlliesStore);
+		ourCombat.setFlag("world", "enemies", enemiesStore);
 		this.currentPhase = whoseTurn
-		this.slowPlayers = ourCombat.getFlag("world", "slowPlayers");
-		this.fastPlayers = ourCombat.getFlag("world", "fastPlayers");
-		console.log(this.fastPlayers);
-		this.enemies = ourCombat.getFlag("world", "enemies");
-		this.npcAllies = ourCombat.getFlag("world", "npcAllies");
+		this.slowPlayers = slowPlayersStore;
+		this.fastPlayers = fastPlayersStore;
+		this.npcAllies = npcAlliesStore;
+		this.enemies = enemiesStore;
+		// this.slowPlayers = ourCombat.getFlag("world", "slowPlayers");
+		// this.fastPlayers = ourCombat.getFlag("world", "fastPlayers");
+		// this.enemies = ourCombat.getFlag("world", "enemies");
+		// this.npcAllies = ourCombat.getFlag("world", "npcAllies");
 		this.combatActive = inCombat;
 
+		console.log(this.fastPlayers);
 		this.fastPlayersActivation = this.setActivations(this.fastPlayers, this.phases.FASTPC);
 		this.slowPlayersActivation = this.setActivations(this.slowPlayers, this.phases.SLOWPC);
 		this.enemiesActivation = this.setActivations(this.enemies, this.phases.ENEMY);
