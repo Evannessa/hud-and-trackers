@@ -24,5 +24,13 @@ export default function registerSettings(){
 		// 	if(!game.user.isGM) Hooks.call("combatHudRoundChanged", currentRound);
 		// }
 	})
+	game.settings.register(CombatHud.ID, "activationMaps", {
+		scope: "client",
+		config: false,
+		type: Object,
+		onChange: activationMaps => {
+			if(!game.user.isGM) Hooks.call("combatHudActivationChanged", activationMaps);
+		}
+	})
 
 }
