@@ -17,10 +17,7 @@ Hooks.once("socketlib.ready", () => {
 
 })
 
-function rollNonCombatInitiative(){
-	let tokens = game.canvas.tokens.controlled;
 
-}
 
 function renderCombatHud(combat) {
 	combatHud = new CombatHud(combat).render(true);
@@ -61,17 +58,36 @@ Hooks.on("ready", () => {
 	}
 })
 
-function getActor(ourToken) {
-		if (ourToken.data.actorLink) {
-			return game.actors.get(ourToken.data.actorId);
-		} else {
-			return null;
+function rollNonCombatInitiative() {
+	let tokens = game.canvas.tokens.controlled;
+	let tokensWithInitiative = {}
+	for (let token in tokens) {
+
+		let actor = getActor(token);
+		let initiative = 0;
+		if (actor) {
+			initiative = actor.data.data.settings.initiative.initiativeBonus;
+			if (actor.data.type == "PC") {
+				let r = new Roll('1d20').evaluate().result;
+				initiative += r;
+				tokensWithInitiative[token.id] = initiative;
+			}
+			else if(actor.data.type == "NPC" || actor.data.type == "Companion"){
+				initiative = actor.data.data.level * 3 + (initiative - 0.5)
+				tokensWithInitiative[token.id] = initiative; 
+			}
 		}
 	}
-
-function getEnemyLevels() {
-
 }
+
+function getActor(ourToken) {
+	return game.actors.get(ourToken.data.actorId);
+}
+
+
+// function getEnemyLevels() {
+
+// }
 
 function getCanvasToken(id) {
 	return canvas.tokens.get(id);
@@ -222,12 +238,12 @@ Hooks.on("renderCombatHud", async (app, html) => {
 
 });
 Hooks.on("updateCombat", async (combat, roundData, diff) => {
-	if(!game.user.isGM){
-			game.socket.emit("module.hud-and-trackers", {
-					operation: 'renderCombatHud',
-					user: game.user.id,
-					content: "Sup"
-				});
+	if (!game.user.isGM) {
+		game.socket.emit("module.hud-and-trackers", {
+			operation: 'renderCombatHud',
+			user: game.user.id,
+			content: "Sup"
+		});
 		return
 	}
 	ourCombat = combat;
