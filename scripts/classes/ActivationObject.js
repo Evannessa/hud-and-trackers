@@ -1,55 +1,75 @@
-
-export class ActivationObject{
-	constructor(fastPlayers, slowPlayers, enemies, npcAllies){
+export class ActivationObject {
+	constructor(activationMap = {}, ...args) {
 		//these should be arrays of tokens
-		this.activationMap = {
-			"fastPlayers": {},
-			"slowPlayers": {},
-			"enemies": {},
-			"npcAllies": {}
-		};	
-		var count = 0;
-		for(let mapName in this.activationMap){
-			this.setActivations(mapName, arguments[count]);
-			count++;
+	
+		if (Object.keys(activationMap) == 0) {
+			this.activationMap = {
+				"fastPlayers": {},
+				"slowPlayers": {},
+				"enemies": {},
+				"npcAllies": {}
+			};
+			var count = 0;
+			for (let mapName in this.activationMap) {
+				this.setActivations(mapName, args[count]);
+				count++;
+			}
 		}
+		else{
+			this.activationMap = activationMap;
+		}
+
+
+		// this.updateGameSetting();
 	}
 
-	setActivations(phaseName, array){
-		console.log(phaseName);
+	static fromJSON(obj){
+		if(typeof obj == "string"){
+			obj = JSON.parse(obj);
+		}
+		return new ActivationObject(obj.activationMap);
+	}
+
+
+
+	setActivations(phaseName, array) {
 		array.forEach(element => {
 			this.activationMap[phaseName][element.id] = false;
 		});
 	}
 
 	//this will reset every activation in the map to false
-	resetActivations(){
-		for(let map in this.activationMap){
-			for(let tokenId in map){
-				map[tokenId] = false;
+	resetActivations() {
+		for (let mapKey in this.activationMap) {
+			for (let tokenId in this.activationMap[mapKey]) {
+				this.activationMap[mapKey][tokenId] = false;
 			}
-		}	
+		}
+		// this.updateGameSetting();
 	}
 
 	//each time a token has acted, update the whole map
-	updateActivations(_tokenId){
-		for(let map in this.activationMap){
-			for(let tokenId in map){
+	updateActivations(_tokenId) {
+		for (let mapKey in this.activationMap) {
+			for (let tokenId in this.activationMap[mapKey]) {
 				//if we've found the token id we're updating
 				//update and set it to true
-				if(tokenId === _tokenId){
-					map[tokenId] = true;
+				if (tokenId === _tokenId) {
+					this.activationMap[mapKey][tokenId] = true;
 				}
 			}
-		}	
+		}
+		// this.updateGameSetting();
 	}
 
-	updateGameSetting(){
-		game.settings.get
+	async updateGameSetting() {
+		console.log("THIS activation object is ", this);
+		await game.settings.set("combat-hud", "activationObject", new ActivationObject(null, null, null, null, this.activationMap));
+		console.log("The setting is now ", game.settings.get("combat-hud", "activationObject"));
 	}
 
 
-	getSpecificMap(mapName){
+	getSpecificMap(mapName) {
 		switch (mapName) {
 			case "fastPlayers":
 				return this.getFastPlayersMap();
@@ -64,8 +84,8 @@ export class ActivationObject{
 		}
 	}
 
-	getSpecificCategory(categoryName){
-		switch(categoryName){
+	getSpecificCategory(categoryName) {
+		switch (categoryName) {
 			case "fastPlayers":
 				return this.getFastPlayersMap().keys();
 			case "slowPlayers":
@@ -79,22 +99,22 @@ export class ActivationObject{
 		}
 	}
 
-	getFastPlayersMap(){
+	getFastPlayersMap() {
 		return this.activationMap.fastPlayers;
 	}
-	getSlowPlayersMap(){
+	getSlowPlayersMap() {
 		return this.activationMap.slowPlayers;
 	}
-	getEnemiesMap(){
+	getEnemiesMap() {
 		return this.activationMap.enemies;
 	}
-	getNPCAlliesMap(){
+	getNPCAlliesMap() {
 		return this.activationMap.npcAllies;
 	}
 
 
 
-	alertIfUndefined(){
+	alertIfUndefined() {
 
 	}
 }
