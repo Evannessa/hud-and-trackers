@@ -2,7 +2,7 @@
 	
 	<h1 class="roundNumber"></h1>
 	<h1 class="phaseName">{{currentPhase}}</h1>
-	{{#if (eq currentPhase "fastPlayerTurn")}}
+	{{#if (eq currentPhase "fastPlayersTurn")}}
 		<div class="combatant-wrapper">
 			{{#each fastPlayers}}
 				<div class="combatant-div" 
@@ -17,7 +17,7 @@
 		<button class="combatAction"><i class="fas fa-power-off"></i> I've Acted</button>
 		<input type="checkbox" name="combatActed" id="combatActed">
 	{{/if}}
-	{{#if (eq currentPhase "slowPlayerTurn")}}
+	{{#if (eq currentPhase "slowPlayersTurn")}}
 		<div class="combatant-wrapper">
 			{{#each slowPlayers}}
 				<div class="combatant-div" 
@@ -32,7 +32,7 @@
 		<button class="combatAction"><i class="fas fa-power-off"></i> I've Acted</button>
 		<input type="checkbox" name="combatActed" id="combatActed">
 	{{/if}}
-	{{#if (eq currentPhase "enemyTurn")}}
+	{{#if (eq currentPhase "enemiesTurn")}}
 		<div class="combatant-wrapper">
 			{{#each enemies}}
 				<div class="combatant-div" 
