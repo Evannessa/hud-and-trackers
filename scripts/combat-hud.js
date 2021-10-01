@@ -286,21 +286,7 @@ async function setRepTokenInitiative(combat) {
 
 let refreshed = false;
 
-function getStuff(combat) {
-	CombatHud.ourCombat = combat;
-	CombatHud.inCombat = true;
 
-	let fastPlayers = convertToArrayOfTokens(CombatHud.getSetting("activeCategories").fastPlayers);
-	let slowPlayers = convertToArrayOfTokens(CombatHud.getSetting("activeCategories").slowPlayers);
-	let enemies = convertToArrayOfTokens(CombatHud.getSetting("activeCategories").enemies); 
-	let npcAllies = convertToArrayOfTokens(CombatHud.getSetting("activeCategories").npcAllies);
-
-	CombatHud.activationObject = new ActivationObject({}, fastPlayers, slowPlayers, enemies, npcAllies);
-	console.log("Our Activation Object", CombatHud.activationObject);
-	console.log(CombatHud.activationObject.getSpecificMap("enemies"));
-	combatHud.render();
-	refreshed = true;
-}
 ;
 Hooks.on("updateCombat", async (combat, roundData, diff) => {
 
@@ -317,11 +303,7 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 			if (game.user.isGM) {
 				combatHud = new CombatHud(combat).render(true);
 			}
-		} else {
-			if (!refreshed && !game.user.isGM) {
-				// getStuff(combat)
-			}
-		}
+		} 
 
 		let name = combat.combatant.name;
 		if (name == "FastPlayer") {
@@ -686,7 +668,8 @@ export default class CombatHud extends Application {
 	static _receiveDataAndUpdate(data){
 		console.log("Data received!");
 		console.log("Activation Object is BEFORE conversion",  data.activationObject);
-		CombatHud.activationObject = ActivationObject.fromJSON(data.activationObject);
+		CombatHud.activationObject = new ActivationObject(data.activationObject.activationMap);
+		// CombatHud.activationObject = ActivationObject.fromJSON(data.activationObject);
 		console.log("Activation Object is after conversion",  CombatHud.activationObject);
 		CombatHud.currentPhase = data.currentPhase;	
 		CombatHud.inCombat = data.inCombat;
