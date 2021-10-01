@@ -18,6 +18,12 @@ export default function registerSettings(){
 			if(!game.user.isGM) Hooks.call("combatHudRoundChanged", currentRound);
 		}
 	})
+	game.settings.register(CombatHud.ID, "activationObject", {
+		scope: "world",
+		config: false,
+		type: Object,
+		default: {},
+	});
 	game.settings.register(CombatHud.ID, "activeCategories", {
 		scope: "world",
 		config: false,

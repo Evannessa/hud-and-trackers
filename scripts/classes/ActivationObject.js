@@ -1,5 +1,5 @@
 
-export default class ActivationObject{
+export class ActivationObject{
 	constructor(fastPlayers, slowPlayers, enemies, npcAllies){
 		//these should be arrays of tokens
 		this.activationMap = {
@@ -8,28 +8,44 @@ export default class ActivationObject{
 			"enemies": {},
 			"npcAllies": {}
 		};	
-		for(let arg of arguments){
-			let phaseName = Object.keys({arg})[0];
-			this.setActivations(phaseName, arg);
+		var count = 0;
+		for(let mapName in this.activationMap){
+			this.setActivations(mapName, arguments[count]);
+			count++;
 		}
-		// fastPlayers.forEach(element => {
-		// 	this.activationMap.fastPlayers[element.id] = false;
-		// });
-		// slowPlayers.forEach(element => {
-		// 	this.activationMap.slowPlayers[element.id] = false;
-		// });
-		// enemies.forEach(element => {
-		// 	this.activationMap.fastPlayers[element.id] = false;
-		// });
-		// npcAllies.forEach(element => {
-		// 	this.activationMap.fastPlayers[element.id] = false;
-		// });
 	}
 
 	setActivations(phaseName, array){
+		console.log(phaseName);
 		array.forEach(element => {
 			this.activationMap[phaseName][element.id] = false;
 		});
+	}
+
+	//this will reset every activation in the map to false
+	resetActivations(){
+		for(let map in this.activationMap){
+			for(let tokenId in map){
+				map[tokenId] = false;
+			}
+		}	
+	}
+
+	//each time a token has acted, update the whole map
+	updateActivations(_tokenId){
+		for(let map in this.activationMap){
+			for(let tokenId in map){
+				//if we've found the token id we're updating
+				//update and set it to true
+				if(tokenId === _tokenId){
+					map[tokenId] = true;
+				}
+			}
+		}	
+	}
+
+	updateGameSetting(){
+		game.settings.get
 	}
 
 
