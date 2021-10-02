@@ -296,8 +296,12 @@
 }
 
 #combatHud {
-	width: 252.375px;
-	height: 226px;
+	width: fit-content;
+	width: -moz-max-content !important;
+	height: fit-content;
+	height: -moz-max-content !important;
+	// width: 252.375px;
+	// height: 226px;
 	bottom: 10px !important;
 	left: 810px !important;
 	top: inherit !important;

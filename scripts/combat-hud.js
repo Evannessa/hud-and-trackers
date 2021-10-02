@@ -460,9 +460,9 @@ export default class CombatHud extends Application {
 			let windowApp = newHtml.closest(".window-app")
 			// 
 			$(windowApp).css({
-				"height": "-moz-fit-content",
+				"height": "-moz-max-content",
 				"height": "fit-content",
-				"width": "-moz-fit-content",
+				"width": "-moz-max-content",
 				"width": "fit-content"
 			})
 			// await CombatHud.pullValues();
