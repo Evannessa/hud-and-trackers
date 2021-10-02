@@ -1,7 +1,7 @@
 {{#if combatActive}}
 	
-	<h1 class="roundNumber"></h1>
-	<h1 class="phaseName">{{currentPhase}}</h1>
+	<h1 class="roundNumber">Current Round: {{currentRound}}</h1>
+	<h1 class="phaseName">{{convertToSentence currentPhase}}</h1>
 	{{#if (eq currentPhase "fastPlayersTurn")}}
 		<div class="combatant-wrapper">
 			{{#each fastPlayers}}
@@ -14,8 +14,7 @@
 			{{/each}}
 		</div>
 		<p>It's the fast players' turn. Have you acted?</p>
-		<button class="combatAction"><i class="fas fa-power-off"></i> I've Acted</button>
-		<input type="checkbox" name="combatActed" id="combatActed">
+		<!-- <button class="combatAction"><i class="fas fa-power-off"></i> I've Acted</button> -->
 	{{/if}}
 	{{#if (eq currentPhase "slowPlayersTurn")}}
 		<div class="combatant-wrapper">

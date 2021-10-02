@@ -296,29 +296,113 @@
 }
 
 #combatHud {
+	width: 252.375px;
+	height: 226px;
+	bottom: 10px !important;
+	left: 810px !important;
+	top: inherit !important;
+
+	opacity: 50%;
+
+	&:hover {
+		opacity: 100%;
+	}
+
+	h1,
+	h2 {
+		font-size: 1rem;
+	}
+
+	.window-header {
+		display: none;
+	}
+
 	.combatant-wrapper {
+		position: relative;
 		display: flex;
 		flex-direction: row;
-		box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+		border-radius: 10px;
+		box-shadow: rgb(0 0 0 / 45%) 1px 1px 19px 6px inset;
+		overflow: hidden;
+		background-color: #2c2e2f;
+
+
+
+		&:before {
+			content: '';
+			display: block;
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+		}
 
 		.combatant-div {
-			border-radius: 2px;
+			color: black;
+			font-weight: bold;
+			// border: 1px solid black;
+			padding: 0.5rem;
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
+			align-items: center;
 			text-align: center;
-			background-color: #F90;
+			background: hsla(33, 100%, 53%, 1);
+			background: linear-gradient(90deg, hsla(33, 100%, 53%, 1) 0%, hsla(58, 100%, 68%, 1) 100%);
+			background: -moz-linear-gradient(90deg, hsla(33, 100%, 53%, 1) 0%, hsla(58, 100%, 68%, 1) 100%);
+			background: -webkit-linear-gradient(90deg, hsla(33, 100%, 53%, 1) 0%, hsla(58, 100%, 68%, 1) 100%);
+			box-shadow: rgb(50 50 93 / 58%) 0px 20px 100px -20px, rgb(0 0 0 / 54%) 0px 30px 60px -30px, rgb(33 60 95 / 79%) 0px -4px 12px 1px inset;
+
+			&[data-phase="enemies"] {
+				background: hsla(333, 100%, 53%, 1);
+				background: linear-gradient(90deg, hsla(333, 100%, 53%, 1) 0%, hsla(33, 94%, 57%, 1) 100%);
+				background: -moz-linear-gradient(90deg, hsla(333, 100%, 53%, 1) 0%, hsla(33, 94%, 57%, 1) 100%);
+				background: -webkit-linear-gradient(90deg, hsla(333, 100%, 53%, 1) 0%, hsla(33, 94%, 57%, 1) 100%);
+			}
+
+			&[data-phase="slowPlayers"] {
+				background: hsla(339, 100%, 55%, 1);
+				background: linear-gradient(90deg, hsla(339, 100%, 55%, 1) 0%, hsla(197, 100%, 64%, 1) 100%);
+				background: -moz-linear-gradient(90deg, hsla(339, 100%, 55%, 1) 0%, hsla(197, 100%, 64%, 1) 100%);
+				background: -webkit-linear-gradient(90deg, hsla(339, 100%, 55%, 1) 0%, hsla(197, 100%, 64%, 1) 100%);
+			}
+
+			&[data-phase="fastPlayers"] {
+				background: hsla(16, 100%, 76%, 1);
+				background: linear-gradient(90deg, hsla(16, 100%, 76%, 1) 0%, hsla(49, 100%, 81%, 1) 100%);
+				background: -moz-linear-gradient(90deg, hsla(16, 100%, 76%, 1) 0%, hsla(49, 100%, 81%, 1) 100%);
+				background: -webkit-linear-gradient(90deg, hsla(16, 100%, 76%, 1) 0%, hsla(49, 100%, 81%, 1) 100%);
+			}
+
+			&[data-phase="npcAllies"] {
+				background: hsla(152, 100%, 50%, 1);
+				background: linear-gradient(90deg, hsla(152, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);
+				background: -moz-linear-gradient(90deg, hsla(152, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);
+				background: -webkit-linear-gradient(90deg, hsla(152, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);
+			}
 
 			img {
-				padding: 0.5rem;
 				width: 3rem;
 				height: 3rem;
 			}
 
 			&.activated {
-				background-color: desaturate(darken(#F90, 20), 20);
-				box-shadow: rgba(21, 21, 39, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.582) 0px 18px 36px -18px inset;
+				backdrop-filter: grayscale(0.5);
+				position: relative;
+
+				&::after {
+					content: '';
+					display: block;
+					position: absolute;
+					width: 100%;
+					height: 100%;
+					background: rgba(0, 0, 0, 0.25);
+				}
+
+				box-shadow: rgba(21, 21, 39, 0.705) 3px 3px 6px 0px inset,
+				rgba(0, 9, 0, 0.5) -3px -3px 6px 1px inset;
 			}
+
 
 			&:hover {
 				cursor: pointer;
