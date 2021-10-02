@@ -13,7 +13,6 @@
 				</div>
 			{{/each}}
 		</div>
-		<p>It's the fast players' turn. Have you acted?</p>
 		<!-- <button class="combatAction"><i class="fas fa-power-off"></i> I've Acted</button> -->
 	{{/if}}
 	{{#if (eq currentPhase "slowPlayersTurn")}}
@@ -27,7 +26,6 @@
 				</div>
 			{{/each}}
 		</div>
-		<p>It's the slow players' turn. Have you acted?</p>
 		<button class="combatAction"><i class="fas fa-power-off"></i> I've Acted</button>
 		<input type="checkbox" name="combatActed" id="combatActed">
 	{{/if}}
@@ -42,7 +40,6 @@
 				</div>
 			{{/each}}
 		</div>
-		<p>It's the enemy's turn. Have you acted?</p>
 	{{/if}}
 	{{#if (eq currentPhase "npcAlliesTurn")}}
 		<div class="combatant-wrapper">
@@ -55,8 +52,9 @@
 				</div>
 			{{/each}}
 		</div>
-		<p>It's the allies' turn. Have you acted?</p>
 	{{/if}}
+
+	<button class="endCombat"><i class="fas fa-power-off"></i>End Combat</button> 
 {{else}}
 <div><button class="startCombatButton">Start Combat</button></div>
 {{/if}}
