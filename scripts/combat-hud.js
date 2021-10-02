@@ -286,7 +286,7 @@ let refreshed = false;
 Hooks.on("updateCombat", async (combat, roundData, diff) => {
 
 
-	if(roundData.round){
+	if (roundData.round) {
 		//If not undefined, think this means it's a new round?
 		// CombatHud.unhighlightAll(canvas.tokens.placeables)
 	}
@@ -456,7 +456,7 @@ export default class CombatHud extends Application {
 		let token = getCanvasToken(tokenId);
 		token._toggleOverlayEffect(overlayImg, token);
 	}
-	
+
 
 	static setCanvasTokenActivated(tokenId) {
 		return;
@@ -678,16 +678,25 @@ export default class CombatHud extends Application {
 
 				combatantDiv.addEventListener("hover", (event) => {
 					let token = getCanvasToken(combatantDiv.dataset.id);
+
 					//TODO: Add way to highlight token
 				});
-				combatantDiv.addEventListener("click", (event) => {
-					if (!game.user.isGM) {
-						socket.executeAsGM("requestSetTokenHasActed", combatantDiv.dataset.id, game.userId)
-						socket.executeAsGM("requestIfAllHaveActed", combatantDiv.dataset.id)
-					} else {
-						CombatHud.setTokenHasActed(event);
-						CombatHud.checkIfAllHaveActed(event)
+
+				$(combatantDiv).mousedown((event) => {
+					if (event.which == 1) {
+						if (!game.user.isGM) {
+							socket.executeAsGM("requestSetTokenHasActed", combatantDiv.dataset.id, game.userId)
+							socket.executeAsGM("requestIfAllHaveActed", combatantDiv.dataset.id)
+						} else {
+							CombatHud.setTokenHasActed(event);
+							CombatHud.checkIfAllHaveActed(event)
+						} 
 					}
+					else if (event.which == 3) {
+						let token = getCanvasToken(combatantDiv.dataset.id);
+						token.control({releaseOthers: true});
+					}
+					
 				})
 				let map = CombatHud.activationObject.getSpecificMap(combatantDiv.dataset.phase);
 				for (let id in map) {
