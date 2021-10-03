@@ -444,25 +444,25 @@ export default class CombatHud extends Application {
 	//TODO: This will happen on a new round
 	static unhighlightAll(tokens) {
 		return;
-		let overlayImg = "modules/hud-and-trackers/images/check-mark.png"
-		tokens.forEach(token => {
-			token._toggleOverlayEffect(overlayImg, token);
-		})
+		// let overlayImg = "modules/hud-and-trackers/images/check-mark.png"
+		// tokens.forEach(token => {
+		// 	token._toggleOverlayEffect(overlayImg, token);
+		// })
 	}
 
 	static highlightTokenInGroup(tokenId) {
 		return;
-		let overlayImg = "modules/hud-and-trackers/images/select.png"
-		let token = getCanvasToken(tokenId);
-		token._toggleOverlayEffect(overlayImg, token);
+		// let overlayImg = "modules/hud-and-trackers/images/select.png"
+		// let token = getCanvasToken(tokenId);
+		// token._toggleOverlayEffect(overlayImg, token);
 	}
 
 
 	static setCanvasTokenActivated(tokenId) {
 		return;
-		let overlayImg = "modules/hud-and-trackers/images/check-mark.png"
-		let token = getCanvasToken(tokenId);
-		token._toggleOverlayEffect(overlayImg, token);
+		// let overlayImg = "modules/hud-and-trackers/images/check-mark.png"
+		// let token = getCanvasToken(tokenId);
+		// token._toggleOverlayEffect(overlayImg, token);
 	}
 
 
@@ -674,16 +674,22 @@ export default class CombatHud extends Application {
 			for (let combatantDiv of combatantDivs) {
 
 				CombatHud.highlightTokenInGroup(combatantDiv.dataset.id)
+				let token = getCanvasToken(combatantDiv.dataset.id);
+				$(combatantDiv).mouseenter((event) => {
+					token.update({
+						tint: "#FF5733"
+					})
+				})
 
-
-				combatantDiv.addEventListener("hover", (event) => {
-					let token = getCanvasToken(combatantDiv.dataset.id);
-
-					//TODO: Add way to highlight token
-				});
+				$(combatantDiv).mouseleave((event) => {
+					token.update({
+						tint: "#FFFFFF"
+					})
+				})
 
 				$(combatantDiv).mousedown((event) => {
-					if (event.which == 1) {
+					if (event.which == 3) {
+						//right click
 						if (!game.user.isGM) {
 							socket.executeAsGM("requestSetTokenHasActed", combatantDiv.dataset.id, game.userId)
 							socket.executeAsGM("requestIfAllHaveActed", combatantDiv.dataset.id)
@@ -692,9 +698,11 @@ export default class CombatHud extends Application {
 							CombatHud.checkIfAllHaveActed(event)
 						} 
 					}
-					else if (event.which == 3) {
-						let token = getCanvasToken(combatantDiv.dataset.id);
-						token.control({releaseOthers: true});
+					else if (event.which == 1) {
+						if(game.user.isGM){
+							let token = getCanvasToken(combatantDiv.dataset.id);
+							token.control({releaseOthers: true});
+						}
 					}
 					
 				})

@@ -27,199 +27,6 @@ Handlebars.registerHelper("clean", function (strInputCode) {
 	return cleanText;
 });
 
-// function getEnemyLevels() {
-
-// }
-
-// function getCanvasToken(id) {
-// 	return canvas.tokens.get(id);
-// }
-
-// function getGameActor(id) {
-// 	return game.actors.get(id);
-// }
-
-// function findInFolder(folder, name) {
-// 	let item = folder.content.find((actor) => {
-// 		return actor.name == name
-// 	})
-// 	return item;
-// }
-
-// async function createToken(ourActor) {
-// 	let tokenDoc = await Token.create(ourActor.data.token);
-// 	let tokenObject = tokenDoc[0]._object;
-// 	return tokenObject;
-// }
-
-
-// async function rollAllInitiatives(combat) {
-// 	initializationStarted = true;
-// 	await combat.setFlag("world", "initializationStarted", initializationStarted);
-// 	await combat.rollAll();
-// }
-
-// async function categorizeCombatants(combat) {
-// 	console.log("OUR COMBAT IS")
-// 	console.log(combat);
-// 	let enemies = combat.turns.filter((combatant) => {
-// 		let token = combatant._token;
-// 		if (token.data.disposition == -1) {
-// 			return true;
-// 		}
-// 	});
-// 	let npcAllies = combat.turns.filter((combatant) => {
-// 		let token = combatant._token;
-// 		if (token.data.disposition == 0) {
-// 			return true;
-// 		}
-// 	})
-// 	let highestEnemyInitiative = 0;
-// 	for (let enemy of enemies) {
-// 		if (enemy.initiative > highestEnemyInitiative) {
-// 			highestEnemyInitiative = enemy.initiative;
-// 		}
-// 	}
-// 	let fastPlayers = []
-// 	let slowPlayers = []
-// 	let playersToRemove = [];
-// 	let combatantsToRemove = []
-// 	for (let combatant of combat.turns) {
-// 		combatantsToRemove.push(combatant.id);
-// 		if (!combatant.isNPC) {
-// 			if (combatant.initiative >= highestEnemyInitiative) {
-// 				fastPlayers.push(combatant._token);
-// 				playersToRemove.push(combatant.id);
-// 			} else if (combatant.initiative < highestEnemyInitiative) {
-// 				slowPlayers.push(combatant._token);
-// 				playersToRemove.push(combatant.id);
-// 			}
-// 		}
-// 	}
-// 	await combat.setFlag("world", "slowPlayers", slowPlayers);
-// 	await combat.setFlag("world", "fastPlayers", fastPlayers);
-// 	await combat.setFlag("world", "npcAllies", npcAllies);
-// 	await combat.setFlag("world", "enemies", enemies);
-// 	await combat.setFlag("world", "combatantsToRemove", combatantsToRemove);
-// }
-
-// async function deleteCombatants(combat) {
-// 	let combatantsToRemove = await combat.getFlag("world", "combatantsToRemove")
-// 	await combat.deleteEmbeddedDocuments("Combatant", combatantsToRemove);
-// }
-
-// async function createRepTokens(combat) {
-// 	//set level to NPC level
-// 	//TODO: Add representative tokens
-// 	let repTokens = game.folders.getName("RepTokens");
-// 	let representativeTokens = []
-// 	let tokenData = []
-
-// 	let enemies = await combat.getFlag("world", "enemies");
-// 	let npcAllies = await combat.getFlag("world", "npcAllies");
-// 	let fastPlayers = await combat.getFlag("world", "fastPlayers");
-// 	let slowPlayers = await combat.getFlag("world", "slowPlayers");
-
-// 	//create all the tokens representing the different "Sides"
-// 	for (let repTokenActor of repTokens.content) {
-// 		let newToken;
-// 		if (repTokenActor.name == "FastPlayer" && fastPlayers.length > 0) {
-// 			newToken = await createToken(repTokenActor);
-// 		} else if (repTokenActor.name == "SlowPlayer" && slowPlayers.length > 0) {
-// 			newToken = await createToken(repTokenActor);
-// 		} else if (repTokenActor.name == "NPCAllies" && npcAllies.length > 0) {
-// 			newToken = await createToken(repTokenActor);
-// 		} else if (repTokenActor.name == "Enemies") {
-// 			newToken = await createToken(repTokenActor);
-// 		}
-// 		if (newToken) {
-// 			representativeTokens.push(newToken);
-// 			tokenData.push(newToken.data);
-// 		}
-// 	}
-// 	console.log(tokenData);
-// 	addedRepTokens = true;
-// 	await combat.setFlag("world", "addedRepTokens", addedRepTokens);
-// 	//create all of the representative combatants
-// 	let combatantTest = await combat.createEmbeddedDocuments("Combatant", tokenData);
-// }
-
-// async function setRepTokenInitiative(combat) {
-// 	for (let combatant of combat.turns) {
-// 		console.log(combatant.data.name);
-// 		if (combatant.data.name == "FastPlayer") {
-// 			await combat.setInitiative(combatant.id, 30);
-// 		}
-// 		if (combatant.data.name == "Enemies") {
-// 			await combat.setInitiative(combatant.id, 20);
-// 		}
-// 		if (combatant.data.name == "SlowPlayer") {
-// 			await combat.setInitiative(combatant.id, 10);
-// 		}
-// 		if (combatant.data.name == "NPCAllies") {
-// 			await combat.setInitiative(combatant.id, 3);
-// 		}
-// 	}
-// 	initializedRepTokens = true;
-// 	await combat.setFlag("world", "initializedRepTokens", initializedRepTokens);
-// }
-
-// async function moveToPreviousTurn(combat){
-// 	await combat.previousTurn()
-// 	turnReset = true;
-// 	await combat.setFlag("world", "turnReset", turnReset);
-// }
-
-
-// Hooks.on("updateCombat", async (combat, roundData, diff) => {
-
-// 	let round = combat.current.round;
-
-// 	if (!addedRepTokens && !initializedRepTokens && !initializationStarted) {
-// 		await rollAllInitiatives(combat).then(() => {
-// 			categorizeCombatants(combat).then(() => {
-// 				deleteCombatants(combat).then(() => {
-// 					createRepTokens(combat).then(() => {
-// 						setRepTokenInitiative(combat).then(()=>{
-// 							moveToPreviousTurn(combat);
-// 						});
-// 					})
-// 				})
-// 			})
-// 		})
-// 	}
-
-
-// 	//if we're in combat but we haven't toggled inCombat to true
-// 	if (combat.current.round > 0 && !inCombat) {
-// 		inCombat = true;
-// 	}
-
-// 	if (round > 0 && addedRepTokens && initializedRepTokens && turnReset) {
-// 		let name = combat.combatant.name;
-// 		// let token = canvas.tokens.get(combat.current.tokenId);
-// 		// let actor = game.actors.get(token.data.actorId);
-// 		// let combatant = game.combat.combatant;
-// 		if (name == "FastPlayer") {
-// 			whoseTurn = "fastPlayerTurn"
-// 			console.log("It's the fast players' turn!");
-// 		} else if (name == "Enemies") {
-// 			whoseTurn = "enemyTurn"
-// 			console.log("It's the enemies' turn!");
-// 		} else if (name == "SlowPlayer") {
-// 			whoseTurn = "slowPlayerTurn"
-// 			console.log("It's the slow players' turn!")
-// 		} else if (name == "NPCAllies") {
-// 			whoseTurn = "npcAlliesTurn"
-// 			console.log("It's the NPC allies turn!")
-// 		}
-// 	}
-
-// });
-
-// Hooks.on("deleteCombat", (combat) => {
-// 	inCombat = false;
-// })
 
 /**
  * @param token - the token we've selected
@@ -228,15 +35,17 @@ Handlebars.registerHelper("clean", function (strInputCode) {
  */
 
 
-Hooks.on("controlToken", (token, isControlled) => {
+Hooks.on("controlToken", async (token, isControlled) => {
 
 	let ourToken = token;
 
 	if (isControlled) {
 
 		//if we're controlling the token, render a new token hud
-		//TODO: PUT THIS BACK IN 
-		// hud = new Hud(ourToken).render(true);
+		if(game.canvas.tokens.controlled.length == 1 ){
+			//hud will only appear for the first token that was controlled
+			hud = new Hud(ourToken).render(true);
+		}
 
 	} else {
 		//if we're no  longer controlling the token, and hud has been

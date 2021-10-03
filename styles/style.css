@@ -261,6 +261,7 @@
   box-shadow: rgba(0, 0, 0, 0.45) 1px 1px 19px 6px inset;
   overflow: hidden;
   background-color: #2c2e2f;
+  margin: 0.5rem;
 }
 #combatHud .combatant-wrapper:before {
   content: "";
@@ -324,5 +325,6 @@
 }
 #combatHud .combatant-wrapper .combatant-div:hover {
   cursor: pointer;
-  background-color: #09F;
+  background: #09F;
+  color: white;
 }/*# sourceMappingURL=style.css.map */

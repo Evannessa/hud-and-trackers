@@ -2,6 +2,8 @@
 	
 	<h1 class="roundNumber">Current Round: {{currentRound}}</h1>
 	<h1 class="phaseName">{{convertToSentence currentPhase}}</h1>
+	<p class="intructions">Right click to set token has acted.</p>
+	<p class="intructions">Left click to select token.</p>
 	{{#if (eq currentPhase "fastPlayersTurn")}}
 		<div class="combatant-wrapper">
 			{{#each fastPlayers}}
