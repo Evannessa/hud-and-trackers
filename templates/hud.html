@@ -1,8 +1,9 @@
 
+	<h1>{{ourToken.name}}</h1>
 	<div class="button-wrapper">
-		<button class="showAttacks"> Attacks </button>
-		<button class="showSkills"> Skills </button>
-		<button class="showAbilities"> Abilities </button>
+		<button class="showAttacks" data-type="attacks"> Attacks </button>
+		<button class="showSkills" data-type="skills"> Skills </button>
+		<button class="showAbilities" data-type="abilities"> Abilities </button>
 	</div>
 	<br>
 	<div class="hud-item-wrapper">
@@ -35,11 +36,5 @@
 			{{/unless}}
 		</div>
 		{{/each}}
-		{{/if}}
-
-		{{#if combatActive}}
-		<p>It's the player's turn. Have you acted?</p>
-		<button class="combatAction"><i class="fas fa-power-off"></i> I've Acted</button>
-		<input type="checkbox" name="combatActed" id="combatActed">
 		{{/if}}
 	</div>

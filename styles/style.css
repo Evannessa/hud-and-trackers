@@ -139,6 +139,8 @@
 }
 
 #tokenHud {
+  left: 100px !important;
+  top: 50px !important;
   display: flex;
   width: -webkit-fit-content !important;
   width: -moz-fit-content !important;
@@ -162,9 +164,20 @@
 #tokenHud .button-wrapper {
   display: flex;
   flex-direction: row;
+  max-width: 400px;
+  width: 400px;
 }
 #tokenHud .button-wrapper button {
+  background-color: rgba(66, 78, 87, 0.9);
+}
+#tokenHud .button-wrapper button.active.showAttacks {
+  background-color: #e76f51;
+}
+#tokenHud .button-wrapper button.active.showSkills {
   background-color: #09F;
+}
+#tokenHud .button-wrapper button.active.showAbilities {
+  background-color: #ff930f;
 }
 #tokenHud .combatAction {
   background-color: #e76f51;

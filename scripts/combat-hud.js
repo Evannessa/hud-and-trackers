@@ -675,6 +675,9 @@ export default class CombatHud extends Application {
 
 				CombatHud.highlightTokenInGroup(combatantDiv.dataset.id)
 				let token = getCanvasToken(combatantDiv.dataset.id);
+				token.update({
+					tint: "#FFFFFF"
+				})
 				$(combatantDiv).mouseenter((event) => {
 					token.update({
 						tint: "#FF5733"

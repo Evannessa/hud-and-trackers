@@ -16,6 +16,9 @@ let turnReset = false;
 
 
 Handlebars.registerHelper("clean", function (strInputCode) {
+	if (!strInputCode) {
+		return
+	}
 	let cleanText = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
 	cleanText = cleanText.replace("&quot;", "\"");
 
@@ -34,24 +37,34 @@ Handlebars.registerHelper("clean", function (strInputCode) {
  * controlling it
  */
 
-
+Hooks.on("init", () => {
+	game.abilityHud = {}
+})
 Hooks.on("controlToken", async (token, isControlled) => {
 
+	console.log("We're handling this many tokens", game.canvas.tokens.controlled.length)
 	let ourToken = token;
-
-	if (isControlled) {
-
-		//if we're controlling the token, render a new token hud
-		if(game.canvas.tokens.controlled.length == 1 ){
-			//hud will only appear for the first token that was controlled
-			hud = new Hud(ourToken).render(true);
+	if (!isControlled) {
+		if (game.canvas.tokens.controlled.length == 0) {
+			//** So this will close regardless, as it'll be zero
+			//before being set to one 
+			//as previous control of the tokens is released
+			//if we're controlling zero tokens, close the hud
+			// hud.close();
+			// hud = null;
 		}
-
-	} else {
-		//if we're no  longer controlling the token, and hud has been
-		//initialized, close the hud
-		if (hud) {
-			hud.close();
+	} else if (isControlled) {
+		//if we're controlling the token, render a new token hud
+		console.log("We're handling this many tokens", game.canvas.tokens.controlled.length)
+		if (game.canvas.tokens.controlled.length == 1) {
+			//hud will only appear for the first token that was controlled
+			if (hud) {
+				//if the hud exists, update it's data
+				hud.updateData(ourToken);
+			} else {
+				//create a new hud
+				hud = new Hud(ourToken).render(true);
+			}
 		}
 	}
 })
@@ -163,21 +176,37 @@ function itemRollMacro(actor, itemID, pool, skill, assets, effort1, effort2, add
 
 
 export class Hud extends Application {
+	updateData(object) {
+		this.ourToken = object;
+		this.ourActor = this.getActor(this.ourToken);
+		this.attacks = this.getAttacks(this.ourToken);
+		this.skills = this.getSkills(this.ourToken);
+		this.abilities = this.getAbilities(this.ourToken);
+		if (!this.ourToken.getFlag("hud-and-trackers", "showTab")) {
+			this.showTab = "abilities";
+		} else {
+			this.showTab = this.ourToken.getFlag("hud-and-trackers", "showTab");
+		}
+		this.combatActive = inCombat;
+		this.render();
+	}
 	constructor(object) {
-		// super(object);
 		super();
 		this.ourToken = object;
 		this.ourActor = this.getActor(this.ourToken);
 		this.attacks = this.getAttacks(this.ourToken);
 		this.skills = this.getSkills(this.ourToken);
 		this.abilities = this.getAbilities(this.ourToken);
-		this.showTab = lastTab;
+		if (!this.ourToken.getFlag("hud-and-trackers", "showTab")) {
+			this.showTab = "abilities";
+		} else {
+			this.showTab = this.ourToken.getFlag("hud-and-trackers", "showTab");
+		}
 		this.combatActive = inCombat;
 	}
 	/** @override */
 	static get defaultOptions() {
 		return mergeObject(super.defaultOptions, {
-			// classes: ['form'],
 			popOut: true,
 			submitOnChange: false,
 			closeOnSubmit: false,
@@ -203,44 +232,74 @@ export class Hud extends Application {
 			attacks: this.attacks,
 			skills: this.skills,
 			abilities: this.abilities,
-			showTab: this.showTab,
+			showTab: this.ourToken.getFlag("hud-and-trackers", "showTab"),
 			combatActive: this.combatActive
 		};
 	}
+	static getSiblings(elem) {
+
+		// Setup siblings array and get the first sibling
+		var siblings = [];
+		var sibling = elem.parentNode.firstChild;
+
+		// Loop through each sibling and push to the array
+		while (sibling) {
+			if (sibling.nodeType === 1 && sibling !== elem) {
+				siblings.push(sibling);
+			}
+			sibling = sibling.nextSibling
+		}
+
+		return siblings;
+
+	};
+
+	static setActive(element){
+			console.log(element);
+			let siblings = Hud.getSiblings(element);
+			siblings.forEach(sibling => {
+				if (sibling.classList.contains("active")) {
+					$(sibling).removeClass("active")
+				}
+			});
+			$(element).addClass("active");
+	}
+
 
 	activateListeners(html) {
-		// super.activateListeners(html);
+		game.abilityHud = this;
+
+		console.log("Our current tab is", this.showTab)
 		let windowContent = html.closest(".window-content");
-		let attackButton = windowContent.find(".showAttacks")[0];
-		let skillsButton = windowContent.find(".showSkills")[0];
-		let abilitiesButton = windowContent.find(".showAbilities")[0];
-
-
-		attackButton.addEventListener("click", (event) => {
-			event.preventDefault();
-			this.showTab = "attacks";
-			lastTab = "attacks";
+		let buttonWrapper = windowContent.find(".button-wrapper")[0];
+		let buttons = buttonWrapper.children;
+		windowContent[0].addEventListener("mouseleave", async (event)=> {
+			if(this.showTab == "none"){
+					return;
+			}
+			this.showTab = "none";
+			await this.ourToken.setFlag("hud-and-trackers", "showTab", "none")
+			lastTab = "none";
 			this.render(true);
+		});
+		Array.from(buttons).forEach(button => {
+			let type = button.dataset.type;
+			if(this.showTab == type){
+				$(button).addClass("active");
+			}
+			button.addEventListener("mouseenter", async (event)=>{
+				if(this.showTab == type){
+					return;
+				}
+				let element = event.currentTarget;
+				Hud.setActive(element);
+				this.showTab = type;
+				await this.ourToken.setFlag("hud-and-trackers", "showTab", type)
+				lastTab = type;
+				this.render(true);
+			})
 		})
-
-
-		skillsButton.addEventListener("click", (event) => {
-			event.preventDefault();
-			// event.preventDefault();
-			this.showTab = "skills";
-			lastTab = "skills";
-			this.render(true);
-		});
-
-		abilitiesButton.addEventListener("click", (event) => {
-			event.preventDefault();
-			event.preventDefault();
-			this.showTab = "abilities";
-			lastTab = "abilities";
-			this.render(true);
-		});
-
-		let hudItems = windowContent.find("div.hud-item");
+		let hudItems = windowContent.find(".hud-item");
 
 		for (let hudItem of hudItems) {
 			//if we have an actor connected, get it
@@ -270,17 +329,12 @@ export class Hud extends Application {
 	}
 
 	getActor(ourToken) {
-		if (ourToken.data.actorLink) {
-			return game.actors.get(ourToken.data.actorId);
-		} else {
-			return null;
-		}
+		return game.actors.get(ourToken.data.actorId);
 	}
 
 	getAttacks(ourToken) {
 		if (ourToken.data.actorLink) {
 			let actor = game.actors.get(ourToken.data.actorId);
-			// console.log(actor.data.items);
 			let attacks = actor.data.items.contents.filter((item) => {
 				return item.data.type === "attack";
 			});
@@ -290,7 +344,6 @@ export class Hud extends Application {
 	getSkills(ourToken) {
 		if (ourToken.data.actorLink) {
 			let actor = game.actors.get(ourToken.data.actorId);
-			// console.log(actor.data.items);
 			let skills = actor.data.items.contents.filter((item) => {
 				return item.data.type === "skill";
 			});
@@ -300,7 +353,6 @@ export class Hud extends Application {
 	getAbilities(ourToken) {
 		if (ourToken.data.actorLink) {
 			let actor = game.actors.get(ourToken.data.actorId);
-			// console.log(actor.data.items);
 			let abilities = actor.data.items.contents.filter((item) => {
 				return item.data.type === "ability";
 			});
