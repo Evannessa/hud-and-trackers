@@ -192,6 +192,13 @@
 	left: 100px !important;
 	top: 50px !important;
 
+	*,
+	*::before,
+	*::after {
+		margin: 0;
+		padding: 0;
+	}
+
 	.window-header {
 		display: none;
 	}
@@ -221,12 +228,16 @@
 		max-width: 400px;
 		width: 400px;
 
+		* {
+			margin: 0.5rem;
+		}
+
 
 		button {
 			background-color: rgba(66, 78, 87, 0.9);
 
 			&.pinned {
-				border: 2px dotted black;
+				border: 2px dotted rgb(255, 255, 255);
 			}
 
 			&.active {
@@ -288,9 +299,13 @@
 				overflow-x: visible;
 			}
 
+			&.pinned {
+				border: 2px dotted rgb(255, 255, 255);
+			}
+
 			background: #161a1d;
 			color: white;
-			padding: 1rem;
+			padding: 0.5rem 0.5rem;
 			margin: 0.2rem;
 			border-radius: 10px;
 			// width: max-content;
@@ -335,7 +350,15 @@
 
 #helperHud {
 
+	top: 400px !important;
 	left: 10px !important;
+
+	// &:hover {
+	// 	.utility {
+	// 		display: flex;
+	// 		flex-direction: column;
+	// 	}
+	// }
 
 	*,
 	*::before,
@@ -352,6 +375,8 @@
 		background-color: transparent;
 		background: none;
 		box-shadow: none;
+
+
 	}
 
 	.window-header {

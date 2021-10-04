@@ -153,6 +153,12 @@
   background-color: transparent;
   box-shadow: none;
 }
+#tokenHud *,
+#tokenHud *::before,
+#tokenHud *::after {
+  margin: 0;
+  padding: 0;
+}
 #tokenHud .window-header {
   display: none;
 }
@@ -167,11 +173,14 @@
   max-width: 400px;
   width: 400px;
 }
+#tokenHud .button-wrapper * {
+  margin: 0.5rem;
+}
 #tokenHud .button-wrapper button {
   background-color: rgba(66, 78, 87, 0.9);
 }
 #tokenHud .button-wrapper button.pinned {
-  border: 2px dotted black;
+  border: 2px dotted white;
 }
 #tokenHud .button-wrapper button.active.showAttacks {
   background-color: #e76f51;
@@ -206,13 +215,16 @@
   height: max-content;
   background: #161a1d;
   color: white;
-  padding: 1rem;
+  padding: 0.5rem 0.5rem;
   margin: 0.2rem;
   border-radius: 10px;
 }
 #tokenHud .hud-item-wrapper .hud-item * {
   overflow-y: visible;
   overflow-x: visible;
+}
+#tokenHud .hud-item-wrapper .hud-item.pinned {
+  border: 2px dotted white;
 }
 #tokenHud .hud-item-wrapper .hud-item__title {
   font-size: 0.8rem;
@@ -246,6 +258,7 @@
 }
 
 #helperHud {
+  top: 400px !important;
   left: 10px !important;
   background-color: transparent;
   background: none;

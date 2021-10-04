@@ -16,6 +16,9 @@ let turnReset = false;
 
 
 
+Handlebars.registerHelper("firstChar", function (strInputCode) {
+	return strInputCode.charAt(0);
+});
 
 Handlebars.registerHelper("clean", function (strInputCode) {
 	if (!strInputCode) {
@@ -210,10 +213,15 @@ export class HelperHud extends Application {
 	activateListeners(html) {
 		let windowContent = html.closest(".window-content");
 		let openCheatSheet = windowContent.find(".openCheatSheet")[0];
+		let openLootSheet = windowContent.find(".openLootSheet")[0];
+
 		$(openCheatSheet).click((event)=>{
-			console.log("clicked on", event.currentTarget);
 			HelperFunctions.callMacro("Open Cheat Sheet PDF");
 		});
+		openLootSheet.addEventListener("click", (event) => {
+				let actor = HelperFunctions.getGameActorByName("Party Loot Box")
+				actor.sheet.render(true);
+			})
 		if (this.isGM) {
 			//utility stuff
 			let changeDisposition = windowContent.find(".changeDisposition")[0];
@@ -234,7 +242,6 @@ export class HelperHud extends Application {
 			let selectCharacter = windowContent.find(".selectCharacter")[0];
 			let openCharacterSheet = windowContent.find(".openCharacterSheet")[0];
 			let swapCharacter = windowContent.find(".swapCharacter")[0];
-			let openLootSheet = windowContent.find(".openLootSheet")[0];
 			selectCharacter.addEventListener("click", (event) => {
 				HelperHud.selectMyCharacter();
 			})
@@ -245,10 +252,7 @@ export class HelperHud extends Application {
 				let actor = HelperFunctions.getActorFromUser(game.user);
 				actor.sheet.render(true);
 			})
-			openLootSheet.addEventListener("click", (event) => {
-				let actor = HelperFunctions.getGameActorByName("Party Loot Box")
-				actor.sheet.render(true);
-			})
+		
 		}
 	}
 
