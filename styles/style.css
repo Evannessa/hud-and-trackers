@@ -392,7 +392,11 @@
 
 #clockHud .window-content {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  justify-content: stretch;
+}
+#clockHud .window-content .clockName {
+  flex: 0;
 }
 #clockHud .window-content .clockWrapper {
   display: flex;
@@ -401,6 +405,7 @@
   overflow: hidden;
 }
 #clockHud .window-content .clockSection {
+  position: relative;
   cursor: pointer;
   width: 5rem;
   height: 5rem;
@@ -408,6 +413,17 @@
   box-shadow: #1d1d1d 3px 3px 6px 0px inset, rgba(92, 92, 92, 0.5) -3px -3px 6px 1px inset;
 }
 #clockHud .window-content .clockSection.filled {
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 20px 20px -20px, rgba(0, 0, 0, 0.3) 1px 20px 20px 0px, rgba(10, 37, 64, 0.35) -5px -6px 6px 2px inset;
   background-color: #09F;
+}
+#clockHud .window-content .clockSection .edit {
+  position: absolute;
+  width: 1rem !important;
+  height: 1rem !important;
+  display: none;
+  background-color: transparent;
+  background: none;
+}
+#clockHud .window-content .clockSection:hover .edit {
+  display: block;
 }/*# sourceMappingURL=style.css.map */

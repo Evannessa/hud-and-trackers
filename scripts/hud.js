@@ -1,5 +1,6 @@
 "use strict";
 
+import ClockConfig from "./clock.js"
 import * as HelperFunctions from "./helper-functions.js"
 
 let hud;
@@ -215,6 +216,7 @@ export class HelperHud extends Application {
 		let openCheatSheet = windowContent.find(".openCheatSheet")[0];
 		let openLootSheet = windowContent.find(".openLootSheet")[0];
 
+
 		$(openCheatSheet).click((event)=>{
 			HelperFunctions.callMacro("Open Cheat Sheet PDF");
 		});
@@ -227,6 +229,7 @@ export class HelperHud extends Application {
 			let changeDisposition = windowContent.find(".changeDisposition")[0];
 			let addAttacks = windowContent.find(".addAttacks")[0];
 			let addPCs = windowContent.find(".addPCs")[0];
+			let addClock = windowContent.find(".addClock")[0];
 
 			addPCs.addEventListener("click", (event) => {
 				HelperFunctions.addPCsToScene();
@@ -237,6 +240,9 @@ export class HelperHud extends Application {
 			addAttacks.addEventListener("click", (event) => {
 				HelperFunctions.callMacro("[Token] Toggle Attacks in Inventory of non-PC Actors")
 			})
+			addClock.addEventListener("click", (event) => {
+				new ClockConfig().render();
+			});
 		}
 		else{
 			let selectCharacter = windowContent.find(".selectCharacter")[0];

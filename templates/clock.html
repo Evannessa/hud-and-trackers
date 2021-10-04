@@ -1,11 +1,9 @@
+<h3 class="clockName">{{name}}</h3>
 <div class="clockWrapper">
-	<div class="clockSection">
-	
+	{{#each sections}}
+	<div class="clockSection" id={{this.id}} data-color={{this.color}} data-label={{this.label}}>
+		<button class="edit"><i class="fas fa-edit"></i></button>
+		<p>{{this.label}}</p>	
 	</div>
-	<div class="clockSection">
-	
-	</div>
-	<div class="clockSection">
-	
-	</div>
+	{{/each}}
 </div>

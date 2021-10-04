@@ -1,5 +1,14 @@
 export const moduleName = "hud-and-trackers"
 
+export async function setSetting(name, value){
+	await game.settings.set(moduleName, name, value);
+}
+
+export async function getSetting(name){
+	await game.settings.get(moduleName, name);
+}
+
+
 export function getCanvasToken(id) {
 	return canvas.tokens.get(id);
 }
@@ -30,6 +39,13 @@ export async function createTokenFromActor(ourActor) {
 	let tokenDoc = await Token.create(tk);
 	let tokenObject = tokenDoc[0]._object;
 	return tokenObject;
+}
+//https://stackoverflow.com/questions/6860853/generate-random-string-for-div-id/6860916
+export function idGenerator() {
+	var S4 = function () {
+		return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+	};
+	return ("id" + S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
 
 export function getGameActorById(id) {
