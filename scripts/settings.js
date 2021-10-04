@@ -1,5 +1,13 @@
 import CombatHud from "./combat-hud.js";
+import * as HelperFunctions from "./helper-functions.js"
+
 export default function registerSettings(){
+	game.settings.register(HelperFunctions.moduleName, "savedClocks", {
+		scope: "world",
+		config: false,
+		type: Object,
+		default: {},
+	});
 	game.settings.register(CombatHud.ID, "currentPhase", {
 		scope: "world",
 		config: false,

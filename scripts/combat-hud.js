@@ -1,4 +1,5 @@
 import registerSettings from './settings.js'
+import * as HelperFunctions from "./helper-functions.js"
 import {
 	ActivationObject
 } from './classes/ActivationObject.js'
@@ -43,17 +44,7 @@ Hooks.on("ready", () => {
 	game.combatHud.app = combatHud;
 })
 
-Hooks.on("renderSidebarTab", (app, html) => {
-	if (!game.user.isGM) {
-		return;
-	}
-	if (app.options.id == "combat") {
-		let button = $("<button>Start Combat</button>");
-		button.click(startCombat);
-		html.find(".directory-footer").prepend(button);
-	}
 
-});
 
 
 
@@ -74,6 +65,11 @@ async function startCombat() {
 	} else {
 		if (canvas.tokens.controlled.length === 0) {
 			let allTokens = game.canvas.tokens.placeables;
+			allTokens = allTokens.filter((token)=>{ 
+				return(token.actor.data.type == "PC" 
+						|| token.actor.data.type == "NPC"
+						|| token.actor.data.type == "Companion")
+			})
 			allTokens.forEach((item) => {
 				item.control({
 					releaseOthers: false
@@ -392,6 +388,13 @@ export default class CombatHud extends Application {
 			ENEMY: "enemies",
 			NPC: "npcAllies"
 		}
+		this.data = await HelperFunctions.getSetting("savedCombat");
+		if(this.data.inCombat){
+			CombatHud.ourCombat = this.data.ourCombat;
+			CombatHud.currentPhase = this.data.currentPhase;
+			CombatHud.currentRound = this.data.currentRound;
+			CombatHud.activationObject = this.data.activationObject;
+		}
 	}
 
 	static phases = {
@@ -428,7 +431,7 @@ export default class CombatHud extends Application {
 	static activationObject = {};
 
 
-	static manageDisplay(html) {
+	static async manageDisplay(html) {
 		Hooks.on("renderCombatHud", async (app, newHtml) => {
 			let windowApp = newHtml.closest(".window-app")
 			// 
@@ -438,7 +441,17 @@ export default class CombatHud extends Application {
 				"width": "-moz-max-content",
 				"width": "fit-content"
 			})
+			let data = {
+				ourCombat: CombatHud.ourCombat,
+				currentPhase: CombatHud.currentPhase,
+				currentRound: CombatHud.currentRound,
+				inCombat: CombatHud.inCombat,
+				activationObject: CombatHud.activationObject,
+			}
+			await HelperFunctions.setSetting("savedCombat", data);
+
 		})
+
 	}
 
 	//TODO: This will happen on a new round

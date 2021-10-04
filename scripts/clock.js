@@ -6,13 +6,14 @@ let sectionsMap = {};
 Hooks.on("ready", () => {
 	clockConfig = new ClockConfig().render(true);
 })
-class Clock extends Application {
+class Clock extends FormApplication {
 
 
 	constructor(name, sectionCount, color1) {
-		super()
+		super({name, sectionCount, color1})
+		this.ourId = HelperFunctions.idGenerator();
 		this.name = name;
-		this.sectionCount = 3;
+		this.sectionCount = sectionCount;
 		this.sectionsMap = sectionsMap;
 
 		for (let i = 0; i < sectionCount; i++) {
@@ -35,6 +36,7 @@ class Clock extends Application {
 
 	getData() {
 		return {
+			id: this.ourId,
 			name: this.name,
 			sectionCount: this.sectionCount,
 			sections: Object.values(this.sectionsMap)
@@ -42,6 +44,7 @@ class Clock extends Application {
 	}
 
 	activateListeners(html) {
+		super.activateListeners(html);
 		let windowContent = html.closest(".window-content");
 		let editBtns = windowContent.find(".edit");
 		let sections = windowContent.find(".clockSection");
@@ -90,8 +93,9 @@ class Clock extends Application {
 	}
 	static get defaultOptions() {
 		return mergeObject(super.defaultOptions, {
+			classes: ['form'],
 			popOut: true,
-			submitOnChange: false,
+			submitOnChange: true,
 			closeOnSubmit: false,
 			minimizable: false,
 			resizable: false,
@@ -99,8 +103,17 @@ class Clock extends Application {
 			template: 'modules/hud-and-trackers/templates/clock.html',
 			id: 'clockHud',
 			title: 'clockHud',
-			onSubmit: (e) => e.preventDefault(),
 		});
+	}
+	async _updateObject(event, formData){
+		console.log(formData);
+		this.name = formData.clockName;
+		this.sectionCount = formData.sectionCount;
+		let savedClocks = await HelperFunctions.getSetting("savedClocks")
+		savedClocks[this.ourId] = formData;
+		await HelperFunctions.setSetting("savedClocks")
+		this.object.update(formData);
+		this.render();
 	}
 }
 

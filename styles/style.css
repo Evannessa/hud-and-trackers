@@ -419,6 +419,9 @@
   box-shadow: rgba(50, 50, 93, 0.25) 0px 20px 20px -20px, rgba(0, 0, 0, 0.3) 1px 20px 20px 0px, rgba(10, 37, 64, 0.35) -5px -6px 6px 2px inset;
   background-color: #09F;
 }
+#clockHud .window-content .clockSection.filled:hover {
+  background-color: #eb7937;
+}
 #clockHud .window-content .clockSection .edit {
   position: absolute;
   width: 1rem !important;

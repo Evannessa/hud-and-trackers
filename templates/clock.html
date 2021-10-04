@@ -1,9 +1,11 @@
-<h3 class="clockName">{{name}}</h3>
-<div class="clockWrapper">
-	{{#each sections}}
-	<div class="clockSection" id={{this.id}} data-color={{this.color}} data-label={{this.label}}>
-		<button class="edit"><i class="fas fa-edit"></i></button>
-		<p class="label">{{this.label}}</p>	
+<form action="" class="flexcol" id={{id}}>
+	<h3 class="clockName" name="clockName" contenteditable=true>{{name}}</h3>
+	<div class="clockWrapper">
+		{{#each sections}}
+		<div class="clockSection" id={{this.id}} data-color={{this.color}} data-label={{this.label}}>
+			<button class="edit"><i class="fas fa-edit"></i></button>
+			<p class="label">{{this.label}}</p>	
+		</div>
+		{{/each}}
 	</div>
-	{{/each}}
-</div>
+</form>

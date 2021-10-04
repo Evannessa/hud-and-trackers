@@ -241,7 +241,7 @@ export class HelperHud extends Application {
 				HelperFunctions.callMacro("[Token] Toggle Attacks in Inventory of non-PC Actors")
 			})
 			addClock.addEventListener("click", (event) => {
-				new ClockConfig().render();
+				new ClockConfig().render(true);
 			});
 		}
 		else{
