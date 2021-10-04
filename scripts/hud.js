@@ -1,5 +1,7 @@
 "use strict";
 
+import * as HelperFunctions from "./helper-functions.js"
+
 let hud;
 let lastTab = "attacks";
 let controlled = false;
@@ -39,7 +41,12 @@ Handlebars.registerHelper("clean", function (strInputCode) {
 
 Hooks.on("init", () => {
 	game.abilityHud = {}
+	game.helperFunctions = HelperFunctions;
 })
+Hooks.on("canvasReady", () => {
+	game.helperHud = new HelperHud().render(true);
+})
+
 Hooks.on("controlToken", async (token, isControlled) => {
 
 	console.log("We're handling this many tokens", game.canvas.tokens.controlled.length)
@@ -173,36 +180,10 @@ function itemRollMacro(actor, itemID, pool, skill, assets, effort1, effort2, add
 	// Parse data to All-in-One Dialog
 }
 
-
-
-export class Hud extends Application {
-	updateData(object) {
-		this.ourToken = object;
-		this.ourActor = this.getActor(this.ourToken);
-		this.attacks = this.getAttacks(this.ourToken);
-		this.skills = this.getSkills(this.ourToken);
-		this.abilities = this.getAbilities(this.ourToken);
-		if (!this.ourToken.getFlag("hud-and-trackers", "showTab")) {
-			this.showTab = "abilities";
-		} else {
-			this.showTab = this.ourToken.getFlag("hud-and-trackers", "showTab");
-		}
-		this.combatActive = inCombat;
-		this.render();
-	}
-	constructor(object) {
+export class HelperHud extends Application {
+	constructor() {
 		super();
-		this.ourToken = object;
-		this.ourActor = this.getActor(this.ourToken);
-		this.attacks = this.getAttacks(this.ourToken);
-		this.skills = this.getSkills(this.ourToken);
-		this.abilities = this.getAbilities(this.ourToken);
-		if (!this.ourToken.getFlag("hud-and-trackers", "showTab")) {
-			this.showTab = "abilities";
-		} else {
-			this.showTab = this.ourToken.getFlag("hud-and-trackers", "showTab");
-		}
-		this.combatActive = inCombat;
+		this.isGM = game.user.isGM;
 	}
 	/** @override */
 	static get defaultOptions() {
@@ -211,7 +192,117 @@ export class Hud extends Application {
 			submitOnChange: false,
 			closeOnSubmit: false,
 			minimizable: false,
-			resizable: true,
+			resizable: false,
+			background: "none",
+			template: 'modules/hud-and-trackers/templates/helper-hud.html',
+			id: 'helperHud',
+			title: 'helperHud',
+			onSubmit: (e) => e.preventDefault(),
+		});
+	}
+
+	getData() {
+		return {
+			isGM: this.isGM,
+		}
+	}
+
+	activateListeners(html) {
+		let windowContent = html.closest(".window-content");
+		let openCheatSheet = windowContent.find(".openCheatSheet")[0];
+		$(openCheatSheet).click((event)=>{
+			console.log("clicked on", event.currentTarget);
+			HelperFunctions.callMacro("Open Cheat Sheet PDF");
+		});
+		if (this.isGM) {
+			//utility stuff
+			let changeDisposition = windowContent.find(".changeDisposition")[0];
+			let addAttacks = windowContent.find(".addAttacks")[0];
+			let addPCs = windowContent.find(".addPCs")[0];
+
+			addPCs.addEventListener("click", (event) => {
+				HelperFunctions.addPCsToScene();
+			})
+			changeDisposition.addEventListener("click", (event) => {
+				HelperFunctions.callMacro("Change Disposition");
+			})
+			addAttacks.addEventListener("click", (event) => {
+				HelperFunctions.callMacro("[Token] Toggle Attacks in Inventory of non-PC Actors")
+			})
+		}
+		else{
+			let selectCharacter = windowContent.find(".selectCharacter")[0];
+			let openCharacterSheet = windowContent.find(".openCharacterSheet")[0];
+			let swapCharacter = windowContent.find(".swapCharacter")[0];
+			let openLootSheet = windowContent.find(".openLootSheet")[0];
+			selectCharacter.addEventListener("click", (event) => {
+				HelperHud.selectMyCharacter();
+			})
+			swapCharacter.addEventListener("click", async (event) => {
+				await HelperFunctions.callMacro("Swap-Characters")
+			})
+			openCharacterSheet.addEventListener("click", (event) => {
+				let actor = HelperFunctions.getActorFromUser(game.user);
+				actor.sheet.render(true);
+			})
+			openLootSheet.addEventListener("click", (event) => {
+				let actor = HelperFunctions.getGameActorByName("Party Loot Box")
+				actor.sheet.render(true);
+			})
+		}
+	}
+
+	static selectMyCharacter(){
+		let actor = HelperFunctions.getActorFromUser(game.user);
+		let tokenDoc = HelperFunctions.getSceneTokenFromActor(actor);
+		if(tokenDoc){
+			tokenDoc.object.control({releaseOthers: true});
+		}
+		else{
+			ui.notifications.warn(`${actor.name} does not have a token on this scene`)
+		}
+	}
+
+}
+
+export class Hud extends Application {
+	updateData(object) {
+		this.setFields(object)
+		this.render();
+	}
+
+	setFields(object) {
+		this.isGM = game.user.isGM;
+		this.ourToken = object;
+		this.ourActor = this.getActor(this.ourToken);
+		this.attacks = this.getStuffFromSheet(this.ourToken, "attack")
+		this.abilities = this.getStuffFromSheet(this.ourToken, "ability")
+		this.skills = this.getStuffFromSheet(this.ourToken, "skill")
+		if (!this.ourToken.getFlag("hud-and-trackers", "showTab")) {
+			this.showTab = "abilities";
+		} else {
+			this.showTab = this.ourToken.getFlag("hud-and-trackers", "showTab");
+		}
+		if (!this.ourToken.getFlag("hud-and-trackers", "pinnedTab")) {
+			this.pinnedTab = "none";
+		} else {
+			this.pinnedTab = this.ourToken.getFlag("hud-and-trackers", "pinnedTab");
+		}
+		this.combatActive = inCombat;
+	}
+
+	constructor(object) {
+		super();
+		this.setFields(object);
+	}
+	/** @override */
+	static get defaultOptions() {
+		return mergeObject(super.defaultOptions, {
+			popOut: true,
+			submitOnChange: false,
+			closeOnSubmit: false,
+			minimizable: false,
+			resizable: false,
 			background: "none",
 			template: 'modules/hud-and-trackers/templates/hud.html',
 			id: 'tokenHud',
@@ -228,6 +319,7 @@ export class Hud extends Application {
 	getData() {
 		return {
 			ourToken: this.ourToken,
+			isGM: this.isGM,
 			ourActor: this.ourActor,
 			attacks: this.attacks,
 			skills: this.skills,
@@ -254,41 +346,70 @@ export class Hud extends Application {
 
 	};
 
-	static setActive(element){
-			console.log(element);
-			let siblings = Hud.getSiblings(element);
-			siblings.forEach(sibling => {
-				if (sibling.classList.contains("active")) {
-					$(sibling).removeClass("active")
-				}
-			});
-			$(element).addClass("active");
+	static setActive(element) {
+		let siblings = Hud.getSiblings(element);
+		siblings.forEach(sibling => {
+			if (sibling.classList.contains("active")) {
+				$(sibling).removeClass("active")
+			}
+		});
+		$(element).addClass("active");
 	}
+
+	static setPinned(element) {
+		let siblings = Hud.getSiblings(element);
+		siblings.forEach(sibling => {
+			if (sibling.classList.contains("pinned")) {
+				$(sibling).removeClass("pinned")
+			}
+		});
+		$(element).addClass("pinned");
+	}
+
+	static callMacro(name) {
+		let macro = game.macros.getName(name);
+		if (macro) {
+			macro.execute();
+		} else {
+			ui.notifications.info(`Couldn't find macro named ${name}`)
+		}
+	}
+
+
 
 
 	activateListeners(html) {
 		game.abilityHud = this;
 
-		console.log("Our current tab is", this.showTab)
 		let windowContent = html.closest(".window-content");
 		let buttonWrapper = windowContent.find(".button-wrapper")[0];
 		let buttons = buttonWrapper.children;
-		windowContent[0].addEventListener("mouseleave", async (event)=> {
-			if(this.showTab == "none"){
-					return;
+
+		windowContent[0].addEventListener("mouseleave", async (event) => {
+			if (this.showTab == "none" || this.pinnedTab != "none") {
+				//if we are already not showing a tab, 
+				//or we have a tab pinned, return
+				return;
 			}
 			this.showTab = "none";
 			await this.ourToken.setFlag("hud-and-trackers", "showTab", "none")
 			lastTab = "none";
 			this.render(true);
 		});
+
 		Array.from(buttons).forEach(button => {
 			let type = button.dataset.type;
-			if(this.showTab == type){
+			if (this.showTab == type) {
 				$(button).addClass("active");
 			}
-			button.addEventListener("mouseenter", async (event)=>{
-				if(this.showTab == type){
+			if (this.pinnedTab == type) {
+				$(button).addClass("pinned");
+			}
+			button.addEventListener("mouseenter", async (event) => {
+				if (this.showTab == type) {
+					return;
+				}
+				if (this.pinnedTab != "none") {
 					return;
 				}
 				let element = event.currentTarget;
@@ -297,6 +418,22 @@ export class Hud extends Application {
 				await this.ourToken.setFlag("hud-and-trackers", "showTab", type)
 				lastTab = type;
 				this.render(true);
+			})
+			button.addEventListener("click", async (event) => {
+				//so we want to click to pin, click again to unpin
+				if (this.pinnedTab == type) {
+					//if already pinned, unpin, and re-render
+					this.pinnedTab = "none";
+					await this.ourToken.setFlag("hud-and-trackers", "pinnedTab", "none")
+					this.render(true);
+				} else {
+					//if not pinned, pin, and re-render
+					let element = event.currentTarget;
+					Hud.setPinned(element)
+					this.pinnedTab = type;
+					await this.ourToken.setFlag("hud-and-trackers", "pinnedTab", type)
+					this.render(true);
+				}
 			})
 		})
 		let hudItems = windowContent.find(".hud-item");
@@ -322,7 +459,11 @@ export class Hud extends Application {
 				}
 			}
 		}
+
+
 	}
+
+
 
 	rollAllInOne(foundItem, actor) {
 		itemRollMacro(actor, foundItem.id, "", "", "", "", "", "", "", "", "", "", "", "", false);
@@ -330,6 +471,14 @@ export class Hud extends Application {
 
 	getActor(ourToken) {
 		return game.actors.get(ourToken.data.actorId);
+	}
+
+	getStuffFromSheet(ourToken, type) {
+		let actor = this.getActor(ourToken)
+		let items = actor.data.items.contents.filter((item) => {
+			return item.data.type === type;
+		});
+		return items.sort();
 	}
 
 	getAttacks(ourToken) {

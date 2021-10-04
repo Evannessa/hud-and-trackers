@@ -170,6 +170,9 @@
 #tokenHud .button-wrapper button {
   background-color: rgba(66, 78, 87, 0.9);
 }
+#tokenHud .button-wrapper button.pinned {
+  border: 2px dotted black;
+}
 #tokenHud .button-wrapper button.active.showAttacks {
   background-color: #e76f51;
 }
@@ -240,6 +243,38 @@
 }
 #tokenHud .hud-item-wrapper .hud-item:hover .hud-item__description {
   display: block;
+}
+
+#helperHud {
+  left: 10px !important;
+  background-color: transparent;
+  background: none;
+  box-shadow: none;
+}
+#helperHud *,
+#helperHud *::before,
+#helperHud *::after {
+  padding: 0;
+  margin: 0;
+}
+#helperHud .window-content {
+  background-color: transparent;
+  background: none;
+  box-shadow: none;
+}
+#helperHud .window-header {
+  display: none;
+}
+#helperHud .utility {
+  display: flex;
+  flex-direction: column;
+}
+#helperHud .utility button {
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  padding: 0.5rem;
+  margin: 0.1rem;
 }
 
 #combatHud {
