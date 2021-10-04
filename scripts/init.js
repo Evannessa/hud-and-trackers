@@ -456,7 +456,6 @@ class TrackerApp extends FormApplication {
 		//add event listernrs for add items buttons
 		let addItemButtons = html.find(".addItem");
 		for (var btn of addItemButtons) {
-			// btn.addEventListener("click", renderNewItemConfig);
 			btn.addEventListener("click", (event) => {
 				event.preventDefault();
 				let btn = event.currentTarget;
@@ -465,7 +464,7 @@ class TrackerApp extends FormApplication {
 					trackerElement: trackerContainer,
 					app: myApp
 				}
-				let config = new TrackedItemConfig(configData).render(true);
+				new TrackedItemConfig(configData).render(true);
 			});
 		}
 
@@ -476,7 +475,6 @@ class TrackerApp extends FormApplication {
 		//add right click event listener to add context menu
 		for (var draggie of draggies) {
 			draggie.addEventListener("contextmenu", this.deleteItem, false);
-			// draggie.addEventListener("contextmenu", this.showContextMenu, false);
 		}
 		for (var tracker of trackers) {
 			tracker.addEventListener("contextmenu", this.deleteTracker, false);

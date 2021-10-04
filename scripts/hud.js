@@ -292,6 +292,12 @@ export class Hud extends Application {
 		} else {
 			this.pinnedTab = this.ourToken.getFlag("hud-and-trackers", "pinnedTab");
 		}
+		if(!this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities")){
+			this.pinnedAbilites = [];
+		}
+		else{
+			this.pinnedAbilites = this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities")
+		}
 		this.combatActive = inCombat;
 	}
 
@@ -320,7 +326,9 @@ export class Hud extends Application {
 		this.render();
 	}
 
-	getData() {
+	async getData() {
+		console.log(this.pinnedAbilites);
+		console.log(this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities"));
 		return {
 			ourToken: this.ourToken,
 			isGM: this.isGM,
@@ -328,6 +336,7 @@ export class Hud extends Application {
 			attacks: this.attacks,
 			skills: this.skills,
 			abilities: this.abilities,
+			pinnedAbilites: this.pinnedAbilites,
 			showTab: this.ourToken.getFlag("hud-and-trackers", "showTab"),
 			combatActive: this.combatActive
 		};
@@ -456,11 +465,38 @@ export class Hud extends Application {
 				} else if (actor.data.type == "NPC") {
 					hudItem.addEventListener("click", (event) => {
 						event.preventDefault();
-						console.log(event.currentTarget.id);
 						let item = actor.data.items.find(i => i.id === event.currentTarget.id);
 						item.sheet.render(true);
 					})
 				}
+				hudItem.addEventListener("mousedown", async(event)=> {
+					console.log("IS THIS HAPPENING");
+					if(event.which == 3){
+						//TODO: We want to pin enabler
+						//this should unpin enabler
+						let element = event.currentTarget;
+						if(element.classList.contains("pinned")){
+							console.log("Clicking on pinned")
+							this.pinnedAbilites = this.pinnedAbilites.filter(item => item.id == element.id);
+							await this.ourActor.setFlag("hud-and-trackers", "pinnedAbilities", this.pinnedAbilites);
+							console.log(this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities"));
+							this.render(true)
+						}
+						else{
+							console.log("Clicking on NOT PINNEd")
+							//this should pin enabler, but only if it's not already in the pinned abilities
+							let pinned = (this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities"));
+							let alreadyPinned = pinned.find(pinnedItem => pinnedItem.id === event.currentTarget.id);
+							if(!alreadyPinned){
+								let item = this.ourActor.data.items.find(i => i.id === event.currentTarget.id);
+								this.pinnedAbilites.push(item);
+								await this.ourActor.setFlag("hud-and-trackers", "pinnedAbilities", this.pinnedAbilites);
+								console.log(this.pinnedAbilites);
+								this.render(true)
+							}
+						}
+					}
+				})
 			}
 		}
 
@@ -485,32 +521,32 @@ export class Hud extends Application {
 		return items.sort();
 	}
 
-	getAttacks(ourToken) {
-		if (ourToken.data.actorLink) {
-			let actor = game.actors.get(ourToken.data.actorId);
-			let attacks = actor.data.items.contents.filter((item) => {
-				return item.data.type === "attack";
-			});
-			return attacks.sort();
-		}
-	}
-	getSkills(ourToken) {
-		if (ourToken.data.actorLink) {
-			let actor = game.actors.get(ourToken.data.actorId);
-			let skills = actor.data.items.contents.filter((item) => {
-				return item.data.type === "skill";
-			});
-			return skills.sort();
-		}
-	}
-	getAbilities(ourToken) {
-		if (ourToken.data.actorLink) {
-			let actor = game.actors.get(ourToken.data.actorId);
-			let abilities = actor.data.items.contents.filter((item) => {
-				return item.data.type === "ability";
-			});
-			return abilities.sort();
-		}
-	}
+	// getAttacks(ourToken) {
+	// 	if (ourToken.data.actorLink) {
+	// 		let actor = game.actors.get(ourToken.data.actorId);
+	// 		let attacks = actor.data.items.contents.filter((item) => {
+	// 			return item.data.type === "attack";
+	// 		});
+	// 		return attacks.sort();
+	// 	}
+	// }
+	// getSkills(ourToken) {
+	// 	if (ourToken.data.actorLink) {
+	// 		let actor = game.actors.get(ourToken.data.actorId);
+	// 		let skills = actor.data.items.contents.filter((item) => {
+	// 			return item.data.type === "skill";
+	// 		});
+	// 		return skills.sort();
+	// 	}
+	// }
+	// getAbilities(ourToken) {
+	// 	if (ourToken.data.actorLink) {
+	// 		let actor = game.actors.get(ourToken.data.actorId);
+	// 		let abilities = actor.data.items.contents.filter((item) => {
+	// 			return item.data.type === "ability";
+	// 		});
+	// 		return abilities.sort();
+	// 	}
+	// }
 }
 window.hud = hud;

@@ -19,7 +19,8 @@
 	"esmodules": [
 		"./scripts/init.js",
 		"./scripts/hud.js",
-		"./scripts/combat-hud.js"
+		"./scripts/combat-hud.js",
+		"./scripts/clock.js"
 	],
 	"styles": ["styles/style.css"],
 	"dependencies": [],
