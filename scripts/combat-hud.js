@@ -50,9 +50,9 @@ Hooks.on("ready", () => {
 
 Hooks.on("ready", () => {
 
-	if (game.combat && game.user.isGM) {
-		game.combat.endCombat();
-	}
+	// if (game.combat && game.user.isGM) {
+	// 	game.combat.endCombat();
+	// }
 })
 
 async function startCombat() {
@@ -171,7 +171,7 @@ async function rollNonCombatInitiative(combat) {
 		enemies: convertToArrayOfIDs(enemies)
 	}
 	CombatHud.activeCategories = activeCategories;
-	await CombatHud.setSetting("activeCategories", activeCategories);
+	// await HelperFunctions.setSetting("activeCategories", activeCategories);
 
 }
 
@@ -366,6 +366,7 @@ Hooks.on("deleteCombat", async (combat) => {
 export default class CombatHud extends Application {
 
 	static async initOnCombatStart(combat) {
+		console.log("INITIALIZING HUD ON COMBAT START")
 		CombatHud.ourCombat = combat;
 		CombatHud.inCombat = true;
 
@@ -388,13 +389,15 @@ export default class CombatHud extends Application {
 			ENEMY: "enemies",
 			NPC: "npcAllies"
 		}
-		this.data = await HelperFunctions.getSetting("savedCombat");
+		this.data = game.settings.get("hud-and-trackers", "savedCombat");
+		console.log(this.data);
 		if(this.data.inCombat){
 			CombatHud.ourCombat = this.data.ourCombat;
 			CombatHud.currentPhase = this.data.currentPhase;
 			CombatHud.currentRound = this.data.currentRound;
 			CombatHud.activationObject = this.data.activationObject;
 		}
+		this.render(true)
 	}
 
 	static phases = {
@@ -404,19 +407,19 @@ export default class CombatHud extends Application {
 		NPC: "npcAllies"
 	}
 
-	static currentPhase = "fastPlayersTurn";
+	static currentPhase;
 
-	static currentRound = 1;
+	static currentRound;
 
-	static inCombat = false;
+	static inCombat;
 
 	static ID = "combat-hud";
 
 	static ourCombat;
 
-	static activeCategories = {}
+	static activeCategories;
 
-	static allActivationMaps = {};
+	static allActivationMaps;
 
 	static slowPlayers;
 	static fastPlayers;
@@ -428,7 +431,7 @@ export default class CombatHud extends Application {
 	static enemiesActivation;
 	static npcAlliesActivation;
 
-	static activationObject = {};
+	static activationObject;
 
 
 	static async manageDisplay(html) {
@@ -441,14 +444,15 @@ export default class CombatHud extends Application {
 				"width": "-moz-max-content",
 				"width": "fit-content"
 			})
-			let data = {
-				ourCombat: CombatHud.ourCombat,
-				currentPhase: CombatHud.currentPhase,
-				currentRound: CombatHud.currentRound,
-				inCombat: CombatHud.inCombat,
-				activationObject: CombatHud.activationObject,
-			}
-			await HelperFunctions.setSetting("savedCombat", data);
+			// let data = {
+			// 	ourCombat: CombatHud.ourCombat,
+			// 	currentPhase: CombatHud.currentPhase,
+			// 	currentRound: CombatHud.currentRound,
+			// 	inCombat: CombatHud.inCombat,
+			// 	activationObject: CombatHud.activationObject,
+			// }
+			// console.log(data);
+			// await HelperFunctions.setSetting("savedCombat", data);
 
 		})
 
@@ -476,44 +480,6 @@ export default class CombatHud extends Application {
 		// let overlayImg = "modules/hud-and-trackers/images/check-mark.png"
 		// let token = getCanvasToken(tokenId);
 		// token._toggleOverlayEffect(overlayImg, token);
-	}
-
-
-	static async pullValues() {
-		console.log("Before", CombatHud.currentPhase)
-		CombatHud.currentPhase = await CombatHud.getSetting("currentPhase");
-		console.log("After", CombatHud.currentPhase)
-		CombatHud.currentRound = game.combat ? game.combat.round : await CombatHud.getSetting("currentRound"); // get the current round getSetting("currentRound");
-		CombatHud.activationObject = ActivationObject.fromJSON(await CombatHud.getSetting("activationObject"));
-
-
-		CombatHud.combatActive = await CombatHud.getSetting("combatActive");
-
-		CombatHud.activeCategories = await CombatHud.getSetting("activeCategories");
-		CombatHud.allActivationMaps = await CombatHud.getSetting("activationMaps");
-	}
-
-
-	static async updateApp() {
-		//save the values
-		const combas = document.querySelectorAll(".combatant-div");
-		if (game.user.isGM) {
-			await CombatHud.setSetting("currentPhase", CombatHud.currentPhase);
-			await CombatHud.setSetting("currentRound", CombatHud.currentRound);
-			await CombatHud.setSetting("activationObject", CombatHud.activationObject);
-			await CombatHud.setSetting("combatActive", CombatHud.combatActive);
-
-			CombatHud.setSetting("activeCategories", CombatHud.activeCategories);
-			CombatHud.setSetting("activationMaps", CombatHud.allActivationMaps);
-		}
-	}
-
-	static async setSetting(settingName, value) {
-		await game.settings.set(CombatHud.ID, settingName, value);
-	}
-	static async getSetting(settingName) {
-		let settingValue = await game.settings.get(CombatHud.ID, settingName);
-		return settingValue;
 	}
 
 	static requestSetTokenHasActed(id, userId) {
@@ -573,7 +539,6 @@ export default class CombatHud extends Application {
 		CombatHud.setCanvasTokenActivated(element.dataset.id);
 
 		//re-render
-		combatHud.render();
 	}
 	//each time an actor is clicked on, check if it's the last. IF so, re-render the thing.
 	static async checkIfAllHaveActed(event) {
@@ -659,9 +624,21 @@ export default class CombatHud extends Application {
 		}
 	}
 
-	activateListeners(html) {
+	async activateListeners(html) {
 
 		console.log("Activating listeners again")
+		let data = {
+				ourCombat: CombatHud.ourCombat,
+				currentPhase: CombatHud.currentPhase,
+				currentRound: CombatHud.currentRound,
+				inCombat: CombatHud.inCombat,
+				activationObject: CombatHud.activationObject,
+			}
+		console.log(data);
+
+		await game.settings.set("hud-and-trackers", "savedCombat", data);
+		let data2 = await game.settings.get("hud-and-trackers", "savedCombat");
+		console.log(data2);
 
 		//set the hooks and stuff
 		CombatHud.manageDisplay(html);
