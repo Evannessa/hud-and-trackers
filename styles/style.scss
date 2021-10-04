@@ -542,6 +542,9 @@
 		}
 
 		.clockSection {
+			display: flex;
+			align-items: center;
+			justify-content: center;
 			position: relative;
 			cursor: pointer;
 			width: 5rem;
@@ -556,6 +559,8 @@
 				background-color: #09F;
 			}
 
+			.label {}
+
 			.edit {
 				position: absolute;
 				width: 1rem !important;
@@ -565,11 +570,11 @@
 				background: none;
 			}
 
-			&:hover {
-				.edit {
-					display: block;
-				}
-			}
+			// &:hover {
+			// 	.edit {
+			// 		display: block;
+			// 	}
+			// }
 		}
 	}
 }

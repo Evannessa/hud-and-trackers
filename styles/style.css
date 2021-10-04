@@ -405,6 +405,9 @@
   overflow: hidden;
 }
 #clockHud .window-content .clockSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   cursor: pointer;
   width: 5rem;
@@ -423,7 +426,4 @@
   display: none;
   background-color: transparent;
   background: none;
-}
-#clockHud .window-content .clockSection:hover .edit {
-  display: block;
 }/*# sourceMappingURL=style.css.map */
