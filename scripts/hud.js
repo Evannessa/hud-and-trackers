@@ -66,7 +66,6 @@ Hooks.on("controlToken", async (token, isControlled) => {
 		}
 	} else if (isControlled) {
 		//if we're controlling the token, render a new token hud
-		console.log("We're handling this many tokens", game.canvas.tokens.controlled.length)
 		if (game.canvas.tokens.controlled.length == 1) {
 			//hud will only appear for the first token that was controlled
 			if (hud) {

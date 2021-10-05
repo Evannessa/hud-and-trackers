@@ -28,8 +28,8 @@ Handlebars.registerHelper("convertToSentence", function (strInputCode) {
 Hooks.once("socketlib.ready", () => {
 	socket = socketlib.registerModule("hud-and-trackers");
 	socket.register("receiveDataAndUpdate", _receiveDataAndUpdate)
-	socket.register("requestSetTokenHasActed", CombatHud.requestSetTokenHasActed);
-	socket.register("requestIfAllHaveActed", CombatHud.requestIfAllHaveActed);
+	socket.register("requestSetTokenHasActed", _requestSetTokenHasActed);
+	socket.register("requestIfAllHaveActed", _requestIfAllHaveActed);
 })
 
 Hooks.on("init", () => {
@@ -158,7 +158,6 @@ async function rollNonCombatInitiative(combat) {
 			return tokens.find(token => token.actor.name == actorName);
 	})
 	tokens = [...playerTokens, ...npcTokens];
-	console.log(tokens);
 
 	for (let token of tokens) {
 		let actor = getActor(token);
@@ -465,13 +464,57 @@ Hooks.on("deleteCombat", async (combat) => {
 	combatHud.currentPhase = "fastPlayersTurn"
 
 })
+	async function _requestSetTokenHasActed(id, userId) {
+
+		console.log(game.combatHud.app);
+		//reject if not the token's owner
+		if (game.combatHud.app.checkIfUserIsTokenOwner(id, userId) == false) {
+			return;
+		}
+		//find element and add activated class
+		let element = game.combatHud.app._element[0].querySelector(`[data-id=${id}]`);
+		$(element).addClass("activated")
+
+
+		//find the canvas on the token and add overlay to show it has acted
+		// game.combatHud.app.setCanvasTokenActivated(element.dataset.id);
+
+		//re-render the hud
+		game.combatHud.app.activationObject.updateActivations(element.dataset.id);
+		game.combatHud.app.render();
+	}
+
+	async function _requestIfAllHaveActed(id) {
+		let element = game.combatHud.app._element[0].querySelector(`[data-id=${id}]`);
+		let phaseName = element.dataset.phase;
+		let map = game.combatHud.app.activationObject.getSpecificMap(phaseName);
+		//go through the map, find which items are false.
+		//if none are false, all of them have acted, so go to the next
+		//turn and reset the activations
+		//*maybe re-render the combat too?
+		let allActed = true;
+		for (let mapItem in map) {
+			if (!map[mapItem]) {
+				allActed = false;
+			}
+		}
+		if (allActed) {
+			await game.combatHud.app.ourCombat.nextTurn();
+			game.combatHud.app.resetActivations();
+			//apply highlights to tokens in new group
+			// CombatHud.highightTokensInGroup(CombatHud.)
+
+			//re-render
+			combatHud.render();
+		}
+	}
 
 async function _receiveDataAndUpdate(data) {
 	console.log(data);
 	console.log("Data received!");
 	if (game.combatHud.app) {
 		await game.combatHud.app.render();
-		game.combatHud.activationObject = new ActivationObject(data.activationObject.activationMap);
+		game.combatHud.app.activationObject = new ActivationObject(data.activationObject.activationMap);
 		game.combatHud.app.currentPhase = data.currentPhase;
 		game.combatHud.app.currentRound = data.currentRound;
 		game.combatHud.app.inCombat = data.inCombat;
