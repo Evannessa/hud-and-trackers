@@ -148,6 +148,18 @@ async function rollNonCombatInitiative(combat) {
 	let enemies = []
 	let npcAllies = []
 	let unfilteredPlayers = {}
+
+	// this will make sure there are no duplicate tokens w/ the same actor,
+	// which CAN be a problem if not players.
+	let npcTokens = tokens.filter(token => token.actor.type == "NPC" || token.actor.type == "Companion")
+	let playerTokens = tokens.filter(token => token.actor.type == "PC");
+	playerTokens = Array.from(new Set(tokens.map(token => token.actor.name)))
+		.map(actorName => {
+			return tokens.find(token => token.actor.name == actorName);
+	})
+	tokens = [...playerTokens, ...npcTokens];
+	console.log(tokens);
+
 	for (let token of tokens) {
 		let actor = getActor(token);
 		let initiative = 0;
@@ -155,9 +167,8 @@ async function rollNonCombatInitiative(combat) {
 			initiative = parseInt(actor.data.data.settings.initiative.initiativeBonus);
 			if (actor.data.type == "PC") {
 				//if this token id is not already in there
-				if(!unfilteredPlayers[token.id]){
-					unfilteredPlayers[token.id] = token;
-				}
+				//not working because tokens w/ same actor might have different id
+				unfilteredPlayers[token.id] = token;
 				let r = new Roll('1d20').evaluate("async=true").result;
 				initiative += parseInt(r);
 				tokensWithInitiative[token.id] = initiative;
@@ -175,6 +186,13 @@ async function rollNonCombatInitiative(combat) {
 	npcAllies = tokens.filter((token) => {
 		return token.data.disposition == 0
 	})
+
+	//this will make sure there are no duplicate tokens w/ the same actor,
+	//which CAN be a problem if not players.
+	// let tokens = Array.from(new Set(controlledTokens.map(token => token.actor.name)))
+	// 	.map(actorName => {
+	// 		return controlledTokens.find(token => token.actor.name == actorName);
+	// })
 
 	//find the highest enemy initiative
 	let highestEnemyInitiative = 0;
@@ -299,21 +317,22 @@ async function createRepTokens(combat) {
 	let fastPlayers = fastPlayersStore; //CombatHud.getSetting("activeCategories").fastPlayers;
 	let slowPlayers = slowPlayersStore; //CombatHud.getSetting("activeCategories").slowPlayers;
 
+	console.log("Stored values", enemies, npcAllies, fastPlayers, slowPlayers);
 
 	//create all the tokens representing the different "Sides"
 	let scene = game.scenes.viewed;
 	let tokenActors = repTokens.content;
 	if(slowPlayers.length == 0){
-		tokenActors = tokenActors.filter(actor => actor.name == "SlowPlayer")
+		tokenActors = tokenActors.filter(actor => actor.name != "SlowPlayer")
 	}
 	if(fastPlayers.length == 0){
-		tokenActors = tokenActors.filter(actor => actor.name == "FastPlayer")
+		tokenActors = tokenActors.filter(actor => actor.name != "FastPlayer")
 	}
 	if(npcAllies.length == 0){
-		tokenActors = tokenActors.filter(actor => actor.name == "NPCAllies")
+		tokenActors = tokenActors.filter(actor => actor.name != "NPCAllies")
 	}
 	if(enemies.length == 0){
-		tokenActors = tokenActors.filter(actor => actor.name == "Enemies")
+		tokenActors = tokenActors.filter(actor => actor.name != "Enemies")
 	}
 	console.log(tokenActors);
 	tokenData = tokenActors.map(actor => actor.data.token);
@@ -430,6 +449,7 @@ Hooks.on("deleteCombat", async (combat) => {
 	if (game.user.isGM) {
 		//here we're gonna delete the phase rep tokens
 		let allTokens = game.canvas.tokens.placeables
+		let scene = game.scenes.viewed;
 		let tokensToDelete = [];
 
 		//find all tokens on canvas with names of the phase rep tokens
@@ -439,7 +459,7 @@ Hooks.on("deleteCombat", async (combat) => {
 			}
 		})
 		//delete the ones that match
-		game.canvas.tokens.deleteMany(tokensToDelete);
+		scene.deleteEmbeddedDocuments("Token", tokensToDelete);
 	}
 	combatHud.inCombat = false;
 	combatHud.currentPhase = "fastPlayersTurn"
@@ -472,15 +492,15 @@ export default class CombatHud extends Application {
 		let slowPlayers = convertToArrayOfTokens(slowPlayersStore);
 		let enemies = convertToArrayOfTokens(enemiesStore);
 		let npcAllies = convertToArrayOfTokens(npcAlliesStore);
-
+		this.currentRound = ourCombat.current.round;
 		//if we have no fast players
 		if(fastPlayers.length == 0){
 			//set the first turn to ememies
-			this.currentPhase = "enemies"
+			this.currentPhase = "enemiesTurn"
 		}
 		else{
 			//otherwise, if we have no enemies, we should always have fast players, as there were no enemies to compare to
-			this.currentPhase = "fastPlayers"
+			this.currentPhase = "fastPlayersTurn"
 		}
 
 		this.activationObject = new ActivationObject({}, fastPlayers, slowPlayers, enemies, npcAllies);
@@ -664,6 +684,8 @@ export default class CombatHud extends Application {
 				allActed = false;
 			}
 		}
+		console.log(map);
+		console.log(allActed);
 		if (allActed) {
 			await this.ourCombat.nextTurn();
 			this.resetActivations();
@@ -783,7 +805,7 @@ export default class CombatHud extends Application {
 
 		let windowContent = html.closest(".window-content");
 		let combatantDivs = windowContent.find(".combatant-div");
-
+		let scene = game.scenes.viewed;
 
 		//check if in combat
 		if (this.inCombat) {
@@ -811,19 +833,15 @@ export default class CombatHud extends Application {
 
 				this.highlightTokenInGroup(combatantDiv.dataset.id)
 				let token = getCanvasToken(combatantDiv.dataset.id);
-				token.update({
-					tint: "#FFFFFF"
-				})
+
+				scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FFFFFF"}])
+			
 				$(combatantDiv).mouseenter((event) => {
-					token.update({
-						tint: "#FF5733"
-					})
+					scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FF5733"}])
 				})
 
 				$(combatantDiv).mouseleave((event) => {
-					token.update({
-						tint: "#FFFFFF"
-					})
+					scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FFFFFF"}])
 				})
 
 				$(combatantDiv).mousedown((event) => {
