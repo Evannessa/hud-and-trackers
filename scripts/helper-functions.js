@@ -29,14 +29,36 @@ export async function createTokenFromTokenData(tokenData){
 	const td = duplicate(tokenData);
 	td.x = 100;
 	td.y = 100;
-	await Token.create(td);
+	await game.scenes.viewed.createEmbbededDocuments("Token", td)// await Token.create(tk);
+	// await Token.create(td);
 }
 
-export async function createTokenFromActor(ourActor) {
+//https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
+/**
+ * 
+ * @param {a} a - the array we're filtering
+ * @param {key} key - the key by which we want to filter it
+ * @returns 
+ */
+export function uniqBy(a, key) {
+    var seen = {};
+    return a.filter(function(item) {
+        var k = key(item);
+        return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+    })
+}
+
+/**
+ * this will create a token on the viewed scene
+ * @param {ourActor} ourActor - the actor we want to get the token data from
+ * @returns tokenObject - the actual object of the token
+ */
+export async function createTokenFromActor(ourActor, scene) {
+	console.log(scene)
 	let tk = duplicate(ourActor.data.token);
 	tk.x = 100;
 	tk.y = 100;
-	let tokenDoc = await Token.create(tk);
+	let tokenDoc = await scene.createEmbbededDocuments("Token", tk)// await Token.create(tk);
 	let tokenObject = tokenDoc[0]._object;
 	return tokenObject;
 }

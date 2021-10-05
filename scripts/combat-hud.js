@@ -41,6 +41,7 @@ Hooks.on("ready", () => {
 	registerSettings();
 	combatHud = new CombatHud(combat).render(true);
 	game.combatHud.app = combatHud;
+	createRepresentativeActors();
 })
 
 
@@ -53,6 +54,38 @@ Hooks.on("ready", () => {
 	// 	game.combat.endCombat();
 	// }
 })
+
+async function createRepresentativeActors(){
+	let repTokens = game.folders.getName("RepTokens");
+	if (!repTokens) {
+		await Folder.create({
+				name: "RepTokens",
+				type: "Actor"
+			})
+			.then(parentFolder => {
+				Actor.create({
+					name: "FastPlayer",
+					type: "NPC",
+					folder: parentFolder.id
+				});
+				Actor.create({
+					name: "SlowPlayer",
+					type: "NPC",
+					folder: parentFolder.id
+				});
+				Actor.create({
+					name: "NPCAllies",
+					type: "NPC",
+					folder: parentFolder.id
+				});
+				Actor.create({
+					name: "Enemies",
+					type: "NPC",
+					folder: parentFolder.id
+				});
+			});
+	}
+}
 
 async function startCombat() {
 	let data;
@@ -101,7 +134,11 @@ async function startCombat() {
 }
 
 
-
+/**
+ * We're rolling a "Fake" initiative to determine what category
+ * the various combatants go into
+ * @param {combat} combat - the specific combat that's just been started
+ */
 async function rollNonCombatInitiative(combat) {
 	let tokens = game.canvas.tokens.controlled;
 	let tokensWithInitiative = {}
@@ -117,8 +154,11 @@ async function rollNonCombatInitiative(combat) {
 		if (actor) {
 			initiative = parseInt(actor.data.data.settings.initiative.initiativeBonus);
 			if (actor.data.type == "PC") {
-				unfilteredPlayers[token.id] = token;
-				let r = new Roll('1d20').evaluate().result;
+				//if this token id is not already in there
+				if(!unfilteredPlayers[token.id]){
+					unfilteredPlayers[token.id] = token;
+				}
+				let r = new Roll('1d20').evaluate("async=true").result;
 				initiative += parseInt(r);
 				tokensWithInitiative[token.id] = initiative;
 			} else if (actor.data.type == "NPC" || actor.data.type == "Companion") {
@@ -169,17 +209,23 @@ async function rollNonCombatInitiative(combat) {
 		npcAllies: convertToArrayOfIDs(npcAllies),
 		enemies: convertToArrayOfIDs(enemies)
 	}
-	// CombatHud.activeCategories = activeCategories;
-	// await HelperFunctions.setSetting("activeCategories", activeCategories);
-
 }
 
+/**
+ * 
+ * @param {array} array an array of tokens we want to convert to an array of token ids
+ * @returns an array of token ids from the tokens
+ */
 function convertToArrayOfIDs(array) {
 	return array.map(item => {
 		return item.id
 	})
 }
-
+/**
+ * 
+ * @param {array} array an array of token ids we want to convert to tokens
+ * @returns an array of tokens
+ */
 function convertToArrayOfTokens(array) {
 	if (!array) {
 		return;
@@ -201,27 +247,50 @@ function getCanvasToken(id) {
 	return canvas.tokens.get(id);
 }
 
-function getGameActor(id) {
-	return game.actors.get(id);
-}
-
-function findInFolder(folder, name) {
-	let item = folder.content.find((actor) => {
-		return actor.name == name
-	})
-	return item;
-}
-
 async function createToken(ourActor) {
 	let tokenDoc = await Token.create(ourActor.data.token);
 	let tokenObject = tokenDoc[0]._object;
 	return tokenObject;
 }
-
+async function createTokenFromActor(ourActor, scene){
+	let tk = duplicate(ourActor.data.token);
+	tk.x = 100;
+	tk.y = 100;
+	let tokenDoc = await scene.createEmbeddedDocuments("Token", tk)
+	return tokenDoc;
+}
 
 async function createRepTokens(combat) {
 
 	let repTokens = game.folders.getName("RepTokens");
+	if (!repTokens) {
+		await Folder.create({
+				name: "RepTokens",
+				type: "Actor"
+			})
+			.then(parentFolder => {
+				Actor.create({
+					name: "FastPlayer",
+					type: "NPC",
+					folder: parentFolder.id
+				});
+				Actor.create({
+					name: "SlowPlayer",
+					type: "NPC",
+					folder: parentFolder.id
+				});
+				Actor.create({
+					name: "NPCAllies",
+					type: "NPC",
+					folder: parentFolder.id
+				});
+				Actor.create({
+					name: "Enemies",
+					type: "NPC",
+					folder: parentFolder.id
+				});
+			});
+	}
 	let representativeTokens = []
 	let tokenData = []
 
@@ -232,22 +301,44 @@ async function createRepTokens(combat) {
 
 
 	//create all the tokens representing the different "Sides"
-	for (let repTokenActor of repTokens.content) {
-		let newToken;
-		if (repTokenActor.name == "FastPlayer" && fastPlayers.length > 0) {
-			newToken = await createToken(repTokenActor);
-		} else if (repTokenActor.name == "SlowPlayer" && slowPlayers.length > 0) {
-			newToken = await createToken(repTokenActor);
-		} else if (repTokenActor.name == "NPCAllies" && npcAllies.length > 0) {
-			newToken = await createToken(repTokenActor);
-		} else if (repTokenActor.name == "Enemies" && enemies.length > 0) {
-			newToken = await createToken(repTokenActor);
-		}
-		if (newToken) {
-			representativeTokens.push(newToken);
-			tokenData.push(newToken.data);
-		}
+	let scene = game.scenes.viewed;
+	let tokenActors = repTokens.content;
+	if(slowPlayers.length == 0){
+		tokenActors = tokenActors.filter(actor => actor.name == "SlowPlayer")
 	}
+	if(fastPlayers.length == 0){
+		tokenActors = tokenActors.filter(actor => actor.name == "FastPlayer")
+	}
+	if(npcAllies.length == 0){
+		tokenActors = tokenActors.filter(actor => actor.name == "NPCAllies")
+	}
+	if(enemies.length == 0){
+		tokenActors = tokenActors.filter(actor => actor.name == "Enemies")
+	}
+	console.log(tokenActors);
+	tokenData = tokenActors.map(actor => actor.data.token);
+	console.log(tokenData);
+	scene.createEmbeddedDocuments("Token", tokenData);
+	// for (let repTokenActor of repTokens.content) {
+	// 	let newToken;
+	// 	let scene = game.scenes.viewed;
+	// 	if (repTokenActor.name == "FastPlayer" && fastPlayers.length > 0) {
+	// 		newToken = await createTokenFromActor(repTokenActor, scene);
+	// 	} else if (repTokenActor.name == "SlowPlayer" && slowPlayers.length > 0) {
+	// 		newToken = await createTokenFromActor(repTokenActor, scene);
+	// 		// newToken = await HelperFunctions.createTokenFromActor(repTokenActor, scene);
+	// 	} else if (repTokenActor.name == "NPCAllies" && npcAllies.length > 0) {
+	// 		newToken = await createTokenFromActor(repTokenActor, scene);
+	// 		// newToken = await HelperFunctions.createTokenFromActor(repTokenActor, scene);
+	// 	} else if (repTokenActor.name == "Enemies" && enemies.length > 0) {
+	// 		newToken = await createTokenFromActor(repTokenActor, scene);
+	// 		// newToken = await HelperFunctions.createTokenFromActor(repTokenActor, scene);
+	// 	}
+	// 	if (newToken) {
+	// 		representativeTokens.push(newToken);
+	// 		tokenData.push(newToken.data);
+	// 	}
+	// }
 	// 
 	addedRepTokens = true;
 	//create all of the representative combatants
@@ -382,6 +473,16 @@ export default class CombatHud extends Application {
 		let enemies = convertToArrayOfTokens(enemiesStore);
 		let npcAllies = convertToArrayOfTokens(npcAlliesStore);
 
+		//if we have no fast players
+		if(fastPlayers.length == 0){
+			//set the first turn to ememies
+			this.currentPhase = "enemies"
+		}
+		else{
+			//otherwise, if we have no enemies, we should always have fast players, as there were no enemies to compare to
+			this.currentPhase = "fastPlayers"
+		}
+
 		this.activationObject = new ActivationObject({}, fastPlayers, slowPlayers, enemies, npcAllies);
 		combatHud.render();
 	}
@@ -403,10 +504,9 @@ export default class CombatHud extends Application {
 		}
 		this.currentPhase = this.data.currentPhase;
 		this.currentRound = this.data.currentRound;
-		if(Object.keys(this.data.activationObject).length > 0){
+		if (Object.keys(this.data.activationObject).length > 0) {
 			this.activationObject = new ActivationObject(this.data.activationObject.activationMap);
-		}
-		else{
+		} else {
 			this.activationObject = new ActivationObject();
 		}
 
@@ -691,20 +791,21 @@ export default class CombatHud extends Application {
 			//find the in combat button, and allow only the GM to click it
 			let endCombat = windowContent.find(".endCombat")[0];
 			if (game.user.isGM) {
-				console.log("End combat is", endCombat)
-				endCombat.addEventListener("click", async (event) => {
-					await this.ourCombat.endCombat();
-					
-					let defaultData = {
-						ourCombat: null,
-						currentPhase: "fastPlayersTurn",
-						currentRound: 0,
-						inCombat: false,
-						activationObject: {},
-					}
-					await game.settings.set("hud-and-trackers", "savedCombat", defaultData);
-					game.combatHud.app.render();
-				})
+				if (endCombat) {
+					endCombat.addEventListener("click", async (event) => {
+						await this.ourCombat.endCombat();
+
+						let defaultData = {
+							ourCombat: null,
+							currentPhase: "fastPlayersTurn",
+							currentRound: 0,
+							inCombat: false,
+							activationObject: {},
+						}
+						await game.settings.set("hud-and-trackers", "savedCombat", defaultData);
+						game.combatHud.app.render();
+					})
+				}
 			}
 			for (let combatantDiv of combatantDivs) {
 
