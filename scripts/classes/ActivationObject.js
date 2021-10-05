@@ -2,7 +2,7 @@ export class ActivationObject {
 	constructor(activationMap = {}, ...args) {
 		//these should be arrays of tokens
 	
-		if (Object.keys(activationMap) == 0) {
+		if (Object.keys(activationMap) == 0 && args.length > 0) {
 			this.activationMap = {
 				"fastPlayers": {},
 				"slowPlayers": {},
@@ -14,6 +14,9 @@ export class ActivationObject {
 				this.setActivations(mapName, args[count]);
 				count++;
 			}
+		}
+		else if(Object.keys(activationMap) == 0 && args.length == 0){
+			this.activationMap = {}
 		}
 		else{
 			this.activationMap = activationMap;
