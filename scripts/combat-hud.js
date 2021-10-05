@@ -256,6 +256,7 @@ async function createRepTokens(combat) {
 
 async function setRepTokenInitiative(combat) {
 	for (let combatant of combat.turns) {
+		console.log(combatant);
 		if (combatant.data.name == "FastPlayer") {
 			await combat.setInitiative(combatant.id, 30);
 		}
@@ -305,7 +306,6 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 		if (name == "FastPlayer") {
 
 			combatHud.currentPhase = "fastPlayersTurn"
-			console.log("Current phase", combatHud.currentPhase);
 			if (game.user.isGM) {
 				// await CombatHud.setSetting("currentPhase", "fastPlayersTurn")
 			}
@@ -313,7 +313,6 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 			// 
 		} else if (name == "Enemies") {
 			combatHud.currentPhase = "enemiesTurn"
-			console.log("Current phase", combatHud.currentPhase);
 			if (game.user.isGM) {
 				// await CombatHud.setSetting("currentPhase", "enemiesTurn")
 			}
@@ -321,7 +320,6 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 			// 
 		} else if (name == "SlowPlayer") {
 			combatHud.currentPhase = "slowPlayersTurn"
-			console.log("Current phase", combatHud.currentPhase);
 			if (game.user.isGM) {
 				// await CombatHud.setSetting("currentPhase", "slowPlayersTurn")
 			}
@@ -329,7 +327,6 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 			// 
 		} else if (name == "NPCAllies") {
 			combatHud.currentPhase = "npcAlliesTurn"
-			console.log("Current phase", combatHud.currentPhase);
 			if (game.user.isGM) {}
 			whoseTurn = "npcAlliesTurn"
 		}
@@ -669,14 +666,12 @@ export default class CombatHud extends Application {
 			inCombat: this.inCombat,
 			activationObject: this.activationObject,
 		}
-		console.log(data);
 
 		if (game.user.isGM) {
 			await game.settings.set("hud-and-trackers", "savedCombat", data);
 		} else {
 			//PROBLEM IS THE RE-RENDERING. DATA SETTINGS GETTING WIPED EACH TIME.
 			let data2 = await game.settings.get("hud-and-trackers", "savedCombat");
-			console.log(data2);
 
 		}
 
@@ -696,6 +691,7 @@ export default class CombatHud extends Application {
 			//find the in combat button, and allow only the GM to click it
 			let endCombat = windowContent.find(".endCombat")[0];
 			if (game.user.isGM) {
+				console.log("End combat is", endCombat)
 				endCombat.addEventListener("click", async (event) => {
 					await this.ourCombat.endCombat();
 					
@@ -767,7 +763,6 @@ export default class CombatHud extends Application {
 
 		//send the data once all the GM's stuff has been activated
 		if (game.user.isGM) {
-			console.log("Sharing this data with players", this.data)
 			this.shareApp();
 		}
 	}
@@ -795,13 +790,10 @@ export default class CombatHud extends Application {
 			currentRound: this.currentRound,
 			inCombat: this.inCombat
 		}
-		console.log(data)
 		socket.executeForOthers("receiveDataAndUpdate", data);
 	}
 
 	static _receiveDataAndUpdate(data) {
-		console.log(data);
-		console.log("Data received!");
 		this.activationObject = new ActivationObject(data.activationObject.activationMap);
 		this.currentPhase = data.currentPhase;
 		this.currentRound = data.currentRound;
