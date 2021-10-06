@@ -501,8 +501,14 @@ export class Hud extends Application {
 				if (actor.data.type == "PC") {
 					hudItem.addEventListener("click", (event) => {
 						event.preventDefault();
+						console.log(event.ctrlKey);
 						let item = actor.data.items.find(i => i.id === event.currentTarget.id);
-						this.rollAllInOne(item, actor);
+						if(event.ctrlKey){
+							item.sheet.render(true);
+						}
+						else{
+							this.rollAllInOne(item, actor);
+						}
 					})
 				} else if (actor.data.type == "NPC") {
 					hudItem.addEventListener("click", (event) => {

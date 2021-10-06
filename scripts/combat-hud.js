@@ -707,12 +707,6 @@ export default class CombatHud extends Application {
 		createMarkerOnToken(token, hasActed);
 	}
 
-
-	// setCanvasTokenActivated(tokenId) {
-	// 	let token = game.canvas.tokens.placeables.find(token => token.id == tokenId);
-	// 	createMarkerOnToken(token, true);
-	// }
-
 	static requestSetTokenHasActed(id, userId) {
 
 		//reject if not the token's owner
@@ -765,9 +759,6 @@ export default class CombatHud extends Application {
 
 		//update the activations in the activation object to keep track
 		this.activationObject.updateActivations(element.dataset.id);
-
-		//find the token on the canvas and set overlay to show it has acted
-		// this.setCanvasTokenActivated(element.dataset.id);
 
 		this.render(true);
 		//re-render
