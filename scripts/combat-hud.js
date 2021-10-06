@@ -393,7 +393,7 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 
 	if (roundData.round) {
 		//If not undefined, think this means it's a new round?
-		// CombatHud.unhighlightAll(canvas.tokens.placeables)
+		game.combatHud.app.unhighlightAll(canvas.tokens.placeables)
 	}
 	ourCombat = combat;
 	let round = combat.current.round;
@@ -477,7 +477,7 @@ Hooks.on("deleteCombat", async (combat) => {
 
 
 		//find the canvas on the token and add overlay to show it has acted
-		// game.combatHud.app.setCanvasTokenActivated(element.dataset.id);
+		game.combatHud.app.setCanvasTokenActivated(element.dataset.id);
 
 		//re-render the hud
 		game.combatHud.app.activationObject.updateActivations(element.dataset.id);
@@ -522,17 +522,32 @@ async function _receiveDataAndUpdate(data) {
 
 }
 
-function createMarkerOnToken(token, markerType){
+function createMarkerOnToken(token, hasActed){
+	console.log(`Creating marker. Has ${token.name} acted?`, hasActed);
+	let color;
 	if(token.marker){
 		token.marker.destroy();
 	}
+
+	if(hasActed){
+		color = 0x00DD;
+	}
+	else{
+		color = 0xd53510; 
+	}
+	
 	token.marker = token.addChildAt(new PIXI.Container(), token.getChildIndex(token.icon));
 	const frameWidth = canvas.grid.grid.w;
 	const g = new PIXI.Graphics();
 	token.marker.addChild(g);
-	g.beginFill(0x000DD);
+	g.beginFill(color, 0.5);
 	g.drawCircle(token.w/2, token.h/2, 100);
 	g.endFill();
+}
+function removeMarkerOnToken(token){
+	if(token.marker){
+		token.marker.destroy();
+	}
 }
 /**
  * @param Combat!
@@ -642,29 +657,23 @@ export default class CombatHud extends Application {
 
 	}
 
-	//TODO: This will happen on a new round
 	unhighlightAll(tokens) {
-		return;
-		// let overlayImg = "modules/hud-and-trackers/images/check-mark.png"
-		// tokens.forEach(token => {
-		// 	token._toggleOverlayEffect(overlayImg, token);
-		// })
+		tokens.forEach(token => {
+			removeMarkerOnToken(token);
+		})
 	}
 
-	highlightTokenInGroup(tokenId) {
+
+
+	highlightTokenInGroup(tokenId, hasActed) {
 		let token = game.canvas.tokens.placeables.find(token => token.id == tokenId);
-		createMarkerOnToken(token);
-		// let overlayImg = "modules/hud-and-trackers/images/select.png"
-		// let token = getCanvasToken(tokenId);
-		// token._toggleOverlayEffect(overlayImg, token);
+		createMarkerOnToken(token, hasActed);
 	}
 
 
-	static setCanvasTokenActivated(tokenId) {
-		return;
-		// let overlayImg = "modules/hud-and-trackers/images/check-mark.png"
-		// let token = getCanvasToken(tokenId);
-		// token._toggleOverlayEffect(overlayImg, token);
+	setCanvasTokenActivated(tokenId) {
+		let token = game.canvas.tokens.placeables.find(token => token.id == tokenId);
+		createMarkerOnToken(token, true);
 	}
 
 	static requestSetTokenHasActed(id, userId) {
@@ -721,7 +730,7 @@ export default class CombatHud extends Application {
 		this.activationObject.updateActivations(element.dataset.id);
 
 		//find the token on the canvas and set overlay to show it has acted
-		// this.setCanvasTokenActivated(element.dataset.id);
+		this.setCanvasTokenActivated(element.dataset.id);
 
 		this.render(true);
 		//re-render
@@ -741,11 +750,10 @@ export default class CombatHud extends Application {
 				allActed = false;
 			}
 		}
-		console.log(map);
-		console.log(allActed);
 		if (allActed) {
 			await this.ourCombat.nextTurn();
 			this.resetActivations();
+			this.unhighlightAll(game.canvas.tokens.placeables)
 			this.render(true);
 		}
 	}
@@ -881,6 +889,7 @@ export default class CombatHud extends Application {
 							inCombat: false,
 							activationObject: {},
 						}
+						this.unhighlightAll(game.canvas.tokens.placeables);
 						await game.settings.set("hud-and-trackers", "savedCombat", defaultData);
 						game.combatHud.app.render();
 					})
@@ -888,18 +897,23 @@ export default class CombatHud extends Application {
 			}
 			for (let combatantDiv of combatantDivs) {
 
-				this.highlightTokenInGroup(combatantDiv.dataset.id)
+				if(!combatantDiv.classList.contains("activated")){
+					this.highlightTokenInGroup(combatantDiv.dataset.id, false)
+				}
+				else{
+					this.highlightTokenInGroup(combatantDiv.dataset.id, true)
+				}
 				let token = getCanvasToken(combatantDiv.dataset.id);
 
-				scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FFFFFF"}])
+				// scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FFFFFF"}])
 			
-				$(combatantDiv).mouseenter((event) => {
-					scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FF5733"}])
-				})
+				// $(combatantDiv).mouseenter((event) => {
+				// 	scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FF5733"}])
+				// })
 
-				$(combatantDiv).mouseleave((event) => {
-					scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FFFFFF"}])
-				})
+				// $(combatantDiv).mouseleave((event) => {
+				// 	scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FFFFFF"}])
+				// })
 
 				$(combatantDiv).mousedown((event) => {
 					if (event.which == 3) {
@@ -926,6 +940,7 @@ export default class CombatHud extends Application {
 					if (combatantDiv.dataset.id == id) {
 						if (map[id] == true) {
 							$(combatantDiv).addClass("activated");
+							this.highlightTokenInGroup(token.id, true)
 						}
 					}
 				}

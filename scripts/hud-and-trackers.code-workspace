@@ -6,8 +6,11 @@
 	],
 	"settings": {
 		"cSpell.words": [
+			"Divs",
 			"minimizable",
-			"placeables"
+			"PIXI",
+			"placeables",
+			"unhighlight"
 		]
 	}
 }
