@@ -1,0 +1,10 @@
+<div class="hud-item" id={{this.id}} data-type={{this.type}}>
+		<h1 class="hud-item__title">{{this.data.name}}<span class="hud-item__damage">
+				{{firstChar this.data.data.skillLevel}}</span></h1>
+		{{#unless (eq this.data.data.description "")}}
+		<div class="hud-item__description">
+			<h3 class="hud-item__damage">Rating: {{this.data.data.skillLevel}}</h3>
+			<p>{{clean this.data.data.description}}</p>
+		</div>
+		{{/unless}}
+</div>

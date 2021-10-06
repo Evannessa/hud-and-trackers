@@ -302,11 +302,11 @@ export class Hud extends Application {
 		//pinned items will be an object that holds an array of each pinned type
 		if(!this.ourActor.getFlag("hud-and-trackers", "pinnedItems")){
 			this.pinnedItems = {
-				abilities: [],
-				skills: [],
-				attacks: [],
-				cyphers: [],
-				artifacts: []
+				ability: [],
+				skill: [],
+				attack: [],
+				cypher: [],
+				artifact: []
 			}
 			this.ourActor.setFlag("hud-and-trackers", "pinnedItems", this.pinnedItems);
 		}
@@ -355,9 +355,18 @@ export class Hud extends Application {
 		this.pinnedItems = this.ourActor.getFlag("hud-and-trackers", "pinnedItems");
 		for(let key in this.pinnedItems){
 			let array = this.pinnedItems[key];
-			array.map(pin => new Item(pin));
+			array = array.map(pin => {
+				if(pin.hasOwnProperty("name")){
+					return new Item(pin)
+				}
+				else{
+					return new Item(pin.data)
+				}
+			});
+			this.pinnedItems[key] = array;
 		}
-		this.pinnedAbilities = this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities").map( pin => new Item(pin));
+		// console.log(this.pinnedItems);
+		// this.pinnedAbilities = this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities").map( pin => new Item(pin));
 
 		return {
 			ourToken: this.ourToken,
@@ -510,21 +519,27 @@ export class Hud extends Application {
 						let element = event.currentTarget;
 						if(element.classList.contains("pinned")){
 							//TODO: Finish the statement beneath
-							this.pinnedItems[this.pinnedItems[element.dataset.type + "s"]]
 							console.log("Clicking on pinned")
-							this.pinnedAbilities = this.pinnedAbilities.filter(item => item.id != element.id);
-							await this.ourActor.setFlag("hud-and-trackers", "pinnedAbilities", this.pinnedAbilities);
+							let array = this.pinnedItems[element.dataset.type].map(item => new Item(item));
+							console.log("Our pinned items for" + element.dataset.type + " are ", array)
+							array.filter(item => item.id != element.id)
+							this.pinnedItems[element.dataset.type] = array;
+							await this.ourActor.setFlag("hud-and-trackers", "pinnedItems", this.pinnedItems);
 							this.render(true)
 						}
 						else{
 							console.log("Clicking on NOT PINNEd")
 							//this should pin enabler, but only if it's not already in the pinned abilities
-							let pinned = (this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities"));
-							let alreadyPinned = pinned.find(pinnedItem => pinnedItem.id === event.currentTarget.id);
+							let array = this.pinnedItems[element.dataset.type].map(item => new Item(item));
+							console.log("Our pinned items for" + element.dataset.type + " are ", array)
+							let alreadyPinned = array.find(item => item.id == element.id)
+							console.log("Already pinned ", alreadyPinned)
 							if(!alreadyPinned){
-								let item = this.ourActor.data.items.find(i => i.id === event.currentTarget.id);
-								this.pinnedAbilities.push(item);
-								await this.ourActor.setFlag("hud-and-trackers", "pinnedAbilities", this.pinnedAbilities);
+								let item = this.ourActor.data.items.find(i => i.id === element.id);
+								array.push(item);
+								this.pinnedItems[element.dataset.type] = array;
+								// this.pinnedAbilities.push(item);
+								await this.ourActor.setFlag("hud-and-trackers", "pinnedItems", this.pinnedItems);
 								this.render(true)
 							}
 						}

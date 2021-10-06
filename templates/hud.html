@@ -12,97 +12,41 @@
 	<!-- Attacks -->
 	{{#if (eq showTab "attacks")}}
 	<div class="pinnedDiv">
-		{{#each pinnedItems.attacks}}
-		{{> "modules/hud-and-trackers/templates/hud-partials/attack-partial.html"}}
-		<!-- <div class="hud-item" id={{this.id}}>
-			<h1 class="hud-item__title">{{this.data.name}}<span class="hud-item__damage">
-					{{this.data.data.damage}}</span></h1>
-			{{#unless (eq this.data.data.description "")}}
-			<div class="hud-item__description">
-				<h3 class="hud-item__damage">Damage: {{this.data.data.damage}}</h3><br>
-				<p>{{clean this.data.data.description}}</p>
-			</div>
-			{{/unless}}
-		</div> -->
+		{{#each pinnedItems.attack}}
+			{{> "modules/hud-and-trackers/templates/hud-partials/attack-partial.html"}}
 		{{/each}}
 	</div>
 	{{#each attacks}}
 		{{> "modules/hud-and-trackers/templates/hud-partials/attack-partial.html"}}
-	<!-- <div class="hud-item" id={{this.id}}>
-		<h1 class="hud-item__title">{{this.data.name}}<span class="hud-item__damage"> {{this.data.data.damage}}</span>
-		</h1>
-		{{#unless (eq this.data.data.description "")}}
-		<div class="hud-item__description">
-			<h3 class="hud-item__damage">Damage: {{this.data.data.damage}}</h3><br>
-			<p>{{clean this.data.data.description}}</p>
-		</div>
-		{{/unless}}
-	</div> -->
 	{{/each}}
 	{{/if}}
 	<!-- Skills -->
 	{{#if (eq showTab "skills")}}
 	<div class="pinnedDiv">
-		{{#each pinnedItems.skills}}
-		<div class="hud-item pinned" id={{this.id}}>
-			<h1 class="hud-item__title">{{this.data.name}}<span class="hud-item__damage">
-					{{firstChar this.data.data.skillLevel}}</span></h1>
-			{{#unless (eq this.data.data.description "")}}
-			<div class="hud-item__description">
-				<h3 class="hud-item__damage">Rating: {{this.data.data.skillLevel}}</h3>
-				<p>{{clean this.data.data.description}}</p>
-			</div>
-			{{/unless}}
-		</div>
+		{{#each pinnedItems.skill}}
+		{{> "modules/hud-and-trackers/templates/hud-partials/skill-partial.html"}}
 		{{/each}}
 	</div>
 	{{#each skills}}
-	<div class="hud-item" id={{this.id}}>
-		<h1 class="hud-item__title">{{this.data.name}}<span class="hud-item__damage">
-				{{firstChar this.data.data.skillLevel}}</span></h1>
-		{{#unless (eq this.data.data.description "")}}
-		<div class="hud-item__description">
-			<h3 class="hud-item__damage">Rating: {{this.data.data.skillLevel}}</h3>
-			<p>{{clean this.data.data.description}}</p>
-		</div>
-		{{/unless}}
-	</div>
+		{{> "modules/hud-and-trackers/templates/hud-partials/skill-partial.html"}}
 	{{/each}}
 	{{/if}}
 	<!-- Abilities -->
 	{{#if (eq showTab "abilities")}}
 	<div class="pinnedDiv">
-		{{#each pinnedAbilities}}
-		<div class="hud-item pinned" id={{this.id}}>
-			<h1 class="hud-item__title">{{this.data.name}}<span class="hud-item__damage">
-					{{this.data.data.costPoints}}{{firstChar this.data.data.costPool}}</span></h1>
-			{{#unless (eq this.data.data.description "")}}
-			<div class="hud-item__description">
-				<h3 class="hud-item__damage">Cost: {{this.data.data.costPoints}} {{this.data.data.costPool}}</h3>
-				<p>{{clean this.data.data.description}}</p>
-			</div>
-			{{/unless}}
-		</div>
+		{{#each pinnedItems.ability}}
+		{{> "modules/hud-and-trackers/templates/hud-partials/ability-partial.html"}}
 		{{/each}}
 	</div>
 	<div class="break"></div>
 	{{#each abilities}}
-	<div class="hud-item" id={{this.id}}>
-		<h1 class="hud-item__title">{{this.data.name}}<span class="hud-item__damage">
-				{{this.data.data.costPoints}}{{firstChar this.data.data.costPool}}</span></h1>
-		{{#unless (eq this.data.data.description "")}}
-		<div class="hud-item__description">
-			<h3 class="hud-item__damage">Cost: {{this.data.data.costPoints}} {{this.data.data.costPool}}</h3>
-			<p>{{clean this.data.data.description}}</p>
-		</div>
-		{{/unless}}
-	</div>
+		{{> "modules/hud-and-trackers/templates/hud-partials/ability-partial.html"}}
 	{{/each}}
 	{{/if}}
 	<!-- Cyphers -->
 	{{#if (eq showTab "cyphers")}}
 	<div class="pinnedDiv">
-		{{#each pinnedItems.cyphers}}
+		{{#each pinnedItems.cypher}}
 		{{> "modules/hud-and-trackers/templates/hud-partials/cypher-partial.html"}}
 		{{/each}}
 	</div>
@@ -114,7 +58,7 @@
 	<!-- Artifacts -->
 	{{#if (eq showTab "artifacts")}}
 	<div class="pinnedDiv">
-		{{#each pinnedItems.artifacts}}
+		{{#each pinnedItems.artifact}}
 		{{> "modules/hud-and-trackers/templates/hud-partials/artifact-partial.html"}}
 		{{/each}}
 	</div>
