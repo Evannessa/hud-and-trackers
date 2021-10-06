@@ -191,6 +191,29 @@
 #tokenHud .button-wrapper button.active.showAbilities {
   background-color: #ff930f;
 }
+#tokenHud .button-wrapper button.active.showCyphers {
+  background-color: #01FDF6;
+  color: black;
+}
+#tokenHud .button-wrapper button.active.showArtifacts {
+  background-color: #8962d8;
+}
+#tokenHud .instructions {
+  background-color: rgba(44, 46, 47, 0.452);
+  flex: 0;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+#tokenHud .instructions span:nth-of-type(1) {
+  color: #3cb1ff;
+}
+#tokenHud .instructions span:nth-of-type(2) {
+  color: #ff7b00;
+}
+#tokenHud .instructions span:nth-of-type(3) {
+  color: #fb5ab8;
+}
 #tokenHud .combatAction {
   background-color: #e76f51;
   color: white;
@@ -214,8 +237,23 @@
 #tokenHud .hud-item-wrapper .pinnedDiv {
   display: flex;
 }
+#tokenHud .hud-item-wrapper .pinnedDiv .hud-item {
+  background-color: #09F;
+  color: black;
+}
+#tokenHud .hud-item-wrapper .pinnedDiv .hud-item__description {
+  color: white;
+}
+#tokenHud .hud-item-wrapper .pinnedDiv .hud-item .hud-item__damage {
+  color: #ffbdad !important;
+}
+#tokenHud .hud-item-wrapper .pinnedDiv .hud-item:hover {
+  background: #6589a5;
+  cursor: pointer;
+}
 #tokenHud .hud-item-wrapper .hud-item {
   flex: 0 0 auto;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   position: relative;
   height: -webkit-max-content;
   height: -moz-max-content;
@@ -236,6 +274,7 @@
 }
 #tokenHud .hud-item-wrapper .hud-item.pinned .hud-item__description {
   color: white;
+  pointer-events: none;
 }
 #tokenHud .hud-item-wrapper .hud-item.pinned .hud-item__damage {
   color: #ffbdad !important;
@@ -248,6 +287,7 @@
   font-size: 0.8rem;
 }
 #tokenHud .hud-item-wrapper .hud-item__description {
+  pointer-events: none;
   position: absolute;
   background-color: rgba(66, 78, 87, 0.9);
   border: 2px solid white;

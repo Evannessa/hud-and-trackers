@@ -8,6 +8,9 @@
 	<button class="showArtifacts" data-type="artifacts"> Artifacts </button>
 </div>
 <br>
+{{#unless (eq showTab "none")}}
+<div class="instructions"><p><span>Left click to All-in-One Roll.</span> | <span>Right Click to Pin to top.</span> |<span> Ctrl-Click to Open Item Sheet.</span></p></div>
+{{/unless}}
 <div class="hud-item-wrapper">
 	<!-- Attacks -->
 	{{#if (eq showTab "attacks")}}
@@ -16,6 +19,7 @@
 			{{> "modules/hud-and-trackers/templates/hud-partials/attack-partial.html"}}
 		{{/each}}
 	</div>
+	<div class="break"></div>
 	{{#each attacks}}
 		{{> "modules/hud-and-trackers/templates/hud-partials/attack-partial.html"}}
 	{{/each}}
@@ -24,9 +28,10 @@
 	{{#if (eq showTab "skills")}}
 	<div class="pinnedDiv">
 		{{#each pinnedItems.skill}}
-		{{> "modules/hud-and-trackers/templates/hud-partials/skill-partial.html"}}
+			{{> "modules/hud-and-trackers/templates/hud-partials/skill-partial.html"}}
 		{{/each}}
 	</div>
+	<div class="break"></div>
 	{{#each skills}}
 		{{> "modules/hud-and-trackers/templates/hud-partials/skill-partial.html"}}
 	{{/each}}
@@ -35,7 +40,7 @@
 	{{#if (eq showTab "abilities")}}
 	<div class="pinnedDiv">
 		{{#each pinnedItems.ability}}
-		{{> "modules/hud-and-trackers/templates/hud-partials/ability-partial.html"}}
+			{{> "modules/hud-and-trackers/templates/hud-partials/ability-partial.html"}}
 		{{/each}}
 	</div>
 	<div class="break"></div>
@@ -47,7 +52,7 @@
 	{{#if (eq showTab "cyphers")}}
 	<div class="pinnedDiv">
 		{{#each pinnedItems.cypher}}
-		{{> "modules/hud-and-trackers/templates/hud-partials/cypher-partial.html"}}
+			{{> "modules/hud-and-trackers/templates/hud-partials/cypher-partial.html"}}
 		{{/each}}
 	</div>
 	<div class="break"></div>
@@ -59,7 +64,7 @@
 	{{#if (eq showTab "artifacts")}}
 	<div class="pinnedDiv">
 		{{#each pinnedItems.artifact}}
-		{{> "modules/hud-and-trackers/templates/hud-partials/artifact-partial.html"}}
+			{{> "modules/hud-and-trackers/templates/hud-partials/artifact-partial.html"}}
 		{{/each}}
 	</div>
 	<div class="break"></div>

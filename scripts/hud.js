@@ -514,13 +514,19 @@ export class Hud extends Application {
 				hudItem.addEventListener("mousedown", async(event)=> {
 					console.log("IS THIS HAPPENING");
 					if(event.which == 3){
-						//TODO: We want to pin enabler
 						//this should unpin enabler
 						let element = event.currentTarget;
-						if(element.classList.contains("pinned")){
+						if(element.parentNode.classList.contains("pinnedDiv")){
 							//TODO: Finish the statement beneath
 							console.log("Clicking on pinned")
-							let array = this.pinnedItems[element.dataset.type].map(item => new Item(item));
+							let array = this.pinnedItems[element.dataset.type].map(item => {
+								if(item.hasOwnProperty("name")){
+									return new Item(item);
+								}
+								else{
+									return new Item(item.data);
+								}
+							});
 							console.log("Our pinned items for" + element.dataset.type + " are ", array)
 							array.filter(item => item.id != element.id)
 							this.pinnedItems[element.dataset.type] = array;
@@ -530,7 +536,14 @@ export class Hud extends Application {
 						else{
 							console.log("Clicking on NOT PINNEd")
 							//this should pin enabler, but only if it's not already in the pinned abilities
-							let array = this.pinnedItems[element.dataset.type].map(item => new Item(item));
+							let array = this.pinnedItems[element.dataset.type].map(item => {
+								if(item.hasOwnProperty("name")){
+									return new Item(item);
+								}
+								else{
+									return new Item(item.data);
+								}
+							});
 							console.log("Our pinned items for" + element.dataset.type + " are ", array)
 							let alreadyPinned = array.find(item => item.id == element.id)
 							console.log("Already pinned ", alreadyPinned)
