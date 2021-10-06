@@ -55,7 +55,7 @@ Hooks.on("ready", () => {
 	// }
 })
 
-async function createRepresentativeActors(){
+async function createRepresentativeActors() {
 	let repTokens = game.folders.getName("RepTokens");
 	if (!repTokens) {
 		await Folder.create({
@@ -156,7 +156,7 @@ async function rollNonCombatInitiative(combat) {
 	playerTokens = Array.from(new Set(tokens.map(token => token.actor.name)))
 		.map(actorName => {
 			return tokens.find(token => token.actor.name == actorName);
-	})
+		})
 	tokens = [...playerTokens, ...npcTokens];
 
 	for (let token of tokens) {
@@ -269,7 +269,7 @@ async function createToken(ourActor) {
 	let tokenObject = tokenDoc[0]._object;
 	return tokenObject;
 }
-async function createTokenFromActor(ourActor, scene){
+async function createTokenFromActor(ourActor, scene) {
 	let tk = duplicate(ourActor.data.token);
 	tk.x = 100;
 	tk.y = 100;
@@ -321,16 +321,16 @@ async function createRepTokens(combat) {
 	//create all the tokens representing the different "Sides"
 	let scene = game.scenes.viewed;
 	let tokenActors = repTokens.content;
-	if(slowPlayers.length == 0){
+	if (slowPlayers.length == 0) {
 		tokenActors = tokenActors.filter(actor => actor.name != "SlowPlayer")
 	}
-	if(fastPlayers.length == 0){
+	if (fastPlayers.length == 0) {
 		tokenActors = tokenActors.filter(actor => actor.name != "FastPlayer")
 	}
-	if(npcAllies.length == 0){
+	if (npcAllies.length == 0) {
 		tokenActors = tokenActors.filter(actor => actor.name != "NPCAllies")
 	}
-	if(enemies.length == 0){
+	if (enemies.length == 0) {
 		tokenActors = tokenActors.filter(actor => actor.name != "Enemies")
 	}
 	console.log(tokenActors);
@@ -464,50 +464,50 @@ Hooks.on("deleteCombat", async (combat) => {
 	combatHud.currentPhase = "fastPlayersTurn"
 
 })
-	async function _requestSetTokenHasActed(id, userId) {
+async function _requestSetTokenHasActed(id, userId) {
 
-		console.log(game.combatHud.app);
-		//reject if not the token's owner
-		if (game.combatHud.app.checkIfUserIsTokenOwner(id, userId) == false) {
-			return;
-		}
-		//find element and add activated class
-		let element = game.combatHud.app._element[0].querySelector(`[data-id=${id}]`);
-		$(element).addClass("activated")
-
-
-		//find the canvas on the token and add overlay to show it has acted
-		// game.combatHud.app.setCanvasTokenActivated(element.dataset.id);
-
-		//re-render the hud
-		game.combatHud.app.activationObject.updateActivations(element.dataset.id);
-		game.combatHud.app.render();
+	console.log(game.combatHud.app);
+	//reject if not the token's owner
+	if (game.combatHud.app.checkIfUserIsTokenOwner(id, userId) == false) {
+		return;
 	}
+	//find element and add activated class
+	let element = game.combatHud.app._element[0].querySelector(`[data-id=${id}]`);
+	$(element).addClass("activated")
 
-	async function _requestIfAllHaveActed(id) {
-		let element = game.combatHud.app._element[0].querySelector(`[data-id=${id}]`);
-		let phaseName = element.dataset.phase;
-		let map = game.combatHud.app.activationObject.getSpecificMap(phaseName);
-		//go through the map, find which items are false.
-		//if none are false, all of them have acted, so go to the next
-		//turn and reset the activations
-		//*maybe re-render the combat too?
-		let allActed = true;
-		for (let mapItem in map) {
-			if (!map[mapItem]) {
-				allActed = false;
-			}
-		}
-		if (allActed) {
-			await game.combatHud.app.ourCombat.nextTurn();
-			game.combatHud.app.resetActivations();
-			//apply highlights to tokens in new group
-			// CombatHud.highightTokensInGroup(CombatHud.)
 
-			//re-render
-			combatHud.render();
+	//find the canvas on the token and add overlay to show it has acted
+	// game.combatHud.app.setCanvasTokenActivated(element.dataset.id);
+
+	//re-render the hud
+	game.combatHud.app.activationObject.updateActivations(element.dataset.id);
+	game.combatHud.app.render();
+}
+
+async function _requestIfAllHaveActed(id) {
+	let element = game.combatHud.app._element[0].querySelector(`[data-id=${id}]`);
+	let phaseName = element.dataset.phase;
+	let map = game.combatHud.app.activationObject.getSpecificMap(phaseName);
+	//go through the map, find which items are false.
+	//if none are false, all of them have acted, so go to the next
+	//turn and reset the activations
+	//*maybe re-render the combat too?
+	let allActed = true;
+	for (let mapItem in map) {
+		if (!map[mapItem]) {
+			allActed = false;
 		}
 	}
+	if (allActed) {
+		await game.combatHud.app.ourCombat.nextTurn();
+		game.combatHud.app.resetActivations();
+		//apply highlights to tokens in new group
+		// CombatHud.highightTokensInGroup(CombatHud.)
+
+		//re-render
+		combatHud.render();
+	}
+}
 
 async function _receiveDataAndUpdate(data) {
 	console.log(data);
@@ -522,33 +522,6 @@ async function _receiveDataAndUpdate(data) {
 
 }
 
-function TokenTurnMarker(token, color, texturePath){
-	if(token.marker){
-		token.marker.destroy();
-	}
-
-	if(hasActed){
-		texturePath = "modules/hud-and-trackers/images/check-mark.png"
-		color = 0x00DD;
-	}
-	else{
-		texturePath = "modules/hud-and-trackers/images/convergence-target.png"
-		color = 0xd53510; 
-	}
-	
-	token.marker = token.addChildAt(new PIXI.Container(), token.getChildIndex(token.icon));
-	const frameWidth = canvas.grid.grid.w;
-	const sprite = PIXI.Sprite.from(texturePath);
-	token.marker.addChild(sprite);
-	sprite.zIndex = 2000;
-	sprite.width = 200;
-	sprite.height = 200;
-	sprite.anchor.set(0.5, 0.5)
-	sprite.position.set(token.w/2, token.h/2);
-	canvas.ticker.add((delta) => {
-		sprite.rotation += 0.05
-	})
-}
 
 /**
  * Creates a PIXI.Container -- destroying previous one 1st if already exists--, adds sprite
@@ -556,25 +529,30 @@ function TokenTurnMarker(token, color, texturePath){
  * @param {token} token - the token we're placing the marker upon	
  * @param {*} hasActed - whether or not the token has acted or not
  */
-function createMarkerOnToken(token, hasActed){
+function createMarkerOnToken(token, hasActed) {
 	console.log(`Creating marker. Has ${token.name} acted?`, hasActed);
 	let color;
 	let texturePath;
 	let previousRotation = 0;
-	if(token.marker){
-		previousRotation = token.marker.children[0].rotation;
+	if (token.marker) {
+		if(token.marker.children.length > 0){
+			previousRotation = token.marker.children[0].rotation;
+		}
+		//destroy the marker PIXI Container stored on the token
 		token.marker.destroy();
+
+		//delete the property itself that was storing it
+		delete token.marker;
 	}
 
-	if(hasActed){
+	if (hasActed) {
 		texturePath = "modules/hud-and-trackers/images/check-mark.png"
 		color = 0x00DD;
-	}
-	else{
+	} else {
 		texturePath = "modules/hud-and-trackers/images/convergence-target.png"
-		color = 0xd53510; 
+		color = 0xd53510;
 	}
-	
+
 	token.marker = token.addChildAt(new PIXI.Container(), token.getChildIndex(token.icon));
 	const frameWidth = canvas.grid.grid.w;
 	const sprite = PIXI.Sprite.from(texturePath);
@@ -583,21 +561,28 @@ function createMarkerOnToken(token, hasActed){
 	sprite.width = 200;
 	sprite.height = 200;
 	sprite.anchor.set(0.5, 0.5)
-	sprite.position.set(token.w/2, token.h/2);
-	sprite.rotation = previousRotation;
-	canvas.app.ticker.add((delta) => {
-		sprite.rotation += 0.05;
-	})
+	sprite.position.set(token.w / 2, token.h / 2);
+
+	//We only want it to rotate if has not acted
+	if (!hasActed) {
+		sprite.rotation = previousRotation;
+		let rotateFunction = (delta) => {
+			sprite.rotation += 0.05;
+		}
+		token.rotateMarkerFunction = rotateFunction
+		canvas.app.ticker.add(rotateFunction, token.id)
+	}
 }
-function removeMarkerOnToken(token){
-	canvas.app.ticker.remove(rotateTokenMarkers(token), token.id)
-	if(token.marker){
+
+function removeMarkerOnToken(token) {
+	canvas.app.ticker.remove(token.rotateMarkerFunction, token.id)
+	if (token.marker) {
 		token.marker.destroy();
 	}
 }
 
-function rotateTokenMarkers(token){
-	if(token.marker){
+function rotateTokenMarkers(token) {
+	if (token.marker) {
 		token.marker.children.forEach(child => child.rotation += 0.05)
 	}
 }
@@ -618,11 +603,10 @@ export default class CombatHud extends Application {
 		console.log("Our combat is, ", ourCombat);
 		this.currentRound = ourCombat.current.round;
 		//if we have no fast players
-		if(fastPlayers.length == 0){
+		if (fastPlayers.length == 0) {
 			//set the first turn to ememies
 			this.currentPhase = "enemiesTurn"
-		}
-		else{
+		} else {
 			//otherwise, if we have no enemies, we should always have fast players, as there were no enemies to compare to
 			this.currentPhase = "fastPlayersTurn"
 		}
@@ -950,15 +934,14 @@ export default class CombatHud extends Application {
 			}
 			for (let combatantDiv of combatantDivs) {
 
-				if(!combatantDiv.classList.contains("activated")){
+				if (!combatantDiv.classList.contains("activated")) {
 					this.highlightTokenInGroup(combatantDiv.dataset.id, false)
-				}
-				else{
+				} else {
 					this.highlightTokenInGroup(combatantDiv.dataset.id, true)
 				}
 				let token = getCanvasToken(combatantDiv.dataset.id);
 
-			
+
 				$(combatantDiv).mouseenter((event) => {
 					this.tintMarkerOnToken(token, 0xFF5733);
 				})
@@ -1010,8 +993,8 @@ export default class CombatHud extends Application {
 		}
 	}
 
-	tintMarkerOnToken(token, color){
-		if(token.marker){
+	tintMarkerOnToken(token, color) {
+		if (token.marker) {
 			token.marker.children.forEach(child => child.tint = color);
 		}
 	}
