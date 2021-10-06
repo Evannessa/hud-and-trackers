@@ -53,7 +53,6 @@ Hooks.on("canvasReady", () => {
 
 Hooks.on("controlToken", async (token, isControlled) => {
 
-	console.log("We're handling this many tokens", game.canvas.tokens.controlled.length)
 	let ourToken = token;
 	if (!isControlled) {
 		if (game.canvas.tokens.controlled.length == 0) {
@@ -61,7 +60,7 @@ Hooks.on("controlToken", async (token, isControlled) => {
 			//before being set to one 
 			//as previous control of the tokens is released
 			//if we're controlling zero tokens, close the hud
-			// hud.close();
+			hud.close();
 			// hud = null;
 		}
 	} else if (isControlled) {
@@ -71,6 +70,7 @@ Hooks.on("controlToken", async (token, isControlled) => {
 			if (hud) {
 				//if the hud exists, update it's data
 				hud.updateData(ourToken);
+				hud.render(true);
 			} else {
 				//create a new hud
 				hud = new Hud(ourToken).render(true);
@@ -287,6 +287,8 @@ export class Hud extends Application {
 		this.attacks = this.getStuffFromSheet(this.ourToken, "attack")
 		this.abilities = this.getStuffFromSheet(this.ourToken, "ability")
 		this.skills = this.getStuffFromSheet(this.ourToken, "skill")
+		this.cyphers = this.getStuffFromSheet(this.ourToken, "cypher")
+		this.artifacts = this.getStuffFromSheet(this.ourToken, "artifact")
 		if (!this.ourToken.getFlag("hud-and-trackers", "showTab")) {
 			this.showTab = "abilities";
 		} else {
@@ -297,11 +299,28 @@ export class Hud extends Application {
 		} else {
 			this.pinnedTab = this.ourToken.getFlag("hud-and-trackers", "pinnedTab");
 		}
-		if(!this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities")){
-			this.pinnedAbilites = [];
+		//pinned items will be an object that holds an array of each pinned type
+		if(!this.ourActor.getFlag("hud-and-trackers", "pinnedItems")){
+			this.pinnedItems = {
+				abilities: [],
+				skills: [],
+				attacks: [],
+				cyphers: [],
+				artifacts: []
+			}
+			this.ourActor.setFlag("hud-and-trackers", "pinnedItems", this.pinnedItems);
 		}
 		else{
-			this.pinnedAbilites = this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities")
+			this.pinnedItems = this.ourActor.getFlag("hud-and-trackers", "pinnedItems");
+		}
+
+
+		if(!this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities")){
+			this.pinnedAbilities = [];
+			this.ourActor.setFlag("hud-and-trackers", "pinnedAbilities", this.pinnedAbilities);
+		}
+		else{
+			this.pinnedAbilities = this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities")
 		}
 		this.combatActive = inCombat;
 	}
@@ -332,8 +351,14 @@ export class Hud extends Application {
 	}
 
 	async getData() {
-		console.log(this.pinnedAbilites);
-		console.log(this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities"));
+		
+		this.pinnedItems = this.ourActor.getFlag("hud-and-trackers", "pinnedItems");
+		for(let key in this.pinnedItems){
+			let array = this.pinnedItems[key];
+			array.map(pin => new Item(pin));
+		}
+		this.pinnedAbilities = this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities").map( pin => new Item(pin));
+
 		return {
 			ourToken: this.ourToken,
 			isGM: this.isGM,
@@ -341,7 +366,10 @@ export class Hud extends Application {
 			attacks: this.attacks,
 			skills: this.skills,
 			abilities: this.abilities,
-			pinnedAbilites: this.pinnedAbilites,
+			cyphers: this.cyphers,
+			artifacts: this.artifacts,
+			pinnedItems: this.pinnedItems,
+			pinnedAbilities: this.pinnedAbilities,//this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities"),
 			showTab: this.ourToken.getFlag("hud-and-trackers", "showTab"),
 			combatActive: this.combatActive
 		};
@@ -481,10 +509,11 @@ export class Hud extends Application {
 						//this should unpin enabler
 						let element = event.currentTarget;
 						if(element.classList.contains("pinned")){
+							//TODO: Finish the statement beneath
+							this.pinnedItems[this.pinnedItems[element.dataset.type + "s"]]
 							console.log("Clicking on pinned")
-							this.pinnedAbilites = this.pinnedAbilites.filter(item => item.id == element.id);
-							await this.ourActor.setFlag("hud-and-trackers", "pinnedAbilities", this.pinnedAbilites);
-							console.log(this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities"));
+							this.pinnedAbilities = this.pinnedAbilities.filter(item => item.id != element.id);
+							await this.ourActor.setFlag("hud-and-trackers", "pinnedAbilities", this.pinnedAbilities);
 							this.render(true)
 						}
 						else{
@@ -494,9 +523,8 @@ export class Hud extends Application {
 							let alreadyPinned = pinned.find(pinnedItem => pinnedItem.id === event.currentTarget.id);
 							if(!alreadyPinned){
 								let item = this.ourActor.data.items.find(i => i.id === event.currentTarget.id);
-								this.pinnedAbilites.push(item);
-								await this.ourActor.setFlag("hud-and-trackers", "pinnedAbilities", this.pinnedAbilites);
-								console.log(this.pinnedAbilites);
+								this.pinnedAbilities.push(item);
+								await this.ourActor.setFlag("hud-and-trackers", "pinnedAbilities", this.pinnedAbilities);
 								this.render(true)
 							}
 						}

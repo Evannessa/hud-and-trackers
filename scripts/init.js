@@ -97,7 +97,12 @@ Hooks.on("renderTrackerApp", (app, html) => {
 
 async function loadHandleBarTemplates() {
 	const templatePaths = [
-		"modules/hud-and-trackers/templates/tracker-partial.html"
+		"modules/hud-and-trackers/templates/tracker-partial.html",
+		"modules/hud-and-trackers/templates/hud-partials/cypher-partial.html",
+		"modules/hud-and-trackers/templates/hud-partials/artifact-partial.html",
+		"modules/hud-and-trackers/templates/hud-partials/skill-partial.html",
+		"modules/hud-and-trackers/templates/hud-partials/ability-partial.html",
+		"modules/hud-and-trackers/templates/hud-partials/attack-partial.html",
 	];
 	return loadTemplates(templatePaths);
 }

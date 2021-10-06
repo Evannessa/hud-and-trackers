@@ -4,7 +4,7 @@ let clockConfig;
 let filledSections = 0;
 let sectionsMap = {};
 Hooks.on("ready", () => {
-	clockConfig = new ClockConfig().render(true);
+	// clockConfig = new ClockConfig().render(true);
 })
 class Clock extends FormApplication {
 

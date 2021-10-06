@@ -287,7 +287,14 @@
 		flex-wrap: wrap;
 		max-width: 50vw;
 
+		.break {
+			flex-basis: 100%;
+			height: 0;
+		}
 
+		.pinnedDiv {
+			display: flex;
+		}
 
 		.hud-item {
 			flex: 0 0 auto;
@@ -300,7 +307,21 @@
 			}
 
 			&.pinned {
-				border: 2px dotted rgb(255, 255, 255);
+				background-color: #09F;
+				color: black;
+
+				.hud-item__description {
+					color: white;
+				}
+
+				.hud-item__damage {
+					color: #ffbdad !important;
+				}
+
+				&:hover {
+					background: #6589a5;
+					cursor: pointer;
+				}
 			}
 
 			background: #161a1d;

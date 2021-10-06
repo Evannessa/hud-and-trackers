@@ -207,6 +207,13 @@
   flex-wrap: wrap;
   max-width: 50vw;
 }
+#tokenHud .hud-item-wrapper .break {
+  flex-basis: 100%;
+  height: 0;
+}
+#tokenHud .hud-item-wrapper .pinnedDiv {
+  display: flex;
+}
 #tokenHud .hud-item-wrapper .hud-item {
   flex: 0 0 auto;
   position: relative;
@@ -224,7 +231,18 @@
   overflow-x: visible;
 }
 #tokenHud .hud-item-wrapper .hud-item.pinned {
-  border: 2px dotted white;
+  background-color: #09F;
+  color: black;
+}
+#tokenHud .hud-item-wrapper .hud-item.pinned .hud-item__description {
+  color: white;
+}
+#tokenHud .hud-item-wrapper .hud-item.pinned .hud-item__damage {
+  color: #ffbdad !important;
+}
+#tokenHud .hud-item-wrapper .hud-item.pinned:hover {
+  background: #6589a5;
+  cursor: pointer;
 }
 #tokenHud .hud-item-wrapper .hud-item__title {
   font-size: 0.8rem;
