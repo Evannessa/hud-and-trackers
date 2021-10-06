@@ -387,7 +387,7 @@ async function setRepTokenInitiative(combat) {
 let refreshed = false;
 
 
-;
+
 Hooks.on("updateCombat", async (combat, roundData, diff) => {
 
 
@@ -521,6 +521,19 @@ async function _receiveDataAndUpdate(data) {
 	}
 
 }
+
+function createMarkerOnToken(token, markerType){
+	if(token.marker){
+		token.marker.destroy();
+	}
+	token.marker = token.addChildAt(new PIXI.Container(), token.getChildIndex(token.icon));
+	const frameWidth = canvas.grid.grid.w;
+	const g = new PIXI.Graphics();
+	token.marker.addChild(g);
+	g.beginFill(0x000DD);
+	g.drawCircle(token.w/2, token.h/2, 100);
+	g.endFill();
+}
 /**
  * @param Combat!
  */
@@ -639,7 +652,8 @@ export default class CombatHud extends Application {
 	}
 
 	highlightTokenInGroup(tokenId) {
-		return;
+		let token = game.canvas.tokens.placeables.find(token => token.id == tokenId);
+		createMarkerOnToken(token);
 		// let overlayImg = "modules/hud-and-trackers/images/select.png"
 		// let token = getCanvasToken(tokenId);
 		// token._toggleOverlayEffect(overlayImg, token);
