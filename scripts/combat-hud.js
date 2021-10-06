@@ -477,7 +477,7 @@ Hooks.on("deleteCombat", async (combat) => {
 
 
 		//find the canvas on the token and add overlay to show it has acted
-		game.combatHud.app.setCanvasTokenActivated(element.dataset.id);
+		// game.combatHud.app.setCanvasTokenActivated(element.dataset.id);
 
 		//re-render the hud
 		game.combatHud.app.activationObject.updateActivations(element.dataset.id);
@@ -522,10 +522,7 @@ async function _receiveDataAndUpdate(data) {
 
 }
 
-function createMarkerOnToken(token, hasActed){
-	console.log(`Creating marker. Has ${token.name} acted?`, hasActed);
-	let color;
-	let texturePath;
+function TokenTurnMarker(token, color, texturePath){
 	if(token.marker){
 		token.marker.destroy();
 	}
@@ -544,19 +541,64 @@ function createMarkerOnToken(token, hasActed){
 	const sprite = PIXI.Sprite.from(texturePath);
 	token.marker.addChild(sprite);
 	sprite.zIndex = 2000;
-	sprite.width = 150;
-	sprite.height = 150;
-	// sprite.anchor.set(0.5, 0.5)
+	sprite.width = 200;
+	sprite.height = 200;
+	sprite.anchor.set(0.5, 0.5)
+	sprite.position.set(token.w/2, token.h/2);
+	canvas.ticker.add((delta) => {
+		sprite.rotation += 0.05
+	})
+}
 
-	const g = new PIXI.Graphics();
-	token.marker.addChild(g);
-	g.beginFill(color, 0.5);
-	g.drawCircle(token.w/2, token.h/2, 100);
-	g.endFill();
+/**
+ * Creates a PIXI.Container -- destroying previous one 1st if already exists--, adds sprite
+ * or graphic to it depending on if token has acted or not. 
+ * @param {token} token - the token we're placing the marker upon	
+ * @param {*} hasActed - whether or not the token has acted or not
+ */
+function createMarkerOnToken(token, hasActed){
+	console.log(`Creating marker. Has ${token.name} acted?`, hasActed);
+	let color;
+	let texturePath;
+	let previousRotation = 0;
+	if(token.marker){
+		previousRotation = token.marker.children[0].rotation;
+		token.marker.destroy();
+	}
+
+	if(hasActed){
+		texturePath = "modules/hud-and-trackers/images/check-mark.png"
+		color = 0x00DD;
+	}
+	else{
+		texturePath = "modules/hud-and-trackers/images/convergence-target.png"
+		color = 0xd53510; 
+	}
+	
+	token.marker = token.addChildAt(new PIXI.Container(), token.getChildIndex(token.icon));
+	const frameWidth = canvas.grid.grid.w;
+	const sprite = PIXI.Sprite.from(texturePath);
+	token.marker.addChild(sprite);
+	sprite.zIndex = 2000;
+	sprite.width = 200;
+	sprite.height = 200;
+	sprite.anchor.set(0.5, 0.5)
+	sprite.position.set(token.w/2, token.h/2);
+	sprite.rotation = previousRotation;
+	canvas.app.ticker.add((delta) => {
+		sprite.rotation += 0.05;
+	})
 }
 function removeMarkerOnToken(token){
+	canvas.app.ticker.remove(rotateTokenMarkers(token), token.id)
 	if(token.marker){
 		token.marker.destroy();
+	}
+}
+
+function rotateTokenMarkers(token){
+	if(token.marker){
+		token.marker.children.forEach(child => child.rotation += 0.05)
 	}
 }
 /**
@@ -682,10 +724,10 @@ export default class CombatHud extends Application {
 	}
 
 
-	setCanvasTokenActivated(tokenId) {
-		let token = game.canvas.tokens.placeables.find(token => token.id == tokenId);
-		createMarkerOnToken(token, true);
-	}
+	// setCanvasTokenActivated(tokenId) {
+	// 	let token = game.canvas.tokens.placeables.find(token => token.id == tokenId);
+	// 	createMarkerOnToken(token, true);
+	// }
 
 	static requestSetTokenHasActed(id, userId) {
 
@@ -699,7 +741,7 @@ export default class CombatHud extends Application {
 
 
 		//find the canvas on the token and add overlay to show it has acted
-		this.setCanvasTokenActivated(element.dataset.id);
+		// this.setCanvasTokenActivated(element.dataset.id);
 
 		//re-render the hud
 		this.activationObject.updateActivations(element.dataset.id);
@@ -741,7 +783,7 @@ export default class CombatHud extends Application {
 		this.activationObject.updateActivations(element.dataset.id);
 
 		//find the token on the canvas and set overlay to show it has acted
-		this.setCanvasTokenActivated(element.dataset.id);
+		// this.setCanvasTokenActivated(element.dataset.id);
 
 		this.render(true);
 		//re-render
@@ -916,16 +958,13 @@ export default class CombatHud extends Application {
 				}
 				let token = getCanvasToken(combatantDiv.dataset.id);
 
-				// scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FFFFFF"}])
 			
 				$(combatantDiv).mouseenter((event) => {
 					this.tintMarkerOnToken(token, 0xFF5733);
-					// scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FF5733"}])
 				})
 
 				$(combatantDiv).mouseleave((event) => {
 					this.tintMarkerOnToken(token, 0xFFFFFF);
-					// scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FFFFFF"}])
 				})
 
 				$(combatantDiv).mousedown((event) => {
