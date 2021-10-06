@@ -528,9 +528,10 @@ export class Hud extends Application {
 								}
 							});
 							console.log("Our pinned items for" + element.dataset.type + " are ", array)
-							array.filter(item => item.id != element.id)
+							array = array.filter(item => item.id != element.id)
 							this.pinnedItems[element.dataset.type] = array;
 							await this.ourActor.setFlag("hud-and-trackers", "pinnedItems", this.pinnedItems);
+							console.log("Our pinned items for" + element.dataset.type + " are ", array)
 							this.render(true)
 						}
 						else{
