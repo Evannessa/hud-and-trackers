@@ -525,19 +525,29 @@ async function _receiveDataAndUpdate(data) {
 function createMarkerOnToken(token, hasActed){
 	console.log(`Creating marker. Has ${token.name} acted?`, hasActed);
 	let color;
+	let texturePath;
 	if(token.marker){
 		token.marker.destroy();
 	}
 
 	if(hasActed){
+		texturePath = "modules/hud-and-trackers/images/check-mark.png"
 		color = 0x00DD;
 	}
 	else{
+		texturePath = "modules/hud-and-trackers/images/convergence-target.png"
 		color = 0xd53510; 
 	}
 	
 	token.marker = token.addChildAt(new PIXI.Container(), token.getChildIndex(token.icon));
 	const frameWidth = canvas.grid.grid.w;
+	const sprite = PIXI.Sprite.from(texturePath);
+	token.marker.addChild(sprite);
+	sprite.zIndex = 2000;
+	sprite.width = 150;
+	sprite.height = 150;
+	// sprite.anchor.set(0.5, 0.5)
+
 	const g = new PIXI.Graphics();
 	token.marker.addChild(g);
 	g.beginFill(color, 0.5);
@@ -563,6 +573,7 @@ export default class CombatHud extends Application {
 		let slowPlayers = convertToArrayOfTokens(slowPlayersStore);
 		let enemies = convertToArrayOfTokens(enemiesStore);
 		let npcAllies = convertToArrayOfTokens(npcAlliesStore);
+		console.log("Our combat is, ", ourCombat);
 		this.currentRound = ourCombat.current.round;
 		//if we have no fast players
 		if(fastPlayers.length == 0){
@@ -907,13 +918,15 @@ export default class CombatHud extends Application {
 
 				// scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FFFFFF"}])
 			
-				// $(combatantDiv).mouseenter((event) => {
-				// 	scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FF5733"}])
-				// })
+				$(combatantDiv).mouseenter((event) => {
+					this.tintMarkerOnToken(token, 0xFF5733);
+					// scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FF5733"}])
+				})
 
-				// $(combatantDiv).mouseleave((event) => {
-				// 	scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FFFFFF"}])
-				// })
+				$(combatantDiv).mouseleave((event) => {
+					this.tintMarkerOnToken(token, 0xFFFFFF);
+					// scene.updateEmbeddedDocuments("Token", [{_id: token.id, tint: "#FFFFFF"}])
+				})
 
 				$(combatantDiv).mousedown((event) => {
 					if (event.which == 3) {
@@ -955,6 +968,12 @@ export default class CombatHud extends Application {
 		//send the data once all the GM's stuff has been activated
 		if (game.user.isGM) {
 			this.shareApp();
+		}
+	}
+
+	tintMarkerOnToken(token, color){
+		if(token.marker){
+			token.marker.children.forEach(child => child.tint = color);
 		}
 	}
 
