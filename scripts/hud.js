@@ -1,6 +1,6 @@
 "use strict";
 
-import ClockConfig from "./clock.js"
+import * as ClockApp from "./clock.js"
 import * as HelperFunctions from "./helper-functions.js"
 
 let hud;
@@ -229,6 +229,7 @@ export class HelperHud extends Application {
 			let addAttacks = windowContent.find(".addAttacks")[0];
 			let addPCs = windowContent.find(".addPCs")[0];
 			let addClock = windowContent.find(".addClock")[0];
+			let showClock = windowContent.find(".showClocks")[0];
 
 			addPCs.addEventListener("click", (event) => {
 				HelperFunctions.addPCsToScene();
@@ -240,8 +241,11 @@ export class HelperHud extends Application {
 				HelperFunctions.callMacro("[Token] Toggle Attacks in Inventory of non-PC Actors")
 			})
 			addClock.addEventListener("click", (event) => {
-				new ClockConfig().render(true);
+				new ClockApp.ClockConfig().render(true);
 			});
+			showClock.addEventListener("click", (event) => {
+				new ClockApp.ClockViewer().render(true);
+			})
 		}
 		else{
 			let selectCharacter = windowContent.find(".selectCharacter")[0];

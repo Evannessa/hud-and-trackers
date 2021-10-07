@@ -12,7 +12,7 @@ export default function registerSettings(){
 		scope: "world",
 		config: false,
 		type: Object,
-		default: {},
+		default: [],
 	});
 	game.settings.register(CombatHud.ID, "currentPhase", {
 		scope: "world",
