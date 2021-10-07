@@ -1,5 +1,5 @@
 <form action="" class="flex-col">
-	{{#each clocks}}
-		<button id={{this.id}} data-action="open">{{this.name}}</button>
-	{{/each}}
+    {{log clocks}} {{#each clocks}}
+    <button id="{{this.id}}" data-action="open">{{this.name}}</button>
+    {{/each}}
 </form>

@@ -1,14 +1,10 @@
 "use strict";
 import * as HelperFunctions from "./helper-functions.js";
-let clock;
-let clockConfig;
 let filledSections = 0;
-let sectionsMap = {};
-Hooks.on("ready", () => {
-    // clockConfig = new ClockConfig().render(true);
-});
+
 class Clock extends FormApplication {
     constructor(name, sectionCount, sectionMap, color1, id) {
+        console.log("Rendering new clock");
         super({
             name,
             sectionCount,
@@ -37,14 +33,17 @@ class Clock extends FormApplication {
         this.sectionsMap[sectionId] = new Section(
             sectionId,
             data.sectionLabel,
-            data.sectionColor
+            data.sectionColor,
+            data.sectionFilled
         );
-        this.render();
+        this.saveAndRenderApp();
     }
 
-    getData() {
-        let data = game.settings.get("hud-and-trackers", "savedClocks");
-        this.name = data.name;
+    async getData() {
+        let data = await game.settings.get("hud-and-trackers", "savedClocks");
+        let ourClock = data[this.ourId];
+        this.name = ourClock.name;
+
         return {
             id: this.ourId,
             name: this.name,
@@ -53,44 +52,41 @@ class Clock extends FormApplication {
         };
     }
 
-    activateListeners(html) {
+    async activateListeners(html) {
         super.activateListeners(html);
-        // let app = html.closest(".window-app")[0];
-        // console.log("Our clock app is", app);
-        // app.classList.add("clockHud");
         let windowContent = html.closest(".window-content");
         let editBtns = windowContent.find(".edit");
         let sections = windowContent.find(".clockSection");
         let filled = 0;
-        let nameForm = windowContent.find(".clockName")[0];
+        // let id = windowContent.find(".flexcol")[0].id;
 
-        nameForm.blur((event) => {
-            console.log("NAME CHANGED FULLY");
-        });
-        nameForm.addEventListener("input", (event) => {
-            console.log("Name changed!");
-        });
+        // let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+        // let ourClock = savedClocks[id];
+        // this.sectionsMap = ourClock.sectionsMap;
 
         Array.from(editBtns).forEach((element) => {
             let section = element.parentNode;
             element.addEventListener("click", (e) => {
                 e.preventDefault();
-                // e.stopPropogation();
                 e.cancelBubble = true;
                 new SectionConfig(
                     section.id,
                     section.dataset.label,
                     section.dataset.color,
+                    element.classList.contains("filled"),
                     this
                 ).render(true);
             });
         });
         Array.from(sections).forEach((element) => {
             //refilling the sections after refresh
-            if (filled < filledSections) {
+            if (this.sectionsMap[element.id].filled) {
                 element.classList.add("filled");
-                filled++;
             }
+            // if (filled < filledSections) {
+            //     element.classList.add("filled");
+            //     filled++;
+            // }
 
             //clicking on the sections
             element.addEventListener("mousedown", (event) => {
@@ -102,6 +98,7 @@ class Clock extends FormApplication {
                             element.id,
                             element.dataset.label,
                             element.dataset.color,
+                            element.classList.contains("filled"),
                             this
                         ).render(true);
                     } else {
@@ -109,7 +106,8 @@ class Clock extends FormApplication {
                         if (!element.classList.contains("filled")) {
                             filledSections++;
                             element.classList.add("filled");
-                            this.render();
+                            this.sectionsMap[element.id].filled = true;
+                            this.saveAndRenderApp();
                         }
                     }
                 } else if (event.which == 3) {
@@ -117,12 +115,24 @@ class Clock extends FormApplication {
                     if (element.classList.contains("filled")) {
                         filledSections--;
                         element.classList.remove("filled");
-                        this.render();
+                        this.sectionsMap[element.id].filled = false;
+                        this.saveAndRenderApp();
                     }
                 }
             });
         });
     }
+
+    /**
+     * this will update our app with saved values
+     */
+    async saveAndRenderApp() {
+        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+        savedClocks[this.ourId] = this.object;
+        await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
+        this.render();
+    }
+
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             classes: ["form", "clockHud"],
@@ -137,16 +147,13 @@ class Clock extends FormApplication {
         });
     }
     async _updateObject(event, formData) {
-        console.log(formData);
         this.name = formData.clockName;
         this.sectionCount = formData.sectionCount;
-        let savedClocks = await game.settings.get(
-            "hud-and-trackers",
-            "savedClocks"
-        );
+        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
         savedClocks[this.ourId] = formData;
         await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
         this.object.update(formData);
+        console.log("Is this working?");
         this.render();
     }
 }
@@ -164,30 +171,29 @@ export class ClockConfig extends FormApplication {
         let clockName = formData.clockName;
         let color = formData.color;
         let sectionCount = formData.sectionCount;
+        let startFilled = formData.startFilled;
         let sectionMap = {};
         for (let i = 0; i < sectionCount; i++) {
             let sectionID = HelperFunctions.idGenerator();
-            sectionMap[sectionID] = new Section(sectionID, "", color);
+            if (!startFilled) {
+                sectionMap[sectionID] = new Section(sectionID, "", color, false);
+            } else {
+                sectionMap[sectionID] = new Section(sectionID, "", color, true);
+            }
         }
 
-        let savedClocks = game.settings.get("hud-and-trackers", "savedClocks");
+        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
         let id = HelperFunctions.idGenerator();
 
-        let newClock = new Clock(
-            clockName,
-            sectionCount,
-            sectionMap,
-            color,
-            id
-        ).render(true);
-        savedClocks.push(newClock.object);
-        game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
+        let newClock = new Clock(clockName, sectionCount, sectionMap, color, id);
+        savedClocks[newClock.object.id] = newClock.object;
+        await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
+        newClock.render(true);
         this.render();
     }
 
     activateListeners(html) {
         super.activateListeners(html);
-        // let windowContent = html.closest(".window-content");
     }
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
@@ -204,12 +210,21 @@ export class ClockConfig extends FormApplication {
 }
 
 class SectionConfig extends FormApplication {
-    constructor(sectionId, sectionLabel, sectionColor, clockParent) {
-        super(sectionId, sectionLabel, sectionColor, clockParent);
+    constructor(sectionId, sectionLabel, sectionColor, sectionFilled, clockParent) {
+        console.log(sectionId, sectionLabel, sectionColor, sectionFilled, clockParent);
+        super();
+        // super(sectionId, sectionLabel, sectionColor, sectionFilled, clockParent);
         this.sectionId = sectionId;
         this.sectionLabel = sectionLabel;
         this.sectionColor = sectionColor;
+        this.sectionFilled = sectionFilled;
         this.clockParent = clockParent;
+    }
+    getData() {
+        return {
+            sectionLabel: this.sectionLabel,
+            sectionColor: this.sectionColor,
+        };
     }
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
@@ -227,6 +242,7 @@ class SectionConfig extends FormApplication {
         let data = {
             sectionLabel: formData.label,
             sectionColor: formData.color,
+            sectionFilled: this.sectionFilled,
         };
         this.clockParent.updateSections(this.sectionId, data);
     }
@@ -237,16 +253,17 @@ class SectionConfig extends FormApplication {
 }
 
 class Section {
-    constructor(id, label, color) {
+    constructor(id, label, color, filled) {
         this.id = id;
         this.label = label;
         this.color = color;
+        this.filled = filled;
     }
     static fromJSON(obj) {
         if (typeof obj == "string") {
             obj = JSON.parse(obj);
         }
-        return new Section(obj.id, obj.label, obj.color);
+        return new Section(obj.id, obj.label, obj.color, obj.filled);
     }
 }
 
@@ -265,6 +282,7 @@ export class ClockViewer extends FormApplication {
             classes: ["form"],
             popOut: true,
             submitOnChange: false,
+            closeOnSubmit: false,
             template: `modules/hud-and-trackers/templates/clock-viewer.html`,
             id: "clockViewer",
             title: "Clock Viewer",
@@ -272,11 +290,9 @@ export class ClockViewer extends FormApplication {
     }
 
     async getData() {
-        let savedClocks = await game.settings.get(
-            "hud-and-trackers",
-            "savedClocks"
-        );
-        this.clocks = savedClocks;
+        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+        this.clocks = Object.values(savedClocks);
+        console.log(this.clocks);
         // Send data to the template
         return {
             clocks: this.clocks,
@@ -285,28 +301,26 @@ export class ClockViewer extends FormApplication {
 
     async activateListeners(html) {
         super.activateListeners(html);
-        let savedClocks = await game.settings.get(
-            "hud-and-trackers",
-            "savedClocks"
-        );
+        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
         this.clocks = savedClocks;
-        html.on("click", "[data-action]", this._handleButtonClick);
+        console.log(this.clocks);
+        console.log(html);
+        html.on("click", ["data-action"], this._handleButtonClick);
+        // html.on("click", "button", this._handleButtonClick);
     }
 
     async _handleButtonClick(event) {
+        console.log(event);
         event.preventDefault();
-        let savedClocks = await game.settings.get(
-            "hud-and-trackers",
-            "savedClocks"
-        );
+        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
         this.clocks = savedClocks;
+        console.log(savedClocks);
 
-        const clickedElement = event.currentTarget;
+        const clickedElement = event.target;
         const action = clickedElement.dataset.action;
+        console.log(clickedElement.id);
 
-        let clockData = savedClocks.find(
-            (ourClock) => ourClock.id == clickedElement.id
-        );
+        let clockData = savedClocks[clickedElement.id];
 
         switch (action) {
             case "open": {
@@ -321,7 +335,5 @@ export class ClockViewer extends FormApplication {
         }
     }
 
-    async _updateObject(event, formData) {
-        let windowContent = html.closest(".window-content");
-    }
+    async _updateObject(event, formData) {}
 }

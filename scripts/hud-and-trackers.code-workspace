@@ -1,16 +1,17 @@
 {
-	"folders": [
-		{
-			"path": ".."
-		}
-	],
-	"settings": {
-		"cSpell.words": [
-			"Divs",
-			"minimizable",
-			"PIXI",
-			"placeables",
-			"unhighlight"
-		]
-	}
+    "folders": [
+        {
+            "path": ".."
+        }
+    ],
+    "settings": {
+        "cSpell.words": [
+            "Btns",
+            "Divs",
+            "minimizable",
+            "PIXI",
+            "placeables",
+            "unhighlight"
+        ]
+    }
 }
