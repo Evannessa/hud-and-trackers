@@ -3,13 +3,14 @@ import * as HelperFunctions from "./helper-functions.js";
 let filledSections = 0;
 
 class Clock extends FormApplication {
-    constructor(name, sectionCount, sectionMap, color1, id) {
+    constructor(name, sectionCount, sectionMap, color1, gradient, id) {
         console.log("Rendering new clock");
         super({
             name,
             sectionCount,
             sectionMap,
             color1,
+            gradient,
             id,
         });
         if (!id) {
@@ -20,6 +21,7 @@ class Clock extends FormApplication {
         this.name = name;
         this.sectionCount = sectionCount;
         this.sectionsMap = sectionMap;
+        this.gradient = gradient;
 
         this.filledSections = filledSections;
     }
@@ -55,29 +57,21 @@ class Clock extends FormApplication {
     async activateListeners(html) {
         super.activateListeners(html);
         let windowContent = html.closest(".window-content");
-        let editBtns = windowContent.find(".edit");
+
+        let clockWrapper = windowContent.find(".clockWrapper")[0];
+        clockWrapper.style.backgroundImage = this.gradient;
+
         let sections = windowContent.find(".clockSection");
         let filled = 0;
-        // let id = windowContent.find(".flexcol")[0].id;
+        let deleteClock = windowContent.find(".delete")[0];
 
-        // let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
-        // let ourClock = savedClocks[id];
-        // this.sectionsMap = ourClock.sectionsMap;
-
-        Array.from(editBtns).forEach((element) => {
-            let section = element.parentNode;
-            element.addEventListener("click", (e) => {
-                e.preventDefault();
-                e.cancelBubble = true;
-                new SectionConfig(
-                    section.id,
-                    section.dataset.label,
-                    section.dataset.color,
-                    element.classList.contains("filled"),
-                    this
-                ).render(true);
-            });
+        deleteClock.addEventListener("click", (event) => {
+            let savedClocks = game.settings.get("hud-and-trackers", "savedClocks");
+            delete savedClocks[this.ourId];
+            game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
+            this.close();
         });
+
         Array.from(sections).forEach((element) => {
             //refilling the sections after refresh
             if (this.sectionsMap[element.id].filled) {
@@ -146,16 +140,7 @@ class Clock extends FormApplication {
             title: "clockHud",
         });
     }
-    async _updateObject(event, formData) {
-        this.name = formData.clockName;
-        this.sectionCount = formData.sectionCount;
-        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
-        savedClocks[this.ourId] = formData;
-        await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
-        this.object.update(formData);
-        console.log("Is this working?");
-        this.render();
-    }
+    async _updateObject(event, formData) {}
 }
 
 /** This will be the configuration for the clock itself. */
@@ -170,6 +155,9 @@ export class ClockConfig extends FormApplication {
         //create a new clock
         let clockName = formData.clockName;
         let color = formData.color;
+        let gradient = formData.gradient;
+        console.log(formData);
+        console.log(gradient);
         let sectionCount = formData.sectionCount;
         let startFilled = formData.startFilled;
         let sectionMap = {};
@@ -185,7 +173,14 @@ export class ClockConfig extends FormApplication {
         let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
         let id = HelperFunctions.idGenerator();
 
-        let newClock = new Clock(clockName, sectionCount, sectionMap, color, id);
+        let newClock = new Clock(
+            clockName,
+            sectionCount,
+            sectionMap,
+            color,
+            gradient,
+            id
+        );
         savedClocks[newClock.object.id] = newClock.object;
         await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
         newClock.render(true);
@@ -329,6 +324,7 @@ export class ClockViewer extends FormApplication {
                     clockData.sectionCount,
                     clockData.sectionMap,
                     clockData.color,
+                    clockData.gradient,
                     clockData.id
                 ).render(true);
             }

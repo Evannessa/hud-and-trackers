@@ -456,13 +456,17 @@
 .clockHud .window-content .clockName {
   flex: 0;
 }
+.clockHud .window-content .delete {
+  margin: 1rem;
+  width: 20%;
+}
 .clockHud .window-content .clockWrapper {
   display: flex;
   flex-direction: row;
   border-radius: 15px;
   overflow: hidden;
   position: relative;
-  background-image: linear-gradient(to right, #ff6e7f 0%, #bfe9ff 100%);
+  background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 100%);
   background-position: right;
 }
 .clockHud .window-content .clockSection {
@@ -504,4 +508,37 @@
   display: none;
   background-color: transparent;
   background: none;
+}
+
+#clockConfig .reddish,
+.clockHud .reddish {
+  background-image: linear-gradient(to right, #DC2424 0%, #4A569D 100%);
+}
+#clockConfig .purple,
+.clockHud .purple {
+  background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 100%);
+}
+#clockConfig .bluePink,
+.clockHud .bluePink {
+  background-image: linear-gradient(62deg, #15d5eb 0%, #ff00bf 100%);
+}
+#clockConfig .turquoise,
+.clockHud .turquoise {
+  background-image: linear-gradient(132deg, #a1ffff 0%, #00d8d8 100%);
+}
+#clockConfig .pinkLemonade,
+.clockHud .pinkLemonade {
+  background-image: linear-gradient(132deg, #fd7088 0%, #ffd3a5 100%);
+}
+#clockConfig .fire,
+.clockHud .fire {
+  background-image: linear-gradient(132deg, #faaa00 0%, #ed1313 50%, #d54aff 100%);
+}
+#clockConfig .magic,
+.clockHud .magic {
+  background-image: linear-gradient(132deg, #00ff9d 0%, #e32baf 100%);
+}
+#clockConfig .pastel,
+.clockHud .pastel {
+  background-image: linear-gradient(132deg, #ffceec 0%, #9796f0 100%);
 }/*# sourceMappingURL=style.css.map */

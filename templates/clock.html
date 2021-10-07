@@ -1,4 +1,4 @@
-<form class="flexcol" id="{{id}}">
+<form id="{{id}}">
     <h3 class="clockName" name="clockName" contenteditable="true">{{name}}</h3>
     <div class="clockWrapper">
         {{#each sections}}
@@ -12,4 +12,5 @@
         </div>
         {{/each}}
     </div>
+    <button class="delete" data-action="delete"><i class="fa fa-trash"></i></button>
 </form>
