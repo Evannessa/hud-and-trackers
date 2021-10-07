@@ -593,13 +593,16 @@
 
 }
 
-#clockHud {
+
+
+.clockHud {
 
 	$colorOne: #09F;
 	$colorTwo: #F90;
 	$colorThree: mix($colorOne, $colorTwo, 20%);
 
 	.window-content {
+
 		display: flex;
 		flex-direction: column;
 		justify-content: stretch;
