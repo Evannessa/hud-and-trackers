@@ -614,8 +614,12 @@
 		.clockWrapper {
 			display: flex;
 			flex-direction: row;
-			border-radius: 5px;
+			border-radius: 15px;
 			overflow: hidden;
+			position: relative;
+			background-image: linear-gradient(to right, #ff6e7f 0%, #bfe9ff 100%);
+			background-position: right;
+
 		}
 
 		.clockSection {
@@ -629,18 +633,33 @@
 			background-color: #2c2e2f;
 			box-shadow: rgb(29, 29, 29) 3px 3px 6px 0px inset, rgba(92, 92, 92, 0.5) -3px -3px 6px 1px inset;
 
+			.label {
+				color: white;
+				font-weight: bold;
+				z-index: 200;
+			}
 
 			&.filled {
-				// box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
-				box-shadow: rgb(50 50 93 / 25%) 0px 20px 20px -20px, rgb(0 0 0 / 30%) 1px 20px 20px 0px, rgb(10 37 64 / 35%) -5px -6px 6px 2px inset;
-				background-color: #09F;
+				box-shadow: none;
+				box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+				// box-shadow: rgb(50 50 93 / 25%) 0px 20px 20px -20px, rgb(0 0 0 / 30%) 1px 20px 20px 0px, rgb(10 37 64 / 35%) -5px -6px 6px 2px inset;
+				background-color: white;
+				mix-blend-mode: multiply;
+				transition: 0.5s;
+
+				.label {
+					color: black;
+				}
 
 				&:hover {
-					background-color: rgb(235, 121, 55);
+					background-position: right center;
+					/* change the direction of the change here */
+					color: #fff;
+					text-decoration: none;
 				}
 			}
 
-			.label {}
+
 
 			.edit {
 				position: absolute;
