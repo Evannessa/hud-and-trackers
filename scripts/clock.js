@@ -1,9 +1,8 @@
 "use strict";
 import * as HelperFunctions from "./helper-functions.js";
-let filledSections = 0;
 
 class Clock extends FormApplication {
-    constructor(name, sectionCount, sectionMap, color1, gradient, id) {
+    constructor(name, sectionCount, sectionMap, color1, gradient, filledSections, id) {
         console.log("Rendering new clock");
         super({
             name,
@@ -11,6 +10,7 @@ class Clock extends FormApplication {
             sectionMap,
             color1,
             gradient,
+            filledSections,
             id,
         });
         if (!id) {
@@ -61,6 +61,22 @@ class Clock extends FormApplication {
         let clockWrapper = windowContent.find(".clockWrapper")[0];
         clockWrapper.style.backgroundImage = this.gradient;
 
+        clockWrapper.addEventListener("mousedown", (event) => {
+            if (event.which == 1) {
+                this.filledSections++;
+                if (this.filledSections > this.sectionCount) {
+                    this.filledSections = this.sectionCount;
+                }
+                this.saveAndRenderApp();
+            } else if (event.which == 3) {
+                this.filledSections--;
+                if (this.filledSections < 0) {
+                    this.filledSections = 0;
+                }
+                this.saveAndRenderApp();
+            }
+        });
+
         let sections = windowContent.find(".clockSection");
         let filled = 0;
         let deleteClock = windowContent.find(".delete")[0];
@@ -74,13 +90,14 @@ class Clock extends FormApplication {
 
         Array.from(sections).forEach((element) => {
             //refilling the sections after refresh
-            if (this.sectionsMap[element.id].filled) {
-                element.classList.add("filled");
-            }
-            // if (filled < filledSections) {
+            // if (this.sectionsMap[element.id].filled) {
             //     element.classList.add("filled");
-            //     filled++;
             // }
+            if (filled < this.filledSections) {
+                element.classList.add("filled");
+                filled++;
+                this.sectionsMap[element.id].filled = true;
+            }
 
             //clicking on the sections
             element.addEventListener("mousedown", (event) => {
@@ -95,22 +112,6 @@ class Clock extends FormApplication {
                             element.classList.contains("filled"),
                             this
                         ).render(true);
-                    } else {
-                        //if not, just fill it
-                        if (!element.classList.contains("filled")) {
-                            filledSections++;
-                            element.classList.add("filled");
-                            this.sectionsMap[element.id].filled = true;
-                            this.saveAndRenderApp();
-                        }
-                    }
-                } else if (event.which == 3) {
-                    //right click
-                    if (element.classList.contains("filled")) {
-                        filledSections--;
-                        element.classList.remove("filled");
-                        this.sectionsMap[element.id].filled = false;
-                        this.saveAndRenderApp();
                     }
                 }
             });
@@ -161,11 +162,13 @@ export class ClockConfig extends FormApplication {
         let sectionCount = formData.sectionCount;
         let startFilled = formData.startFilled;
         let sectionMap = {};
+        let filledSections = 0;
         for (let i = 0; i < sectionCount; i++) {
             let sectionID = HelperFunctions.idGenerator();
             if (!startFilled) {
                 sectionMap[sectionID] = new Section(sectionID, "", color, false);
             } else {
+                filledSections = sectionCount;
                 sectionMap[sectionID] = new Section(sectionID, "", color, true);
             }
         }
@@ -179,6 +182,7 @@ export class ClockConfig extends FormApplication {
             sectionMap,
             color,
             gradient,
+            filledSections,
             id
         );
         savedClocks[newClock.object.id] = newClock.object;
@@ -325,6 +329,7 @@ export class ClockViewer extends FormApplication {
                     clockData.sectionMap,
                     clockData.color,
                     clockData.gradient,
+                    clockData.filledSections,
                     clockData.id
                 ).render(true);
             }

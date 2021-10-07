@@ -448,6 +448,14 @@
   color: white;
 }
 
+.clockHud {
+  width: -webkit-max-content !important;
+  width: max-content !important;
+  width: -moz-max-content !important;
+  height: -webkit-max-content !important;
+  height: max-content !important;
+  height: -moz-max-content !important;
+}
 .clockHud .window-content {
   display: flex;
   flex-direction: column;
@@ -456,8 +464,17 @@
 .clockHud .window-content .clockName {
   flex: 0;
 }
-.clockHud .window-content .delete {
-  margin: 1rem;
+.clockHud .window-content .headerWrapper {
+  display: flex;
+  flex: content;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 0.5rem 0rem;
+}
+.clockHud .window-content .headerWrapper h3 {
+  white-space: nowrap;
+}
+.clockHud .window-content .headerWrapper .delete {
   width: 20%;
 }
 .clockHud .window-content .clockWrapper {
