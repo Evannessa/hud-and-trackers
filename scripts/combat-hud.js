@@ -533,7 +533,10 @@ export default class CombatHud extends Application {
         this.currentPhase = this.data.currentPhase;
         this.currentRound = this.data.currentRound;
         this.initialized = this.data.initialized;
-        if (Object.keys(this.data.activationObject).length > 0) {
+        if (
+            this.data.activationObject &&
+            Object.keys(this.data.activationObject).length > 0
+        ) {
             this.activationObject = new ActivationObject(
                 this.data.activationObject.activationMap
             );
