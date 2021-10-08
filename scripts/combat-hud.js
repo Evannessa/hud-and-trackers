@@ -856,7 +856,7 @@ export default class CombatHud extends Application {
         }
 
         //send the data once all the GM's stuff has been activated
-        if (game.user.isGM && this.inCombat) {
+        if (game.user.isGM) {
             this.shareApp();
         }
     }
