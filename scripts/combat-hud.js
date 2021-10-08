@@ -4,12 +4,7 @@ import { ActivationObject } from "./classes/ActivationObject.js";
 let ourCombat;
 let combatHud;
 let inCombat = false;
-let whoseTurn = "fastPlayersTurn";
 
-let initializationStarted = false;
-let addedRepTokens = false;
-let initializedRepTokens = false;
-let turnReset = false;
 let socket;
 
 let slowPlayersStore;
@@ -25,10 +20,14 @@ Handlebars.registerHelper("convertToSentence", function (strInputCode) {
 
 Hooks.once("socketlib.ready", () => {
     socket = socketlib.registerModule("hud-and-trackers");
-    socket.register("receiveDataAndUpdate", _receiveDataAndUpdate);
-    socket.register("requestSetTokenHasActed", _requestSetTokenHasActed);
-    socket.register("requestUnsetTokenHasActed", _requestUnsetTokenHasActed);
-    socket.register("requestIfAllHaveActed", _requestIfAllHaveActed);
+});
+
+Hooks.on("renderCombatHud", (app, html) => {
+    console.log("Combat hud rendered");
+    if (!game.combatHud.app) {
+        game.combatHud.app = app;
+    }
+    socket.register("receiveDataAndUpdate", game.combatHud.app.receiveDataAndUpdate);
 });
 
 Hooks.on("init", () => {
@@ -40,13 +39,15 @@ Hooks.on("ready", () => {
     registerSettings();
     combatHud = new CombatHud(combat).render(true);
     game.combatHud.app = combatHud;
+    socket.register("receiveDataAndUpdate", game.combatHud.app.receiveDataAndUpdate);
     createRepresentativeActors();
 });
 
-Hooks.on("ready", () => {
-    // if (game.combat && game.user.isGM) {
-    // 	game.combat.endCombat();
-    // }
+const specialCombatStartID = Hooks.on("combatHudStartCombat", () => {
+    registerCombatSockets();
+    if (game.user.isGM) {
+        console.log("THIS HAS BEEN CALLED ON COMBAT START");
+    }
 });
 
 async function createRepresentativeActors() {
@@ -117,13 +118,22 @@ async function startCombat() {
             }
             await rollNonCombatInitiative(combat).then(() => {
                 createRepTokens(combat).then(() => {
-                    setRepTokenInitiative(combat).then(() => {
-                        combat.startCombat();
+                    setRepTokenInitiative(combat).then(async () => {
+                        await combat.startCombat();
                         combatHud.initOnCombatStart(combat);
+                        Hooks.call("combatHudStartCombat");
                     });
                 });
             });
         }
+    }
+}
+
+function registerCombatSockets() {
+    if (game.combatHud.app) {
+        socket.register("requestSetTokenHasActed", game.combatHud.app.setTokenHasActed);
+        socket.register("requestIfAllHaveActed", game.combatHud.app.checkIfAllHaveActed);
+        console.log("Sockets registered");
     }
 }
 
@@ -328,28 +338,6 @@ async function createRepTokens(combat) {
     tokenData = tokenActors.map((actor) => actor.data.token);
     console.log(tokenData);
     scene.createEmbeddedDocuments("Token", tokenData);
-    // for (let repTokenActor of repTokens.content) {
-    // 	let newToken;
-    // 	let scene = game.scenes.viewed;
-    // 	if (repTokenActor.name == "FastPlayer" && fastPlayers.length > 0) {
-    // 		newToken = await createTokenFromActor(repTokenActor, scene);
-    // 	} else if (repTokenActor.name == "SlowPlayer" && slowPlayers.length > 0) {
-    // 		newToken = await createTokenFromActor(repTokenActor, scene);
-    // 		// newToken = await HelperFunctions.createTokenFromActor(repTokenActor, scene);
-    // 	} else if (repTokenActor.name == "NPCAllies" && npcAllies.length > 0) {
-    // 		newToken = await createTokenFromActor(repTokenActor, scene);
-    // 		// newToken = await HelperFunctions.createTokenFromActor(repTokenActor, scene);
-    // 	} else if (repTokenActor.name == "Enemies" && enemies.length > 0) {
-    // 		newToken = await createTokenFromActor(repTokenActor, scene);
-    // 		// newToken = await HelperFunctions.createTokenFromActor(repTokenActor, scene);
-    // 	}
-    // 	if (newToken) {
-    // 		representativeTokens.push(newToken);
-    // 		tokenData.push(newToken.data);
-    // 	}
-    // }
-    //
-    addedRepTokens = true;
     //create all of the representative combatants
     await combat.createEmbeddedDocuments("Combatant", tokenData);
 }
@@ -370,7 +358,6 @@ async function setRepTokenInitiative(combat) {
             await combat.setInitiative(combatant.id, 3);
         }
     }
-    initializedRepTokens = true;
 }
 
 let refreshed = false;
@@ -399,30 +386,12 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
         let name = combat.combatant.name;
         if (name == "FastPlayer") {
             combatHud.currentPhase = "fastPlayersTurn";
-            if (game.user.isGM) {
-                // await CombatHud.setSetting("currentPhase", "fastPlayersTurn")
-            }
-            whoseTurn = "fastPlayersTurn";
-            //
         } else if (name == "Enemies") {
             combatHud.currentPhase = "enemiesTurn";
-            if (game.user.isGM) {
-                // await CombatHud.setSetting("currentPhase", "enemiesTurn")
-            }
-            whoseTurn = "enemiesTurn";
-            //
         } else if (name == "SlowPlayer") {
             combatHud.currentPhase = "slowPlayersTurn";
-            if (game.user.isGM) {
-                // await CombatHud.setSetting("currentPhase", "slowPlayersTurn")
-            }
-            whoseTurn = "slowPlayersTurn";
-            //
         } else if (name == "NPCAllies") {
             combatHud.currentPhase = "npcAlliesTurn";
-            if (game.user.isGM) {
-            }
-            whoseTurn = "npcAlliesTurn";
         }
     }
 });
@@ -453,79 +422,6 @@ Hooks.on("deleteCombat", async (combat) => {
     combatHud.inCombat = false;
     combatHud.currentPhase = "fastPlayersTurn";
 });
-async function _requestSetTokenHasActed(id, userId) {
-    console.log(game.combatHud.app);
-    //reject if not the token's owner
-    if (game.combatHud.app.checkIfUserIsTokenOwner(id, userId) == false) {
-        return;
-    }
-    //find element and add activated class
-    let element = game.combatHud.app._element[0].querySelector(`[data-id=${id}]`);
-    $(element).addClass("activated");
-
-    //find the canvas on the token and add overlay to show it has acted
-    // game.combatHud.app.setCanvasTokenActivated(element.dataset.id);
-
-    //re-render the hud
-    game.combatHud.app.activationObject.updateActivations(element.dataset.id, true);
-    game.combatHud.app.render();
-}
-
-async function _requestIfAllHaveActed(id) {
-    let element = game.combatHud.app._element[0].querySelector(`[data-id=${id}]`);
-    let phaseName = element.dataset.phase;
-    let map = game.combatHud.app.activationObject.getSpecificMap(phaseName);
-    //go through the map, find which items are false.
-    //if none are false, all of them have acted, so go to the next
-    //turn and reset the activations
-    //*maybe re-render the combat too?
-    let allActed = true;
-    for (let mapItem in map) {
-        if (!map[mapItem]) {
-            allActed = false;
-        }
-    }
-    if (allActed) {
-        await game.combatHud.app.ourCombat.nextTurn();
-        game.combatHud.app.resetActivations();
-        //apply highlights to tokens in new group
-        // CombatHud.highightTokensInGroup(CombatHud.)
-
-        //re-render
-        combatHud.render();
-    }
-}
-
-async function _receiveDataAndUpdate(data) {
-    console.log(data);
-    console.log("Data received!");
-    if (game.combatHud.app) {
-        await game.combatHud.app.render();
-        game.combatHud.app.activationObject = new ActivationObject(
-            data.activationObject.activationMap
-        );
-        game.combatHud.app.currentPhase = data.currentPhase;
-        game.combatHud.app.currentRound = data.currentRound;
-        game.combatHud.app.inCombat = data.inCombat;
-    }
-}
-
-async function _requestUnsetTokenHasActed(id, userId) {
-    //reject if not the token's owner
-    if (game.combatHud.app.checkIfUserIsTokenOwner(id, userId) == false) {
-        return;
-    }
-    //find element and add activated class
-    let element = game.combatHud.app._element[0].querySelector(`[data-id=${id}]`);
-    $(element).removeClass("activated");
-
-    //find the canvas on the token and add overlay to show it has acted
-    // game.combatHud.app.setCanvasTokenActivated(element.dataset.id);
-
-    //re-render the hud
-    game.combatHud.app.activationObject.updateActivations(element.dataset.id, false);
-    game.combatHud.app.render();
-}
 
 /**
  * Creates a PIXI.Container -- destroying previous one 1st if already exists--, adds sprite
@@ -588,11 +484,6 @@ function removeMarkerOnToken(token) {
     }
 }
 
-function rotateTokenMarkers(token) {
-    if (token.marker) {
-        token.marker.children.forEach((child) => (child.rotation += 0.05));
-    }
-}
 /**
  * @param Combat!
  */
@@ -601,6 +492,7 @@ export default class CombatHud extends Application {
         console.log("INITIALIZING HUD ON COMBAT START");
         this.ourCombat = combat;
         this.inCombat = true;
+        this.initialized = true;
 
         let fastPlayers = convertToArrayOfTokens(fastPlayersStore);
         let slowPlayers = convertToArrayOfTokens(slowPlayersStore);
@@ -642,6 +534,7 @@ export default class CombatHud extends Application {
         }
         this.currentPhase = this.data.currentPhase;
         this.currentRound = this.data.currentRound;
+        this.initialized = this.data.initialized;
         if (Object.keys(this.data.activationObject).length > 0) {
             this.activationObject = new ActivationObject(
                 this.data.activationObject.activationMap
@@ -660,33 +553,10 @@ export default class CombatHud extends Application {
         NPC: "npcAllies",
     };
 
-    static currentPhase;
-
-    static currentRound;
-
-    static inCombat;
-
     static ID = "combat-hud";
 
-    static ourCombat;
-
-    static activeCategories;
-
-    static allActivationMaps;
-
-    static slowPlayers;
-    static fastPlayers;
-    static enemies;
-    static allies;
-
-    static fastPlayersActivation;
-    static slowPlayersActivation;
-    static enemiesActivation;
-    static npcAlliesActivation;
-
-    static activationObject;
-
     async manageDisplay(html) {
+        Hooks.call("combatHudStartCombat");
         Hooks.on("renderCombatHud", async (app, newHtml) => {
             let windowApp = newHtml.closest(".window-app");
             //
@@ -705,74 +575,47 @@ export default class CombatHud extends Application {
     }
 
     unhighlightAll(tokens) {
-        tokens.forEach((token) => {
-            removeMarkerOnToken(token);
-        });
+        if (game.user.isGM) {
+            tokens.forEach((token) => {
+                removeMarkerOnToken(token);
+            });
+        }
     }
 
     highlightTokenInGroup(tokenId, hasActed) {
         let token = game.canvas.tokens.placeables.find((token) => token.id == tokenId);
-        createMarkerOnToken(token, hasActed);
+        if (game.user.isGM) {
+            createMarkerOnToken(token, hasActed);
+        }
     }
 
-    static requestSetTokenHasActed(id, userId) {
-        //reject if not the token's owner
-        if (this.checkIfUserIsTokenOwner(id, userId) == false) {
+    setTokenHasActed(elementId, userId, hasActed) {
+        if (!game.combatHud.app.checkIfUserIsTokenOwner(elementId, userId)) {
             return;
         }
-        //find element and add activated class
-        let element = game.combatHud.app._element[0].querySelector(`[data-id=${id}]`);
-        $(element).addClass("activated");
-
-        //find the canvas on the token and add overlay to show it has acted
-        // this.setCanvasTokenActivated(element.dataset.id);
-
-        //re-render the hud
-        this.activationObject.updateActivations(element.dataset.id, true);
-        this.render();
-    }
-
-    static async requestIfAllHaveActed(id) {
-        let element = game.combatHud.app._element[0].querySelector(`[data-id=${id}]`);
-        let phaseName = element.dataset.phase;
-        let map = this.activationObject.getSpecificMap(phaseName);
-        //go through the map, find which items are false.
-        //if none are false, all of them have acted, so go to the next
-        //turn and reset the activations
-        //*maybe re-render the combat too?
-        let allActed = true;
-        for (let mapItem in map) {
-            if (!map[mapItem]) {
-                allActed = false;
-            }
-        }
-        if (allActed) {
-            await this.ourCombat.nextTurn();
-            this.resetActivations();
-            //apply highlights to tokens in new group
-            // CombatHud.highightTokensInGroup(CombatHud.)
-
-            //re-render
-            combatHud.render();
-        }
-    }
-
-    setTokenHasActed(event) {
         //find element in hud, and add class to show it has acted
-        let element = event.currentTarget;
-        $(element).addClass("activated");
+
+        let element = game.combatHud.app.element[0].querySelector(
+            `[data-id='${elementId}']`
+        );
+        if (hasActed) {
+            $(element).addClass("activated");
+        } else {
+            $(element).removeClass("activated");
+        }
 
         //update the activations in the activation object to keep track
-        this.activationObject.updateActivations(element.dataset.id, true);
+        game.combatHud.app.activationObject.updateActivations(elementId, hasActed);
 
-        this.render(true);
-        //re-render
+        game.combatHud.app.render(true);
     }
     //each time an actor is clicked on, check if it's the last. IF so, re-render the thing.
-    async checkIfAllHaveActed(event) {
-        let element = event.currentTarget;
+    async checkIfAllHaveActed(elementId) {
+        let element = game.combatHud.app.element[0].querySelector(
+            `[data-id='${elementId}']`
+        );
         let phaseName = element.dataset.phase;
-        let map = this.activationObject.getSpecificMap(phaseName);
+        let map = game.combatHud.app.activationObject.getSpecificMap(phaseName);
         //go through the map, find which items are false.
         //if none are false, all of them have acted, so go to the next
         //turn and reset the activations
@@ -784,24 +627,11 @@ export default class CombatHud extends Application {
             }
         }
         if (allActed) {
-            await this.ourCombat.nextTurn();
-            this.resetActivations();
-            this.unhighlightAll(game.canvas.tokens.placeables);
-            this.render(true);
+            await game.combatHud.app.ourCombat.nextTurn();
+            game.combatHud.app.resetActivations();
+            game.combatHud.app.unhighlightAll(game.canvas.tokens.placeables);
+            game.combatHud.app.render(true);
         }
-    }
-
-    //TODO: This one will unset the tokens if possible
-    unsetTokenHasActed(event) {
-        //find element in hud, and add class to show it has acted
-        let element = event.currentTarget;
-        $(element).removeClass("activated");
-
-        //update the activations in the activation object to keep track
-        this.activationObject.updateActivations(element.dataset.id, false);
-
-        this.render(true);
-        console.log();
     }
 
     resetActivations() {
@@ -823,9 +653,6 @@ export default class CombatHud extends Application {
             title: "combatHud",
             onSubmit: (e) => e.preventDefault(),
         });
-    }
-    async _updateObject(event, formData) {
-        console.log(formData);
     }
 
     getData() {
@@ -907,6 +734,7 @@ export default class CombatHud extends Application {
             currentPhase: this.currentPhase,
             currentRound: this.currentRound,
             inCombat: this.inCombat,
+            initialized: this.initialized,
             activationObject: this.activationObject,
         };
 
@@ -941,6 +769,7 @@ export default class CombatHud extends Application {
                             currentPhase: "fastPlayersTurn",
                             currentRound: 0,
                             inCombat: false,
+                            initialized: false,
                             activationObject: {},
                         };
                         this.unhighlightAll(game.canvas.tokens.placeables);
@@ -970,29 +799,32 @@ export default class CombatHud extends Application {
                 });
 
                 $(combatantDiv).mousedown((event) => {
+                    let elementId = event.currentTarget.dataset.id;
                     if (event.which == 3) {
                         //right click
                         if (!game.user.isGM) {
-                            socket.executeAsGM(
-                                "requestSetTokenHasActed",
-                                combatantDiv.dataset.id,
-                                game.userId
-                            );
-                            socket.executeAsGM(
-                                "requestUnsetTokenHasActed",
-                                combatantDiv.dataset.id,
-                                game.userId
-                            );
-                            socket.executeAsGM(
-                                "requestIfAllHaveActed",
-                                combatantDiv.dataset.id
-                            );
+                            if (!event.ctrlKey) {
+                                socket.executeAsGM(
+                                    "requestSetTokenHasActed",
+                                    elementId,
+                                    game.userId,
+                                    true
+                                );
+                                socket.executeAsGM("requestIfAllHaveActed", elementId);
+                            } else {
+                                socket.executeAsGM(
+                                    "requestSetTokenHasActed",
+                                    elementId,
+                                    game.userId,
+                                    false
+                                );
+                            }
                         } else {
                             if (!event.ctrlKey) {
-                                this.setTokenHasActed(event);
-                                this.checkIfAllHaveActed(event);
+                                this.setTokenHasActed(elementId, game.user.id, true);
+                                this.checkIfAllHaveActed(elementId);
                             } else {
-                                this.unsetTokenHasActed(event);
+                                this.setTokenHasActed(elementId, game.user.id, false);
                             }
                         }
                     } else if (event.which == 1) {
@@ -1024,7 +856,7 @@ export default class CombatHud extends Application {
         }
 
         //send the data once all the GM's stuff has been activated
-        if (game.user.isGM) {
+        if (game.user.isGM && this.inCombat) {
             this.shareApp();
         }
     }
@@ -1041,7 +873,9 @@ export default class CombatHud extends Application {
     }
 
     checkIfUserIsTokenOwner(tokenId, userId) {
+        console.log(tokenId);
         let token = getCanvasToken(tokenId);
+        console.log(token);
         let actor = getActor(token);
         let permission = actor.data.permission[userId];
         if (permission == 3) {
@@ -1057,17 +891,21 @@ export default class CombatHud extends Application {
             currentPhase: this.currentPhase,
             currentRound: this.currentRound,
             inCombat: this.inCombat,
+            initialized: this.initialized,
         };
         socket.executeForOthers("receiveDataAndUpdate", data);
     }
 
-    static _receiveDataAndUpdate(data) {
-        this.activationObject = new ActivationObject(data.activationObject.activationMap);
-        this.currentPhase = data.currentPhase;
-        this.currentRound = data.currentRound;
-        this.inCombat = data.inCombat;
-        this.render(true);
-        // game.combatHud.app.render();
+    receiveDataAndUpdate(data) {
+        console.log(this);
+        game.combatHud.app.activationObject = new ActivationObject(
+            data.activationObject.activationMap
+        );
+        game.combatHud.app.currentPhase = data.currentPhase;
+        game.combatHud.app.currentRound = data.currentRound;
+        game.combatHud.app.inCombat = data.inCombat;
+        game.combatHud.app.initialized = data.initialized;
+        game.combatHud.app.render(true);
     }
 }
 window.combatHud = combatHud;

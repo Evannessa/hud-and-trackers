@@ -53,11 +53,13 @@ export class ActivationObject {
                 //if we've found the token id we're updating
                 //update and set it to true
                 if (tokenId === _tokenId) {
+                    console.log("Setting " + _tokenId + " HAS-ACTED to " + hasActed);
                     this.activationMap[mapKey][tokenId] = hasActed;
+                } else {
+                    console.log("Couldn't find token");
                 }
             }
         }
-        // this.updateGameSetting();
     }
 
     async updateGameSetting() {

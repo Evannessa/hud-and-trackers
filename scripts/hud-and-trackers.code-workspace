@@ -11,6 +11,7 @@
             "minimizable",
             "PIXI",
             "placeables",
+            "socketlib",
             "unhighlight"
         ]
     }
