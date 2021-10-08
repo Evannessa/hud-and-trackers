@@ -37,8 +37,7 @@ Hooks.on("init", () => {
 
 Hooks.on("ready", () => {
     registerSettings();
-    combatHud = new CombatHud(combat).render(true);
-    game.combatHud.app = combatHud;
+    game.combatHud.app = new CombatHud().render(true);
     socket.register("receiveDataAndUpdate", game.combatHud.app.receiveDataAndUpdate);
     createRepresentativeActors();
 });
@@ -120,7 +119,7 @@ async function startCombat() {
                 createRepTokens(combat).then(() => {
                     setRepTokenInitiative(combat).then(async () => {
                         await combat.startCombat();
-                        combatHud.initOnCombatStart(combat);
+                        game.combatHud.app.initOnCombatStart(combat);
                         Hooks.call("combatHudStartCombat");
                     });
                 });
@@ -376,22 +375,17 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
     }
 
     if (round > 0) {
-        if (!combatHud) {
-            if (game.user.isGM) {
-                combatHud = new CombatHud(combat).render(true);
-            }
-        }
-        combatHud.currentRound = round;
+        game.combatHud.app.currentRound = round;
 
         let name = combat.combatant.name;
         if (name == "FastPlayer") {
-            combatHud.currentPhase = "fastPlayersTurn";
+            game.combatHud.app.currentPhase = "fastPlayersTurn";
         } else if (name == "Enemies") {
-            combatHud.currentPhase = "enemiesTurn";
+            game.combatHud.app.currentPhase = "enemiesTurn";
         } else if (name == "SlowPlayer") {
-            combatHud.currentPhase = "slowPlayersTurn";
+            game.combatHud.app.currentPhase = "slowPlayersTurn";
         } else if (name == "NPCAllies") {
-            combatHud.currentPhase = "npcAlliesTurn";
+            game.combatHud.app.currentPhase = "npcAlliesTurn";
         }
     }
 });
@@ -419,8 +413,8 @@ Hooks.on("deleteCombat", async (combat) => {
         //delete the ones that match
         scene.deleteEmbeddedDocuments("Token", tokensToDelete);
     }
-    combatHud.inCombat = false;
-    combatHud.currentPhase = "fastPlayersTurn";
+    game.combatHud.app.inCombat = false;
+    game.combatHud.app.currentPhase = "fastPlayersTurn";
 });
 
 /**
@@ -520,7 +514,7 @@ export default class CombatHud extends Application {
             enemies,
             npcAllies
         );
-        combatHud.render();
+        game.combatHud.app.render();
     }
 
     constructor(object) {
@@ -914,4 +908,4 @@ export default class CombatHud extends Application {
         game.combatHud.app.render(true);
     }
 }
-window.combatHud = combatHud;
+window.combatHud = game.combatHud.app;
