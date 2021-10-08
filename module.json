@@ -1,32 +1,36 @@
 {
-	"name": "hud-and-trackers",
-	"title": "HUD and Trackers",
-	"description": "An attempt to make tracking stuff easier for me.",
-	"version": "1.0.0",
-	"minimumCoreVersion": "0.7.9",
-	"compatibleCoreVersion": "0.8.9",
-	"author": "Eva",
-	"authors": [{
-		"name": "Eva"
-	}],
-	"packs": [{
-		"name": "macros",
-		"label": "HUD and Trackers",
-		"path": "/packs/macros.db",
-		"entity": "Macro"
-	}],
-	"scripts": ["scripts/draggabilly.min.js"],
-	"esmodules": [
-		"./scripts/init.js",
-		"./scripts/hud.js",
-		"./scripts/combat-hud.js",
-		"./scripts/clock.js"
-	],
-	"styles": ["styles/style.css"],
-	"dependencies": [],
-	"url": "https://github.com/EvanesceExotica/hud-and-trackers",
-	"manifest": "https://raw.githubusercontent.com/EvanesceExotica/hud-and-trackers/master/module.json",
-	"download": "https://github.com/EvanesceExotica/hud-and-trackers",
-	"manifestPlusVersion": "1.2.0",
-	"socket": true
+    "name": "hud-and-trackers",
+    "title": "HUD and Trackers",
+    "description": "An attempt to make tracking stuff easier for me.",
+    "version": "1.0.0",
+    "minimumCoreVersion": "0.7.9",
+    "compatibleCoreVersion": "0.8.9",
+    "author": "Eva",
+    "authors": [
+        {
+            "name": "Eva"
+        }
+    ],
+    "packs": [
+        {
+            "name": "macros",
+            "label": "HUD and Trackers",
+            "path": "/packs/macros.db",
+            "entity": "Macro"
+        }
+    ],
+    "scripts": ["scripts/draggabilly.min.js"],
+    "esmodules": [
+        "./scripts/init.js",
+        "./scripts/hud.js",
+        "./scripts/combat-hud.js",
+        "./scripts/clock.js"
+    ],
+    "styles": ["styles/style.css"],
+    "dependencies": [],
+    "url": "https://github.com/EvanesceExotica/hud-and-trackers",
+    "manifest": "https://raw.githubusercontent.com/EvanesceExotica/hud-and-trackers/master/module.json",
+    "download": "https://github.com/EvanesceExotica/hud-and-trackers/archive/refs/heads/master.zip",
+    "manifestPlusVersion": "1.2.0",
+    "socket": true
 }

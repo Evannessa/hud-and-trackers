@@ -93,6 +93,7 @@ class Clock extends FormApplication {
             delete savedClocks[this.ourId];
             game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
             if (game.clockViewer) {
+                //TODO: Find way to delay this until after the clocks are updated
                 game.clockViewer.render(true);
             }
             this.close();
