@@ -702,6 +702,27 @@
 	}
 }
 
+#clockConfig {
+	.gradients {
+		display: flex;
+		flex-direction: column;
+		justify-content: stretch;
+		align-items: stretch;
+
+		>div {
+			cursor: pointer;
+
+			label {
+				color: black;
+				width: 100%;
+			}
+
+			border-radius: 5px;
+			margin: 0.2rem;
+		}
+	}
+}
+
 #clockConfig,
 .clockHud {
 	.reddish {

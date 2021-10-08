@@ -1,6 +1,10 @@
 "use strict";
 import * as HelperFunctions from "./helper-functions.js";
 
+Hooks.on("renderClockViewer", (app, html) => {
+    game.clockViewer = app;
+});
+
 class Clock extends FormApplication {
     constructor(name, sectionCount, sectionMap, color1, gradient, filledSections, id) {
         console.log("Rendering new clock");
@@ -62,18 +66,21 @@ class Clock extends FormApplication {
         clockWrapper.style.backgroundImage = this.gradient;
 
         clockWrapper.addEventListener("mousedown", (event) => {
-            if (event.which == 1) {
-                this.filledSections++;
-                if (this.filledSections > this.sectionCount) {
-                    this.filledSections = this.sectionCount;
+            if (!event.ctrlKey) {
+                if (event.which == 1) {
+                    this.filledSections++;
+                    if (this.filledSections > this.sectionCount) {
+                        this.filledSections = this.sectionCount;
+                    }
+                    console.log(this.filledSections);
+                    this.saveAndRenderApp();
+                } else if (event.which == 3) {
+                    this.filledSections--;
+                    if (this.filledSections < 0) {
+                        this.filledSections = 0;
+                    }
+                    this.saveAndRenderApp();
                 }
-                this.saveAndRenderApp();
-            } else if (event.which == 3) {
-                this.filledSections--;
-                if (this.filledSections < 0) {
-                    this.filledSections = 0;
-                }
-                this.saveAndRenderApp();
             }
         });
 
@@ -85,14 +92,14 @@ class Clock extends FormApplication {
             let savedClocks = game.settings.get("hud-and-trackers", "savedClocks");
             delete savedClocks[this.ourId];
             game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
+            if (game.clockViewer) {
+                game.clockViewer.render(true);
+            }
             this.close();
         });
 
         Array.from(sections).forEach((element) => {
             //refilling the sections after refresh
-            // if (this.sectionsMap[element.id].filled) {
-            //     element.classList.add("filled");
-            // }
             if (filled < this.filledSections) {
                 element.classList.add("filled");
                 filled++;
@@ -115,6 +122,18 @@ class Clock extends FormApplication {
                     }
                 }
             });
+            element.addEventListener("mouseenter", (event) => {
+                if (event.ctrlKey) {
+                    if (element.classList.contains("filled")) {
+                        element.style.backgroundColor = "gray";
+                    }
+                }
+            });
+            element.addEventListener("mouseleave", (event) => {
+                if (element.classList.contains("filled")) {
+                    element.style.backgroundColor = "white";
+                }
+            });
         });
     }
 
@@ -123,6 +142,7 @@ class Clock extends FormApplication {
      */
     async saveAndRenderApp() {
         let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+        this.object.filledSections = this.filledSections;
         savedClocks[this.ourId] = this.object;
         await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
         this.render();
@@ -157,8 +177,6 @@ export class ClockConfig extends FormApplication {
         let clockName = formData.clockName;
         let color = formData.color;
         let gradient = formData.gradient;
-        console.log(formData);
-        console.log(gradient);
         let sectionCount = formData.sectionCount;
         let startFilled = formData.startFilled;
         let sectionMap = {};
@@ -188,11 +206,25 @@ export class ClockConfig extends FormApplication {
         savedClocks[newClock.object.id] = newClock.object;
         await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
         newClock.render(true);
+        if (game.clockViewer) {
+            game.clockViewer.render(true);
+        }
         this.render();
     }
 
     activateListeners(html) {
         super.activateListeners(html);
+        let windowContent = html.closest(".window-content");
+        console.log(windowContent);
+        let gradientDivs = windowContent.find(".gradients")[0].children;
+        console.log(gradientDivs);
+        Array.from(gradientDivs).forEach((element) => {
+            if (element.tagName == "DIV") {
+                element.addEventListener("click", (event) => {
+                    element.querySelector("input").checked = true;
+                });
+            }
+        });
     }
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
