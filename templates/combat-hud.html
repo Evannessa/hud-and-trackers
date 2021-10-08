@@ -1,59 +1,49 @@
 {{#if combatActive}}
-	
-	<h1 class="roundNumber">Current Round: {{currentRound}}</h1>
-	<h1 class="phaseName">{{convertToSentence currentPhase}}</h1>
-	<p class="intructions">Right click to set token has acted.</p>
-	<p class="intructions">Left click to select token.</p>
-	{{#if (eq currentPhase "fastPlayersTurn")}}
-		<div class="combatant-wrapper">
-			{{#each fastPlayers}}
-				<div class="combatant-div" 
-				data-id={{this.id}}
-				data-phase="fastPlayers">
-					<p>{{this.name}}</p>
-					<img src={{this.data.img}}>
-				</div>
-			{{/each}}
-		</div>
-	{{/if}}
-	{{#if (eq currentPhase "slowPlayersTurn")}}
-		<div class="combatant-wrapper">
-			{{#each slowPlayers}}
-				<div class="combatant-div" 
-				data-id={{this.id}} 
-				data-phase="slowPlayers">
-					<p>{{this.name}}</p>
-					<img src={{this.data.img}}>
-				</div>
-			{{/each}}
-		</div>
-	{{/if}}
-	{{#if (eq currentPhase "enemiesTurn")}}
-		<div class="combatant-wrapper">
-			{{#each enemies}}
-				<div class="combatant-div" 
-				data-id={{this.id}} 
-				data-phase="enemies">
-					<p>{{this.name}}</p>
-					<img src={{this.data.img}}>
-				</div>
-			{{/each}}
-		</div>
-	{{/if}}
-	{{#if (eq currentPhase "npcAlliesTurn")}}
-		<div class="combatant-wrapper">
-			{{#each npcAllies}}
-				<div class="combatant-div" 
-				data-id={{this.id}} 
-				data-phase="npcAllies">
-					<p>{{this.name}}</p>
-					<img src={{this.data.img}}>
-				</div>
-			{{/each}}
-		</div>
-	{{/if}}
 
-	<button class="endCombat"><i class="fas fa-power-off"></i>End Combat</button> 
+<h1 class="roundNumber">Current Round: {{currentRound}}</h1>
+<h1 class="phaseName">{{convertToSentence currentPhase}}</h1>
+<p class="intructions">Right click to mark that character has acted.</p>
+<p class="intructions">Ctrl + Right click to unmark that character has acted.</p>
+<p class="intructions">Left click to select token.</p>
+{{#if (eq currentPhase "fastPlayersTurn")}}
+<div class="combatant-wrapper">
+    {{#each fastPlayers}}
+    <div class="combatant-div" data-id="{{this.id}}" data-phase="fastPlayers">
+        <p>{{this.name}}</p>
+        <img src="{{this.data.img}}" />
+    </div>
+    {{/each}}
+</div>
+{{/if}} {{#if (eq currentPhase "slowPlayersTurn")}}
+<div class="combatant-wrapper">
+    {{#each slowPlayers}}
+    <div class="combatant-div" data-id="{{this.id}}" data-phase="slowPlayers">
+        <p>{{this.name}}</p>
+        <img src="{{this.data.img}}" />
+    </div>
+    {{/each}}
+</div>
+{{/if}} {{#if (eq currentPhase "enemiesTurn")}}
+<div class="combatant-wrapper">
+    {{#each enemies}}
+    <div class="combatant-div" data-id="{{this.id}}" data-phase="enemies">
+        <p>{{this.name}}</p>
+        <img src="{{this.data.img}}" />
+    </div>
+    {{/each}}
+</div>
+{{/if}} {{#if (eq currentPhase "npcAlliesTurn")}}
+<div class="combatant-wrapper">
+    {{#each npcAllies}}
+    <div class="combatant-div" data-id="{{this.id}}" data-phase="npcAllies">
+        <p>{{this.name}}</p>
+        <img src="{{this.data.img}}" />
+    </div>
+    {{/each}}
+</div>
+{{/if}}
+
+<button class="endCombat"><i class="fas fa-power-off"></i>End Combat</button>
 {{else}}
 <div><button class="startCombatButton">Start Combat</button></div>
 {{/if}}
