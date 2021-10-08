@@ -109,7 +109,7 @@ async function startCombat() {
             if (!combat) {
                 if (game.user.isGM) {
                     combat = await game.combats.documentClass.create({
-                        scene: canvas.scene.id,
+                        scene: null,
                         active: true,
                     });
                 }
@@ -430,6 +430,10 @@ Hooks.on("deleteCombat", async (combat) => {
  * @param {*} hasActed - whether or not the token has acted or not
  */
 function createMarkerOnToken(token, hasActed) {
+    if (!token) {
+        return;
+    }
+
     console.log(`Creating marker. Has ${token.name} acted?`, hasActed);
     let color;
     let texturePath;
@@ -467,7 +471,7 @@ function createMarkerOnToken(token, hasActed) {
     sprite.position.set(token.w / 2, token.h / 2);
 
     //We only want it to rotate if has not acted
-    if (!hasActed) {
+    if (!hasActed && sprite) {
         sprite.rotation = previousRotation;
         let rotateFunction = (delta) => {
             sprite.rotation += 0.05;
@@ -577,15 +581,15 @@ export default class CombatHud extends Application {
     unhighlightAll(tokens) {
         if (game.user.isGM) {
             tokens.forEach((token) => {
-                removeMarkerOnToken(token);
+                // removeMarkerOnToken(token);
             });
         }
     }
 
     highlightTokenInGroup(tokenId, hasActed) {
         let token = game.canvas.tokens.placeables.find((token) => token.id == tokenId);
-        if (game.user.isGM) {
-            createMarkerOnToken(token, hasActed);
+        if (game.user.isGM && token) {
+            // createMarkerOnToken(token, hasActed);
         }
     }
 
@@ -830,9 +834,11 @@ export default class CombatHud extends Application {
                     } else if (event.which == 1) {
                         if (game.user.isGM) {
                             let token = getCanvasToken(combatantDiv.dataset.id);
-                            token.control({
-                                releaseOthers: true,
-                            });
+                            if (token) {
+                                token.control({
+                                    releaseOthers: true,
+                                });
+                            }
                         }
                     }
                 });
