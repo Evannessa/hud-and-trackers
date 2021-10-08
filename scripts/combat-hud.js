@@ -38,6 +38,7 @@ Hooks.on("init", () => {
 Hooks.on("ready", () => {
     registerSettings();
     game.combatHud.app = new CombatHud().render(true);
+    window.combatHud = game.combatHud.app;
     socket.register("receiveDataAndUpdate", game.combatHud.app.receiveDataAndUpdate);
     createRepresentativeActors();
 });
@@ -911,4 +912,3 @@ export default class CombatHud extends Application {
         game.combatHud.app.render(true);
     }
 }
-window.combatHud = game.combatHud.app;

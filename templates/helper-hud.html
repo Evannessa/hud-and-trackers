@@ -1,16 +1,27 @@
+<div class="hoverBar"><p>Show Utility Buttons</p></div>
 <div class="utility">
-		<button class="openCheatSheet">Open Cheat Sheet</button>
-		{{#if isGM}}
-			<button class="addPCs">Add PCs to Scene</button>
-			<button class="changeDisposition">Change Disposition</button>
-			<button class="addAttacks">Add NPC Attacks</button>
-			<button class="prep">Open Prep Builder</button>
-			<button class="addClock"><i class="fas fa-clock"></i> Create Clock</button>
-			<button class="showClocks"><i class="fas fa-clock"></i> View Clocks </button>
-		{{else}}
-			<button class="swapCharacter">Swap Character</button>
-			<button class="selectCharacter">Select Character Token</button>
-			<button class="openCharacterSheet">Open Character Sheet</button>
-		{{/if}}
-		<button class="openLootSheet">Open Party Lootbox</button>
+    <button class="openCheatSheet">
+        <i class="far fa-question-circle"></i> Open Cheat Sheet
+    </button>
+    {{#if isGM}}
+    <button class="addPCs"><i class="fas fa-user"></i> Add PCs to Scene</button>
+    <button class="changeDisposition">
+        <i class="far fa-angry"></i> Change Disposition
+    </button>
+    <button class="addAttacks"><i class="fas fa-utensils"></i> Add NPC Attacks</button>
+    <button class="prep"><i class="fas fa-hammer"></i> Open Prep Builder</button>
+    <button class="addClock"><i class="fas fa-clock"></i> Create Clock</button>
+    <button class="showClocks"><i class="fas fa-clock"></i> View Clocks</button>
+    {{else}}
+    <button class="swapCharacter">
+        <i class="fas fa-exchange-alt"></i> Swap Character
+    </button>
+    <button class="selectCharacter">
+        <i class="fas fa-user"></i> Select Character Token
+    </button>
+    <button class="openCharacterSheet">
+        <i class="fas fa-external-link-alt"></i> Open Character Sheet
+    </button>
+    {{/if}}
+    <button class="openLootSheet"><i class="far fa-gem"></i> Open Party Lootbox</button>
 </div>
