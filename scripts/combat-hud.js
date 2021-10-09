@@ -483,6 +483,9 @@ function removeMarkerOnToken(token) {
     }
 }
 
+Hooks.on("renderCombatHud", (app, html) => {
+    HelperFunctions.setInvisibleHeader(html, false);
+});
 /**
  * @param Combat!
  */
@@ -805,7 +808,7 @@ export default class CombatHud extends Application {
                     if (event.which == 3) {
                         //right click
                         if (!game.user.isGM) {
-                            if (!event.ctrlKey) {
+                            if (!event.altKey) {
                                 socket.executeAsGM(
                                     "requestSetTokenHasActed",
                                     elementId,
@@ -822,7 +825,7 @@ export default class CombatHud extends Application {
                                 );
                             }
                         } else {
-                            if (!event.ctrlKey) {
+                            if (!event.altKey) {
                                 this.setTokenHasActed(elementId, game.user.id, true);
                                 this.checkIfAllHaveActed(elementId);
                             } else {

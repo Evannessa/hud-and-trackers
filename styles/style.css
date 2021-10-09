@@ -139,8 +139,6 @@
 }
 
 #tokenHud {
-  left: 100px !important;
-  top: 50px !important;
   display: flex;
   width: -webkit-fit-content !important;
   width: -moz-fit-content !important;
@@ -158,9 +156,6 @@
 #tokenHud *::after {
   margin: 0;
   padding: 0;
-}
-#tokenHud .window-header {
-  display: none;
 }
 #tokenHud .window-content {
   overflow-y: visible;
@@ -316,8 +311,6 @@
 }
 
 #helperHud {
-  top: 500px !important;
-  left: 10px !important;
   width: -webkit-max-content !important;
   width: -moz-max-content !important;
   width: max-content !important;
@@ -339,6 +332,9 @@
   display: flex;
   flex-direction: column;
 }
+#helperHud:hover .window-header {
+  display: block;
+}
 #helperHud *,
 #helperHud *::before,
 #helperHud *::after {
@@ -349,9 +345,6 @@
   background-color: transparent;
   background: none;
   box-shadow: none;
-}
-#helperHud .window-header {
-  display: none;
 }
 #helperHud .utility {
   display: none;
@@ -382,9 +375,7 @@
   height: -moz-fit-content !important;
   height: fit-content !important;
   height: -moz-max-content !important;
-  bottom: 10px !important;
-  left: 810px !important;
-  top: inherit !important;
+  background: transparent;
   opacity: 50%;
 }
 #combatHud:hover {
@@ -395,7 +386,7 @@
   font-size: 1rem;
 }
 #combatHud .window-header {
-  display: none;
+  background-color: transparent;
 }
 #combatHud .combatant-wrapper {
   position: relative;
