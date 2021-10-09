@@ -44,7 +44,9 @@ Hooks.on("init", () => {
     game.helperFunctions = HelperFunctions;
 });
 Hooks.on("canvasReady", () => {
-    game.helperHud = new HelperHud().render(true);
+    if (!game.helperHud) {
+        game.helperHud = new HelperHud().render(true);
+    }
 });
 
 Hooks.on("controlToken", async (token, isControlled) => {
@@ -500,7 +502,7 @@ export class Hud extends Application {
             this.showTab = "none";
             await this.ourToken.setFlag("hud-and-trackers", "showTab", "none");
             lastTab = "none";
-            this.render(true);
+            this.render();
         });
 
         Array.from(buttons).forEach((button) => {
@@ -523,7 +525,7 @@ export class Hud extends Application {
                 this.showTab = type;
                 await this.ourToken.setFlag("hud-and-trackers", "showTab", type);
                 lastTab = type;
-                this.render(true);
+                this.render();
             });
             button.addEventListener("click", async (event) => {
                 //so we want to click to pin, click again to unpin
@@ -531,14 +533,14 @@ export class Hud extends Application {
                     //if already pinned, unpin, and re-render
                     this.pinnedTab = "none";
                     await this.ourToken.setFlag("hud-and-trackers", "pinnedTab", "none");
-                    this.render(true);
+                    this.render();
                 } else {
                     //if not pinned, pin, and re-render
                     let element = event.currentTarget;
                     Hud.setPinned(element);
                     this.pinnedTab = type;
                     await this.ourToken.setFlag("hud-and-trackers", "pinnedTab", type);
-                    this.render(true);
+                    this.render();
                 }
             });
         });
@@ -602,7 +604,7 @@ export class Hud extends Application {
                                 "Our pinned items for" + element.dataset.type + " are ",
                                 array
                             );
-                            this.render(true);
+                            this.render();
                         } else {
                             console.log("Clicking on NOT PINNEd");
                             //this should pin enabler, but only if it's not already in the pinned abilities
@@ -635,7 +637,7 @@ export class Hud extends Application {
                                     "pinnedItems",
                                     this.pinnedItems
                                 );
-                                this.render(true);
+                                this.render();
                             }
                         }
                     }

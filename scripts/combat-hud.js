@@ -483,8 +483,12 @@ function removeMarkerOnToken(token) {
     }
 }
 
-Hooks.on("renderCombatHud", (app, html) => {
+Hooks.once("renderCombatHud", (app, html) => {
     HelperFunctions.setInvisibleHeader(html, false);
+    let windowHeight = $(document).height();
+    let appHeight = app.position.height;
+    let value = windowHeight - (appHeight + 200);
+    app.setPosition({ top: value });
 });
 /**
  * @param Combat!
@@ -518,7 +522,7 @@ export default class CombatHud extends Application {
             enemies,
             npcAllies
         );
-        game.combatHud.app.render();
+        game.combatHud.app.render(game.combatHud.app.position);
     }
 
     constructor(object) {
@@ -612,7 +616,7 @@ export default class CombatHud extends Application {
         //update the activations in the activation object to keep track
         game.combatHud.app.activationObject.updateActivations(elementId, hasActed);
 
-        game.combatHud.app.render(true);
+        game.combatHud.app.render(game.combatHud.app.position);
     }
     //each time an actor is clicked on, check if it's the last. IF so, re-render the thing.
     async checkIfAllHaveActed(elementId) {
@@ -635,7 +639,7 @@ export default class CombatHud extends Application {
             await game.combatHud.app.ourCombat.nextTurn();
             game.combatHud.app.resetActivations();
             game.combatHud.app.unhighlightAll(game.canvas.tokens.placeables);
-            game.combatHud.app.render(true);
+            game.combatHud.app.render(game.combatHud.app.position);
         }
     }
 
@@ -651,7 +655,7 @@ export default class CombatHud extends Application {
             closeOnSubmit: false,
             minimizable: false,
             background: "none",
-            top: 500,
+            top: 600,
             left: 810,
             template: "modules/hud-and-trackers/templates/combat-hud.html",
             id: "combatHud",
@@ -783,7 +787,7 @@ export default class CombatHud extends Application {
                             "savedCombat",
                             defaultData
                         );
-                        game.combatHud.app.render();
+                        game.combatHud.app.render(game.combatHud.app.position);
                     });
                 }
             }
@@ -912,6 +916,6 @@ export default class CombatHud extends Application {
         game.combatHud.app.currentRound = data.currentRound;
         game.combatHud.app.inCombat = data.inCombat;
         game.combatHud.app.initialized = data.initialized;
-        game.combatHud.app.render(true);
+        game.combatHud.app.render(game.combatHud.app.position);
     }
 }
