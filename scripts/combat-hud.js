@@ -651,7 +651,7 @@ export default class CombatHud extends Application {
             closeOnSubmit: false,
             minimizable: false,
             background: "none",
-            bottom: 10,
+            top: 500,
             left: 810,
             template: "modules/hud-and-trackers/templates/combat-hud.html",
             id: "combatHud",

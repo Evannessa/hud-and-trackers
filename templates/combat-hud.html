@@ -1,10 +1,18 @@
 {{#if combatActive}}
 
 <h1 class="roundNumber">Current Round: {{currentRound}}</h1>
-<h1 class="phaseName">{{convertToSentence currentPhase}}</h1>
-<p class="intructions">Right click to mark that character has acted.</p>
-<p class="intructions">Alt + Right click to unmark that character has acted.</p>
-<p class="intructions">Left click to select token.</p>
+<h1 class="phaseName {{currentPhase}}">{{convertToSentence currentPhase}}</h1>
+<span class="tooltip">
+    <ol>
+        <li class="instructions">Right click to mark that character has acted.</li>
+        <hr />
+        <li class="instructions">
+            Alt + Right click to unmark that character has acted.
+        </li>
+        <hr />
+        <li class="instructions">Left click to select token.</li>
+    </ol>
+</span>
 {{#if (eq currentPhase "fastPlayersTurn")}}
 <div class="combatant-wrapper">
     {{#each fastPlayers}}

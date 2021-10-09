@@ -194,7 +194,10 @@
   background-color: #8962d8;
 }
 #tokenHud .instructions {
-  background-color: rgba(44, 46, 47, 0.452);
+  background-color: rgba(44, 46, 47, 0.678);
+  width: -webkit-max-content;
+  width: max-content;
+  width: -moz-max-content;
   flex: 0;
   font-weight: bold;
   padding: 0.5rem 1rem;
@@ -376,9 +379,34 @@
   height: fit-content !important;
   height: -moz-max-content !important;
   background: transparent;
-  opacity: 50%;
+  position: relative;
 }
-#combatHud:hover {
+#combatHud .tooltip {
+  pointer-events: none;
+  opacity: 0;
+  width: 200px;
+  position: absolute;
+  z-index: 10;
+  background-color: #161a1db7;
+  left: -200px;
+  padding: 0.5rem;
+  border-radius: 5px;
+  transition-property: opacity;
+  transition-duration: 0.3s;
+}
+#combatHud .phaseName.enemiesTurn {
+  color: #ff427b;
+}
+#combatHud .phaseName.npcAlliesTurn {
+  color: #00ff88;
+}
+#combatHud .phaseName.slowPlayersTurn {
+  color: #47cbff;
+}
+#combatHud .phaseName.fastPlayersTurn {
+  color: #ffa585;
+}
+#combatHud:hover .tooltip {
   opacity: 100%;
 }
 #combatHud h1,
@@ -387,6 +415,16 @@
 }
 #combatHud .window-header {
   background-color: transparent;
+}
+#combatHud .window-content {
+  background-color: #161a1da9;
+  overflow-y: visible;
+  overflow-x: visible;
+  transition-property: background-color;
+  transition-duration: 0.3s;
+}
+#combatHud .window-content:hover {
+  background-color: #161a1dda;
 }
 #combatHud .combatant-wrapper {
   position: relative;

@@ -279,7 +279,9 @@
 	}
 
 	.instructions {
-		background-color: rgba(44, 46, 47, 0.452);
+		background-color: rgba(44, 46, 47, 0.678);
+		width: max-content;
+		width: -moz-max-content;
 		flex: 0;
 		font-weight: bold;
 		padding: 0.5rem 1rem;
@@ -506,16 +508,57 @@
 	height: fit-content !important;
 	height: -moz-max-content !important;
 	background: transparent;
+	position: relative;
 	// width: 252.375px;
 	// height: 226px;
 	// bottom: 10px !important;
 	// left: 810px !important;
 	// top: inherit !important;
 
-	opacity: 50%;
+
+	.tooltip {
+		pointer-events: none;
+		// display: none;
+		opacity: 0;
+		width: 200px;
+		position: absolute;
+		z-index: 10;
+		background-color: #161a1db7;
+		left: -200px;
+		padding: 0.5rem;
+		border-radius: 5px;
+		transition-property: opacity;
+		transition-duration: 0.3s;
+
+	}
+
+
+
+	.phaseName {
+		&.enemiesTurn {
+			color: rgb(255, 66, 123);
+		}
+
+		&.npcAlliesTurn {
+			color: hsla(152, 100%, 50%, 1)
+		}
+
+		&.slowPlayersTurn {
+			color: hsl(197, 100%, 64%);
+		}
+
+		&.fastPlayersTurn {
+			color: hsla(16, 100%, 76%, 1);
+		}
+	}
 
 	&:hover {
-		opacity: 100%;
+
+		.tooltip {
+			// display: block;
+			opacity: 100%;
+
+		}
 	}
 
 	h1,
@@ -526,6 +569,18 @@
 	.window-header {
 		background-color: transparent;
 		// display: none;
+	}
+
+	.window-content {
+		background-color: #161a1da9;
+		overflow-y: visible;
+		overflow-x: visible;
+		transition-property: background-color;
+		transition-duration: 0.3s;
+
+		&:hover {
+			background-color: #161a1dda;
+		}
 	}
 
 	.combatant-wrapper {
@@ -574,7 +629,7 @@
 
 			&[data-phase="slowPlayers"] {
 				background: hsla(339, 100%, 55%, 1);
-				background: linear-gradient(90deg, hsla(339, 100%, 55%, 1) 0%, hsla(197, 100%, 64%, 1) 100%);
+				background: linear-gradient(90deg, hsla(339, 100%, 55%, 1) 0%, hsl(197, 100%, 64%) 100%);
 				background: -moz-linear-gradient(90deg, hsla(339, 100%, 55%, 1) 0%, hsla(197, 100%, 64%, 1) 100%);
 				background: -webkit-linear-gradient(90deg, hsla(339, 100%, 55%, 1) 0%, hsla(197, 100%, 64%, 1) 100%);
 			}
