@@ -121,6 +121,7 @@ async function startCombat() {
                     setRepTokenInitiative(combat).then(async () => {
                         await combat.startCombat();
                         game.combatHud.app.initOnCombatStart(combat);
+                        game.combatHud.initialSceneId = game.scenes.viewed.id;
                         Hooks.call("combatHudStartCombat");
                     });
                 });
@@ -312,10 +313,10 @@ async function createRepTokens(combat) {
     let representativeTokens = [];
     let tokenData = [];
 
-    let enemies = enemiesStore; //CombatHud.getSetting("activeCategories").enemies;
-    let npcAllies = npcAlliesStore; //CombatHud.getSetting("activeCategories").npcAllies;
-    let fastPlayers = fastPlayersStore; //CombatHud.getSetting("activeCategories").fastPlayers;
-    let slowPlayers = slowPlayersStore; //CombatHud.getSetting("activeCategories").slowPlayers;
+    let enemies = enemiesStore;
+    let npcAllies = npcAlliesStore;
+    let fastPlayers = fastPlayersStore;
+    let slowPlayers = slowPlayersStore;
 
     console.log("Stored values", enemies, npcAllies, fastPlayers, slowPlayers);
 
@@ -429,8 +430,6 @@ function createMarkerOnToken(token, hasActed) {
         return;
     }
 
-    console.log(`Creating marker. Has ${token.name} acted?`, hasActed);
-    let color;
     let texturePath;
     let previousRotation = 0;
     if (token.marker) {
@@ -446,17 +445,14 @@ function createMarkerOnToken(token, hasActed) {
 
     if (hasActed) {
         texturePath = "modules/hud-and-trackers/images/check-mark.png";
-        color = 0x00dd;
     } else {
         texturePath = "modules/hud-and-trackers/images/convergence-target.png";
-        color = 0xd53510;
     }
 
     token.marker = token.addChildAt(
         new PIXI.Container(),
         token.getChildIndex(token.icon)
     );
-    const frameWidth = canvas.grid.grid.w;
     const sprite = PIXI.Sprite.from(texturePath);
     token.marker.addChild(sprite);
     sprite.zIndex = 2000;
@@ -467,10 +463,19 @@ function createMarkerOnToken(token, hasActed) {
 
     //We only want it to rotate if has not acted
     if (!hasActed && sprite) {
-        sprite.rotation = previousRotation;
+        if (sprite != null) {
+            sprite.rotation = previousRotation;
+        }
         let rotateFunction = (delta) => {
-            sprite.rotation += 0.05;
+            if (sprite != null) {
+                sprite.rotation += 0.05;
+            }
         };
+        //store this on the scene
+        if (!game.combatHud.functions) {
+            game.combatHud.functions = {};
+        }
+        game.combatHud.functions[token.id] = rotateFunction;
         token.rotateMarkerFunction = rotateFunction;
         canvas.app.ticker.add(rotateFunction, token.id);
     }
@@ -482,6 +487,56 @@ function removeMarkerOnToken(token) {
         token.marker.destroy();
     }
 }
+Hooks.on("canvasReady", (canvas) => {
+    if (game.combatHud.app && game.combatHud.initialSceneId) {
+        if (canvas.scene.data._id == game.combatHud.initialSceneId) {
+            console.log("Switching back to original scene");
+            //back on the original scene, start to highlight everything again
+            if (game.combatHud.app.element) {
+                let combatantDivs = game.combatHud.app.element.find(".combatant-div");
+                for (let combatantDiv of combatantDivs) {
+                    if (!combatantDiv.classList.contains("activated")) {
+                        game.combatHud.app.highlightTokenInGroup(
+                            combatantDiv.dataset.id,
+                            false
+                        );
+                    } else {
+                        game.combatHud.app.highlightTokenInGroup(
+                            combatantDiv.dataset.id,
+                            true
+                        );
+                    }
+                }
+            }
+        }
+    }
+});
+Hooks.on("canvasInit", (canvas) => {
+    //we're trying to get the scene where the combat started
+    if (game.combatHud.app && game.combatHud.initialSceneId) {
+        //if we've switched scenes from the initial combat scene
+        if (canvas.scene.data._id != game.combatHud.initialSceneId) {
+            console.log("Switching to different scene");
+            //if we have the ticker functions
+            if (game.combatHud.functions) {
+                for (let tokenId in game.combatHud.functions) {
+                    canvas.app.ticker.remove(game.combatHud.functions[tokenId], tokenId);
+                }
+            }
+        }
+        // if we're back on the original scene
+    }
+});
+// if (canvas.scene.data._id != game.combatHud.initialSceneId) {
+//     //store the previous scene, and get a new one
+//     game.combatHud.app.previousSceneId = game.combatHud.initialSceneId;
+//     game.combatHud.initialSceneId = canvas.scene.data._id;
+// }
+// if (game.combatHud.app && game.combatHud.functions) {
+//     for (let tokenId in game.combatHud.functions) {
+//         canvas.app.ticker.remove(game.combatHud.functions[tokenId], tokenId);
+//     }
+// }
 
 Hooks.once("renderCombatHud", (app, html) => {
     HelperFunctions.setInvisibleHeader(html, false);
@@ -508,7 +563,7 @@ export default class CombatHud extends Application {
         this.currentRound = ourCombat.current.round;
         //if we have no fast players
         if (fastPlayers.length == 0) {
-            //set the first turn to ememies
+            //set the first turn to enemies
             this.currentPhase = "enemiesTurn";
         } else {
             //otherwise, if we have no enemies, we should always have fast players, as there were no enemies to compare to
@@ -576,17 +631,12 @@ export default class CombatHud extends Application {
                 width: "fit-content",
             });
         });
-        Hooks.on("updateSetting", async (setting) => {
-            if (setting.key == "hud-and-trackers.savedCombat") {
-                let data = await game.settings.get("hud-and-trackers", "savedCombat");
-            }
-        });
     }
 
     unhighlightAll(tokens) {
         if (game.user.isGM) {
             tokens.forEach((token) => {
-                // removeMarkerOnToken(token);
+                removeMarkerOnToken(token);
             });
         }
     }
@@ -594,7 +644,7 @@ export default class CombatHud extends Application {
     highlightTokenInGroup(tokenId, hasActed) {
         let token = game.canvas.tokens.placeables.find((token) => token.id == tokenId);
         if (game.user.isGM && token) {
-            // createMarkerOnToken(token, hasActed);
+            createMarkerOnToken(token, hasActed);
         }
     }
 
@@ -641,6 +691,10 @@ export default class CombatHud extends Application {
             game.combatHud.app.unhighlightAll(game.canvas.tokens.placeables);
             game.combatHud.app.render(game.combatHud.app.position);
         }
+    }
+
+    getTokensInCurrentPhase() {
+        return this.activationObject.getTokensInPhase(this.currentPhase);
     }
 
     resetActivations() {

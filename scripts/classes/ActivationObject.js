@@ -62,6 +62,10 @@ export class ActivationObject {
         }
     }
 
+    getTokensInPhase(phaseName) {
+        return Object.keys(this.activationMap[phaseName]);
+    }
+
     async updateGameSetting() {
         console.log("THIS activation object is ", this);
         await game.settings.set(
