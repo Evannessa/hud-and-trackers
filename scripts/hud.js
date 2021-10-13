@@ -453,6 +453,7 @@ export class Hud extends Application {
         return {
             ourToken: this.ourToken,
             isGM: this.isGM,
+            type: this.ourActor.type,
             ourActor: this.ourActor,
             attacks: this.attacks,
             skills: this.skills,
@@ -528,16 +529,37 @@ export class Hud extends Application {
             lastTab = "none";
             this.render();
         });
+        let tabs = Array.from(buttons);
+        tabs = tabs.filter((btn) => {
+            if (btn.classList.contains("show")) {
+                return btn;
+            }
+        });
+        console.log(tabs);
+        let damage = buttonWrapper.querySelector(".damage");
+        if (damage) {
+            $(damage).click((event) => {
+                HelperFunctions.callMacro("Apply Damage to Selected Tokens");
+            });
+        }
+        let effort = buttonWrapper.querySelector(".effort");
+        if (effort) {
+            $(effort).click((event) => {
+                HelperFunctions.callMacro("NPC Effort");
+            });
+        }
 
-        Array.from(buttons).forEach((button) => {
-            let type = button.dataset.type;
+        //go through the tabs,, and add the active class if our show tab
+        //shows it as the active class, or pinned class
+        tabs.forEach((tab) => {
+            let type = tab.dataset.type;
             if (this.showTab == type) {
-                $(button).addClass("active");
+                $(tab).addClass("active");
             }
             if (this.pinnedTab == type) {
-                $(button).addClass("pinned");
+                $(tab).addClass("pinned");
             }
-            button.addEventListener("mouseenter", async (event) => {
+            tab.addEventListener("mouseenter", async (event) => {
                 if (this.showTab == type) {
                     return;
                 }
@@ -551,7 +573,7 @@ export class Hud extends Application {
                 lastTab = type;
                 this.render();
             });
-            button.addEventListener("click", async (event) => {
+            tab.addEventListener("click", async (event) => {
                 //so we want to click to pin, click again to unpin
                 if (this.pinnedTab == type) {
                     //if already pinned, unpin, and re-render
@@ -597,7 +619,6 @@ export class Hud extends Application {
                     });
                 }
                 hudItem.addEventListener("mousedown", async (event) => {
-                    console.log("IS THIS HAPPENING");
                     if (event.which == 3) {
                         //this should unpin enabler
                         let element = event.currentTarget;
@@ -701,33 +722,5 @@ export class Hud extends Application {
         });
         return items.sort();
     }
-
-    // getAttacks(ourToken) {
-    // 	if (ourToken.data.actorLink) {
-    // 		let actor = game.actors.get(ourToken.data.actorId);
-    // 		let attacks = actor.data.items.contents.filter((item) => {
-    // 			return item.data.type === "attack";
-    // 		});
-    // 		return attacks.sort();
-    // 	}
-    // }
-    // getSkills(ourToken) {
-    // 	if (ourToken.data.actorLink) {
-    // 		let actor = game.actors.get(ourToken.data.actorId);
-    // 		let skills = actor.data.items.contents.filter((item) => {
-    // 			return item.data.type === "skill";
-    // 		});
-    // 		return skills.sort();
-    // 	}
-    // }
-    // getAbilities(ourToken) {
-    // 	if (ourToken.data.actorLink) {
-    // 		let actor = game.actors.get(ourToken.data.actorId);
-    // 		let abilities = actor.data.items.contents.filter((item) => {
-    // 			return item.data.type === "ability";
-    // 		});
-    // 		return abilities.sort();
-    // 	}
-    // }
 }
 window.hud = hud;

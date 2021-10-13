@@ -162,6 +162,9 @@
   overflow-x: visible;
   background-color: transparent;
 }
+#tokenHud .window-content .tokenName {
+  text-shadow: 0px 5px 15px rgba(0, 0, 0, 0.55);
+}
 #tokenHud .button-wrapper {
   display: flex;
   flex-direction: row;

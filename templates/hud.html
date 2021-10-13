@@ -1,11 +1,20 @@
 {{#if ourToken}}
-<h1>{{ourToken.name}}</h1>
+<h1 class="tokenName">{{ourToken.name}}</h1>
 <div class="button-wrapper">
-    <button class="showAttacks" data-type="attacks">Attacks</button>
-    <button class="showSkills" data-type="skills">Skills</button>
-    <button class="showAbilities" data-type="abilities">Abilities</button>
-    <button class="showCyphers" data-type="cyphers">Cyphers</button>
-    <button class="showArtifacts" data-type="artifacts">Artifacts</button>
+    <button class="showAttacks show" data-type="attacks">Attacks</button>
+    {{#if (eq type "PC")}}
+    <button class="showSkills show" data-type="skills">Skills</button>
+    <button class="showAbilities show" data-type="abilities">Abilities</button>
+    {{/if}}
+    <button class="showCyphers show" data-type="cyphers">Cyphers</button>
+    <button class="showArtifacts show" data-type="artifacts">Artifacts</button>
+    {{#if isGM}} {{#if (eq type "NPC")}}
+    <button class="damage">Apply Dmg</button>
+    <button class="effort">
+        Use<br />
+        Effort
+    </button>
+    {{/if}} {{/if}}
 </div>
 <br />
 {{#unless (eq showTab "none")}}
@@ -28,7 +37,7 @@
     <div class="break"></div>
     {{#each attacks}} {{>
     "modules/hud-and-trackers/templates/hud-partials/attack-partial.html"}} {{/each}}
-    {{/if}}
+    {{/if}} {{#if (eq type "PC")}} {{log type}}
     <!-- Skills -->
     {{#if (eq showTab "skills")}}
     <div class="pinnedDiv">
@@ -48,7 +57,7 @@
     <div class="break"></div>
     {{#each abilities}} {{>
     "modules/hud-and-trackers/templates/hud-partials/ability-partial.html"}} {{/each}}
-    {{/if}}
+    {{/if}} {{/if}}
     <!-- Cyphers -->
     {{#if (eq showTab "cyphers")}}
     <div class="pinnedDiv">

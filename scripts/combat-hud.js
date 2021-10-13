@@ -556,6 +556,7 @@ Hooks.once("renderCombatHud", (app, html) => {
 export default class CombatHud extends Application {
     async initOnCombatStart(combat) {
         console.log("INITIALIZING HUD ON COMBAT START");
+        this.isGM = game.user.isGM;
         this.ourCombat = combat;
         this.inCombat = true;
         this.initialized = true;
@@ -587,6 +588,7 @@ export default class CombatHud extends Application {
 
     constructor(object) {
         super();
+        this.isGM = game.user.isGM;
         this.phases = {
             FASTPC: "fastPlayers",
             SLOWPC: "slowPlayers",
@@ -726,6 +728,7 @@ export default class CombatHud extends Application {
     getData() {
         if (game.user.isGM) {
             return {
+                isGM: game.user.isGM,
                 activationObject: this.activationObject,
                 combatActive: this.inCombat,
                 fastPlayers: convertToArrayOfTokens(
@@ -755,6 +758,7 @@ export default class CombatHud extends Application {
                 this.data.activationObject.activationMap
             );
             return {
+                isGM: game.user.isGM,
                 activationObject: this.activationObject,
                 combatActive: this.inCombat,
                 fastPlayers: convertToArrayOfTokens(
@@ -798,6 +802,7 @@ export default class CombatHud extends Application {
     async activateListeners(html) {
         console.log("Activating listeners again");
         let data = {
+            isGM: game.user.isGM,
             ourCombat: this.ourCombat,
             currentPhase: this.currentPhase,
             currentRound: this.currentRound,

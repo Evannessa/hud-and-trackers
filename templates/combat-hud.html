@@ -53,5 +53,5 @@
 
 <button class="endCombat"><i class="fas fa-power-off"></i>End Combat</button>
 {{else}}
-<div><button class="startCombatButton">Start Combat</button></div>
+<div><button class="startCombatButton" {{#unless isGM}}disabled{{/unless}}>Start Combat</button></div>
 {{/if}}

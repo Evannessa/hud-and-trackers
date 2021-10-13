@@ -219,7 +219,13 @@
 		overflow-y: visible;
 		overflow-x: visible;
 		background-color: transparent;
+
+		.tokenName {
+			text-shadow: 0px 5px 15px rgba(0, 0, 0, 0.55);
+		}
 	}
+
+
 
 	.button-wrapper {
 		display: flex;
@@ -265,17 +271,7 @@
 			}
 		}
 
-		// .showAttacks {
-		// 	background-color: #e76f51;
-		// }
 
-		// .showSkills {
-		// 	background-color: #09F;
-		// }
-
-		// .showAbilities {
-		// 	background-color: hsla(33, 100%, 53%, 1);
-		// }
 	}
 
 	.instructions {
