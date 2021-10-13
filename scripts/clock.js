@@ -6,13 +6,12 @@ Hooks.on("renderClockViewer", (app, html) => {
 });
 
 class Clock extends FormApplication {
-    constructor(name, sectionCount, sectionMap, color1, gradient, filledSections, id) {
+    constructor(name, sectionCount, sectionMap, gradient, filledSections, id) {
         console.log("Rendering new clock");
         super({
             name,
             sectionCount,
             sectionMap,
-            color1,
             gradient,
             filledSections,
             id,
@@ -176,7 +175,6 @@ export class ClockConfig extends FormApplication {
     async _updateObject(event, formData) {
         //create a new clock
         let clockName = formData.clockName;
-        let color = formData.color;
         let gradient = formData.gradient;
         let sectionCount = formData.sectionCount;
         let startFilled = formData.startFilled;
@@ -185,10 +183,10 @@ export class ClockConfig extends FormApplication {
         for (let i = 0; i < sectionCount; i++) {
             let sectionID = HelperFunctions.idGenerator();
             if (!startFilled) {
-                sectionMap[sectionID] = new Section(sectionID, "", color, false);
+                sectionMap[sectionID] = new Section(sectionID, "", false);
             } else {
                 filledSections = sectionCount;
-                sectionMap[sectionID] = new Section(sectionID, "", color, true);
+                sectionMap[sectionID] = new Section(sectionID, "", true);
             }
         }
 
@@ -199,7 +197,6 @@ export class ClockConfig extends FormApplication {
             clockName,
             sectionCount,
             sectionMap,
-            color,
             gradient,
             filledSections,
             id
@@ -242,20 +239,17 @@ export class ClockConfig extends FormApplication {
 }
 
 class SectionConfig extends FormApplication {
-    constructor(sectionId, sectionLabel, sectionColor, sectionFilled, clockParent) {
-        console.log(sectionId, sectionLabel, sectionColor, sectionFilled, clockParent);
+    constructor(sectionId, sectionLabel, sectionFilled, clockParent) {
         super();
         // super(sectionId, sectionLabel, sectionColor, sectionFilled, clockParent);
         this.sectionId = sectionId;
         this.sectionLabel = sectionLabel;
-        this.sectionColor = sectionColor;
         this.sectionFilled = sectionFilled;
         this.clockParent = clockParent;
     }
     getData() {
         return {
             sectionLabel: this.sectionLabel,
-            sectionColor: this.sectionColor,
         };
     }
     static get defaultOptions() {
@@ -273,7 +267,6 @@ class SectionConfig extends FormApplication {
     async _updateObject(event, formData) {
         let data = {
             sectionLabel: formData.label,
-            sectionColor: formData.color,
             sectionFilled: this.sectionFilled,
         };
         this.clockParent.updateSections(this.sectionId, data);
@@ -285,17 +278,16 @@ class SectionConfig extends FormApplication {
 }
 
 class Section {
-    constructor(id, label, color, filled) {
+    constructor(id, label, filled) {
         this.id = id;
         this.label = label;
-        this.color = color;
         this.filled = filled;
     }
     static fromJSON(obj) {
         if (typeof obj == "string") {
             obj = JSON.parse(obj);
         }
-        return new Section(obj.id, obj.label, obj.color, obj.filled);
+        return new Section(obj.id, obj.label, obj.filled);
     }
 }
 
