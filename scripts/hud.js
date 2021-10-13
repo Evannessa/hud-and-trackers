@@ -71,6 +71,7 @@ Hooks.on("controlToken", async (token, isControlled) => {
             } else {
                 //create a new hud
                 hud = new Hud(ourToken).render(true);
+                game.abilityHud = hud;
             }
         }
     }
@@ -227,8 +228,21 @@ function itemRollMacro(
     // Parse data to All-in-One Dialog
 }
 
+Hooks.once("renderHelperHud", (app, html) => {
+    let position = game.settings.get("hud-and-trackers", "helperHudPosition");
+    if (Object.keys(position).length > 0) {
+        app.setPosition({ top: position.top, left: position.left });
+    }
+});
 Hooks.on("renderHelperHud", (app, html) => {
     HelperFunctions.setInvisibleHeader(html, true);
+});
+
+Hooks.once("renderHud", (app, html) => {
+    let position = game.settings.get("hud-and-trackers", "tokenHudPosition");
+    if (Object.keys(position).length > 0) {
+        app.setPosition({ top: position.top, left: position.left });
+    }
 });
 
 Hooks.on("renderHud", (app, html) => {
@@ -268,6 +282,16 @@ export class HelperHud extends Application {
         let windowContent = html.closest(".window-content");
         let openCheatSheet = windowContent.find(".openCheatSheet")[0];
         let openLootSheet = windowContent.find(".openLootSheet")[0];
+        let savePos = windowContent.find(".savePos")[0];
+
+        $(savePos).click((event) => {
+            let combatHudPosition = game.combatHud.app.position;
+            let helperHudPosition = game.helperHud.position;
+            let tokenHudPosition = game.abilityHud.position;
+            game.settings.set("hud-and-trackers", "combatHudPosition", combatHudPosition);
+            game.settings.set("hud-and-trackers", "tokenHudPosition", tokenHudPosition);
+            game.settings.set("hud-and-trackers", "helperHudPosition", helperHudPosition);
+        });
 
         $(openCheatSheet).click((event) => {
             HelperFunctions.callMacro("Open Cheat Sheet PDF");

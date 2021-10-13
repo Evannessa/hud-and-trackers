@@ -13,6 +13,7 @@
             "placeables",
             "socketlib",
             "unhighlight"
-        ]
+        ],
+        "blockman.n04ColorComboPreset": "Classic Dark Oppo (Gradients)"
     }
 }

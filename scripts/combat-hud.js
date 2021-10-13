@@ -540,10 +540,15 @@ Hooks.on("canvasInit", (canvas) => {
 
 Hooks.once("renderCombatHud", (app, html) => {
     HelperFunctions.setInvisibleHeader(html, false);
-    let windowHeight = $(document).height();
-    let appHeight = app.position.height;
-    let value = windowHeight - (appHeight + 200);
-    app.setPosition({ top: value });
+    let position = game.settings.get("hud-and-trackers", "combatHudPosition");
+    if (Object.keys(position).length > 0) {
+        app.setPosition({ top: position.top, left: position.left });
+    } else {
+        let windowHeight = $(document).height();
+        let appHeight = app.position.height;
+        let value = windowHeight - (appHeight + 200);
+        app.setPosition({ top: value });
+    }
 });
 /**
  * @param Combat!
