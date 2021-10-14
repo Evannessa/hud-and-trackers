@@ -521,6 +521,16 @@
 .clockHud .window-content .clockName {
   flex: 0;
 }
+.clockHud .window-content .contentWrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+.clockHud .window-content .contentWrapper .frameWrapper,
+.clockHud .window-content .contentWrapper .clockWrapper {
+  grid-row: 1;
+  grid-column: 1;
+}
 .clockHud .window-content .headerWrapper {
   display: flex;
   flex: content;
@@ -533,6 +543,24 @@
 }
 .clockHud .window-content .headerWrapper .delete {
   width: 20%;
+}
+.clockHud .window-content .frameWrapper {
+  display: flex;
+  flex-direction: row;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  pointer-events: none;
+  z-index: 10;
+}
+.clockHud .window-content .frameWrapper .frameSection {
+  width: 5rem;
+  height: 5rem;
+  background-color: transparent;
+  position: relative;
+  box-shadow: 0px -14px 0px 2px #191716, 0px 14px 0px 2px #191716, 0px 0px 0px 10px #191716;
+  border-radius: 10px;
+  margin-right: 10px;
 }
 .clockHud .window-content .clockWrapper {
   display: flex;
@@ -563,38 +591,30 @@
 }
 .clockHud .window-content .clockSection[data-break] {
   position: relative;
+  margin-right: 10px;
 }
-.clockHud .window-content .clockSection[data-break]::after {
-  content: "";
-  position: absolute;
-  border-right: 6px solid #191816;
-  z-index: 10;
-  height: 100%;
-  width: 100%;
-  pointer-events: none;
-}
-.clockHud .window-content .label {
+.clockHud .window-content .clockSection .label {
   color: white;
   font-weight: bold;
   z-index: 200;
 }
-.clockHud .window-content.filled {
+.clockHud .window-content .clockSection.filled {
   box-shadow: none;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
   background-color: white;
   mix-blend-mode: multiply;
   transition: 0.5s;
 }
-.clockHud .window-content.filled .label {
+.clockHud .window-content .clockSection.filled .label {
   color: black;
 }
-.clockHud .window-content.filled:hover {
+.clockHud .window-content .clockSection.filled:hover {
   background-position: right center;
   /* change the direction of the change here */
   color: #fff;
   text-decoration: none;
 }
-.clockHud .window-content .edit {
+.clockHud .window-content .clockSection .edit {
   position: absolute;
   width: 1rem !important;
   height: 1rem !important;

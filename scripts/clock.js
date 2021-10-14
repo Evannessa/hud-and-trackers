@@ -4,7 +4,9 @@ import * as HelperFunctions from "./helper-functions.js";
 Hooks.on("renderClockViewer", (app, html) => {
     game.clockViewer = app;
 });
+// Handlebars.registerHelper("calcWidth", function() {
 
+// });
 Handlebars.registerHelper("times", function (n, block) {
     var accum = "";
     for (var i = 0; i < n; ++i) accum += block.fn(i);
@@ -93,6 +95,7 @@ class Clock extends FormApplication {
         });
 
         let sections = windowContent.find(".clockSection");
+        let frames = windowContent.find(".frameSection");
         let filled = 0;
         let deleteClock = windowContent.find(".delete")[0];
 
@@ -108,13 +111,26 @@ class Clock extends FormApplication {
         });
 
         let sectionsArray = Array.from(sections);
+        let framesArray = Array.from(frames);
         let count = 0;
-        sectionsArray.forEach((element) => {
-            if (sectionsArray.indexOf(element) == this.breaks[count]) {
-                $(element).attr("data-break", "true");
-                count++;
-            }
+        //go through all the sub-sections if there are some
+        if (this.breaks.length > 0) {
+            //if breaks is = [2, 1, 2]
+            this.breaks.forEach((num) => {
+                count += num; //count = 2, first time around, 3 second time around, 5 3rd time around
+                $(sectionsArray[count - 1]).attr("data-break", true); //(we're subtracting one since array indices start at zero)
+            });
+            let i = 0;
 
+            framesArray.forEach((frame) => {
+                $(frame).width((index, currentWidth) => {
+                    let result = currentWidth * this.breaks[i];
+                    return currentWidth * this.breaks[i];
+                });
+                i++;
+            });
+        }
+        sectionsArray.forEach((element) => {
             //refilling the sections after refresh
             if (filled < this.filledSections) {
                 element.classList.add("filled");
@@ -197,6 +213,13 @@ export class ClockConfig extends FormApplication {
         let breaksString = formData.breaks;
         let breaks = breaksString.split(",");
         breaks = breaks.map((ch) => parseInt(ch));
+        //! this will return [""] then [NaN]
+        //if we have a number in the breaks array
+        if (!Number.isNaN(breaks[0])) {
+            sectionCount = breaks.reduce((previousValue, currentValue) => {
+                return previousValue + currentValue;
+            });
+        }
         console.log(
             "🚀 ~ file: clock.js ~ line 187 ~ ClockConfig ~ _updateObject ~ breaks",
             breaks
