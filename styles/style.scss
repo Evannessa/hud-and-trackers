@@ -727,6 +727,15 @@
 			// background-image: linear-gradient(to right, #ff6e7f 0%, #bfe9ff 100%);
 			background-position: right;
 
+			.innerWrapper {
+				display: flex;
+				flex-direction: row;
+
+				+.innerWrapper {
+					margin: 1rem;
+				}
+			}
+
 		}
 
 		.clockSection {

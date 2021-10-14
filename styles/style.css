@@ -543,6 +543,13 @@
   background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 100%);
   background-position: right;
 }
+.clockHud .window-content .clockWrapper .innerWrapper {
+  display: flex;
+  flex-direction: row;
+}
+.clockHud .window-content .clockWrapper .innerWrapper + .innerWrapper {
+  margin: 1rem;
+}
 .clockHud .window-content .clockSection {
   display: flex;
   align-items: center;

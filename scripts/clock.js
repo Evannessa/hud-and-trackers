@@ -5,8 +5,14 @@ Hooks.on("renderClockViewer", (app, html) => {
     game.clockViewer = app;
 });
 
+Handlebars.registerHelper("times", function (n, block) {
+    var accum = "";
+    for (var i = 0; i < n; ++i) accum += block.fn(i);
+    return accum;
+});
+
 class Clock extends FormApplication {
-    constructor(name, sectionCount, sectionMap, gradient, filledSections, id) {
+    constructor(name, sectionCount, sectionMap, gradient, filledSections, breaks, id) {
         console.log("Rendering new clock");
         super({
             name,
@@ -14,6 +20,7 @@ class Clock extends FormApplication {
             sectionMap,
             gradient,
             filledSections,
+            breaks,
             id,
         });
         if (!id) {
@@ -25,6 +32,7 @@ class Clock extends FormApplication {
         this.sectionCount = sectionCount;
         this.sectionsMap = sectionMap;
         this.gradient = gradient;
+        this.breaks = breaks;
 
         this.filledSections = filledSections;
     }
@@ -54,6 +62,7 @@ class Clock extends FormApplication {
             name: this.name,
             sectionCount: this.sectionCount,
             sections: Object.values(this.sectionsMap),
+            breaks: this.breaks,
         };
     }
 
@@ -178,6 +187,13 @@ export class ClockConfig extends FormApplication {
         let gradient = formData.gradient;
         let sectionCount = formData.sectionCount;
         let startFilled = formData.startFilled;
+        let breaksString = formData.breaks;
+        let breaks = breaksString.split(",");
+        breaks = breaks.map((ch) => parseInt(ch));
+        console.log(
+            "🚀 ~ file: clock.js ~ line 187 ~ ClockConfig ~ _updateObject ~ breaks",
+            breaks
+        );
         let sectionMap = {};
         let filledSections = 0;
         for (let i = 0; i < sectionCount; i++) {
@@ -199,6 +215,7 @@ export class ClockConfig extends FormApplication {
             sectionMap,
             gradient,
             filledSections,
+            breaks,
             id
         );
         savedClocks[newClock.object.id] = newClock.object;
