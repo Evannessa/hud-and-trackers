@@ -107,7 +107,14 @@ class Clock extends FormApplication {
             this.close();
         });
 
-        Array.from(sections).forEach((element) => {
+        let sectionsArray = Array.from(sections);
+        let count = 0;
+        sectionsArray.forEach((element) => {
+            if (sectionsArray.indexOf(element) == this.breaks[count]) {
+                $(element).attr("data-break", "true");
+                count++;
+            }
+
             //refilling the sections after refresh
             if (filled < this.filledSections) {
                 element.classList.add("filled");

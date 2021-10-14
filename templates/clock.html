@@ -4,7 +4,7 @@
         <button class="delete" data-action="delete"><i class="fa fa-trash"></i></button>
     </div>
     <div class="clockWrapper">
-        {{#if (eq breaks.length 0)}} {{#each sections}}
+        {{#each sections}}
         <div
             class="clockSection"
             id="{{this.id}}"
@@ -13,19 +13,6 @@
         >
             <p class="label">{{this.label}}</p>
         </div>
-        {{/each}} {{else}} {{#each breaks}}
-        <div class="innerWrapper">
-            {{#times this}}
-            <div
-                class="clockSection"
-                id="{{this.id}}"
-                data-color="{{this.color}}"
-                data-label="{{this.label}}"
-            >
-                <p class="label">{{this.label}}</p>
-            </div>
-            {{/times}}
-        </div>
-        {{/each}} {{/if}}
+        {{/each}}
     </div>
 </form>

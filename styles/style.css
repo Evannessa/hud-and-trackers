@@ -561,28 +561,40 @@
   background-color: #2c2e2f;
   box-shadow: #1d1d1d 3px 3px 6px 0px inset, rgba(92, 92, 92, 0.5) -3px -3px 6px 1px inset;
 }
-.clockHud .window-content .clockSection .label {
+.clockHud .window-content .clockSection[data-break] {
+  position: relative;
+}
+.clockHud .window-content .clockSection[data-break]::after {
+  content: "";
+  position: absolute;
+  border-right: 6px solid #191816;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+}
+.clockHud .window-content .label {
   color: white;
   font-weight: bold;
   z-index: 200;
 }
-.clockHud .window-content .clockSection.filled {
+.clockHud .window-content.filled {
   box-shadow: none;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
   background-color: white;
   mix-blend-mode: multiply;
   transition: 0.5s;
 }
-.clockHud .window-content .clockSection.filled .label {
+.clockHud .window-content.filled .label {
   color: black;
 }
-.clockHud .window-content .clockSection.filled:hover {
+.clockHud .window-content.filled:hover {
   background-position: right center;
   /* change the direction of the change here */
   color: #fff;
   text-decoration: none;
 }
-.clockHud .window-content .clockSection .edit {
+.clockHud .window-content .edit {
   position: absolute;
   width: 1rem !important;
   height: 1rem !important;
