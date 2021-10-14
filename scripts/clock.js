@@ -4,9 +4,13 @@ import * as HelperFunctions from "./helper-functions.js";
 Hooks.on("renderClockViewer", (app, html) => {
     game.clockViewer = app;
 });
-// Handlebars.registerHelper("calcWidth", function() {
+Handlebars.registerHelper("isNumber", function (value) {
+    return Number.isNaN(value);
+});
+Handlebars.registerHelper("getValue", function (array, index) {
+    return array[index];
+});
 
-// });
 Handlebars.registerHelper("times", function (n, block) {
     var accum = "";
     for (var i = 0; i < n; ++i) accum += block.fn(i);
@@ -219,11 +223,13 @@ export class ClockConfig extends FormApplication {
             sectionCount = breaks.reduce((previousValue, currentValue) => {
                 return previousValue + currentValue;
             });
+        } else {
+            breaks = [];
         }
-        console.log(
-            "🚀 ~ file: clock.js ~ line 187 ~ ClockConfig ~ _updateObject ~ breaks",
-            breaks
-        );
+        // console.log(
+        // "🚀 ~ file: clock.js ~ line 187 ~ ClockConfig ~ _updateObject ~ breaks",
+        // breaks
+        // );
         let sectionMap = {};
         let filledSections = 0;
         for (let i = 0; i < sectionCount; i++) {
@@ -260,9 +266,7 @@ export class ClockConfig extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
         let windowContent = html.closest(".window-content");
-        console.log(windowContent);
         let gradientDivs = windowContent.find(".gradients")[0].children;
-        console.log(gradientDivs);
         Array.from(gradientDivs).forEach((element) => {
             if (element.tagName == "DIV") {
                 element.addEventListener("click", (event) => {
