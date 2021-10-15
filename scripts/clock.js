@@ -18,7 +18,16 @@ Handlebars.registerHelper("times", function (n, block) {
 });
 
 class Clock extends FormApplication {
-    constructor(name, sectionCount, sectionMap, gradient, filledSections, breaks, id) {
+    constructor(
+        name,
+        sectionCount,
+        sectionMap,
+        gradient,
+        filledSections,
+        breaks,
+        linkedEntities,
+        id
+    ) {
         console.log("Rendering new clock");
         super({
             name,
@@ -27,6 +36,7 @@ class Clock extends FormApplication {
             gradient,
             filledSections,
             breaks,
+            linkedEntities,
             id,
         });
         if (!id) {
@@ -39,6 +49,7 @@ class Clock extends FormApplication {
         this.sectionsMap = sectionMap;
         this.gradient = gradient;
         this.breaks = breaks;
+        this.linkedEntities = linkedEntities;
 
         this.filledSections = filledSections;
     }
@@ -90,7 +101,6 @@ class Clock extends FormApplication {
                     if (this.filledSections > this.sectionCount) {
                         this.filledSections = this.sectionCount;
                     }
-                    console.log(this.filledSections);
                     this.saveAndRenderApp();
                 } else if (event.which == 3) {
                     this.filledSections--;
@@ -238,9 +248,13 @@ class Clock extends FormApplication {
         }
         //if our entity is defined
         if (ourEntity) {
+            //add this clock to a flag of the entity
             let clocks = await ourEntity.getFlag("hud-and-trackers", linkedClocks);
             clocks.push(this.ourId);
             await ourEntity.setFlag("hud-and-trackers", "linkedClocks", clocks);
+
+            //save this entity a linked entity on our clock
+            this.linkedEntities[data.id] = ourEntity;
         }
         //set to render clock when entity is opened
     }
@@ -460,6 +474,7 @@ export class ClockViewer extends FormApplication {
                     clockData.gradient,
                     clockData.filledSections,
                     clockData.breaks,
+                    clockData.linkedEntities,
                     clockData.id
                 ).render(true);
             }
