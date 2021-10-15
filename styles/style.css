@@ -524,7 +524,7 @@
 .clockHud .window-content .contentWrapper {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
+  grid-template-rows: 1fr, 1fr;
 }
 .clockHud .window-content .contentWrapper .frameWrapper,
 .clockHud .window-content .contentWrapper .clockWrapper {
@@ -543,6 +543,20 @@
 }
 .clockHud .window-content .headerWrapper .delete {
   width: 20%;
+}
+.clockHud .window-content .breakLabelWrapper {
+  grid-column: 1;
+  grid-row: 2;
+  padding-top: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  text-align: center;
+}
+.clockHud .window-content .breakLabelWrapper .breakLabel {
+  width: 5rem;
+  overflow: hidden;
+  overflow-wrap: break-word;
 }
 .clockHud .window-content .frameWrapper {
   display: flex;

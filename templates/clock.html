@@ -7,6 +7,11 @@
         <input type="text" class="entityLinkBox" placeholder="drag linked entity here" />
     </div>
     <div class="contentWrapper">
+        <div class="breakLabelWrapper">
+            {{#each breakLabels}}
+            <h3 class="breakLabel" id="{{@key}}" contenteditable="true">{{this}}</h3>
+            {{/each}}
+        </div>
         <div class="frameWrapper">
             {{#each breaks}}
             <div class="frameSection"></div>

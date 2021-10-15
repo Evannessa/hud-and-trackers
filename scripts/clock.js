@@ -29,6 +29,7 @@ class Clock extends FormApplication {
             gradient: this.gradient,
             filledSections: this.filledSections,
             breaks: this.breaks,
+            breakLabels: this.breakLabels,
             linkedEntities: this.linkedEntities,
             id: this.ourId,
         } = clockData);
@@ -41,7 +42,6 @@ class Clock extends FormApplication {
      * @param {data} data - the data we're sending through
      */
     updateSections(sectionId, data) {
-        console.log("Updating section", sectionId, data);
         this.sectionMap[sectionId] = new Section({
             id: sectionId,
             ...data,
@@ -56,8 +56,31 @@ class Clock extends FormApplication {
         };
     }
 
+    handleEditableContent() {
+        // Find all editable content.
+        $("[contenteditable=true]")
+            // When you click on item, record into data("initialText") content of this item.
+            .focus(function () {
+                $(this).data("initialText", $(this).html());
+            });
+        // When you leave an item...
+        $("[contenteditable=true]").blur(function () {
+            // ...if content is different...
+            if ($(this).data("initialText") !== $(this).html()) {
+                // ... do something.
+                console.log("New data when content change.");
+                console.log($(this).html());
+                console.log(this);
+                let newData = $(this).html();
+                if (this.classList.contains("breakLabel")) {
+                    this.breakLabels[this.id] = newData;
+                }
+            }
+        });
+    }
     async activateListeners(html) {
         super.activateListeners(html);
+        this.handleEditableContent();
         let windowContent = html.closest(".window-content");
 
         let clockWrapper = windowContent.find(".clockWrapper")[0];
@@ -83,6 +106,7 @@ class Clock extends FormApplication {
 
         let sections = windowContent.find(".clockSection");
         let frames = windowContent.find(".frameSection");
+        let breakLabels = windowContent.find(".breakLabel");
         let filled = 0;
         let deleteClock = windowContent.find(".delete")[0];
 
@@ -101,6 +125,7 @@ class Clock extends FormApplication {
         //adding breaks if we have any
         let sectionsArray = Array.from(sections);
         let framesArray = Array.from(frames);
+        breakLabels = Array.from(breakLabels);
         let count = 0;
         //go through all the sub-sections if there are some
         if (this.breaks.length > 0) {
@@ -111,21 +136,31 @@ class Clock extends FormApplication {
             });
             let i = 0;
 
-            framesArray.forEach((frame) => {
-                $(frame).width((index, currentWidth) => {
-                    let result = currentWidth * this.breaks[i];
+            for (i = 0; i < this.breaks.length; i++) {
+                console.log(framesArray[i]);
+                $(framesArray[i]).width((index, currentWidth) => {
                     return currentWidth * this.breaks[i];
                 });
-                i++;
-            });
+                $(breakLabels[i]).width((index, currentWidth) => {
+                    return currentWidth * this.breaks[i];
+                });
+            }
+            // framesArray.forEach((frame) => {
+            //     $(frame).width((index, currentWidth) => {
+            //         let result = currentWidth * this.breaks[i];
+            //         return currentWidth * this.breaks[i];
+            //     });
+            //     i++;
+            // });
+
+            // i = 0;
+            // breakLabels.forEach((label) => {});
         }
 
         //refilling the sections if we have any, and adding event listener for click and ctrl click
         sectionsArray.forEach((element) => {
             //refilling the sections after refresh
-            console.log(this.sectionMap);
             if (filled < this.filledSections) {
-                console.log(element.id);
                 element.classList.add("filled");
                 filled++;
                 this.sectionMap[element.id].filled = true;
@@ -137,12 +172,6 @@ class Clock extends FormApplication {
                     //left click
                     //if the control key is held down, edit the section
                     if (event.ctrlKey) {
-                        let clock = this;
-                        console.log(
-                            "🚀 ~ file: clock.js ~ line 140 ~ Clock ~ element.addEventListener ~ clock",
-                            clock
-                        );
-
                         new SectionConfig({
                             sectionId: element.id,
                             sectionLabel: element.dataset.label,
@@ -272,9 +301,10 @@ export class ClockConfig extends FormApplication {
         }
         formData.breaks = breaks;
 
-        //initialize the section map to an empty object, and filledSections to zero
+        //initialize the section map to an empty object, and filledSections to zero, and break labels to empty array
         let sectionMap = {};
         let filledSections = 0;
+        let breakLabels = {};
 
         //loop through and populate the section map with new sections.
         //if start filled is active, set filledSections to the full amount
@@ -292,13 +322,14 @@ export class ClockConfig extends FormApplication {
                 filled: formData.startFilled,
             };
             sectionMap[sectionID] = new Section(sectionData);
-            // if (!formData.startFilled) {
-            //     sectionMap[sectionID] = new Section(sectionID, "", false);
-            // } else {
-            //     filledSections = formData.sectionCount;
-            //     sectionMap[sectionID] = new Section(sectionID, "", true);
-            // }
         }
+
+        //populate the break labels with default strings
+        formData.breaks.forEach((el) => {
+            let labelId = HelperFunctions.idGenerator();
+            breakLabels[labelId] = "Input Label";
+        });
+        console.log(breakLabels);
 
         let id = HelperFunctions.idGenerator();
 
@@ -307,9 +338,11 @@ export class ClockConfig extends FormApplication {
             ...formData,
             sectionMap: sectionMap,
             filledSections: filledSections,
+            breakLabels: breakLabels,
             id: id,
         };
 
+        //get saved clocks from game settings
         let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
 
         //create the clock
@@ -364,11 +397,6 @@ class SectionConfig extends FormApplication {
             sectionFilled: this.sectionFilled,
             clockParent: this.clockParent,
         } = sectionData);
-        console.log(sectionData);
-        console.log(
-            "🚀 ~ file: clock.js ~ line 354 ~ SectionConfig ~ constructor ~ this.clockParent",
-            this.clockParent
-        );
     }
     getData() {
         return {
@@ -388,7 +416,6 @@ class SectionConfig extends FormApplication {
         });
     }
     async _updateObject(event, formData) {
-        console.log(this);
         let data = {
             label: formData.label,
             filled: this.sectionFilled,

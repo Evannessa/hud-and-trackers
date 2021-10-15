@@ -702,7 +702,7 @@
 		.contentWrapper {
 			display: grid;
 			grid-template-columns: 1fr;
-			grid-template-rows: 1fr;
+			grid-template-rows: 1fr, 1fr;
 
 			.frameWrapper,
 			.clockWrapper {
@@ -726,6 +726,24 @@
 
 			.delete {
 				width: 20%;
+			}
+		}
+
+		.breakLabelWrapper {
+			grid-column: 1;
+			grid-row: 2;
+			padding-top: 0.5rem;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-evenly;
+			text-align: center;
+
+			.breakLabel {
+				width: 5rem;
+				// min-width: 5rem;
+				// max-width: 5rem;
+				overflow: hidden;
+				overflow-wrap: break-word;
 			}
 		}
 
