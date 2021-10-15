@@ -61,6 +61,10 @@ class Clock extends FormApplication {
     async getData() {
         let data = await game.settings.get("hud-and-trackers", "savedClocks");
         let ourClock = data[this.ourId];
+        console.log(
+            "🚀 ~ file: clock.js ~ line 65 ~ Clock ~ getData ~ this.ourId",
+            this.ourId
+        );
         this.name = ourClock.name;
 
         return {
@@ -103,17 +107,19 @@ class Clock extends FormApplication {
         let filled = 0;
         let deleteClock = windowContent.find(".delete")[0];
 
+        //delete clock button
         deleteClock.addEventListener("click", (event) => {
             let savedClocks = game.settings.get("hud-and-trackers", "savedClocks");
             delete savedClocks[this.ourId];
             game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
-            if (game.clockViewer) {
+            if (game.clockViewer && game.clockViewer.rendered) {
                 //TODO: Find way to delay this until after the clocks are updated
                 game.clockViewer.render(true);
             }
             this.close();
         });
 
+        //adding breaks if we have any
         let sectionsArray = Array.from(sections);
         let framesArray = Array.from(frames);
         let count = 0;
@@ -134,6 +140,8 @@ class Clock extends FormApplication {
                 i++;
             });
         }
+
+        //refilling the sections if we have any, and adding event listener for click and ctrl click
         sectionsArray.forEach((element) => {
             //refilling the sections after refresh
             if (filled < this.filledSections) {
@@ -226,10 +234,6 @@ export class ClockConfig extends FormApplication {
         } else {
             breaks = [];
         }
-        // console.log(
-        // "🚀 ~ file: clock.js ~ line 187 ~ ClockConfig ~ _updateObject ~ breaks",
-        // breaks
-        // );
         let sectionMap = {};
         let filledSections = 0;
         for (let i = 0; i < sectionCount; i++) {
@@ -378,22 +382,17 @@ export class ClockViewer extends FormApplication {
         super.activateListeners(html);
         let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
         this.clocks = savedClocks;
-        console.log(this.clocks);
-        console.log(html);
         html.on("click", ["data-action"], this._handleButtonClick);
         // html.on("click", "button", this._handleButtonClick);
     }
 
     async _handleButtonClick(event) {
-        console.log(event);
         event.preventDefault();
         let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
         this.clocks = savedClocks;
-        console.log(savedClocks);
 
         const clickedElement = event.target;
         const action = clickedElement.dataset.action;
-        console.log(clickedElement.id);
 
         let clockData = savedClocks[clickedElement.id];
 
@@ -403,9 +402,9 @@ export class ClockViewer extends FormApplication {
                     clockData.name,
                     clockData.sectionCount,
                     clockData.sectionMap,
-                    clockData.color,
                     clockData.gradient,
                     clockData.filledSections,
+                    clockData.breaks,
                     clockData.id
                 ).render(true);
             }
