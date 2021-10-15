@@ -56,7 +56,8 @@ class Clock extends FormApplication {
         };
     }
 
-    handleEditableContent() {
+    handleEditableContent(app) {
+        console.log("IS this our app?", app);
         // Find all editable content.
         $("[contenteditable=true]")
             // When you click on item, record into data("initialText") content of this item.
@@ -73,14 +74,16 @@ class Clock extends FormApplication {
                 console.log(this);
                 let newData = $(this).html();
                 if (this.classList.contains("breakLabel")) {
-                    this.breakLabels[this.id] = newData;
+                    app.breakLabels[this.id] = newData;
+                } else if (this.classList.contains("clockName")) {
+                    app.name = newData;
                 }
             }
         });
     }
     async activateListeners(html) {
         super.activateListeners(html);
-        this.handleEditableContent();
+        this.handleEditableContent(this);
         let windowContent = html.closest(".window-content");
 
         let clockWrapper = windowContent.find(".clockWrapper")[0];
@@ -202,6 +205,7 @@ class Clock extends FormApplication {
     async saveAndRenderApp() {
         let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
         this.object.filledSections = this.filledSections;
+        this.object.name = this.name;
         savedClocks[this.ourId] = this.object;
         await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
         this.render();
