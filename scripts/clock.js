@@ -203,8 +203,48 @@ class Clock extends FormApplication {
             background: "none",
             template: "modules/hud-and-trackers/templates/clock.html",
             title: "clockHud",
+            dragDrop: [{ dragSelector: ".entity", dropSelector: ".entityLinkBox" }],
         });
     }
+    async _onDrop(event) {
+        event.preventDefault();
+        console.log("Something dropped");
+        let data;
+        try {
+            data = JSON.parse(event.dataTransfer.getData("text/plain"));
+            console.log("🚀 ~ file: clock.js ~ line 215 ~ Clock ~ _onDrop ~ data", data);
+        } catch (err) {
+            return;
+        }
+
+        //get drop target
+        const li = event.target.closest(".entityLinkBox");
+    }
+    linkEntity(data) {
+        //set this as a flag on the entity
+        let ourEntity;
+        switch (data.type) {
+            case "JournalEntry":
+                ourEntity = game.journal.get(data.id);
+                break;
+            case "Actor":
+                ourEntity = game.actors.get(data.id);
+                break;
+            case "Scene":
+                ourEntity = game.scenes.get(data.id);
+                break;
+            default:
+                break;
+        }
+        //if our entity is defined
+        if (ourEntity) {
+            let clocks = await ourEntity.getFlag("hud-and-trackers", linkedClocks);
+            clocks.push(this.ourId);
+            await ourEntity.setFlag("hud-and-trackers", "linkedClocks", clocks);
+        }
+        //set to render clock when entity is opened
+    }
+    showEntityLinks() {}
     async _updateObject(event, formData) {}
 }
 
@@ -329,6 +369,21 @@ class SectionConfig extends FormApplication {
 
     activateListeners(html) {
         super.activateListeners(html);
+    }
+
+    linkEntityDialogue() {
+        let d = new Dialog({
+            title: "Link Entity to Clock",
+            content: `
+			<form class="flexcol">
+				<div class="form-group">
+					<label for="entityName">Entity Name</label>
+					<input type="text" name="entityName" placeholder="Enter entity name">
+				</div>
+			</form>
+			`,
+            callback: () => {},
+        }).render(true);
     }
 }
 
