@@ -41,12 +41,11 @@ class Clock extends FormApplication {
      * @param {data} data - the data we're sending through
      */
     updateSections(sectionId, data) {
-        this.sectionMap[sectionId] = new Section(
-            sectionId,
-            data.sectionLabel,
-            data.sectionColor,
-            data.sectionFilled
-        );
+        console.log("Updating section", sectionId, data);
+        this.sectionMap[sectionId] = new Section({
+            id: sectionId,
+            ...data,
+        });
         this.saveAndRenderApp();
     }
 
@@ -124,7 +123,9 @@ class Clock extends FormApplication {
         //refilling the sections if we have any, and adding event listener for click and ctrl click
         sectionsArray.forEach((element) => {
             //refilling the sections after refresh
+            console.log(this.sectionMap);
             if (filled < this.filledSections) {
+                console.log(element.id);
                 element.classList.add("filled");
                 filled++;
                 this.sectionMap[element.id].filled = true;
@@ -142,13 +143,12 @@ class Clock extends FormApplication {
                             clock
                         );
 
-                        new SectionConfig(
-                            element.id,
-                            element.dataset.label,
-                            element.dataset.color,
-                            element.classList.contains("filled"),
-                            this
-                        ).render(true);
+                        new SectionConfig({
+                            sectionId: element.id,
+                            sectionLabel: element.dataset.label,
+                            sectionFilled: element.classList.contains("filled"),
+                            clockParent: this,
+                        }).render(true);
                     }
                 }
             });
@@ -278,14 +278,26 @@ export class ClockConfig extends FormApplication {
 
         //loop through and populate the section map with new sections.
         //if start filled is active, set filledSections to the full amount
+
+        if (formData.startFilled) {
+            filledSections = formData.sectionCount;
+        }
+
+        //generate all sections as section objects to store
         for (let i = 0; i < formData.sectionCount; i++) {
             let sectionID = HelperFunctions.idGenerator();
-            if (!formData.startFilled) {
-                sectionMap[sectionID] = new Section(sectionID, "", false);
-            } else {
-                filledSections = formData.sectionCount;
-                sectionMap[sectionID] = new Section(sectionID, "", true);
-            }
+            let sectionData = {
+                id: sectionID,
+                label: "",
+                filled: formData.startFilled,
+            };
+            sectionMap[sectionID] = new Section(sectionData);
+            // if (!formData.startFilled) {
+            //     sectionMap[sectionID] = new Section(sectionID, "", false);
+            // } else {
+            //     filledSections = formData.sectionCount;
+            //     sectionMap[sectionID] = new Section(sectionID, "", true);
+            // }
         }
 
         let id = HelperFunctions.idGenerator();
@@ -344,14 +356,19 @@ export class ClockConfig extends FormApplication {
 }
 
 class SectionConfig extends FormApplication {
-    constructor(sectionId, sectionLabel, sectionFilled, clockParent) {
+    constructor(sectionData) {
         super();
-        // super(sectionId, sectionLabel, sectionColor, sectionFilled, clockParent);
-        this.sectionId = sectionId;
-        this.sectionLabel = sectionLabel;
-        this.sectionFilled = sectionFilled;
-        this.clockParent = clockParent;
-        console.log("🚀 ~ file: clock.js ~ line 354 ~ SectionConfig ~ constructor ~ this.clockParent", this.clockParent)
+        ({
+            sectionId: this.sectionId,
+            sectionLabel: this.sectionLabel,
+            sectionFilled: this.sectionFilled,
+            clockParent: this.clockParent,
+        } = sectionData);
+        console.log(sectionData);
+        console.log(
+            "🚀 ~ file: clock.js ~ line 354 ~ SectionConfig ~ constructor ~ this.clockParent",
+            this.clockParent
+        );
     }
     getData() {
         return {
@@ -371,9 +388,10 @@ class SectionConfig extends FormApplication {
         });
     }
     async _updateObject(event, formData) {
+        console.log(this);
         let data = {
-            sectionLabel: formData.label,
-            sectionFilled: this.sectionFilled,
+            label: formData.label,
+            filled: this.sectionFilled,
         };
         this.clockParent.updateSections(this.sectionId, data);
     }
@@ -399,16 +417,14 @@ class SectionConfig extends FormApplication {
 }
 
 class Section {
-    constructor(id, label, filled) {
-        this.id = id;
-        this.label = label;
-        this.filled = filled;
+    constructor(sectionData) {
+        ({ id: this.id, label: this.label, filled: this.filled } = sectionData);
     }
     static fromJSON(obj) {
         if (typeof obj == "string") {
             obj = JSON.parse(obj);
         }
-        return new Section(obj.id, obj.label, obj.filled);
+        return new Section(...obj);
     }
 }
 
