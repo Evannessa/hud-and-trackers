@@ -18,40 +18,21 @@ Handlebars.registerHelper("times", function (n, block) {
 });
 
 class Clock extends FormApplication {
-    constructor(
-        name,
-        sectionCount,
-        sectionMap,
-        gradient,
-        filledSections,
-        breaks,
-        linkedEntities,
-        id
-    ) {
-        console.log("Rendering new clock");
+    constructor(clockData) {
         super({
-            name,
-            sectionCount,
-            sectionMap,
-            gradient,
-            filledSections,
-            breaks,
-            linkedEntities,
-            id,
+            ...clockData,
         });
-        if (!id) {
-            this.ourId = HelperFunctions.idGenerator();
-        } else {
-            this.ourId = id;
-        }
-        this.name = name;
-        this.sectionCount = sectionCount;
-        this.sectionsMap = sectionMap;
-        this.gradient = gradient;
-        this.breaks = breaks;
-        this.linkedEntities = linkedEntities;
-
-        this.filledSections = filledSections;
+        ({
+            name: this.name,
+            sectionCount: this.sectionCount,
+            sectionMap: this.sectionMap,
+            gradient: this.gradient,
+            filledSections: this.filledSections,
+            breaks: this.breaks,
+            linkedEntities: this.linkedEntities,
+            id: this.ourId,
+        } = clockData);
+        console.log("Rendering new clock");
     }
 
     /**
@@ -60,7 +41,7 @@ class Clock extends FormApplication {
      * @param {data} data - the data we're sending through
      */
     updateSections(sectionId, data) {
-        this.sectionsMap[sectionId] = new Section(
+        this.sectionMap[sectionId] = new Section(
             sectionId,
             data.sectionLabel,
             data.sectionColor,
@@ -70,20 +51,9 @@ class Clock extends FormApplication {
     }
 
     async getData() {
-        let data = await game.settings.get("hud-and-trackers", "savedClocks");
-        let ourClock = data[this.ourId];
-        console.log(
-            "🚀 ~ file: clock.js ~ line 65 ~ Clock ~ getData ~ this.ourId",
-            this.ourId
-        );
-        this.name = ourClock.name;
-
         return {
-            id: this.ourId,
-            name: this.name,
-            sectionCount: this.sectionCount,
-            sections: Object.values(this.sectionsMap),
-            breaks: this.breaks,
+            ...this.object,
+            sections: Object.values(this.sectionMap),
         };
     }
 
@@ -157,7 +127,7 @@ class Clock extends FormApplication {
             if (filled < this.filledSections) {
                 element.classList.add("filled");
                 filled++;
-                this.sectionsMap[element.id].filled = true;
+                this.sectionMap[element.id].filled = true;
             }
 
             //clicking on the sections
@@ -166,6 +136,12 @@ class Clock extends FormApplication {
                     //left click
                     //if the control key is held down, edit the section
                     if (event.ctrlKey) {
+                        let clock = this;
+                        console.log(
+                            "🚀 ~ file: clock.js ~ line 140 ~ Clock ~ element.addEventListener ~ clock",
+                            clock
+                        );
+
                         new SectionConfig(
                             element.id,
                             element.dataset.label,
@@ -222,7 +198,6 @@ class Clock extends FormApplication {
         let data;
         try {
             data = JSON.parse(event.dataTransfer.getData("text/plain"));
-            console.log("🚀 ~ file: clock.js ~ line 215 ~ Clock ~ _onDrop ~ data", data);
         } catch (err) {
             return;
         }
@@ -230,7 +205,9 @@ class Clock extends FormApplication {
         //get drop target
         const li = event.target.closest(".entityLinkBox");
     }
-    linkEntity(data) {
+
+    //link an entity that's dragged onto here
+    async linkEntity(data) {
         //set this as a flag on the entity
         let ourEntity;
         switch (data.type) {
@@ -271,51 +248,70 @@ export class ClockConfig extends FormApplication {
         return {};
     }
     async _updateObject(event, formData) {
-        //create a new clock
-        let clockName = formData.clockName;
-        let gradient = formData.gradient;
-        let sectionCount = formData.sectionCount;
-        let startFilled = formData.startFilled;
-        let breaksString = formData.breaks;
-        let breaks = breaksString.split(",");
+        //split the linked entities array into an array of string ids
+        let linkedEntities = formData.linkedEntities.split(",");
+
+        if (linkedEntities[0] == "") {
+            linkedEntities = [];
+        }
+        formData.linkedEntities = linkedEntities;
+
+        let breaks = formData.breaks.split(",");
         breaks = breaks.map((ch) => parseInt(ch));
-        //! this will return [""] then [NaN]
+
+        //! this will return [""] then [NaN] if it doesn't find anything
         //if we have a number in the breaks array
         if (!Number.isNaN(breaks[0])) {
-            sectionCount = breaks.reduce((previousValue, currentValue) => {
+            //set the section count to the sum of all the sections in each group
+            formData.sectionCount = breaks.reduce((previousValue, currentValue) => {
                 return previousValue + currentValue;
             });
         } else {
+            //if not, set breaks to []
             breaks = [];
         }
+        formData.breaks = breaks;
+
+        //initialize the section map to an empty object, and filledSections to zero
         let sectionMap = {};
         let filledSections = 0;
-        for (let i = 0; i < sectionCount; i++) {
+
+        //loop through and populate the section map with new sections.
+        //if start filled is active, set filledSections to the full amount
+        for (let i = 0; i < formData.sectionCount; i++) {
             let sectionID = HelperFunctions.idGenerator();
-            if (!startFilled) {
+            if (!formData.startFilled) {
                 sectionMap[sectionID] = new Section(sectionID, "", false);
             } else {
-                filledSections = sectionCount;
+                filledSections = formData.sectionCount;
                 sectionMap[sectionID] = new Section(sectionID, "", true);
             }
         }
 
-        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
         let id = HelperFunctions.idGenerator();
 
-        let newClock = new Clock(
-            clockName,
-            sectionCount,
-            sectionMap,
-            gradient,
-            filledSections,
-            breaks,
-            id
-        );
+        //get the formData, and then all the extra stuff we had to calculate/generate
+        const newClockData = {
+            ...formData,
+            sectionMap: sectionMap,
+            filledSections: filledSections,
+            id: id,
+        };
+
+        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+
+        //create the clock
+        let newClock = new Clock(newClockData);
+
+        //update saved clocks
         savedClocks[newClock.object.id] = newClock.object;
         await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
+
+        //render new clock
         newClock.render(true);
-        if (game.clockViewer) {
+
+        if (game.clockViewer && game.clockViewer.rendered) {
+            //re-render the clock viewer if it's open
             game.clockViewer.render(true);
         }
         this.render();
@@ -355,6 +351,7 @@ class SectionConfig extends FormApplication {
         this.sectionLabel = sectionLabel;
         this.sectionFilled = sectionFilled;
         this.clockParent = clockParent;
+        console.log("🚀 ~ file: clock.js ~ line 354 ~ SectionConfig ~ constructor ~ this.clockParent", this.clockParent)
     }
     getData() {
         return {
@@ -440,7 +437,6 @@ export class ClockViewer extends FormApplication {
     async getData() {
         let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
         this.clocks = Object.values(savedClocks);
-        console.log(this.clocks);
         // Send data to the template
         return {
             clocks: this.clocks,
@@ -467,16 +463,7 @@ export class ClockViewer extends FormApplication {
 
         switch (action) {
             case "open": {
-                await new Clock(
-                    clockData.name,
-                    clockData.sectionCount,
-                    clockData.sectionMap,
-                    clockData.gradient,
-                    clockData.filledSections,
-                    clockData.breaks,
-                    clockData.linkedEntities,
-                    clockData.id
-                ).render(true);
+                await new Clock(clockData).render(true);
             }
         }
     }
