@@ -35,7 +35,7 @@
             "titleBar.inactiveForeground": "#e7e7e799"
         },
         "peacock.color": "#007fff",
-        "vim.statusBarColorControl": true,
-        "peacock.affectStatusBar": false
+        "peacock.affectStatusBar": false,
+        "vim.easymotion": true
     }
 }

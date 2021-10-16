@@ -30,6 +30,7 @@ class Clock extends FormApplication {
             filledSections: this.filledSections,
             breaks: this.breaks,
             breakLabels: this.breakLabels,
+            waypoints: this.waypoints,
             linkedEntities: this.linkedEntities,
             id: this.ourId,
         } = clockData);
@@ -68,16 +69,14 @@ class Clock extends FormApplication {
         $("[contenteditable=true]").blur(function () {
             // ...if content is different...
             if ($(this).data("initialText") !== $(this).html()) {
-                // ... do something.
-                console.log("New data when content change.");
-                console.log($(this).html());
-                console.log(this);
+                // ... check if it's the title or a label, then save and render it
                 let newData = $(this).html();
                 if (this.classList.contains("breakLabel")) {
                     app.breakLabels[this.id] = newData;
                 } else if (this.classList.contains("clockName")) {
                     app.name = newData;
                 }
+                app.saveAndRenderApp();
             }
         });
     }
@@ -87,6 +86,8 @@ class Clock extends FormApplication {
         let windowContent = html.closest(".window-content");
 
         let clockWrapper = windowContent.find(".clockWrapper")[0];
+
+        //make the background wrapper's gradient look like the chosen one
         clockWrapper.style.backgroundImage = this.gradient;
 
         clockWrapper.addEventListener("mousedown", (event) => {
@@ -110,6 +111,7 @@ class Clock extends FormApplication {
         let sections = windowContent.find(".clockSection");
         let frames = windowContent.find(".frameSection");
         let breakLabels = windowContent.find(".breakLabel");
+        let waypoints = windowContent.find(".waypoint");
         let filled = 0;
         let deleteClock = windowContent.find(".delete")[0];
 
@@ -140,24 +142,16 @@ class Clock extends FormApplication {
             let i = 0;
 
             for (i = 0; i < this.breaks.length; i++) {
-                console.log(framesArray[i]);
                 $(framesArray[i]).width((index, currentWidth) => {
                     return currentWidth * this.breaks[i];
                 });
                 $(breakLabels[i]).width((index, currentWidth) => {
                     return currentWidth * this.breaks[i];
                 });
+                $(waypoints[i]).width((index, currentWidth) => {
+                    return currentWidth * this.breaks[i];
+                });
             }
-            // framesArray.forEach((frame) => {
-            //     $(frame).width((index, currentWidth) => {
-            //         let result = currentWidth * this.breaks[i];
-            //         return currentWidth * this.breaks[i];
-            //     });
-            //     i++;
-            // });
-
-            // i = 0;
-            // breakLabels.forEach((label) => {});
         }
 
         //refilling the sections if we have any, and adding event listener for click and ctrl click
@@ -222,7 +216,7 @@ class Clock extends FormApplication {
             background: "none",
             template: "modules/hud-and-trackers/templates/clock.html",
             title: "clockHud",
-            dragDrop: [{ dragSelector: ".entity", dropSelector: ".entityLinkBox" }],
+            dragDrop: [{ dragSelector: ".entity", dropSelector: ".contentWrapper" }],
         });
     }
     async _onDrop(event) {
@@ -235,6 +229,7 @@ class Clock extends FormApplication {
             return;
         }
 
+        this.linkEntity(data);
         //get drop target
         const li = event.target.closest(".entityLinkBox");
     }
@@ -259,12 +254,17 @@ class Clock extends FormApplication {
         //if our entity is defined
         if (ourEntity) {
             //add this clock to a flag of the entity
-            let clocks = await ourEntity.getFlag("hud-and-trackers", linkedClocks);
-            clocks.push(this.ourId);
-            await ourEntity.setFlag("hud-and-trackers", "linkedClocks", clocks);
+            if (!ourEntity.getFlag("hud-and-trackers", "linkedClocks")) {
+                ourEntity.setFlag("hud-and-trackers", "linkedClocks", {});
+            } else {
+                let clocks = await ourEntity.getFlag("hud-and-trackers", "linkedClocks");
+                clocks[this.ourId] = this;
+                await ourEntity.setFlag("hud-and-trackers", "linkedClocks", clocks);
+            }
 
             //save this entity a linked entity on our clock
             this.linkedEntities[data.id] = ourEntity;
+            console.log(this.linkedEntities);
         }
         //set to render clock when entity is opened
     }
@@ -281,13 +281,7 @@ export class ClockConfig extends FormApplication {
         return {};
     }
     async _updateObject(event, formData) {
-        //split the linked entities array into an array of string ids
-        let linkedEntities = formData.linkedEntities.split(",");
-
-        if (linkedEntities[0] == "") {
-            linkedEntities = [];
-        }
-        formData.linkedEntities = linkedEntities;
+        let linkedEntities = {};
 
         let breaks = formData.breaks.split(",");
         breaks = breaks.map((ch) => parseInt(ch));
@@ -309,6 +303,7 @@ export class ClockConfig extends FormApplication {
         let sectionMap = {};
         let filledSections = 0;
         let breakLabels = {};
+        let waypoints = {};
 
         //loop through and populate the section map with new sections.
         //if start filled is active, set filledSections to the full amount
@@ -332,6 +327,9 @@ export class ClockConfig extends FormApplication {
         formData.breaks.forEach((el) => {
             let labelId = HelperFunctions.idGenerator();
             breakLabels[labelId] = "Input Label";
+
+            let waypointId = HelperFunctions.idGenerator();
+            waypoints[waypointId] = "Waypoint";
         });
         console.log(breakLabels);
 
@@ -343,6 +341,8 @@ export class ClockConfig extends FormApplication {
             sectionMap: sectionMap,
             filledSections: filledSections,
             breakLabels: breakLabels,
+            waypoints: waypoints,
+            linkedEntities: linkedEntities,
             id: id,
         };
 

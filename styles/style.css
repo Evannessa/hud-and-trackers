@@ -524,11 +524,11 @@
 .clockHud .window-content .contentWrapper {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr, 1fr;
+  grid-template-rows: 2rem 1fr 1fr;
 }
 .clockHud .window-content .contentWrapper .frameWrapper,
 .clockHud .window-content .contentWrapper .clockWrapper {
-  grid-row: 1;
+  grid-row: 2;
   grid-column: 1;
 }
 .clockHud .window-content .headerWrapper {
@@ -536,7 +536,7 @@
   flex: content;
   justify-content: space-between;
   align-items: flex-start;
-  margin: 0.5rem 0rem;
+  margin: 0.5rem 0.5rem;
 }
 .clockHud .window-content .headerWrapper h3 {
   white-space: nowrap;
@@ -544,13 +544,36 @@
 .clockHud .window-content .headerWrapper .delete {
   width: 20%;
 }
+.clockHud .window-content .waypointWrapper {
+  display: flex;
+  z-index: 20;
+  justify-content: space-around;
+}
+.clockHud .window-content .waypointWrapper .waypoint {
+  width: 5rem;
+  text-align: right;
+}
+.clockHud .window-content .waypointWrapper .waypointLabel {
+  position: relative;
+  transform: translateX(-10px);
+  padding-right: 0.5rem;
+}
+.clockHud .window-content .waypointWrapper .waypointLabel::after {
+  content: "";
+  position: absolute;
+  border-top: 7px solid #f5f5f576;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  bottom: 0;
+  transform: translateX(10px);
+}
 .clockHud .window-content .breakLabelWrapper {
   grid-column: 1;
-  grid-row: 2;
+  grid-row: 3;
   padding-top: 0.5rem;
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-between;
   text-align: center;
 }
 .clockHud .window-content .breakLabelWrapper .breakLabel {
@@ -575,6 +598,10 @@
   box-shadow: 0px -14px 0px 2px #191716, 0px 14px 0px 2px #191716, 0px 0px 0px 10px #191716;
   border-radius: 10px;
   margin-right: 10px;
+}
+.clockHud .window-content .frameWrapper .frameSection:last-child {
+  box-shadow: 0px -14px 0px 2px #191716, 0px 14px 0px 2px #191716;
+  margin-right: 0;
 }
 .clockHud .window-content .clockWrapper {
   display: flex;
@@ -606,6 +633,9 @@
 .clockHud .window-content .clockSection[data-break] {
   position: relative;
   margin-right: 10px;
+}
+.clockHud .window-content .clockSection[data-break]:last-child {
+  margin-right: 0;
 }
 .clockHud .window-content .clockSection .label {
   color: white;

@@ -3,10 +3,17 @@
         <h3 class="clockName" name="clockName" contenteditable="true">{{name}}</h3>
         <button class="delete" data-action="delete"><i class="fa fa-trash"></i></button>
     </div>
-    <div class="entityLinkWrapper">
+    <!-- <div class="entityLinkWrapper">
         <input type="text" class="entityLinkBox" placeholder="drag linked entity here" />
-    </div>
+    </div> -->
     <div class="contentWrapper">
+        <div class="waypointWrapper">
+            {{#each waypoints}}
+            <div class="waypoint">
+                <p class="waypointLabel" contenteditable="true">Hello</p>
+            </div>
+            {{/each}}
+        </div>
         <div class="breakLabelWrapper">
             {{#each breakLabels}}
             <h3 class="breakLabel" id="{{@key}}" contenteditable="true">{{this}}</h3>
