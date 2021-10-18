@@ -286,23 +286,7 @@ class Clock extends FormApplication {
     async linkEntity(data) {
         //set this as a flag on the entity
         let ourEntity = await HelperFunctions.getEntityById(data.type, data.id);
-        // switch (data.type) {
-        //     case "JournalEntry":
-        //         ourEntity = game.journal.get(data.id);
-        //         break;
-        //     case "Actor":
-        //         ourEntity = game.actors.get(data.id);
-        //         break;
-        //     case "Scene":
-        //         ourEntity = game.scenes.get(data.id);
-        //         break;
-        //     case "Item":
-        //         ourEntity = game.items.get(data.id);
-        //         break;
-        //     default:
-        //         break;
-        // }
-        //if our entity is defined
+
         if (ourEntity) {
             //add this clock to a flag of the entity
 
@@ -327,29 +311,41 @@ class Clock extends FormApplication {
     async _updateObject(event, formData) {}
 }
 
+//registers the hooks for journal sheets, actor sheets, item sheets
 function registerHooks(hookName) {
-    Hooks.on(hookName, (app, html) => {
+    Hooks.on(hookName, (app) => {
         let linkedClocks = app.object.getFlag("hud-and-trackers", "linkedClocks");
         if (linkedClocks) {
             for (let clockId in linkedClocks) {
-                console.log("rendering!");
                 renderNewClockFromData(linkedClocks[clockId]);
             }
-            console.log("HEY WE'VE GOT A CLOCK LINKED");
         }
     });
 }
 
+//registers the hooks for scenes
+function registerSceneHook() {
+    Hooks.on("canvasReady", (canvas) => {
+        console.log(canvas);
+        let linkedClocks = canvas.scene.getFlag("hud-and-trackers", "linkedClocks");
+        if (linkedClocks) {
+            for (let clockId in linkedClocks) {
+                renderNewClockFromData(linkedClocks[clockId]);
+            }
+        }
+    });
+}
+//renders a new clock from saved clock data on an entity or setting
 async function renderNewClockFromData(clockData) {
-    // let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
-    // let clockData = savedClocks[id];
     await new Clock(clockData).render(true);
 }
 
+//sets up hook handlers for all the different entity types
 function hookEntities() {
     registerHooks("renderJournalSheet");
     registerHooks("renderActorSheet");
     registerHooks("renderItemSheet");
+    registerSceneHook();
 }
 
 /** This will be the configuration for the clock itself. */
