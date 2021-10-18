@@ -2,6 +2,7 @@
 import * as HelperFunctions from "./helper-functions.js";
 
 Hooks.on("ready", () => {
+    game.renderedClocks = {};
     hookEntities();
 });
 Hooks.on("renderClockViewer", (app, html) => {
@@ -317,16 +318,31 @@ function registerHooks(hookName) {
         let linkedClocks = app.object.getFlag("hud-and-trackers", "linkedClocks");
         if (linkedClocks) {
             for (let clockId in linkedClocks) {
-                renderNewClockFromData(linkedClocks[clockId]);
+                //if the clock isn't already rendered, render it
+                if (!isClockRendered(clockId)) {
+                    renderNewClockFromData(linkedClocks[clockId]);
+                }
             }
         }
     });
 }
 
+function isClockRendered(clockId) {
+    return game.renderedClocks[clockId];
+}
+
+Hooks.on("renderClock", (app, html) => {
+    if (!game.renderedClocks[app.ourId]) {
+        game.renderedClocks[app.ourId] = app;
+    }
+});
+Hooks.on("closeClock", (app, html) => {
+    delete game.renderedClocks[app.ourId];
+});
+
 //registers the hooks for scenes
 function registerSceneHook() {
     Hooks.on("canvasReady", (canvas) => {
-        console.log(canvas);
         let linkedClocks = canvas.scene.getFlag("hud-and-trackers", "linkedClocks");
         if (linkedClocks) {
             for (let clockId in linkedClocks) {

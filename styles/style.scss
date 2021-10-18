@@ -703,7 +703,7 @@
 			display: grid;
 			width: max-content;
 			grid-template-columns: max-content;
-			grid-template-rows: 2rem 1fr 1fr;
+			grid-template-rows: 2rem 1fr max-content;
 
 			.frameWrapper,
 			.clockWrapper {

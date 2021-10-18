@@ -528,7 +528,8 @@
   width: max-content;
   grid-template-columns: -webkit-max-content;
   grid-template-columns: max-content;
-  grid-template-rows: 2rem 1fr 1fr;
+  grid-template-rows: 2rem 1fr -webkit-max-content;
+  grid-template-rows: 2rem 1fr max-content;
 }
 .clockHud .window-content .contentWrapper .frameWrapper,
 .clockHud .window-content .contentWrapper .clockWrapper {
