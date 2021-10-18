@@ -1,6 +1,9 @@
 "use strict";
 import * as HelperFunctions from "./helper-functions.js";
 
+Hooks.on("ready", () => {
+    hookEntities();
+});
 Hooks.on("renderClockViewer", (app, html) => {
     game.clockViewer = app;
 });
@@ -112,11 +115,56 @@ class Clock extends FormApplication {
         let frames = windowContent.find(".frameSection");
         let breakLabels = windowContent.find(".breakLabel");
         let waypoints = windowContent.find(".waypoint");
+        let entityLinks = windowContent.find(".entityLink");
         let filled = 0;
         let deleteClock = windowContent.find(".delete")[0];
 
+        Array.from(entityLinks).forEach((element) => {
+            element.addEventListener("click", (event) => {
+                let entityType = element.dataset.type;
+                let entityId = element.id;
+                let ourEntity;
+                switch (entityType) {
+                    case "Actor":
+                        ourEntity = game.actors.get(entityId);
+                        break;
+                    case "Item":
+                        ourEntity = game.items.get(entityId);
+                        break;
+                    case "Scene":
+                        ourEntity = game.scenes.get(entityId);
+                        break;
+                    case "JournalEntry":
+                        ourEntity = game.journal.get(entityId);
+                        break;
+                    default:
+                        break;
+                }
+                if (entityType == "Scene") {
+                    //if it's a scene, view it
+                    ourEntity.view();
+                } else if (ourEntity.sheet) {
+                    //else if it's something with a sheet, render that sheet
+                    ourEntity.sheet.render(true);
+                }
+            });
+        });
         //delete clock button
         deleteClock.addEventListener("click", (event) => {
+            //delete us in all our linked entities
+            //TODO: Place this back in -- right now linkedEntities only stores the actor type and name
+            //TODO: maybe create a helper function that gets the entity in question
+            // for (let us in this.linkedEntities) {
+            //     //special syntax for deleting a specific key in flag objects
+            //     console.log(
+            //         "🚀 ~ file: clock.js ~ line 161 ~ Clock ~ deleteClock.addEventListener ~  this.linkedEntities[us]",
+            //         this.linkedEntities[us]
+            //     );
+            //     this.linkedEntities[us].setFlag("hud-and-trackers", "linkedClocks", {
+            //         [`-=${this.ourId}`]: null,
+            //     });
+            // }
+            //delete us from the saved clocks setting
             let savedClocks = game.settings.get("hud-and-trackers", "savedClocks");
             delete savedClocks[this.ourId];
             game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
@@ -198,6 +246,7 @@ class Clock extends FormApplication {
      */
     async saveAndRenderApp() {
         let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+        this.object.linkedEntities = this.linkedEntities;
         this.object.filledSections = this.filledSections;
         this.object.name = this.name;
         savedClocks[this.ourId] = this.object;
@@ -231,45 +280,76 @@ class Clock extends FormApplication {
 
         this.linkEntity(data);
         //get drop target
-        const li = event.target.closest(".entityLinkBox");
     }
 
     //link an entity that's dragged onto here
     async linkEntity(data) {
         //set this as a flag on the entity
-        let ourEntity;
-        switch (data.type) {
-            case "JournalEntry":
-                ourEntity = game.journal.get(data.id);
-                break;
-            case "Actor":
-                ourEntity = game.actors.get(data.id);
-                break;
-            case "Scene":
-                ourEntity = game.scenes.get(data.id);
-                break;
-            default:
-                break;
-        }
+        let ourEntity = await HelperFunctions.getEntityById(data.type, data.id);
+        // switch (data.type) {
+        //     case "JournalEntry":
+        //         ourEntity = game.journal.get(data.id);
+        //         break;
+        //     case "Actor":
+        //         ourEntity = game.actors.get(data.id);
+        //         break;
+        //     case "Scene":
+        //         ourEntity = game.scenes.get(data.id);
+        //         break;
+        //     case "Item":
+        //         ourEntity = game.items.get(data.id);
+        //         break;
+        //     default:
+        //         break;
+        // }
         //if our entity is defined
         if (ourEntity) {
             //add this clock to a flag of the entity
-            if (!ourEntity.getFlag("hud-and-trackers", "linkedClocks")) {
-                ourEntity.setFlag("hud-and-trackers", "linkedClocks", {});
-            } else {
-                let clocks = await ourEntity.getFlag("hud-and-trackers", "linkedClocks");
-                clocks[this.ourId] = this;
-                await ourEntity.setFlag("hud-and-trackers", "linkedClocks", clocks);
-            }
 
+            const newLinkedClocks = {
+                [this.ourId]: this.object,
+            };
+
+            await ourEntity.setFlag("hud-and-trackers", "linkedClocks", newLinkedClocks);
+
+            //save the linked entity on our clock
+            let entityData = {
+                name: ourEntity.name,
+                entity: ourEntity.entity,
+            };
             //save this entity a linked entity on our clock
-            this.linkedEntities[data.id] = ourEntity;
-            console.log(this.linkedEntities);
+            this.linkedEntities[data.id] = entityData;
+            this.saveAndRenderApp();
         }
         //set to render clock when entity is opened
     }
     showEntityLinks() {}
     async _updateObject(event, formData) {}
+}
+
+function registerHooks(hookName) {
+    Hooks.on(hookName, (app, html) => {
+        let linkedClocks = app.object.getFlag("hud-and-trackers", "linkedClocks");
+        if (linkedClocks) {
+            for (let clockId in linkedClocks) {
+                console.log("rendering!");
+                renderNewClockFromData(linkedClocks[clockId]);
+            }
+            console.log("HEY WE'VE GOT A CLOCK LINKED");
+        }
+    });
+}
+
+async function renderNewClockFromData(clockData) {
+    // let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+    // let clockData = savedClocks[id];
+    await new Clock(clockData).render(true);
+}
+
+function hookEntities() {
+    registerHooks("renderJournalSheet");
+    registerHooks("renderActorSheet");
+    registerHooks("renderItemSheet");
 }
 
 /** This will be the configuration for the clock itself. */
@@ -352,7 +432,7 @@ export class ClockConfig extends FormApplication {
         //create the clock
         let newClock = new Clock(newClockData);
 
-        //update saved clocks
+        //update saved clocks with the new clock
         savedClocks[newClock.object.id] = newClock.object;
         await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
 

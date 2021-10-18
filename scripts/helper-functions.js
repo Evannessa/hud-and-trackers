@@ -14,6 +14,37 @@ export function setInvisibleHeader(html, showIcon) {
     }
 }
 
+/**
+ *
+ * @param {string} type - the entity type ("Actor", "Item", "JournalEntry", "Scene"), to determine where to look to call it
+ * @param {string} id - the entity's id, which will be the identifier to find the entity in a particular Document collection
+ * @returns entity -- returns the entity, or Document, we're looking for
+ */
+export async function getEntityById(type, id) {
+    let ourEntity;
+    switch (type) {
+        case "JournalEntry":
+            ourEntity = await game.journal.get(id);
+            break;
+        case "Actor":
+            ourEntity = await game.actors.get(id);
+            break;
+        case "Scene":
+            ourEntity = await game.scenes.get(id);
+            break;
+        case "Item":
+            ourEntity = await game.items.get(id);
+            break;
+        default:
+            break;
+    }
+    console.log(
+        "🚀 ~ file: helper-functions.js ~ line 43 ~ getEntityById ~ ourEntity",
+        ourEntity
+    );
+    return ourEntity;
+}
+
 export async function setSetting(name, value) {
     await game.settings.set(moduleName, name, value);
 }

@@ -701,7 +701,8 @@
 
 		.contentWrapper {
 			display: grid;
-			grid-template-columns: 1fr;
+			width: max-content;
+			grid-template-columns: max-content;
 			grid-template-rows: 2rem 1fr 1fr;
 
 			.frameWrapper,
@@ -815,6 +816,7 @@
 
 
 
+
 			.innerWrapper {
 				display: flex;
 				flex-direction: row;
@@ -887,6 +889,17 @@
 			// 		display: block;
 			// 	}
 			// }
+		}
+
+		.entityLinkWrapper {
+			display: flex;
+			flex-wrap: wrap;
+			max-width: fit-content;
+			max-width: -moz-fit-content;
+
+			.entityLink {
+				flex: 0;
+			}
 		}
 	}
 }

@@ -523,7 +523,11 @@
 }
 .clockHud .window-content .contentWrapper {
   display: grid;
-  grid-template-columns: 1fr;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  grid-template-columns: -webkit-max-content;
+  grid-template-columns: max-content;
   grid-template-rows: 2rem 1fr 1fr;
 }
 .clockHud .window-content .contentWrapper .frameWrapper,
@@ -664,6 +668,16 @@
   display: none;
   background-color: transparent;
   background: none;
+}
+.clockHud .window-content .entityLinkWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: -webkit-fit-content;
+  max-width: fit-content;
+  max-width: -moz-fit-content;
+}
+.clockHud .window-content .entityLinkWrapper .entityLink {
+  flex: 0;
 }
 
 #clockConfig .gradients {
