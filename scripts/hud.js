@@ -5,9 +5,7 @@ import * as HelperFunctions from "./helper-functions.js";
 
 let hud;
 let lastTab = "attacks";
-let controlled = false;
 let inCombat = false;
-let whoseTurn = "fastPlayerTurn";
 
 let initializationStarted = false;
 let addedRepTokens = false;
