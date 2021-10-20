@@ -97,6 +97,10 @@ class Clock extends FormApplication {
         this.saveAndRenderApp();
     }
 
+    userIsCreator() {
+        return game.user._id === this.creator._id;
+    }
+
     async getData() {
         return {
             ...this.object,
@@ -129,9 +133,6 @@ class Clock extends FormApplication {
         });
     }
     async activateListeners(html) {
-        if (game.user._id != this.creator._id) {
-            return;
-        }
         super.activateListeners(html);
         this.handleEditableContent(this);
         let windowContent = html.closest(".window-content");
@@ -199,42 +200,46 @@ class Clock extends FormApplication {
             });
         });
         //delete clock button
-        deleteClock.addEventListener("click", (event) => {
-            //delete us in all our linked entities
-            //TODO: Place this back in -- right now linkedEntities only stores the actor type and name
-            //TODO: maybe create a helper function that gets the entity in question
-            // for (let us in this.linkedEntities) {
-            //     //special syntax for deleting a specific key in flag objects
-            //     console.log(
-            //         "🚀 ~ file: clock.js ~ line 161 ~ Clock ~ deleteClock.addEventListener ~  this.linkedEntities[us]",
-            //         this.linkedEntities[us]
-            //     );
-            //     this.linkedEntities[us].setFlag("hud-and-trackers", "linkedClocks", {
-            //         [`-=${this.ourId}`]: null,
-            //     });
-            // }
-            //delete us from the saved clocks setting
-            let savedClocks = game.settings.get("hud-and-trackers", "savedClocks");
-            delete savedClocks[this.ourId];
-            game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
-            if (game.clockViewer && game.clockViewer.rendered) {
-                //TODO: Find way to delay this until after the clocks are updated
-                game.clockViewer.render(true);
-            }
-            this.close();
-        });
+        if (deleteClock) {
+            deleteClock.addEventListener("click", (event) => {
+                //delete us in all our linked entities
+                //TODO: Place this back in -- right now linkedEntities only stores the actor type and name
+                //TODO: maybe create a helper function that gets the entity in question
+                // for (let us in this.linkedEntities) {
+                //     //special syntax for deleting a specific key in flag objects
+                //     console.log(
+                //         "🚀 ~ file: clock.js ~ line 161 ~ Clock ~ deleteClock.addEventListener ~  this.linkedEntities[us]",
+                //         this.linkedEntities[us]
+                //     );
+                //     this.linkedEntities[us].setFlag("hud-and-trackers", "linkedClocks", {
+                //         [`-=${this.ourId}`]: null,
+                //     });
+                // }
+                //delete us from the saved clocks setting
+                let savedClocks = game.settings.get("hud-and-trackers", "savedClocks");
+                delete savedClocks[this.ourId];
+                game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
+                if (game.clockViewer && game.clockViewer.rendered) {
+                    //TODO: Find way to delay this until after the clocks are updated
+                    game.clockViewer.render(true);
+                }
+                this.close();
+            });
+        }
         //share clock button
-        shareClock.addEventListener("click", (event) => {
-            //toggle whether or not it's shared
-            if (this.shared) {
-                this.shared = false;
-                ui.notifications.notify("Stopped sharing clock");
-            } else {
-                this.shared = true;
-                ui.notifications.notify("Sharing clock");
-            }
-            this.saveAndRenderApp();
-        });
+        if (shareClock) {
+            shareClock?.addEventListener("click", (event) => {
+                //toggle whether or not it's shared
+                if (this.shared) {
+                    this.shared = false;
+                    ui.notifications.notify("Stopped sharing clock");
+                } else {
+                    this.shared = true;
+                    ui.notifications.notify("Sharing clock");
+                }
+                this.saveAndRenderApp();
+            });
+        }
         //adding breaks if we have any
         let sectionsArray = Array.from(sections);
         let framesArray = Array.from(frames);
@@ -272,32 +277,34 @@ class Clock extends FormApplication {
             }
 
             //clicking on the sections
-            element.addEventListener("mousedown", (event) => {
-                if (event.which == 1) {
-                    //left click
-                    //if the control key is held down, edit the section
+            if (this.userIsCreator) {
+                element.addEventListener("mousedown", (event) => {
+                    if (event.which == 1) {
+                        //left click
+                        //if the control key is held down, edit the section
+                        if (event.ctrlKey) {
+                            new SectionConfig({
+                                sectionId: element.id,
+                                sectionLabel: element.dataset.label,
+                                sectionFilled: element.classList.contains("filled"),
+                                clockParent: this,
+                            }).render(true);
+                        }
+                    }
+                });
+                element.addEventListener("mouseenter", (event) => {
                     if (event.ctrlKey) {
-                        new SectionConfig({
-                            sectionId: element.id,
-                            sectionLabel: element.dataset.label,
-                            sectionFilled: element.classList.contains("filled"),
-                            clockParent: this,
-                        }).render(true);
+                        if (element.classList.contains("filled")) {
+                            element.style.backgroundColor = "gray";
+                        }
                     }
-                }
-            });
-            element.addEventListener("mouseenter", (event) => {
-                if (event.ctrlKey) {
+                });
+                element.addEventListener("mouseleave", (event) => {
                     if (element.classList.contains("filled")) {
-                        element.style.backgroundColor = "gray";
+                        element.style.backgroundColor = "white";
                     }
-                }
-            });
-            element.addEventListener("mouseleave", (event) => {
-                if (element.classList.contains("filled")) {
-                    element.style.backgroundColor = "white";
-                }
-            });
+                });
+            }
         });
     }
 
@@ -331,14 +338,16 @@ class Clock extends FormApplication {
         this.object.shared = this.shared;
 
         //update our value in this array with new object
-        savedClocks[this.ourId] = this.object;
+        // savedClocks[this.ourId] = this.object;
+        savedClocks[this.ourId] = this;
 
         //save it back to the settings
         await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
 
         //if we're sharing this, update on other users' ends
         if (this.shared) {
-            socket.executeForOthers("renderNewClockFromData", this.object);
+            socket.executeForOthers("renderNewClockFromData", this);
+            // socket.executeForOthers("renderNewClockFromData", this.object);
         }
 
         //re-render
