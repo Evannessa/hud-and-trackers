@@ -57,20 +57,24 @@ class Clock extends FormApplication {
     //this will be used for when the clock data update is coming from a different
     //location
     updateEntireClock(clockData) {
-        ({
-            name: this.name,
-            sectionCount: this.sectionCount,
-            sectionMap: this.sectionMap,
-            gradient: this.gradient,
-            filledSections: this.filledSections,
-            breaks: this.breaks,
-            breakLabels: this.breakLabels,
-            waypoints: this.waypoints,
-            linkedEntities: this.linkedEntities,
-            shared: this.shared,
-            creator: this.creator,
-            ourId: this.ourId,
-        } = clockData);
+        this.object = {
+            ...clockData,
+        }(
+            ({
+                name: this.name,
+                sectionCount: this.sectionCount,
+                sectionMap: this.sectionMap,
+                gradient: this.gradient,
+                filledSections: this.filledSections,
+                breaks: this.breaks,
+                breakLabels: this.breakLabels,
+                waypoints: this.waypoints,
+                linkedEntities: this.linkedEntities,
+                shared: this.shared,
+                creator: this.creator,
+                ourId: this.ourId,
+            } = clockData)
+        );
 
         this.saveAndRenderApp();
     }
@@ -88,7 +92,7 @@ class Clock extends FormApplication {
     }
 
     userIsCreator() {
-        return game.user._id === this.creator;
+        return game.user.id === this.creator;
     }
 
     async getData() {
@@ -306,24 +310,15 @@ class Clock extends FormApplication {
      * this will update our app with saved values
      */
     async saveAndRenderApp() {
-        if (game.user._id == this.creator._id) {
-            console.log("We are the creator");
-            //if we created this clock, so we have permission to edit it
-            // if (!game.user.isGM) {
-            //     console.log("But we're not the GM");
-            //     //but we're not the GM
-            //     //ask the GM to save it, and ignore the rest of this
-            //     socket.executeAsGM("saveAndRenderApp", this);
-            //     return;
-            // }
-        } else {
-            console.log("We're just looking");
+        foundry.utils.mergeObject(this.object, this, { insertKeys: false });
+        if (!this.userIsCreator()) {
             //if we're not the creator
             //just render it and don't save it
             this.render();
             return;
         }
-        updateClock(this.ourId, this);
+
+        await updateClock(this.ourId, this.object);
         // //get saved clocks from settings
 
         // let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
@@ -415,9 +410,6 @@ function registerHooks(hookName) {
 }
 
 function isClockRendered(clockId) {
-    console.log("🚀 ~ file: clock.js ~ line 386 ~ isClockRendered ~ clockId", clockId);
-
-    console.log("Is clock rendered?", game.renderedClocks[clockId]);
     return game.renderedClocks[clockId];
 }
 
@@ -443,7 +435,6 @@ function registerSceneHook() {
 }
 //renders a new clock from saved clock data on an entity or setting
 async function renderNewClockFromData(clockData) {
-    console.log("Rendering new clock data", clockData);
     if (!isClockRendered(clockData.ourId)) {
         await new Clock(clockData).render(true);
     } else {
@@ -453,7 +444,6 @@ async function renderNewClockFromData(clockData) {
 
 //external functions for socket to handle internal function of Clock Object
 async function saveAndRenderApp(clockApp) {
-    console.log("🚀 ~ file: clock.js ~ line 459 ~ saveAndRenderApp ~ clockApp", clockApp);
     clockApp.saveAndRenderApp();
 }
 async function saveClock(clock) {
@@ -461,30 +451,32 @@ async function saveClock(clock) {
     savedClocks[clock.ourId] = clock;
     await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
 }
-async function getClocksByUser(userId) {
+function getClocksByUser(userId) {
     return game.users.get(userId)?.getFlag("hud-and-trackers", "savedClocks");
 }
-async function getAllClocks() {
+function getAllClocks() {
     const allClocks = game.users.reduce((accumulator, user) => {
         const userClocks = getClocksByUser(user.id);
-        return {
-            ...accumulator,
-            ...userClocks,
-        };
+
+        if (userClocks) {
+            //if user clocks is defined
+            return {
+                ...accumulator,
+                ...userClocks,
+            };
+        } else {
+            return {
+                ...accumulator,
+            };
+        }
     }, {});
     return allClocks;
 }
 
 async function updateClock(clockId, updateData, userId) {
-    console.log("🚀 ~ file: clock.js ~ line 483 ~ updateClock ~ updateData", updateData);
-    console.log("🚀 ~ file: clock.js ~ line 483 ~ updateClock ~ clockId", clockId);
     if (!userId) {
         const relevantClock = getAllClocks()[clockId];
-        console.log(
-            "🚀 ~ file: clock.js ~ line 486 ~ updateClock ~ relevantClock",
-            relevantClock
-        );
-        userId = relevantClock.creator._id;
+        userId = relevantClock.creator;
     }
     const updateInfo = {
         [clockId]: updateData,
@@ -585,7 +577,6 @@ export class ClockConfig extends FormApplication {
         //create the clock
         let newClock = new Clock(newClockData);
 
-        console.log("Getting ready to update clock");
         updateClock(newClock.ourId, newClockData, game.userId);
         //update saved clocks with the new clock
         // savedClocks[newClock.ourId] = newClock.object;
@@ -721,7 +712,7 @@ export class ClockViewer extends FormApplication {
     }
 
     async getData() {
-        let savedClocks = await getClocksByUser(game.userId); //await game.settings.get("hud-and-trackers", "savedClocks");
+        let savedClocks = getClocksByUser(game.userId); //await game.settings.get("hud-and-trackers", "savedClocks");
         this.clocks = Object.values(savedClocks);
         // Send data to the template
         return {
@@ -731,7 +722,7 @@ export class ClockViewer extends FormApplication {
 
     async activateListeners(html) {
         super.activateListeners(html);
-        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+        let savedClocks = getClocksByUser(game.userId); //await game.settings.get("hud-and-trackers", "savedClocks");
         this.clocks = savedClocks;
         html.on("click", ["data-action"], this._handleButtonClick);
         // html.on("click", "button", this._handleButtonClick);
@@ -739,12 +730,8 @@ export class ClockViewer extends FormApplication {
 
     async _handleButtonClick(event) {
         event.preventDefault();
-        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+        let savedClocks = getClocksByUser(game.userId); //await game.settings.get("hud-and-trackers", "savedClocks");
         this.clocks = savedClocks;
-        console.log(
-            "🚀 ~ file: clock.js ~ line 715 ~ ClockViewer ~ _handleButtonClick ~ savedClocks",
-            savedClocks
-        );
 
         const clickedElement = event.target;
         const action = clickedElement.dataset.action;
