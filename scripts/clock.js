@@ -57,24 +57,20 @@ class Clock extends FormApplication {
     //this will be used for when the clock data update is coming from a different
     //location
     updateEntireClock(clockData) {
-        this.object = {
-            ...clockData,
-        }(
-            ({
-                name: this.name,
-                sectionCount: this.sectionCount,
-                sectionMap: this.sectionMap,
-                gradient: this.gradient,
-                filledSections: this.filledSections,
-                breaks: this.breaks,
-                breakLabels: this.breakLabels,
-                waypoints: this.waypoints,
-                linkedEntities: this.linkedEntities,
-                shared: this.shared,
-                creator: this.creator,
-                ourId: this.ourId,
-            } = clockData)
-        );
+        ({
+            name: this.name,
+            sectionCount: this.sectionCount,
+            sectionMap: this.sectionMap,
+            gradient: this.gradient,
+            filledSections: this.filledSections,
+            breaks: this.breaks,
+            breakLabels: this.breakLabels,
+            waypoints: this.waypoints,
+            linkedEntities: this.linkedEntities,
+            shared: this.shared,
+            creator: this.creator,
+            ourId: this.ourId,
+        } = clockData);
 
         this.saveAndRenderApp();
     }

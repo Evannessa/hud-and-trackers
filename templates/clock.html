@@ -1,7 +1,7 @@
 <form id="{{id}}">
     <div class="headerWrapper">
         <h3 class="clockName" name="clockName" contenteditable="true">{{name}}</h3>
-        {{log user}} {{log creator}} {{#if (eq user._id creator)}}
+        {{#if (eq user.id creator)}}
         <button class="share" data-action="share">
             <i class="fas fa-share-square"></i>
         </button>
