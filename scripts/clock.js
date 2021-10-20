@@ -1,6 +1,15 @@
 "use strict";
 import * as HelperFunctions from "./helper-functions.js";
+let socket;
 
+// also register socket to share clock data
+Hooks.once("socketlib.ready", () => {
+    socket = socketlib.registerModule("hud-and-trackers");
+    socket.register("renderNewClockFromData", renderNewClockFromData);
+});
+//attack all the clocks to their linked entities' render hooks
+// start a rendered clock object to keep track of
+// all the rendered clocks
 Hooks.on("ready", () => {
     game.renderedClocks = {};
     hookEntities();
@@ -36,11 +45,34 @@ class Clock extends FormApplication {
             breakLabels: this.breakLabels,
             waypoints: this.waypoints,
             linkedEntities: this.linkedEntities,
+            shared: this.shared,
             id: this.ourId,
         } = clockData);
         console.log("Rendering new clock");
     }
 
+    //this will be used for when the clock data update is coming from a different
+    //location
+    updateEntireClock(clockData) {
+        ({
+            name: this.name,
+            sectionCount: this.sectionCount,
+            sectionMap: this.sectionMap,
+            gradient: this.gradient,
+            filledSections: this.filledSections,
+            breaks: this.breaks,
+            breakLabels: this.breakLabels,
+            waypoints: this.waypoints,
+            linkedEntities: this.linkedEntities,
+            shared: this.shared,
+            id: this.ourId,
+        } = clockData);
+        if (game.user.isGM) {
+            this.saveAndRenderApp();
+        } else {
+            this.render();
+        }
+    }
     /**
      *
      * @param {section} sectionId the id of the section we're targeting
@@ -119,6 +151,7 @@ class Clock extends FormApplication {
         let entityLinks = windowContent.find(".entityLink");
         let filled = 0;
         let deleteClock = windowContent.find(".delete")[0];
+        let shareClock = windowContent.find(".share")[0];
 
         Array.from(entityLinks).forEach((element) => {
             element.addEventListener("click", (event) => {
@@ -175,7 +208,18 @@ class Clock extends FormApplication {
             }
             this.close();
         });
-
+        //share clock button
+        shareClock.addEventListener("click", (event) => {
+            //toggle whether or not it's shared
+            if (this.shared) {
+                this.shared = false;
+                ui.notifications.notify("Stopped sharing clock");
+            } else {
+                this.shared = true;
+                ui.notifications.notify("Sharing clock");
+            }
+            this.saveAndRenderApp();
+        });
         //adding breaks if we have any
         let sectionsArray = Array.from(sections);
         let framesArray = Array.from(frames);
@@ -246,12 +290,27 @@ class Clock extends FormApplication {
      * this will update our app with saved values
      */
     async saveAndRenderApp() {
+        //get saved clocks from settings
         let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+
+        //?still not sure how "object" is determined. Something with "super"?
         this.object.linkedEntities = this.linkedEntities;
         this.object.filledSections = this.filledSections;
         this.object.name = this.name;
+        this.object.shared = this.shared;
+
+        //update our value in this array with new object
         savedClocks[this.ourId] = this.object;
+
+        //save it back to the settings
         await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
+
+        //if we're sharing this, update on other users' ends
+        if (this.shared) {
+            socket.executeForOthers("renderNewClockFromData", this.object);
+        }
+
+        //re-render
         this.render();
     }
 
@@ -319,21 +378,26 @@ function registerHooks(hookName) {
         if (linkedClocks) {
             for (let clockId in linkedClocks) {
                 //if the clock isn't already rendered, render it
-                if (!isClockRendered(clockId)) {
-                    renderNewClockFromData(linkedClocks[clockId]);
-                }
+                // if (!isClockRendered(clockId)) {
+                renderNewClockFromData(linkedClocks[clockId]);
+                // }
             }
         }
     });
 }
 
 function isClockRendered(clockId) {
+    console.log("🚀 ~ file: clock.js ~ line 386 ~ isClockRendered ~ clockId", clockId);
+
+    console.log("Is clock rendered?", game.renderedClocks[clockId]);
     return game.renderedClocks[clockId];
 }
 
 Hooks.on("renderClock", (app, html) => {
-    if (!game.renderedClocks[app.ourId]) {
+    console.log(game.renderedClocks[app.ourId]);
+    if (game.renderedClocks[app.ourId] == undefined) {
         game.renderedClocks[app.ourId] = app;
+        console.log(game.renderedClocks);
     }
 });
 Hooks.on("closeClock", (app, html) => {
@@ -353,7 +417,12 @@ function registerSceneHook() {
 }
 //renders a new clock from saved clock data on an entity or setting
 async function renderNewClockFromData(clockData) {
-    await new Clock(clockData).render(true);
+    console.log("Rendering new clock data", clockData);
+    if (!isClockRendered(clockData.id)) {
+        await new Clock(clockData).render(true);
+    } else {
+        game.renderedClocks[clockData.id].updateEntireClock(clockData);
+    }
 }
 
 //sets up hook handlers for all the different entity types
@@ -435,6 +504,7 @@ export class ClockConfig extends FormApplication {
             breakLabels: breakLabels,
             waypoints: waypoints,
             linkedEntities: linkedEntities,
+            shared: false,
             id: id,
         };
 
