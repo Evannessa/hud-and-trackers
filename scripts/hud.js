@@ -281,6 +281,8 @@ export class HelperHud extends Application {
         let openCheatSheet = windowContent.find(".openCheatSheet")[0];
         let openLootSheet = windowContent.find(".openLootSheet")[0];
         let savePos = windowContent.find(".savePos")[0];
+        let addClock = windowContent.find(".addClock")[0];
+        let showClock = windowContent.find(".showClocks")[0];
 
         $(savePos).click((event) => {
             let combatHudPosition = game.combatHud.app.position;
@@ -291,20 +293,29 @@ export class HelperHud extends Application {
             game.settings.set("hud-and-trackers", "helperHudPosition", helperHudPosition);
         });
 
+        //open cheat sheet PDF
         $(openCheatSheet).click((event) => {
             HelperFunctions.callMacro("Open Cheat Sheet PDF");
         });
+
+        //open loot sheet actor
         openLootSheet.addEventListener("click", (event) => {
             let actor = HelperFunctions.getGameActorByName("Party Loot Box");
             actor.sheet.render(true);
+        });
+        //add clock
+        addClock.addEventListener("click", (event) => {
+            new ClockApp.ClockConfig().render(true);
+        });
+        //show clock
+        showClock.addEventListener("click", (event) => {
+            new ClockApp.ClockViewer().render(true);
         });
         if (this.isGM) {
             //utility stuff
             let changeDisposition = windowContent.find(".changeDisposition")[0];
             let addAttacks = windowContent.find(".addAttacks")[0];
             let addPCs = windowContent.find(".addPCs")[0];
-            let addClock = windowContent.find(".addClock")[0];
-            let showClock = windowContent.find(".showClocks")[0];
 
             addPCs.addEventListener("click", (event) => {
                 HelperFunctions.addPCsToScene();
@@ -316,12 +327,6 @@ export class HelperHud extends Application {
                 HelperFunctions.callMacro(
                     "[Token] Toggle Attacks in Inventory of non-PC Actors"
                 );
-            });
-            addClock.addEventListener("click", (event) => {
-                new ClockApp.ClockConfig().render(true);
-            });
-            showClock.addEventListener("click", (event) => {
-                new ClockApp.ClockViewer().render(true);
             });
         } else {
             let selectCharacter = windowContent.find(".selectCharacter")[0];

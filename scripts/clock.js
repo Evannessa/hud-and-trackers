@@ -7,6 +7,7 @@ Hooks.once("socketlib.ready", () => {
     socket = socketlib.registerModule("hud-and-trackers");
     socket.register("renderNewClockFromData", renderNewClockFromData);
     socket.register("saveAndRenderApp", saveAndRenderApp);
+    socket.register("saveClock", saveClock);
 });
 //attack all the clocks to their linked entities' render hooks
 // start a rendered clock object to keep track of
@@ -87,11 +88,7 @@ class Clock extends FormApplication {
     }
 
     userIsCreator() {
-        console.log(
-            "🚀 ~ file: clock.js ~ line 91 ~ Clock ~ userIsCreator ~ game.user._id === this.creator._id",
-            game.user._id === this.creator._id
-        );
-        return game.user._id === this.creator._id;
+        return game.user._id === this.creator;
     }
 
     async getData() {
@@ -309,17 +306,16 @@ class Clock extends FormApplication {
      * this will update our app with saved values
      */
     async saveAndRenderApp() {
-        console.log("This is being called");
         if (game.user._id == this.creator._id) {
             console.log("We are the creator");
             //if we created this clock, so we have permission to edit it
-            if (!game.user.isGM) {
-                console.log("But we're not the GM");
-                //but we're not the GM
-                //ask the GM to save it, and ignore the rest of this
-                socket.executeAsGM("saveAndRenderApp", this);
-                return;
-            }
+            // if (!game.user.isGM) {
+            //     console.log("But we're not the GM");
+            //     //but we're not the GM
+            //     //ask the GM to save it, and ignore the rest of this
+            //     socket.executeAsGM("saveAndRenderApp", this);
+            //     return;
+            // }
         } else {
             console.log("We're just looking");
             //if we're not the creator
@@ -327,30 +323,19 @@ class Clock extends FormApplication {
             this.render();
             return;
         }
-        //get saved clocks from settings
-        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+        updateClock(this.ourId, this);
+        // //get saved clocks from settings
 
-        //?still not sure how "object" is determined. Something with "super"?
-        this.object.linkedEntities = this.linkedEntities;
-        this.object.filledSections = this.filledSections;
-        this.object.name = this.name;
-        this.object.shared = this.shared;
+        // let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
 
-        //update our value in this array with new object
-        //? savedClocks[this.ourId] = this.object;
-        console.log(
-            "🚀 ~ file: clock.js ~ line 344 ~ Clock ~ saveAndRenderApp ~ this",
-            this
-        );
-        savedClocks[this.ourId] = this;
+        // savedClocks[this.ourId] = this;
 
-        //save it back to the settings
-        await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
+        // //save it back to the settings
+        // await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
 
         //if we're sharing this, update on other users' ends
         if (this.shared) {
             socket.executeForOthers("renderNewClockFromData", this);
-            // socket.executeForOthers("renderNewClockFromData", this.object);
         }
 
         //re-render
@@ -437,7 +422,6 @@ function isClockRendered(clockId) {
 }
 
 Hooks.on("renderClock", (app, html) => {
-    console.log("🚀 ~ file: clock.js ~ line 441 ~ Hooks.on ~ app", app);
     if (game.renderedClocks[app.ourId] == undefined) {
         game.renderedClocks[app.ourId] = app;
     }
@@ -467,9 +451,50 @@ async function renderNewClockFromData(clockData) {
     }
 }
 
+//external functions for socket to handle internal function of Clock Object
 async function saveAndRenderApp(clockApp) {
+    console.log("🚀 ~ file: clock.js ~ line 459 ~ saveAndRenderApp ~ clockApp", clockApp);
     clockApp.saveAndRenderApp();
 }
+async function saveClock(clock) {
+    let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+    savedClocks[clock.ourId] = clock;
+    await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
+}
+async function getClocksByUser(userId) {
+    return game.users.get(userId)?.getFlag("hud-and-trackers", "savedClocks");
+}
+async function getAllClocks() {
+    const allClocks = game.users.reduce((accumulator, user) => {
+        const userClocks = getClocksByUser(user.id);
+        return {
+            ...accumulator,
+            ...userClocks,
+        };
+    }, {});
+    return allClocks;
+}
+
+async function updateClock(clockId, updateData, userId) {
+    console.log("🚀 ~ file: clock.js ~ line 483 ~ updateClock ~ updateData", updateData);
+    console.log("🚀 ~ file: clock.js ~ line 483 ~ updateClock ~ clockId", clockId);
+    if (!userId) {
+        const relevantClock = getAllClocks()[clockId];
+        console.log(
+            "🚀 ~ file: clock.js ~ line 486 ~ updateClock ~ relevantClock",
+            relevantClock
+        );
+        userId = relevantClock.creator._id;
+    }
+    const updateInfo = {
+        [clockId]: updateData,
+    };
+    let user = game.users.get(userId);
+
+    user.setFlag("hud-and-trackers", "savedClocks", updateInfo);
+}
+
+// ==================================
 
 //sets up hook handlers for all the different entity types
 function hookEntities() {
@@ -538,7 +563,6 @@ export class ClockConfig extends FormApplication {
             let waypointId = HelperFunctions.idGenerator();
             waypoints[waypointId] = "Waypoint";
         });
-        console.log(breakLabels);
 
         let id = HelperFunctions.idGenerator();
 
@@ -551,19 +575,25 @@ export class ClockConfig extends FormApplication {
             waypoints: waypoints,
             linkedEntities: linkedEntities,
             shared: false,
-            creator: game.user,
+            creator: game.user.id,
             ourId: id,
         };
 
         //get saved clocks from game settings
-        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+        //! let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
 
         //create the clock
         let newClock = new Clock(newClockData);
 
+        console.log("Getting ready to update clock");
+        updateClock(newClock.ourId, newClockData, game.userId);
         //update saved clocks with the new clock
-        savedClocks[newClock.ourId] = newClock.object;
-        await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
+        // savedClocks[newClock.ourId] = newClock.object;
+        // if (game.user.isGM) {
+        //     await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
+        // } else {
+        //     await socket.executeAsGM("saveClock", newClock);
+        // }
 
         //render new clock
         newClock.render(true);
@@ -674,7 +704,7 @@ class Section {
 export class ClockViewer extends FormApplication {
     constructor() {
         super();
-        let savedClocks = game.settings.get("hud-and-trackers", "savedClocks");
+        let savedClocks = getClocksByUser(game.userId); //game.settings.get("hud-and-trackers", "savedClocks");
         this.clocks = savedClocks;
     }
 
@@ -691,7 +721,7 @@ export class ClockViewer extends FormApplication {
     }
 
     async getData() {
-        let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
+        let savedClocks = await getClocksByUser(game.userId); //await game.settings.get("hud-and-trackers", "savedClocks");
         this.clocks = Object.values(savedClocks);
         // Send data to the template
         return {
