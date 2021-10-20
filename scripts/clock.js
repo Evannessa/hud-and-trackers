@@ -48,7 +48,7 @@ class Clock extends FormApplication {
             linkedEntities: this.linkedEntities,
             shared: this.shared,
             creator: this.creator,
-            id: this.ourId,
+            ourId: this.ourId,
         } = clockData);
         console.log("Rendering new clock");
     }
@@ -68,21 +68,10 @@ class Clock extends FormApplication {
             linkedEntities: this.linkedEntities,
             shared: this.shared,
             creator: this.creator,
-            id: this.ourId,
+            ourId: this.ourId,
         } = clockData);
 
         this.saveAndRenderApp();
-        // //change this to asking if you're the creator or not,
-        // //and if not the GM, use socket to execute as GM
-        // if (game.user == this.creator) {
-        //     if (game.user.isGM) {
-        //         this.saveAndRenderApp();
-        //     } else {
-        //         socket.executeAsGM("saveAndRenderApp", this);
-        //     }
-        // } else {
-        //     this.render();
-        // }
     }
     /**
      *
@@ -98,6 +87,10 @@ class Clock extends FormApplication {
     }
 
     userIsCreator() {
+        console.log(
+            "🚀 ~ file: clock.js ~ line 91 ~ Clock ~ userIsCreator ~ game.user._id === this.creator._id",
+            game.user._id === this.creator._id
+        );
         return game.user._id === this.creator._id;
     }
 
@@ -109,8 +102,9 @@ class Clock extends FormApplication {
         };
     }
 
+    //this method is simply for handling changing the various headers and labels
+    //without them needing to be text inputs
     handleEditableContent(app) {
-        console.log("IS this our app?", app);
         // Find all editable content.
         $("[contenteditable=true]")
             // When you click on item, record into data("initialText") content of this item.
@@ -132,6 +126,8 @@ class Clock extends FormApplication {
             }
         });
     }
+
+    //activating all the listeners on the app
     async activateListeners(html) {
         super.activateListeners(html);
         this.handleEditableContent(this);
@@ -142,8 +138,9 @@ class Clock extends FormApplication {
         //make the background wrapper's gradient look like the chosen one
         clockWrapper.style.backgroundImage = this.gradient;
 
+        //clicking on the clock wrapper will fill or unfill the sections
         clockWrapper.addEventListener("mousedown", (event) => {
-            if (!event.ctrlKey) {
+            if (!event.ctrlKey && this.userIsCreator()) {
                 if (event.which == 1) {
                     this.filledSections++;
                     if (this.filledSections > this.sectionCount) {
@@ -277,7 +274,7 @@ class Clock extends FormApplication {
             }
 
             //clicking on the sections
-            if (this.userIsCreator) {
+            if (this.userIsCreator()) {
                 element.addEventListener("mousedown", (event) => {
                     if (event.which == 1) {
                         //left click
@@ -312,10 +309,12 @@ class Clock extends FormApplication {
      * this will update our app with saved values
      */
     async saveAndRenderApp() {
+        console.log("This is being called");
         if (game.user._id == this.creator._id) {
             console.log("We are the creator");
             //if we created this clock, so we have permission to edit it
             if (!game.user.isGM) {
+                console.log("But we're not the GM");
                 //but we're not the GM
                 //ask the GM to save it, and ignore the rest of this
                 socket.executeAsGM("saveAndRenderApp", this);
@@ -338,7 +337,11 @@ class Clock extends FormApplication {
         this.object.shared = this.shared;
 
         //update our value in this array with new object
-        // savedClocks[this.ourId] = this.object;
+        //? savedClocks[this.ourId] = this.object;
+        console.log(
+            "🚀 ~ file: clock.js ~ line 344 ~ Clock ~ saveAndRenderApp ~ this",
+            this
+        );
         savedClocks[this.ourId] = this;
 
         //save it back to the settings
@@ -434,10 +437,9 @@ function isClockRendered(clockId) {
 }
 
 Hooks.on("renderClock", (app, html) => {
-    console.log(game.renderedClocks[app.ourId]);
+    console.log("🚀 ~ file: clock.js ~ line 441 ~ Hooks.on ~ app", app);
     if (game.renderedClocks[app.ourId] == undefined) {
         game.renderedClocks[app.ourId] = app;
-        console.log(game.renderedClocks);
     }
 });
 Hooks.on("closeClock", (app, html) => {
@@ -458,15 +460,15 @@ function registerSceneHook() {
 //renders a new clock from saved clock data on an entity or setting
 async function renderNewClockFromData(clockData) {
     console.log("Rendering new clock data", clockData);
-    if (!isClockRendered(clockData.id)) {
+    if (!isClockRendered(clockData.ourId)) {
         await new Clock(clockData).render(true);
     } else {
-        game.renderedClocks[clockData.id].updateEntireClock(clockData);
+        game.renderedClocks[clockData.ourId].updateEntireClock(clockData);
     }
 }
 
 async function saveAndRenderApp(clockApp) {
-    app.saveAndRenderApp();
+    clockApp.saveAndRenderApp();
 }
 
 //sets up hook handlers for all the different entity types
@@ -550,7 +552,7 @@ export class ClockConfig extends FormApplication {
             linkedEntities: linkedEntities,
             shared: false,
             creator: game.user,
-            id: id,
+            ourId: id,
         };
 
         //get saved clocks from game settings
@@ -560,7 +562,7 @@ export class ClockConfig extends FormApplication {
         let newClock = new Clock(newClockData);
 
         //update saved clocks with the new clock
-        savedClocks[newClock.object.id] = newClock.object;
+        savedClocks[newClock.ourId] = newClock.object;
         await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
 
         //render new clock
@@ -709,6 +711,10 @@ export class ClockViewer extends FormApplication {
         event.preventDefault();
         let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
         this.clocks = savedClocks;
+        console.log(
+            "🚀 ~ file: clock.js ~ line 715 ~ ClockViewer ~ _handleButtonClick ~ savedClocks",
+            savedClocks
+        );
 
         const clickedElement = event.target;
         const action = clickedElement.dataset.action;
