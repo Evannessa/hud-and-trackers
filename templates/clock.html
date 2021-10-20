@@ -1,10 +1,12 @@
 <form id="{{id}}">
     <div class="headerWrapper">
         <h3 class="clockName" name="clockName" contenteditable="true">{{name}}</h3>
+        {{log user}} {{log creator}} {{#if (eq user._id creator._id)}}
         <button class="share" data-action="share">
             <i class="fas fa-share-square"></i>
         </button>
         <button class="delete" data-action="delete"><i class="fa fa-trash"></i></button>
+        {{/if}}
     </div>
 
     <div class="contentWrapper">

@@ -6,6 +6,7 @@ let socket;
 Hooks.once("socketlib.ready", () => {
     socket = socketlib.registerModule("hud-and-trackers");
     socket.register("renderNewClockFromData", renderNewClockFromData);
+    socket.register("saveAndRenderApp", saveAndRenderApp);
 });
 //attack all the clocks to their linked entities' render hooks
 // start a rendered clock object to keep track of
@@ -46,6 +47,7 @@ class Clock extends FormApplication {
             waypoints: this.waypoints,
             linkedEntities: this.linkedEntities,
             shared: this.shared,
+            creator: this.creator,
             id: this.ourId,
         } = clockData);
         console.log("Rendering new clock");
@@ -65,13 +67,22 @@ class Clock extends FormApplication {
             waypoints: this.waypoints,
             linkedEntities: this.linkedEntities,
             shared: this.shared,
+            creator: this.creator,
             id: this.ourId,
         } = clockData);
-        if (game.user.isGM) {
-            this.saveAndRenderApp();
-        } else {
-            this.render();
-        }
+
+        this.saveAndRenderApp();
+        // //change this to asking if you're the creator or not,
+        // //and if not the GM, use socket to execute as GM
+        // if (game.user == this.creator) {
+        //     if (game.user.isGM) {
+        //         this.saveAndRenderApp();
+        //     } else {
+        //         socket.executeAsGM("saveAndRenderApp", this);
+        //     }
+        // } else {
+        //     this.render();
+        // }
     }
     /**
      *
@@ -90,6 +101,7 @@ class Clock extends FormApplication {
         return {
             ...this.object,
             sections: Object.values(this.sectionMap),
+            user: game.user,
         };
     }
 
@@ -117,6 +129,9 @@ class Clock extends FormApplication {
         });
     }
     async activateListeners(html) {
+        if (game.user._id != this.creator._id) {
+            return;
+        }
         super.activateListeners(html);
         this.handleEditableContent(this);
         let windowContent = html.closest(".window-content");
@@ -290,6 +305,22 @@ class Clock extends FormApplication {
      * this will update our app with saved values
      */
     async saveAndRenderApp() {
+        if (game.user._id == this.creator._id) {
+            console.log("We are the creator");
+            //if we created this clock, so we have permission to edit it
+            if (!game.user.isGM) {
+                //but we're not the GM
+                //ask the GM to save it, and ignore the rest of this
+                socket.executeAsGM("saveAndRenderApp", this);
+                return;
+            }
+        } else {
+            console.log("We're just looking");
+            //if we're not the creator
+            //just render it and don't save it
+            this.render();
+            return;
+        }
         //get saved clocks from settings
         let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
 
@@ -425,6 +456,10 @@ async function renderNewClockFromData(clockData) {
     }
 }
 
+async function saveAndRenderApp(clockApp) {
+    app.saveAndRenderApp();
+}
+
 //sets up hook handlers for all the different entity types
 function hookEntities() {
     registerHooks("renderJournalSheet");
@@ -505,6 +540,7 @@ export class ClockConfig extends FormApplication {
             waypoints: waypoints,
             linkedEntities: linkedEntities,
             shared: false,
+            creator: game.user,
             id: id,
         };
 
