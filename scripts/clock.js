@@ -35,45 +35,47 @@ Handlebars.registerHelper("times", function (n, block) {
 class Clock extends FormApplication {
     constructor(clockData) {
         super({
-            ...clockData,
+            data: clockData,
         });
-        ({
-            name: this.name,
-            sectionCount: this.sectionCount,
-            sectionMap: this.sectionMap,
-            gradient: this.gradient,
-            filledSections: this.filledSections,
-            breaks: this.breaks,
-            breakLabels: this.breakLabels,
-            waypoints: this.waypoints,
-            linkedEntities: this.linkedEntities,
-            shared: this.shared,
-            creator: this.creator,
-            ourId: this.ourId,
-        } = clockData);
+        this.data = clockData;
+        // ({
+        //     name: this.name,
+        //     sectionCount: this.sectionCount,
+        //     sectionMap: this.data.sectionMap,
+        //     gradient: this.gradient,
+        //     filledSections: this.data.filledSections,
+        //     breaks: this.breaks,
+        //     breakLabels: this.breakLabels,
+        //     waypoints: this.waypoints,
+        //     linkedEntities: this.data.linkedEntities,
+        //     shared: this.shared,
+        //     creator: this.creator,
+        //     ourId: this.data.ourId,
+        // } = clockData);
         console.log("Rendering new clock");
     }
 
     //this will be used for when the clock data update is coming from a different
     //location
     updateEntireClock(clockData, dontSave) {
-        ({
-            name: this.name,
-            sectionCount: this.sectionCount,
-            sectionMap: this.sectionMap,
-            gradient: this.gradient,
-            filledSections: this.filledSections,
-            breaks: this.breaks,
-            breakLabels: this.breakLabels,
-            waypoints: this.waypoints,
-            linkedEntities: this.linkedEntities,
-            shared: this.shared,
-            creator: this.creator,
-            ourId: this.ourId,
-        } = clockData);
+        this.data = clockData;
+        // ({
+        //     name: this.name,
+        //     sectionCount: this.sectionCount,
+        //     sectionMap: this.data.sectionMap,
+        //     gradient: this.gradient,
+        //     filledSections: this.data.filledSections,
+        //     breaks: this.breaks,
+        //     breakLabels: this.breakLabels,
+        //     waypoints: this.waypoints,
+        //     linkedEntities: this.data.linkedEntities,
+        //     shared: this.shared,
+        //     creator: this.creator,
+        //     ourId: this.data.ourId,
+        // } = clockData);
         if (dontSave) {
             console.log("should be rendering");
-            foundry.utils.mergeObject(this.object, this, { insertKeys: false });
+            // foundry.utils.mergeObject(this.object, this, { insertKeys: false });
             this.render(true);
         } else {
             this.saveAndRenderApp();
@@ -85,7 +87,7 @@ class Clock extends FormApplication {
      * @param {data} data - the data we're sending through
      */
     updateSections(sectionId, data) {
-        this.sectionMap[sectionId] = new Section({
+        this.data.sectionMap[sectionId] = new Section({
             id: sectionId,
             ...data,
         });
@@ -93,13 +95,13 @@ class Clock extends FormApplication {
     }
 
     userIsCreator() {
-        return game.user.id === this.creator;
+        return game.user.id === this.data.creator;
     }
 
     async getData() {
         return {
-            ...this.object,
-            sections: Object.values(this.sectionMap),
+            ...this.data,
+            sections: Object.values(this.data.sectionMap),
             user: game.user,
         };
     }
@@ -139,21 +141,21 @@ class Clock extends FormApplication {
         let clockWrapper = windowContent.find(".clockWrapper")[0];
 
         //make the background wrapper's gradient look like the chosen one
-        clockWrapper.style.backgroundImage = this.gradient;
+        clockWrapper.style.backgroundImage = this.data.gradient;
 
         //clicking on the clock wrapper will fill or unfill the sections
         clockWrapper.addEventListener("mousedown", (event) => {
             if (!event.ctrlKey && this.userIsCreator()) {
                 if (event.which == 1) {
-                    this.filledSections++;
-                    if (this.filledSections > this.sectionCount) {
-                        this.filledSections = this.sectionCount;
+                    this.data.filledSections++;
+                    if (this.data.filledSections > this.data.sectionCount) {
+                        this.data.filledSections = this.data.sectionCount;
                     }
                     this.saveAndRenderApp();
                 } else if (event.which == 3) {
-                    this.filledSections--;
-                    if (this.filledSections < 0) {
-                        this.filledSections = 0;
+                    this.data.filledSections--;
+                    if (this.data.filledSections < 0) {
+                        this.data.filledSections = 0;
                     }
                     this.saveAndRenderApp();
                 }
@@ -181,7 +183,7 @@ class Clock extends FormApplication {
 
                 if (event.altKey) {
                     //if alt key is pressed, we're going to unlink the entity
-                    await unlinkClockFromEntity(ourEntity, this.ourId);
+                    await unlinkClockFromEntity(ourEntity, this.data.ourId);
                     // this.saveAndRenderApp();
                     return;
                 }
@@ -216,22 +218,22 @@ class Clock extends FormApplication {
                 //delete us in all our linked entities
                 //TODO: Place this back in -- right now linkedEntities only stores the entity type and name
                 //TODO: maybe create a helper function that gets the entity in question
-                for (let entityId in this.linkedEntities) {
+                for (let entityId in this.data.linkedEntities) {
                     //special syntax for deleting a specific key in flag objects
                     let ourEntity;
                     await HelperFunctions.getEntityById(
-                        this.linkedEntities[entityId].entity,
+                        this.data.linkedEntities[entityId].entity,
                         entityId
                     ).then((value) => (ourEntity = value));
 
-                    await unlinkClockFromEntity(ourEntity, this.ourId);
+                    await unlinkClockFromEntity(ourEntity, this.data.ourId);
                 }
                 //delete us from the saved clocks setting
                 //TODO: This should delete from the user saved clocks flag now
 
-                deleteClock(this.ourId);
+                deleteClock(this.data.ourId);
                 // let savedClocks = getClocksByUser(game.userId); //game.settings.get("hud-and-trackers", "savedClocks");
-                // delete savedClocks[this.ourId];
+                // delete savedClocks[this.data.ourId];
                 // game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
                 if (game.clockViewer && game.clockViewer.rendered) {
                     //TODO: Find way to delay this until after the clocks are updated
@@ -249,11 +251,11 @@ class Clock extends FormApplication {
             shareClock.addEventListener("click", (event) => {
                 event.preventDefault();
                 // toggle whether or not it's shared
-                if (this.shared) {
-                    this.shared = false;
+                if (this.data.shared) {
+                    this.data.shared = false;
                     ui.notifications.notify("Stopped sharing clock");
                 } else {
-                    this.shared = true;
+                    this.data.shared = true;
                     ui.notifications.notify("Sharing clock");
                 }
                 this.saveAndRenderApp();
@@ -265,23 +267,23 @@ class Clock extends FormApplication {
         breakLabels = Array.from(breakLabels);
         let count = 0;
         //go through all the sub-sections if there are some
-        if (this.breaks.length > 0) {
+        if (this.data.breaks.length > 0) {
             //if breaks is = [2, 1, 2]
-            this.breaks.forEach((num) => {
+            this.data.breaks.forEach((num) => {
                 count += num; //count = 2, first time around, 3 second time around, 5 3rd time around
                 $(sectionsArray[count - 1]).attr("data-break", true); //(we're subtracting one since array indices start at zero)
             });
             let i = 0;
 
-            for (i = 0; i < this.breaks.length; i++) {
+            for (i = 0; i < this.data.breaks.length; i++) {
                 $(framesArray[i]).width((index, currentWidth) => {
-                    return currentWidth * this.breaks[i];
+                    return currentWidth * this.data.breaks[i];
                 });
                 $(breakLabels[i]).width((index, currentWidth) => {
-                    return currentWidth * this.breaks[i];
+                    return currentWidth * this.data.breaks[i];
                 });
                 $(waypoints[i]).width((index, currentWidth) => {
-                    return currentWidth * this.breaks[i];
+                    return currentWidth * this.data.breaks[i];
                 });
             }
         }
@@ -289,10 +291,10 @@ class Clock extends FormApplication {
         //refilling the sections if we have any, and adding event listener for click and ctrl click
         sectionsArray.forEach((element) => {
             //refilling the sections after refresh
-            if (filled < this.filledSections) {
+            if (filled < this.data.filledSections) {
                 element.classList.add("filled");
                 filled++;
-                this.sectionMap[element.id].filled = true;
+                this.data.sectionMap[element.id].filled = true;
             }
 
             //clicking on the sections
@@ -331,12 +333,6 @@ class Clock extends FormApplication {
      * this will update our app with saved values
      */
     async saveAndRenderApp() {
-        console.log(this.object);
-        foundry.utils.mergeObject(this.object, this, {
-            insertKeys: false,
-            insertValues: false,
-        });
-        console.log(this.object);
         if (!this.userIsCreator()) {
             //if we're not the creator
             //just render it and don't save it
@@ -344,18 +340,18 @@ class Clock extends FormApplication {
             return;
         }
 
-        await updateClock(this.ourId, this.object);
+        await updateClock(this.data.ourId, this.data);
         // //get saved clocks from settings
 
         // let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
 
-        // savedClocks[this.ourId] = this;
+        // savedClocks[this.data.ourId] = this;
 
         // //save it back to the settings
         // await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
 
         //if we're sharing this, update on other users' ends
-        if (this.shared) {
+        if (this.data.shared) {
             socket.executeForOthers("renderNewClockFromData", this);
         }
 
@@ -410,11 +406,11 @@ class Clock extends FormApplication {
                 entity: ourEntity.entity,
             };
             //get our linked entities, and find the id of this entity, and add the linked entities to this data
-            this.linkedEntities[data.id] = entityData;
+            this.data.linkedEntities[data.id] = entityData;
 
             //make a new object for storing the clock on the entity as well
             const newLinkedClocks = {
-                [this.ourId]: this.object,
+                [this.data.ourId]: this.data,
             };
 
             //set the entity flag *after* the linkedEntities is updated, so that the entity
@@ -425,7 +421,7 @@ class Clock extends FormApplication {
     }
 
     async _updateObject(event, formData) {
-        let clockData = await getAllClocks()[this.ourId];
+        let clockData = await getAllClocks()[this.data.ourId];
         console.log(clockData);
         this.updateEntireClock(clockData, true);
     }
@@ -591,30 +587,14 @@ async function unlinkClockFromEntity(ourEntity, clockId) {
 
     let deletion = {
         [clockId]: {
-            // ...clockData,
             linkedEntities: {
-                // ...clockData.linkedEntities,
                 [`-=${ourEntity.id}`]: null,
-            },
-            object: {
-                // ...clockData.object,
-                linkedEntities: {
-                    // ...clockData.object.linkedEntities,
-                    [`-=${ourEntity.id}`]: null,
-                },
             },
         },
     };
     let result = await game.user.setFlag("hud-and-trackers", "savedClocks", deletion);
-    console.log(result);
-    // delete clockData.linkedEntities[ourEntity.id];
-    // delete clockData.object.linkedEntities[ourEntity.id];
-    // //merge it with the "object"
-    // // foundry.utils.mergeObject(clockData.object, clockData, { insertKeys: false });
 
-    // //update the clock
     if (isClockRendered(clockId)) {
-        // console.log(game.renderedClocks[clockId]);
         let clocks = await game.user.getFlag("hud-and-trackers", "savedClocks");
         let newClockData = clocks[clockId];
         console.log(
@@ -716,7 +696,7 @@ export class ClockConfig extends FormApplication {
         //create the clock
         let newClock = new Clock(newClockData);
 
-        updateClock(newClock.ourId, newClockData, game.userId);
+        updateClock(newClock.data.ourId, newClockData, game.userId);
         //update saved clocks with the new clock
         // savedClocks[newClock.ourId] = newClock.object;
         // if (game.user.isGM) {
