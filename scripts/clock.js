@@ -56,7 +56,7 @@ class Clock extends FormApplication {
 
     //this will be used for when the clock data update is coming from a different
     //location
-    updateEntireClock(clockData) {
+    updateEntireClock(clockData, dontSave) {
         ({
             name: this.name,
             sectionCount: this.sectionCount,
@@ -71,8 +71,13 @@ class Clock extends FormApplication {
             creator: this.creator,
             ourId: this.ourId,
         } = clockData);
-
-        this.saveAndRenderApp();
+        if (dontSave) {
+            console.log("should be rendering");
+            foundry.utils.mergeObject(this.object, this, { insertKeys: false });
+            this.render(true);
+        } else {
+            this.saveAndRenderApp();
+        }
     }
     /**
      *
@@ -92,6 +97,9 @@ class Clock extends FormApplication {
     }
 
     async getData() {
+        let data = getAllClocks()[this.ourId];
+        this.updateEntireClock(data);
+        console.log("Getting data", this.object);
         return {
             ...this.object,
             sections: Object.values(this.sectionMap),
@@ -126,6 +134,7 @@ class Clock extends FormApplication {
 
     //activating all the listeners on the app
     async activateListeners(html) {
+        console.log("Activating clock listeners!");
         super.activateListeners(html);
         this.handleEditableContent(this);
         let windowContent = html.closest(".window-content");
@@ -606,9 +615,12 @@ async function unlinkClockFromEntity(ourEntity, clockId) {
     // // foundry.utils.mergeObject(clockData.object, clockData, { insertKeys: false });
 
     // //update the clock
-    // if (!isClockRendered(clockId)) {
-    //     updateClock(clockId, clockData);
-    // }
+    if (isClockRendered(clockId)) {
+        // console.log(game.renderedClocks[clockId]);
+        let clocks = await game.user.getFlag("hud-and-trackers", "savedClocks");
+        let newClockData = clocks[clockId];
+        game.renderedClocks[clockId].updateEntireClock(newClockData, true);
+    }
 }
 
 // ==================================
