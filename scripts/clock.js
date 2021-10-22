@@ -401,12 +401,20 @@ class Clock extends FormApplication {
 //registers the hooks for journal sheets, actor sheets, item sheets
 function registerHooks(hookName) {
     Hooks.on(hookName, async (app, html) => {
-        let linkedClocks = app.object.getFlag("hud-and-trackers", "linkedClocks");
+        console.log("Rendering actor sheet!");
+        let linkedClocks = await app.object.getFlag("hud-and-trackers", "linkedClocks");
         //if we have linked clocks
-        if (linkedClocks) {
-            console.log("🚀 ~ file: clock.js ~ line 422 ~ Hooks.on ~ app", app);
-            $(html[0]).css("position", "relative");
-            await showClockDrawer(app, html, linkedClocks);
+        if (linkedClocks && Object.keys(linkedClocks).length > 0) {
+            console.log(
+                "🚀 ~ file: clock.js ~ line 422 ~ Hooks.on ~ app",
+                app,
+                app.element
+            );
+            app.element.css("position", "relative");
+            // $(html[0]).css("position", "relative");
+            if (app.element.find(".clock-drawer").length == 0) {
+                await showClockDrawer(app, html, linkedClocks);
+            }
             // for (let clockId in linkedClocks) {
             //     // renderNewClockFromData(linkedClocks[clockId]);
             // }
@@ -415,13 +423,18 @@ function registerHooks(hookName) {
 }
 //show a floating clock drawer on sheets that have linked clocks
 async function showClockDrawer(app, html, linkedClocks) {
+    console.log("APP ELEMENT IS", app.element);
     let entity = app.object;
     const template =
         "modules/hud-and-trackers/templates/clock-partials/clock-drawer.html";
-    var drawerHtml = await renderTemplate(template, { clocks: linkedClocks });
+    var drawerHtml = await renderTemplate(template, {
+        clocks: linkedClocks,
+        entityType: entity.entity,
+    });
     drawerHtml = $(drawerHtml);
 
-    $(html[0]).append(drawerHtml);
+    // $(html[0]).append(drawerHtml);
+    app.element.append(drawerHtml);
 
     // drawerHtml.children().each((index) => {
     //     this.mouseenter((event) => {
@@ -440,7 +453,8 @@ async function showClockDrawer(app, html, linkedClocks) {
         if (event.altKey) {
             await unlinkClockFromEntity(entity, clickedElement.id);
             //re-render this sheet and return
-            app.render();
+            drawerHtml.remove();
+            app.render(true);
             return;
         }
         const action = clickedElement.dataset.action;
@@ -448,7 +462,6 @@ async function showClockDrawer(app, html, linkedClocks) {
         switch (action) {
             case "open": {
                 await renderNewClockFromData(clockData);
-                // new Clock(clockData).render(true);
             }
         }
     });
@@ -668,13 +681,6 @@ export class ClockConfig extends FormApplication {
         let newClock = new Clock(newClockData);
 
         updateClock(newClock.data.ourId, newClockData, game.userId);
-        //update saved clocks with the new clock
-        // savedClocks[newClock.ourId] = newClock.object;
-        // if (game.user.isGM) {
-        //     await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
-        // } else {
-        //     await socket.executeAsGM("saveClock", newClock);
-        // }
 
         //render new clock
         newClock.render(true);
