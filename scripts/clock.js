@@ -97,9 +97,6 @@ class Clock extends FormApplication {
     }
 
     async getData() {
-        let data = getAllClocks()[this.ourId];
-        this.updateEntireClock(data);
-        console.log("Getting data", this.object);
         return {
             ...this.object,
             sections: Object.values(this.sectionMap),
@@ -174,6 +171,7 @@ class Clock extends FormApplication {
 
         Array.from(entityLinks).forEach((element) => {
             element.addEventListener("click", async (event) => {
+                event.preventDefault();
                 let entityType = element.dataset.type;
                 let entityId = element.id;
                 let ourEntity;
@@ -214,6 +212,7 @@ class Clock extends FormApplication {
         //delete clock button
         if (deleteClockButton) {
             deleteClockButton.addEventListener("click", async (event) => {
+                event.preventDefault();
                 //delete us in all our linked entities
                 //TODO: Place this back in -- right now linkedEntities only stores the entity type and name
                 //TODO: maybe create a helper function that gets the entity in question
@@ -226,9 +225,6 @@ class Clock extends FormApplication {
                     ).then((value) => (ourEntity = value));
 
                     await unlinkClockFromEntity(ourEntity, this.ourId);
-                    // ourEntity.setFlag("hud-and-trackers", "linkedClocks", {
-                    //     [`-=${this.ourId}`]: null,
-                    // });
                 }
                 //delete us from the saved clocks setting
                 //TODO: This should delete from the user saved clocks flag now
@@ -251,6 +247,7 @@ class Clock extends FormApplication {
 
             //do the event listener for the clock being clicked
             shareClock.addEventListener("click", (event) => {
+                event.preventDefault();
                 // toggle whether or not it's shared
                 if (this.shared) {
                     this.shared = false;
@@ -334,7 +331,11 @@ class Clock extends FormApplication {
      * this will update our app with saved values
      */
     async saveAndRenderApp() {
-        foundry.utils.mergeObject(this.object, this, { insertKeys: false });
+        console.log(this.object);
+        foundry.utils.mergeObject(this.object, this, {
+            insertKeys: false,
+            insertValues: false,
+        });
         console.log(this.object);
         if (!this.userIsCreator()) {
             //if we're not the creator
@@ -403,12 +404,15 @@ class Clock extends FormApplication {
             //add this clock to a flag of the entity
 
             //save the linked entity on our clock
+            //save this entity a linked entity on our clock
             let entityData = {
                 name: ourEntity.name,
                 entity: ourEntity.entity,
             };
-            //save this entity a linked entity on our clock
+            //get our linked entities, and find the id of this entity, and add the linked entities to this data
             this.linkedEntities[data.id] = entityData;
+
+            //make a new object for storing the clock on the entity as well
             const newLinkedClocks = {
                 [this.ourId]: this.object,
             };
@@ -418,11 +422,13 @@ class Clock extends FormApplication {
             await ourEntity.setFlag("hud-and-trackers", "linkedClocks", newLinkedClocks);
             this.saveAndRenderApp();
         }
-        //set to render clock when entity is opened
     }
-    //remove this entity from our clock's linkedEntities array
 
-    async _updateObject(event, formData) {}
+    async _updateObject(event, formData) {
+        let clockData = await getAllClocks()[this.ourId];
+        console.log(clockData);
+        this.updateEntireClock(clockData, true);
+    }
 }
 
 //registers the hooks for journal sheets, actor sheets, item sheets
@@ -514,6 +520,7 @@ async function renderNewClockFromData(clockData) {
         await new Clock(clockData).render(true);
     } else {
         game.renderedClocks[clockData.ourId].updateEntireClock(clockData);
+        //TODO: Add a way to maximize and bring to focus in the "render" options
     }
 }
 
@@ -581,32 +588,23 @@ async function unlinkClockFromEntity(ourEntity, clockId) {
 
     //get the clock and delete the linked entity from the clock
     let clockData = getClocksByUser(game.userId)[clockId];
-    console.log(
-        "🚀 ~ file: clock.js ~ line 573 ~ unlinkClockFromEntity ~ clockData",
-        clockData
-    );
 
     let deletion = {
         [clockId]: {
-            ...clockData,
+            // ...clockData,
             linkedEntities: {
-                ...clockData.linkedEntities,
+                // ...clockData.linkedEntities,
                 [`-=${ourEntity.id}`]: null,
             },
             object: {
-                ...clockData.object,
+                // ...clockData.object,
                 linkedEntities: {
-                    ...clockData.object.linkedEntities,
+                    // ...clockData.object.linkedEntities,
                     [`-=${ourEntity.id}`]: null,
                 },
             },
         },
     };
-    console.log(
-        "🚀 ~ file: clock.js ~ line 596 ~ unlinkClockFromEntity ~ deletion",
-        deletion
-    );
-
     let result = await game.user.setFlag("hud-and-trackers", "savedClocks", deletion);
     console.log(result);
     // delete clockData.linkedEntities[ourEntity.id];
@@ -619,6 +617,10 @@ async function unlinkClockFromEntity(ourEntity, clockId) {
         // console.log(game.renderedClocks[clockId]);
         let clocks = await game.user.getFlag("hud-and-trackers", "savedClocks");
         let newClockData = clocks[clockId];
+        console.log(
+            "🚀 ~ file: clock.js ~ line 618 ~ unlinkClockFromEntity ~ newClockData",
+            newClockData
+        );
         game.renderedClocks[clockId].updateEntireClock(newClockData, true);
     }
 }
