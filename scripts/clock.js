@@ -38,20 +38,6 @@ class Clock extends FormApplication {
             data: clockData,
         });
         this.data = clockData;
-        // ({
-        //     name: this.name,
-        //     sectionCount: this.sectionCount,
-        //     sectionMap: this.data.sectionMap,
-        //     gradient: this.gradient,
-        //     filledSections: this.data.filledSections,
-        //     breaks: this.breaks,
-        //     breakLabels: this.breakLabels,
-        //     waypoints: this.waypoints,
-        //     linkedEntities: this.data.linkedEntities,
-        //     shared: this.shared,
-        //     creator: this.creator,
-        //     ourId: this.data.ourId,
-        // } = clockData);
         console.log("Rendering new clock");
     }
 
@@ -59,23 +45,8 @@ class Clock extends FormApplication {
     //location
     updateEntireClock(clockData, dontSave) {
         this.data = clockData;
-        // ({
-        //     name: this.name,
-        //     sectionCount: this.sectionCount,
-        //     sectionMap: this.data.sectionMap,
-        //     gradient: this.gradient,
-        //     filledSections: this.data.filledSections,
-        //     breaks: this.breaks,
-        //     breakLabels: this.breakLabels,
-        //     waypoints: this.waypoints,
-        //     linkedEntities: this.data.linkedEntities,
-        //     shared: this.shared,
-        //     creator: this.creator,
-        //     ourId: this.data.ourId,
-        // } = clockData);
         if (dontSave) {
             console.log("should be rendering");
-            // foundry.utils.mergeObject(this.object, this, { insertKeys: false });
             this.render(true);
         } else {
             this.saveAndRenderApp();
@@ -490,13 +461,13 @@ function isClockRendered(clockId) {
 //event handler for when the clock is rendered
 Hooks.on("renderClock", (app, html) => {
     //if the clock is rendered, add it to our global rendered clocks object
-    if (game.renderedClocks[app.ourId] == undefined) {
-        game.renderedClocks[app.ourId] = app;
+    if (game.renderedClocks[app.data.ourId] == undefined) {
+        game.renderedClocks[app.data.ourId] = app;
     }
 });
 Hooks.on("closeClock", (app, html) => {
     //if the clock is no longer rendered, remove it from our global rendered clocks object
-    delete game.renderedClocks[app.ourId];
+    delete game.renderedClocks[app.data.ourId];
 });
 
 //registers the hooks for scenes
