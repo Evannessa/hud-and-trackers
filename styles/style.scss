@@ -677,13 +677,78 @@
 
 }
 
+.clock-drawer {
+	$drawer: &;
+	position: absolute;
+	top: 1rem;
+	left: -2rem;
+	width: 2rem;
+	min-height: 10rem;
+	max-height: max-content;
+	background-color: #1e2130f1;
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+	writing-mode: vertical-lr;
+	text-orientation: mixed;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+	overflow: hidden;
+
+	&__header {
+		letter-spacing: 3px;
+		font-size: 1rem;
+		text-transform: uppercase;
+		// transform-origin: 0 0;
+		transform: rotate(180deg);
+	}
+
+
+	.button-holder {
+		width: 10rem;
+		display: none;
+
+		button {
+			text-align: left;
+			border-radius: 0px;
+			padding-left: 1.5rem;
+			background-color: none;
+
+			+button {
+				padding-top: 0.5rem;
+			}
+
+			// border: 1px solid rgb(253, 112, 136);
+		}
+	}
+
+	&:hover {
+		padding: 0.5rem 0rem;
+		left: -10rem;
+		width: 10rem;
+		writing-mode: inherit;
+		text-orientation: inherit;
+		justify-content: flex-start;
+		align-items: center;
+
+		.clock-drawer__header {
+			transform: rotate(0deg);
+		}
+
+
+		.button-holder {
+			display: block;
+		}
+	}
+
+}
 
 
 .clockHud {
 
-	$colorOne: #09F;
-	$colorTwo: #F90;
-	$colorThree: mix($colorOne, $colorTwo, 20%);
+
 	width: max-content !important;
 	width: -moz-max-content !important;
 	height: max-content !important;
@@ -727,6 +792,77 @@
 
 			.delete {
 				width: 20%;
+				color: rgb(168, 43, 43);
+			}
+
+			.share {
+				width: 20%;
+
+				&.active {
+					background-color: purple;
+					box-shadow: inset 0 0 10px rgba(37, 37, 37, 0.731);
+				}
+
+				// position: relative;
+				// display: inline-block;
+				// width: 60px;
+				// height: 34px;
+
+				// input {
+				// 	opacity: 0;
+				// 	width: 0;
+				// 	height: 0;
+
+				// 	&:checked {
+				// 		+.slider {
+				// 			background-color: #2196F3;
+
+				// 			&:before {
+				// 				-webkit-transform: translateX(26px);
+				// 				-ms-transform: translateX(26px);
+				// 				transform: translateX(26px);
+				// 			}
+				// 		}
+				// 	}
+
+				// }
+
+				// .slider {
+				// 	position: absolute;
+				// 	cursor: pointer;
+				// 	top: 0;
+				// 	left: 0;
+				// 	right: 0;
+				// 	bottom: 0;
+				// 	background-color: #ccc;
+				// 	-webkit-transition: .4s;
+				// 	transition: .4s;
+
+				// 	&.round {
+				// 		border-radius: 34px;
+
+				// 		&:before {
+				// 			border-radius: 50%;
+				// 		}
+				// 	}
+
+				// 	&:before {
+				// 		position: absolute;
+				// 		content: "";
+				// 		height: 26px;
+				// 		width: 26px;
+				// 		left: 4px;
+				// 		bottom: 4px;
+				// 		background-color: white;
+				// 		-webkit-transition: .4s;
+				// 		transition: .4s;
+				// 	}
+				// }
+			}
+
+			.edit {
+				width: 20%;
+
 			}
 		}
 

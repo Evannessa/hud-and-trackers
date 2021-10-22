@@ -1,0 +1,8 @@
+<div class="flex-col clock-drawer">
+    <h3 class="clock-drawer__header"><i class="far fa-clock"></i> Clocks</h3>
+    <div class="button-holder">
+        {{#each clocks}}
+        <button id="{{this.ourId}}" data-action="open">{{this.name}}</button>
+        {{/each}}
+    </div>
+</div>

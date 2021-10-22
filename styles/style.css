@@ -505,6 +505,66 @@
   color: white;
 }
 
+.clock-drawer {
+  position: absolute;
+  top: 1rem;
+  left: -2rem;
+  width: 2rem;
+  min-height: 10rem;
+  max-height: -webkit-max-content;
+  max-height: -moz-max-content;
+  max-height: max-content;
+  background-color: #1e2130f1;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  -ms-writing-mode: tb-lr;
+      writing-mode: vertical-lr;
+  -webkit-text-orientation: mixed;
+          text-orientation: mixed;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  overflow: hidden;
+}
+.clock-drawer__header {
+  letter-spacing: 3px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  transform: rotate(180deg);
+}
+.clock-drawer .button-holder {
+  width: 10rem;
+  display: none;
+}
+.clock-drawer .button-holder button {
+  text-align: left;
+  border-radius: 0px;
+  padding-left: 1.5rem;
+  background-color: none;
+}
+.clock-drawer .button-holder button + button {
+  padding-top: 0.5rem;
+}
+.clock-drawer:hover {
+  padding: 0.5rem 0rem;
+  left: -10rem;
+  width: 10rem;
+  -ms-writing-mode: inherit;
+      writing-mode: inherit;
+  -webkit-text-orientation: inherit;
+          text-orientation: inherit;
+  justify-content: flex-start;
+  align-items: center;
+}
+.clock-drawer:hover .clock-drawer__header {
+  transform: rotate(0deg);
+}
+.clock-drawer:hover .button-holder {
+  display: block;
+}
+
 .clockHud {
   width: -webkit-max-content !important;
   width: max-content !important;
@@ -547,6 +607,17 @@
   white-space: nowrap;
 }
 .clockHud .window-content .headerWrapper .delete {
+  width: 20%;
+  color: #a82b2b;
+}
+.clockHud .window-content .headerWrapper .share {
+  width: 20%;
+}
+.clockHud .window-content .headerWrapper .share.active {
+  background-color: purple;
+  box-shadow: inset 0 0 10px rgba(37, 37, 37, 0.731);
+}
+.clockHud .window-content .headerWrapper .edit {
   width: 20%;
 }
 .clockHud .window-content .waypointWrapper {
