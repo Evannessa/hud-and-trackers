@@ -405,11 +405,6 @@ function registerHooks(hookName) {
         let linkedClocks = await app.object.getFlag("hud-and-trackers", "linkedClocks");
         //if we have linked clocks
         if (linkedClocks && Object.keys(linkedClocks).length > 0) {
-            console.log(
-                "🚀 ~ file: clock.js ~ line 422 ~ Hooks.on ~ app",
-                app,
-                app.element
-            );
             app.element.css("position", "relative");
             // $(html[0]).css("position", "relative");
             if (app.element.find(".clock-drawer").length == 0) {
@@ -423,29 +418,47 @@ function registerHooks(hookName) {
 }
 //show a floating clock drawer on sheets that have linked clocks
 async function showClockDrawer(app, html, linkedClocks) {
-    console.log("APP ELEMENT IS", app.element);
     let entity = app.object;
+
+    //get the handlebars template
     const template =
         "modules/hud-and-trackers/templates/clock-partials/clock-drawer.html";
+
+    //render the handlebars template
     var drawerHtml = await renderTemplate(template, {
         clocks: linkedClocks,
         entityType: entity.entity,
     });
-    drawerHtml = $(drawerHtml);
 
-    // $(html[0]).append(drawerHtml);
+    //convert it to a jquery object
+    drawerHtml = $(drawerHtml);
+    drawerHtml.on("keydown", function (e) {
+        console.log(e);
+    });
+
+    //get the app's element and append this
     app.element.append(drawerHtml);
 
-    // drawerHtml.children().each((index) => {
-    //     this.mouseenter((event) => {
-    //         if (event.altKey) {
-    //             this.css("background-color", "red");
-    //         }
-    //     });
-    //     this.mouseleave((event) => {
-    //         this.css("background-color", "#252423");
-    //     });
-    // });
+    //find all the buttons, (filter to avoid grabbing anything that's not a button)
+    let buttons = drawerHtml.find(".button-holder").children(); //[0].children());
+    buttons = buttons.filter("button");
+
+    //get the DOM object from the jquery object, loop through, and add event listeners
+    buttons.get().forEach((element) => {
+        $(element).mouseenter((event) => {
+            if (event.altKey) {
+                $(element).css("background-color", "red");
+            }
+        });
+        $(element).mouseleave((event) => {
+            $(element).css("background-color", "#252423");
+        });
+        $(element).keydown((event) => {
+            console.log(event);
+        });
+    });
+
+    //add click event listener for all of the button elements with "data-action"
     drawerHtml.on("click", ["data-action"], async (event) => {
         event.preventDefault();
         const clickedElement = event.target;
@@ -543,7 +556,6 @@ async function updateClock(clockId, updateData, userId) {
     const updateInfo = {
         [clockId]: updateData,
     };
-    console.log("🚀 ~ file: clock.js ~ line 550 ~ updateClock ~ updateInfo", updateInfo);
     let user = game.users.get(userId);
 
     let result = await user.setFlag("hud-and-trackers", "savedClocks", updateInfo);
@@ -581,10 +593,6 @@ async function unlinkClockFromEntity(ourEntity, clockId) {
     if (isClockRendered(clockId)) {
         let clocks = await game.user.getFlag("hud-and-trackers", "savedClocks");
         let newClockData = clocks[clockId];
-        console.log(
-            "🚀 ~ file: clock.js ~ line 618 ~ unlinkClockFromEntity ~ newClockData",
-            newClockData
-        );
         game.renderedClocks[clockId].updateEntireClock(newClockData, true);
     }
 }

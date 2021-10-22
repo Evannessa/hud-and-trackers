@@ -505,6 +505,17 @@
   color: white;
 }
 
+.window-app.sheet.minimized .clock-drawer {
+  min-height: -webkit-max-content;
+  min-height: -moz-max-content;
+  min-height: max-content;
+  top: 0;
+  padding: 0.1rem;
+}
+.window-app.sheet.minimized .clock-drawer__header span {
+  display: none;
+}
+
 .clock-drawer {
   position: absolute;
   top: 1rem;

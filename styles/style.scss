@@ -677,6 +677,25 @@
 
 }
 
+.window-app {
+	&.sheet {
+		&.minimized {
+			.clock-drawer {
+				min-height: max-content;
+				top: 0;
+				padding: 0.1rem;
+
+				&__header {
+					span {
+						display: none;
+					}
+				}
+			}
+		}
+	}
+}
+
+
 .clock-drawer {
 	$drawer: &;
 	position: absolute;
