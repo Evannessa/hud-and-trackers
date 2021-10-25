@@ -104,7 +104,6 @@ class Clock extends FormApplication {
 
     //activating all the listeners on the app
     async activateListeners(html) {
-        console.log("Activating clock listeners!");
         super.activateListeners(html);
         this.handleEditableContent(this);
         let windowContent = html.closest(".window-content");
@@ -314,16 +313,9 @@ class Clock extends FormApplication {
         await updateClock(this.data.ourId, this.data);
         // //get saved clocks from settings
 
-        // let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
-
-        // savedClocks[this.data.ourId] = this;
-
-        // //save it back to the settings
-        // await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
-
         //if we're sharing this, update on other users' ends
         if (this.data.shared) {
-            socket.executeForOthers("renderNewClockFromData", this);
+            socket.executeForOthers("renderNewClockFromData", this.data);
         }
 
         //re-render
