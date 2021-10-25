@@ -716,6 +716,18 @@
 	box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 	overflow: hidden;
 
+	&.pop-out {
+		left: 0rem;
+		border-top-left-radius: 0px;
+		border-bottom-left-radius: 0px;
+		border-top-right-radius: 10px;
+		border-bottom-right-radius: 10px;
+
+		&:hover {
+			left: 0rem;
+		}
+	}
+
 	&__header {
 		letter-spacing: 3px;
 		font-size: 1rem;
