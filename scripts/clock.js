@@ -93,9 +93,9 @@ class Clock extends FormApplication {
                 // ... check if it's the title or a label, then save and render it
                 let newData = $(this).html();
                 if (this.classList.contains("breakLabel")) {
-                    app.breakLabels[this.id] = newData;
+                    app.data.breakLabels[this.id] = newData;
                 } else if (this.classList.contains("clockName")) {
-                    app.name = newData;
+                    app.data.name = newData;
                 }
                 app.saveAndRenderApp();
             }
