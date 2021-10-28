@@ -194,6 +194,7 @@ class Clock extends FormApplication {
 
     async _handleButtonClick(event) {
         console.log("Handling click!");
+        event.stopPropagation();
 
         let clickedElement = $(event.currentTarget); //this will return the form itself?
         console.log(
@@ -274,7 +275,7 @@ class Clock extends FormApplication {
         let shareClock = windowContent.find(".share")[0];
         console.log(html);
         console.log(windowContent);
-        windowContent.on("click", "[data-action]", this._handleButtonClick.bind(this));
+        windowContent.one("click", "[data-action]", this._handleButtonClick.bind(this));
         // Array.from(entityLinks).forEach((element) => {
         //     element.addEventListener("click", async (event) => {
         //         event.preventDefault();
