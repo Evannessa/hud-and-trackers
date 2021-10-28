@@ -100,6 +100,7 @@ class Clock extends FormApplication {
 
     //this will handle if the clock's delete button is clicked
     async handleClockDeletion(event, app) {
+        console.log("How many times is this being called?");
         event.preventDefault();
         //delete us in all our linked entities
         for (let entityId in app.data.linkedEntities) {
@@ -192,7 +193,7 @@ class Clock extends FormApplication {
     }
 
     async _handleButtonClick(event) {
-        event.preventDefault();
+        console.log("Handling click!");
 
         let clickedElement = $(event.currentTarget); //this will return the form itself?
         console.log(
@@ -576,19 +577,20 @@ async function showClockDrawer(app, html, linkedClocks) {
     });
 
     //add click event listener for all of the button elements with "data-action"
-    drawerHtml.on("click", ["data-action"], async (event) => {
+    drawerHtml.on("click", "[data-action]", async (event) => {
         event.preventDefault();
-        const clickedElement = event.target;
+        const clickedElement = $(event.currentTarget);
         //if we have the alt key held down, unlink instead
         if (event.altKey) {
             await unlinkClockFromEntity(entity, clickedElement.id);
             //re-render this sheet and return
             drawerHtml.remove();
-            app.render(true);
+            // app.render(true);
             return;
         }
-        const action = clickedElement.dataset.action;
-        let clockData = linkedClocks[clickedElement.id];
+        const action = clickedElement.data().action;
+        console.log(clickedElement);
+        let clockData = linkedClocks[clickedElement.attr("id")];
         switch (action) {
             case "open": {
                 await renderNewClockFromData(clockData);
@@ -630,6 +632,7 @@ async function renderNewClockFromData(clockData) {
         await new Clock(clockData).render(true);
     } else {
         game.renderedClocks[clockData.ourId].updateEntireClock(clockData);
+        game.renderedClocks[clockData.ourId].bringToTop();
         //TODO: Add a way to maximize and bring to focus in the "render" options
     }
 }
@@ -682,6 +685,7 @@ async function updateClock(clockId, updateData, userId) {
 //this should delete the flags from the user
 async function deleteClock(clockId) {
     const relevantClock = getAllClocks()[clockId];
+    console.log(relevantClock);
 
     const keyDeletion = {
         [`-=${clockId}`]: null,
@@ -696,6 +700,13 @@ async function unlinkClockFromEntity(ourEntity, clockId) {
         [`-=${clockId}`]: null,
     });
 
+    if (ourEntity.sheet.rendered) {
+        //if the entity sheet is rendered, re-render it
+        if (ourEntity.sheet.element.find(".clock-drawer")) {
+            ourEntity.sheet.element.remove(".clock-drawer");
+        }
+        ourEntity.sheet.render(true);
+    }
     //get the clock and delete the linked entity from the clock
     let clockData = getClocksByUser(game.userId)[clockId];
 
