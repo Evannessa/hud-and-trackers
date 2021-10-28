@@ -77,6 +77,95 @@ class Clock extends FormApplication {
         };
     }
 
+    async generateConfirmationDialog(confirmCallback, event, message, title) {
+        let confirmation = new Dialog({
+            title: `${title}`,
+            content: `<p>Are you sure you want to ${message}</p>`,
+            buttons: {
+                yes: {
+                    icon: '<i class="fas fa-check"></i>',
+                    label: "Delete",
+                    callback: () => {
+                        confirmCallback(event, this);
+                    },
+                },
+                no: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: "Cancel",
+                },
+            },
+        });
+        confirmation.render(true);
+    }
+
+    //this will handle if the clock's delete button is clicked
+    async handleClockDeletion(event, app) {
+        event.preventDefault();
+        //delete us in all our linked entities
+        for (let entityId in app.data.linkedEntities) {
+            //special syntax for deleting a specific key in flag objects
+            let ourEntity;
+            await HelperFunctions.getEntityById(
+                this.data.linkedEntities[entityId].entity,
+                entityId
+            ).then((value) => (ourEntity = value));
+
+            await unlinkClockFromEntity(ourEntity, app.data.ourId);
+        }
+        //delete us from the saved clocks setting
+        deleteClock(app.data.ourId);
+
+        if (game.clockViewer && game.clockViewer.rendered) {
+            //TODO: Find way to delay this until after the clocks are updated
+            game.clockViewer.render(true);
+        }
+        this.close();
+    }
+
+    //this will handle if the clock's share button is clicked
+    async handleShareClock(event, app) {
+        event.preventDefault();
+        if (this.data.shared) {
+            this.data.shared = false;
+            ui.notifications.notify("Stopped sharing clock");
+        } else {
+            this.data.shared = true;
+            ui.notifications.notify("Sharing clock");
+        }
+        this.saveAndRenderApp();
+    }
+    //for opening the entity sheets, or rendering the entity scene
+    async handleEntityClick(event, app) {
+        event.preventDefault();
+        let element = event.currentTarget;
+        let entityType = element.dataset.type;
+        let entityId = element.id;
+        let ourEntity;
+        await HelperFunctions.getEntityById(entityType, entityId).then(
+            (value) => (ourEntity = value)
+        );
+
+        if (event.altKey) {
+            //if alt key is pressed, we're going to unlink the entity
+            await unlinkClockFromEntity(ourEntity, this.data.ourId);
+            // this.saveAndRenderApp();
+            return;
+        }
+
+        if (entityType == "Scene") {
+            //if it's a scene and we're not already viewing it
+            //view it
+            if (game.scenes.viewed != ourEntity) {
+                ourEntity.view();
+            }
+        } else if (ourEntity.sheet) {
+            //else if it's something with a sheet, render that sheet
+            //if it's not already rendered
+            if (!ourEntity.sheet.rendered) {
+                ourEntity.sheet.render(true);
+            }
+        }
+    }
     //this method is simply for handling changing the various headers and labels
     //without them needing to be text inputs
     handleEditableContent(app) {
@@ -102,6 +191,48 @@ class Clock extends FormApplication {
         });
     }
 
+    async _handleButtonClick(event) {
+        event.preventDefault();
+
+        let clickedElement = $(event.currentTarget); //this will return the form itself?
+        console.log(
+            "🚀 ~ file: clock.js ~ line 194 ~ Clock ~ _handleButtonClick ~ clickedElement",
+            clickedElement
+        );
+        let action = clickedElement.data().action;
+
+        console.log(action);
+        const elementId = clickedElement.id;
+
+        switch (action) {
+            case "share": {
+                this.handleShareClock(event, this);
+                break;
+            }
+            case "edit": {
+                //here maybe, pass in an object like
+                // let configData = {editing: true, editedClock: this}
+                new ClockConfig().render();
+                break;
+            }
+            case "delete": {
+                //ask for user's confirmation before deleting clock
+                this.generateConfirmationDialog(
+                    this.handleClockDeletion.bind(this),
+                    event,
+                    "delete this clock",
+                    "Delete Clock"
+                );
+                break;
+            }
+            case "showEntity": {
+                this.handleEntityClick(event, this);
+                break;
+            }
+            default:
+                console.log("Invalid action");
+        }
+    }
     //activating all the listeners on the app
     async activateListeners(html) {
         super.activateListeners(html);
@@ -140,97 +271,93 @@ class Clock extends FormApplication {
         let filled = 0;
         let deleteClockButton = windowContent.find(".delete")[0];
         let shareClock = windowContent.find(".share")[0];
+        console.log(html);
+        console.log(windowContent);
+        windowContent.on("click", "[data-action]", this._handleButtonClick.bind(this));
+        // Array.from(entityLinks).forEach((element) => {
+        //     element.addEventListener("click", async (event) => {
+        //         event.preventDefault();
+        //         let entityType = element.dataset.type;
+        //         let entityId = element.id;
+        //         let ourEntity;
+        //         await HelperFunctions.getEntityById(entityType, entityId).then(
+        //             (value) => (ourEntity = value)
+        //         );
 
-        Array.from(entityLinks).forEach((element) => {
-            element.addEventListener("click", async (event) => {
-                event.preventDefault();
-                let entityType = element.dataset.type;
-                let entityId = element.id;
-                let ourEntity;
-                await HelperFunctions.getEntityById(entityType, entityId).then(
-                    (value) => (ourEntity = value)
-                );
+        //         if (event.altKey) {
+        //             //if alt key is pressed, we're going to unlink the entity
+        //             await unlinkClockFromEntity(ourEntity, this.data.ourId);
+        //             // this.saveAndRenderApp();
+        //             return;
+        //         }
 
-                if (event.altKey) {
-                    //if alt key is pressed, we're going to unlink the entity
-                    await unlinkClockFromEntity(ourEntity, this.data.ourId);
-                    // this.saveAndRenderApp();
-                    return;
-                }
+        //         if (entityType == "Scene") {
+        //             //if it's a scene and we're not already viewing it
+        //             //view it
+        //             if (game.scenes.viewed != ourEntity) {
+        //                 ourEntity.view();
+        //             }
+        //         } else if (ourEntity.sheet) {
+        //             //else if it's something with a sheet, render that sheet
+        //             //if it's not already rendered
+        //             if (!ourEntity.sheet.rendered) {
+        //                 ourEntity.sheet.render(true);
+        //             }
+        //         }
+        //     });
+        //     element.addEventListener("mouseenter", (event) => {
+        //         if (event.altKey) {
+        //             $(element).css("backgroundColor", "red");
+        //         }
+        //     });
+        //     element.addEventListener("mouseleave", (event) => {
+        //         $(element).css("backgroundColor", "#252423");
+        //     });
+        // });
+        // //delete clock button
+        // if (deleteClockButton) {
+        //     deleteClockButton.addEventListener("click", async (event) => {
+        //         event.preventDefault();
+        //         //delete us in all our linked entities
+        //         for (let entityId in this.data.linkedEntities) {
+        //             //special syntax for deleting a specific key in flag objects
+        //             let ourEntity;
+        //             await HelperFunctions.getEntityById(
+        //                 this.data.linkedEntities[entityId].entity,
+        //                 entityId
+        //             ).then((value) => (ourEntity = value));
 
-                if (entityType == "Scene") {
-                    //if it's a scene and we're not already viewing it
-                    //view it
-                    if (game.scenes.viewed != ourEntity) {
-                        ourEntity.view();
-                    }
-                } else if (ourEntity.sheet) {
-                    //else if it's something with a sheet, render that sheet
-                    //if it's not already rendered
-                    if (!ourEntity.sheet.rendered) {
-                        ourEntity.sheet.render(true);
-                    }
-                }
-            });
-            element.addEventListener("mouseenter", (event) => {
-                if (event.altKey) {
-                    $(element).css("backgroundColor", "red");
-                }
-            });
-            element.addEventListener("mouseleave", (event) => {
-                $(element).css("backgroundColor", "#252423");
-            });
-        });
-        //delete clock button
-        if (deleteClockButton) {
-            deleteClockButton.addEventListener("click", async (event) => {
-                event.preventDefault();
-                //delete us in all our linked entities
-                //TODO: Place this back in -- right now linkedEntities only stores the entity type and name
-                //TODO: maybe create a helper function that gets the entity in question
-                for (let entityId in this.data.linkedEntities) {
-                    //special syntax for deleting a specific key in flag objects
-                    let ourEntity;
-                    await HelperFunctions.getEntityById(
-                        this.data.linkedEntities[entityId].entity,
-                        entityId
-                    ).then((value) => (ourEntity = value));
+        //             await unlinkClockFromEntity(ourEntity, this.data.ourId);
+        //         }
+        //         //delete us from the saved clocks setting
+        //         deleteClock(this.data.ourId);
 
-                    await unlinkClockFromEntity(ourEntity, this.data.ourId);
-                }
-                //delete us from the saved clocks setting
-                //TODO: This should delete from the user saved clocks flag now
+        //         if (game.clockViewer && game.clockViewer.rendered) {
+        //             //TODO: Find way to delay this until after the clocks are updated
+        //             game.clockViewer.render(true);
+        //         }
+        //         this.close();
+        //     });
+        // }
+        // //share clock button
+        // if (shareClock) {
+        //     //set the state of the button based on whether or not we're sharing
+        //     //this clock
 
-                deleteClock(this.data.ourId);
-                // let savedClocks = getClocksByUser(game.userId); //game.settings.get("hud-and-trackers", "savedClocks");
-                // delete savedClocks[this.data.ourId];
-                // game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
-                if (game.clockViewer && game.clockViewer.rendered) {
-                    //TODO: Find way to delay this until after the clocks are updated
-                    game.clockViewer.render(true);
-                }
-                this.close();
-            });
-        }
-        //share clock button
-        if (shareClock) {
-            //set the state of the button based on whether or not we're sharing
-            //this clock
-
-            //do the event listener for the clock being clicked
-            shareClock.addEventListener("click", (event) => {
-                event.preventDefault();
-                // toggle whether or not it's shared
-                if (this.data.shared) {
-                    this.data.shared = false;
-                    ui.notifications.notify("Stopped sharing clock");
-                } else {
-                    this.data.shared = true;
-                    ui.notifications.notify("Sharing clock");
-                }
-                this.saveAndRenderApp();
-            });
-        }
+        //     //do the event listener for the clock being clicked
+        //     shareClock.addEventListener("click", (event) => {
+        //         event.preventDefault();
+        //         // toggle whether or not it's shared
+        //         if (this.data.shared) {
+        //             this.data.shared = false;
+        //             ui.notifications.notify("Stopped sharing clock");
+        //         } else {
+        //             this.data.shared = true;
+        //             ui.notifications.notify("Sharing clock");
+        //         }
+        //         this.saveAndRenderApp();
+        //     });
+        // }
         //adding breaks if we have any
         let sectionsArray = Array.from(sections);
         let framesArray = Array.from(frames);
@@ -360,8 +487,6 @@ class Clock extends FormApplication {
         console.log(ourEntity);
 
         if (ourEntity) {
-            //add this clock to a flag of the entity
-
             //save the linked entity on our clock
             //save this entity a linked entity on our clock
             let entityData = {
@@ -554,6 +679,7 @@ async function updateClock(clockId, updateData, userId) {
     console.log(result);
 }
 
+//this should delete the flags from the user
 async function deleteClock(clockId) {
     const relevantClock = getAllClocks()[clockId];
 

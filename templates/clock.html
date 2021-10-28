@@ -2,11 +2,6 @@
     <div class="headerWrapper">
         <h3 class="clockName" name="clockName" contenteditable="true">{{name}}</h3>
         {{#if (eq user.id creator)}}
-        <!-- <label class="share">
-            Share Clock
-            <input type="checkbox" />
-            <span class="slider round"></span>
-        </label> -->
         <button class="share {{#if shared}}active{{/if}}" data-action="share">
             <i class="fas fa-share-square"></i>
         </button>
@@ -53,6 +48,7 @@
             id="{{@key}}"
             data-type="{{entity}}"
             data-name="{{name}}"
+            data-action="showEntity"
         >
             {{name}}
         </button>
