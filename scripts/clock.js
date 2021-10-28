@@ -917,8 +917,13 @@ class Section {
 export class ClockViewer extends FormApplication {
     constructor() {
         super();
-        let savedClocks = getClocksByUser(game.userId); //game.settings.get("hud-and-trackers", "savedClocks");
-        this.clocks = savedClocks;
+        let savedClocks = getClocksByUser(game.userId);
+        console.log(savedClocks);
+        if (savedClocks) {
+            this.clocks = savedClocks;
+        } else {
+            this.clocks = {};
+        }
     }
 
     static get defaultOptions() {
@@ -935,7 +940,11 @@ export class ClockViewer extends FormApplication {
 
     async getData() {
         let savedClocks = getClocksByUser(game.userId); //await game.settings.get("hud-and-trackers", "savedClocks");
-        this.clocks = Object.values(savedClocks);
+        if (savedClocks) {
+            this.clocks = Object.values(savedClocks);
+        } else {
+            this.clocks = [];
+        }
         // Send data to the template
         return {
             clocks: this.clocks,
