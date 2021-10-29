@@ -25,17 +25,18 @@
     <div class="form-group">
         <label for="copyFill">Copy Fill</label>
         <p>
-            Copy fill from original clock? (This will override the "Start Filled" value)
+            Copy fill from original clock? <br />(Note: This will override the "Start
+            Filled" value)
         </p>
         <input type="checkbox" name="copyFill" value="false" />
     </div>
+    <div class="form-group">
+        <label for="deleteOriginal">Delete Original?</label>
+        <p>Delete original clock?</p>
+        <input type="checkbox" name="deleteOriginal" value="false" />
+    </div>
     {{/if}}
 
-    <!-- <div class="form-group">
-        <label for="linkedEntities">Linked Entities</label>
-        <p>Drag entities (scenes, journals, actors) here to link this clock to them</p>
-        <input type="text" name="linkedEntities" class="linkedEntities" />
-    </div> -->
     <div class="form-group gradients">
         <label>Choose Gradient</label>
         <div class="reddish">
@@ -44,7 +45,6 @@
                 id="reddish"
                 name="gradient"
                 value="linear-gradient(to right, #DC2424 0%, #4A569D  100%)"
-                checked
             />
             <label for="reddish">Reddish</label>
         </div>

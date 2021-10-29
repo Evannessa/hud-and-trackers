@@ -327,13 +327,23 @@ class Clock extends FormApplication {
 
                                 this.data.gradient = newGradient;
                                 this.saveAndRenderApp();
-                                // let color = html.find(`[value=${this.gradient}]`)
                             },
                         },
                         no: {
                             icon: '<i class="fas fa-times"></i>',
                             label: "Cancel",
                         },
+                    },
+                    render: (html) => {
+                        let windowContent = html.closest(".window-content");
+                        let gradientDivs = windowContent.find(".gradients")[0].children;
+                        Array.from(gradientDivs).forEach((element) => {
+                            if (element.tagName == "DIV") {
+                                element.addEventListener("click", (event) => {
+                                    element.querySelector("input").checked = true;
+                                });
+                            }
+                        });
                     },
                 }).render(true);
             }
@@ -803,7 +813,8 @@ function hookEntities() {
 export class ClockConfig extends FormApplication {
     constructor(clockData = {}, clone = false) {
         super(clockData);
-        this.data = clockData;
+        //cloning the clockData here so it doesn't affect the original object
+        this.data = { ...clockData };
         this.clone = clone;
     }
     getData() {
@@ -826,8 +837,6 @@ export class ClockConfig extends FormApplication {
         }
     }
     async _updateObject(event, formData) {
-        let linkedEntities = {};
-
         let breaks = formData.breaks.split(",");
         breaks = breaks.map((ch) => parseInt(ch));
 
@@ -845,6 +854,9 @@ export class ClockConfig extends FormApplication {
         formData.breaks = breaks;
 
         //initialize the section map to an empty object, and filledSections to zero, and break labels to empty array
+        //initialize extra values that don't come from the form
+        //!TODO: copy these when clock is cloned
+        let linkedEntities = {};
         let sectionMap = {};
         let filledSections = 0;
         let breakLabels = {};
@@ -856,6 +868,8 @@ export class ClockConfig extends FormApplication {
         if (formData.startFilled) {
             filledSections = formData.sectionCount;
         }
+        //if we copy the fill
+        //!this will override the above option. Maybe make into a radio button later.
         if (formData.copyFill) {
             filledSections = this.data.filledSections;
         }
@@ -895,9 +909,10 @@ export class ClockConfig extends FormApplication {
             ourId: id,
         };
 
-        //create the clock
+        //create the clock w/ the new data
         let newClock = new Clock(newClockData);
 
+        //save the clock's data to the users' flags by id
         updateClock(newClock.data.ourId, newClockData, game.userId);
 
         //render new clock
@@ -921,6 +936,13 @@ export class ClockConfig extends FormApplication {
                 });
             }
         });
+
+        if (this.clone) {
+            let setGradient = html.find(`[value="${this.data.gradient}"]`);
+            console.log(setGradient);
+            setGradient.prop("checked", true);
+            // this.render();
+        }
     }
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
