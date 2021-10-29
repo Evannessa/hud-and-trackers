@@ -217,25 +217,125 @@ class Clock extends FormApplication {
         event.stopPropagation();
 
         let clickedElement = $(event.currentTarget); //this will return the form itself?
-        console.log(
-            "🚀 ~ file: clock.js ~ line 194 ~ Clock ~ _handleButtonClick ~ clickedElement",
-            clickedElement
-        );
+
         let action = clickedElement.data().action;
 
-        console.log(action);
         const elementId = clickedElement.id;
 
+        console.log(action);
         switch (action) {
             case "share": {
                 this.handleShareClock(event, this);
                 break;
             }
-            case "edit": {
-                //here maybe, pass in an object like
-                // let configData = {editing: true, editedClock: this}
-                new ClockConfig(this.data).render(true);
+            case "clone": {
+                //duplicate clock with same data, but chance to change values
+                new ClockConfig(this.data, true).render(true);
                 break;
+            }
+            case "changeColor": {
+                //change the color
+                event.preventDefault();
+                let d = new Dialog({
+                    title: "Change Color",
+                    content: `
+		<div class="form-group gradients">
+        <label>Choose Gradient</label>
+        <div class="reddish">
+            <input
+                type="radio"
+                id="reddish"
+                name="gradient"
+                value="linear-gradient(to right, #DC2424 0%, #4A569D  100%)"
+                checked
+            />
+            <label for="reddish">Reddish</label>
+        </div>
+
+        <div class="purple">
+            <input
+                type="radio"
+                id="purple"
+                name="gradient"
+                value="linear-gradient(to right, #4776E6 0%, #8E54E9  100%)"
+            />
+            <label for="purple">Purple</label>
+        </div>
+
+        <div class="bluePink">
+            <input
+                type="radio"
+                id="bluePink"
+                name="gradient"
+                value="linear-gradient(62deg, rgb(21, 213, 235) 0.00%, rgb(255, 0, 191) 100.00%)"
+            />
+            <label for="bluePink">Blue Pink</label>
+        </div>
+        <div class="turquoise">
+            <input
+                type="radio"
+                id="turquoise"
+                name="gradient"
+                value="linear-gradient(132deg, rgb(161, 255, 255) 0.00%, rgb(0, 216, 216) 100.00%)"
+            />
+            <label for="turquoise">Turquoise</label>
+        </div>
+        <div class="pinkLemonade">
+            <input
+                type="radio"
+                id="pinkLemonade"
+                name="gradient"
+                value="linear-gradient(132deg, rgb(253, 112, 136) 0.00%, rgb(255, 211, 165) 100.00%)"
+            />
+            <label for="pinkLemonade">Pink Lemonade</label>
+        </div>
+        <div class="fire">
+            <input
+                type="radio"
+                id="fire"
+                name="gradient"
+                value="linear-gradient(132deg, rgb(250, 170, 0) 0.00%, rgb(237, 19, 19) 50.00%, rgb(213, 74, 255) 100.00%)"
+            />
+            <label for="fire">Fire</label>
+        </div>
+        <div class="magic">
+            <input
+                type="radio"
+                id="magic"
+                name="gradient"
+                value="linear-gradient(132deg, rgb(0, 255, 157) 0.00%, rgb(227, 43, 175) 100.00%)"
+            />
+            <label for="magic">Magic</label>
+        </div>
+        <div class="pastel">
+            <input
+                type="radio"
+                id="pastel"
+                name="gradient"
+                value="linear-gradient(132deg, rgb(255, 206, 236) 0.00%, rgb(151, 150, 240) 100.00%)"
+            />
+            <label for="pastel">Pastel</label>
+        </div>`,
+                    buttons: {
+                        yes: {
+                            icon: '<i class="fas fa-check"></i>',
+                            label: "Change Color",
+                            callback: (html) => {
+                                let newGradient = html
+                                    .find("input[name='gradient']:checked")
+                                    .val();
+
+                                this.data.gradient = newGradient;
+                                this.saveAndRenderApp();
+                                // let color = html.find(`[value=${this.gradient}]`)
+                            },
+                        },
+                        no: {
+                            icon: '<i class="fas fa-times"></i>',
+                            label: "Cancel",
+                        },
+                    },
+                }).render(true);
             }
             case "delete": {
                 //ask for user's confirmation before deleting clock
@@ -291,95 +391,10 @@ class Clock extends FormApplication {
         let waypoints = windowContent.find(".waypoint");
         let entityLinks = windowContent.find(".entityLink");
         let filled = 0;
-        let deleteClockButton = windowContent.find(".delete")[0];
-        let shareClock = windowContent.find(".share")[0];
-        console.log(html);
-        console.log(windowContent);
+
+        windowContent.off("click", "[data-action]");
         windowContent.one("click", "[data-action]", this._handleButtonClick.bind(this));
-        // Array.from(entityLinks).forEach((element) => {
-        //     element.addEventListener("click", async (event) => {
-        //         event.preventDefault();
-        //         let entityType = element.dataset.type;
-        //         let entityId = element.id;
-        //         let ourEntity;
-        //         await HelperFunctions.getEntityById(entityType, entityId).then(
-        //             (value) => (ourEntity = value)
-        //         );
 
-        //         if (event.altKey) {
-        //             //if alt key is pressed, we're going to unlink the entity
-        //             await unlinkClockFromEntity(ourEntity, this.data.ourId);
-        //             // this.saveAndRenderApp();
-        //             return;
-        //         }
-
-        //         if (entityType == "Scene") {
-        //             //if it's a scene and we're not already viewing it
-        //             //view it
-        //             if (game.scenes.viewed != ourEntity) {
-        //                 ourEntity.view();
-        //             }
-        //         } else if (ourEntity.sheet) {
-        //             //else if it's something with a sheet, render that sheet
-        //             //if it's not already rendered
-        //             if (!ourEntity.sheet.rendered) {
-        //                 ourEntity.sheet.render(true);
-        //             }
-        //         }
-        //     });
-        //     element.addEventListener("mouseenter", (event) => {
-        //         if (event.altKey) {
-        //             $(element).css("backgroundColor", "red");
-        //         }
-        //     });
-        //     element.addEventListener("mouseleave", (event) => {
-        //         $(element).css("backgroundColor", "#252423");
-        //     });
-        // });
-        // //delete clock button
-        // if (deleteClockButton) {
-        //     deleteClockButton.addEventListener("click", async (event) => {
-        //         event.preventDefault();
-        //         //delete us in all our linked entities
-        //         for (let entityId in this.data.linkedEntities) {
-        //             //special syntax for deleting a specific key in flag objects
-        //             let ourEntity;
-        //             await HelperFunctions.getEntityById(
-        //                 this.data.linkedEntities[entityId].entity,
-        //                 entityId
-        //             ).then((value) => (ourEntity = value));
-
-        //             await unlinkClockFromEntity(ourEntity, this.data.ourId);
-        //         }
-        //         //delete us from the saved clocks setting
-        //         deleteClock(this.data.ourId);
-
-        //         if (game.clockViewer && game.clockViewer.rendered) {
-        //             //TODO: Find way to delay this until after the clocks are updated
-        //             game.clockViewer.render(true);
-        //         }
-        //         this.close();
-        //     });
-        // }
-        // //share clock button
-        // if (shareClock) {
-        //     //set the state of the button based on whether or not we're sharing
-        //     //this clock
-
-        //     //do the event listener for the clock being clicked
-        //     shareClock.addEventListener("click", (event) => {
-        //         event.preventDefault();
-        //         // toggle whether or not it's shared
-        //         if (this.data.shared) {
-        //             this.data.shared = false;
-        //             ui.notifications.notify("Stopped sharing clock");
-        //         } else {
-        //             this.data.shared = true;
-        //             ui.notifications.notify("Sharing clock");
-        //         }
-        //         this.saveAndRenderApp();
-        //     });
-        // }
         //adding breaks if we have any
         let sectionsArray = Array.from(sections);
         let framesArray = Array.from(frames);
@@ -786,9 +801,10 @@ function hookEntities() {
 
 /** This will be the configuration for the clock itself. */
 export class ClockConfig extends FormApplication {
-    constructor(clockData = {}) {
+    constructor(clockData = {}, clone = false) {
         super(clockData);
         this.data = clockData;
+        this.clone = clone;
     }
     getData() {
         let defaultData = {
@@ -802,11 +818,14 @@ export class ClockConfig extends FormApplication {
             return defaultData;
         } else {
             this.data.breaks = this.data.breaks.toString();
-            return this.data;
+            this.data.name = this.data.name + "(copy)";
+            return {
+                ...this.data,
+                isClone: this.clone,
+            };
         }
     }
     async _updateObject(event, formData) {
-        console.log(formData);
         let linkedEntities = {};
 
         let breaks = formData.breaks.split(",");
@@ -836,6 +855,9 @@ export class ClockConfig extends FormApplication {
 
         if (formData.startFilled) {
             filledSections = formData.sectionCount;
+        }
+        if (formData.copyFill) {
+            filledSections = this.data.filledSections;
         }
 
         //generate all sections as section objects to store
@@ -872,9 +894,6 @@ export class ClockConfig extends FormApplication {
             creator: game.user.id,
             ourId: id,
         };
-
-        //get saved clocks from game settings
-        //! let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
 
         //create the clock
         let newClock = new Clock(newClockData);
@@ -991,7 +1010,6 @@ export class ClockViewer extends FormApplication {
     constructor() {
         super();
         let savedClocks = getClocksByUser(game.userId);
-        console.log(savedClocks);
         if (savedClocks) {
             this.clocks = savedClocks;
         } else {

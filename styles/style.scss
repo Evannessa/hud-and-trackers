@@ -891,7 +891,7 @@
 				// }
 			}
 
-			.edit {
+			.clone {
 				width: 20%;
 
 			}
@@ -1094,7 +1094,8 @@
 }
 
 #clockConfig,
-.clockHud {
+.clockHud,
+.gradients {
 	.reddish {
 		background-image: linear-gradient(to right, #DC2424 0%, #4A569D 100%);
 	}

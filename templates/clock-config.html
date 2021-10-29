@@ -21,6 +21,15 @@
         <label for="startFilled">Start Filled</label>
         <input type="checkbox" name="startFilled" value="{{startFilled}}" />
     </div>
+    {{#if isClone}}
+    <div class="form-group">
+        <label for="copyFill">Copy Fill</label>
+        <p>
+            Copy fill from original clock? (This will override the "Start Filled" value)
+        </p>
+        <input type="checkbox" name="copyFill" value="false" />
+    </div>
+    {{/if}}
 
     <!-- <div class="form-group">
         <label for="linkedEntities">Linked Entities</label>
