@@ -1,25 +1,25 @@
 <form class="flexcol">
     <div class="form-group">
         <label for="clockName">Clock Name</label>
-        <input type="text" name="name" placeholder="Enter a name" value="New Clock" />
+        <input type="text" name="name" placeholder="Enter a name" value="{{name}}" />
     </div>
     <div class="form-group">
         <label for="sectionCount">How Many Sections</label>
-        <input type="number" name="sectionCount" value="3" />
+        <input type="number" name="sectionCount" value="{{sectionCount}}" />
         <label for="break">Include Breaks At</label>
         <p>After which sections should you insert a break?</p>
         <p>Format Example: "2,3,4" (w/out quotes)</p>
-        <input type="text" name="breaks" />
+        <input type="text" name="breaks" value="{{breaks}}" />
     </div>
     <div class="form-group">
         <label for="showWaypoints">Show Waypoints</label>
         <p>Would you like waypoints between breaks?</p>
-        <input type="checkbox" name="showWaypoints" value="false" />
+        <input type="checkbox" name="showWaypoints" value="{{showWaypoints}}" />
     </div>
 
     <div class="form-group">
         <label for="startFilled">Start Filled</label>
-        <input type="checkbox" name="startFilled" value="false" />
+        <input type="checkbox" name="startFilled" value="{{startFilled}}" />
     </div>
 
     <!-- <div class="form-group">

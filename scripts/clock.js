@@ -234,7 +234,7 @@ class Clock extends FormApplication {
             case "edit": {
                 //here maybe, pass in an object like
                 // let configData = {editing: true, editedClock: this}
-                new ClockConfig().render();
+                new ClockConfig(this.data).render(true);
                 break;
             }
             case "delete": {
@@ -647,14 +647,16 @@ function registerSceneHook() {
         }
     });
 }
-//renders a new clock from saved clock data on an entity or setting
+/**
+ * renders a new clock from saved clock data, or updates and brings-to-top the clock if it is already rendered
+ * @param {Object} clockData - an object holding the clock's data
+ */
 async function renderNewClockFromData(clockData) {
     if (!isClockRendered(clockData.ourId)) {
         await new Clock(clockData).render(true);
     } else {
         game.renderedClocks[clockData.ourId].updateEntireClock(clockData);
         game.renderedClocks[clockData.ourId].bringToTop();
-        //TODO: Add a way to maximize and bring to focus in the "render" options
     }
 }
 
@@ -662,14 +664,28 @@ async function renderNewClockFromData(clockData) {
 async function saveAndRenderApp(clockApp) {
     clockApp.saveAndRenderApp();
 }
+
+/**
+ * !deprecated
+ * @param {Object} clock - saves a clock
+ */
 async function saveClock(clock) {
     let savedClocks = await game.settings.get("hud-and-trackers", "savedClocks");
     savedClocks[clock.ourId] = clock;
     await game.settings.set("hud-and-trackers", "savedClocks", savedClocks);
 }
+/**
+ * gets the clocks from the users' flags
+ * @param {String} userId - the Id of the user whose saved clocks we want to get
+ * @returns the users clocks, which should be an Object with ids and Clock data
+ */
 function getClocksByUser(userId) {
     return game.users.get(userId)?.getFlag("hud-and-trackers", "savedClocks");
 }
+/**
+ * this method will return all the clocks combined from every user
+ * @returns allClocks - returns every clock of every user, combined together as one
+ */
 function getAllClocks() {
     const allClocks = game.users.reduce((accumulator, user) => {
         const userClocks = getClocksByUser(user.id);
@@ -689,6 +705,12 @@ function getAllClocks() {
     return allClocks;
 }
 
+/**
+ * this function will save (or update) a clock to the user's flags
+ * @param {String} clockId - the id of the clock to update the flags with
+ * @param {Object} updateData - the object containing the data we want to update the clock with
+ * @param {String} userId - the id of the user whose clock this is, and whose flags we will update
+ */
 async function updateClock(clockId, updateData, userId) {
     if (!userId) {
         const relevantClock = getAllClocks()[clockId];
@@ -700,13 +722,14 @@ async function updateClock(clockId, updateData, userId) {
     let user = game.users.get(userId);
 
     let result = await user.setFlag("hud-and-trackers", "savedClocks", updateInfo);
-    console.log(result);
 }
 
-//this should delete the flags from the user
+/**
+ * This should delete the clock from the user's flags
+ * @param {String} clockId - the id of the clock we want to delete from the user's flag
+ */
 async function deleteClock(clockId) {
     const relevantClock = getAllClocks()[clockId];
-    console.log(relevantClock);
 
     const keyDeletion = {
         [`-=${clockId}`]: null,
@@ -715,7 +738,11 @@ async function deleteClock(clockId) {
     user.setFlag("hud-and-trackers", "savedClocks", keyDeletion);
 }
 
-//remove our clock from the entity's flags
+/**
+ *  This function removes the clock (by its id) from the entity's flags
+ * @param {Object} ourEntity - the entity (Document?) we want to unlink the clock from
+ * @param {String} clockId - the id of the clock we want to delete
+ */
 async function unlinkClockFromEntity(ourEntity, clockId) {
     await ourEntity.setFlag("hud-and-trackers", "linkedClocks", {
         [`-=${clockId}`]: null,
@@ -759,13 +786,27 @@ function hookEntities() {
 
 /** This will be the configuration for the clock itself. */
 export class ClockConfig extends FormApplication {
-    constructor() {
-        super();
+    constructor(clockData = {}) {
+        super(clockData);
+        this.data = clockData;
     }
     getData() {
-        return {};
+        let defaultData = {
+            name: `NewClock`,
+            sectionCount: 3,
+            breaks: "", //[2, 3, 4],
+            showWaypoints: false,
+            startFilled: false,
+        };
+        if (Object.keys(this.data).length == 0) {
+            return defaultData;
+        } else {
+            this.data.breaks = this.data.breaks.toString();
+            return this.data;
+        }
     }
     async _updateObject(event, formData) {
+        console.log(formData);
         let linkedEntities = {};
 
         let breaks = formData.breaks.split(",");
