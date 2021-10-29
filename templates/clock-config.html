@@ -6,35 +6,53 @@
     <div class="form-group">
         <label for="sectionCount">How Many Sections</label>
         <input type="number" name="sectionCount" value="{{sectionCount}}" />
+    </div>
+    <div class="form-group">
         <label for="break">Include Breaks At</label>
         <p>After which sections should you insert a break?</p>
         <p>Format Example: "2,3,4" (w/out quotes)</p>
         <input type="text" name="breaks" value="{{breaks}}" />
     </div>
     <div class="form-group">
-        <label for="showWaypoints">Show Waypoints</label>
         <p>Would you like waypoints between breaks?</p>
-        <input type="checkbox" name="showWaypoints" value="{{showWaypoints}}" />
+        <label for="showWaypoints">
+            <input type="checkbox" name="showWaypoints" value="{{showWaypoints}}" />
+            Show Waypoints
+        </label>
     </div>
 
     <div class="form-group">
-        <label for="startFilled">Start Filled</label>
-        <input type="checkbox" name="startFilled" value="{{startFilled}}" />
+        <p>Should this clock start with all of its sections filled in?</p>
+        <label for="startFilled">
+            <input type="checkbox" name="startFilled" value="{{startFilled}}" />
+            Start Filled
+        </label>
     </div>
     {{#if isClone}}
     <div class="form-group">
-        <label for="copyFill">Copy Fill</label>
         <p>
             Copy fill from original clock? <br />(Note: This will override the "Start
             Filled" value)
         </p>
-        <input type="checkbox" name="copyFill" value="false" />
+        <label for="copyFill">
+            <input type="checkbox" name="copyFill" value="false" />
+            Copy Fill</label
+        >
     </div>
     <div class="form-group">
-        <label for="deleteOriginal">Delete Original?</label>
-        <p>Delete original clock?</p>
-        <input type="checkbox" name="deleteOriginal" value="false" />
+        <p>Copy labels from original clock?</p>
+        <label for="copyLabels">
+            <input type="checkbox" name="copyLabels" value="false" />
+            Copy Labels</label
+        >
     </div>
+    <!-- <div class="form-group">
+        <p>Delete original clock?</p>
+        <label class="delete" for="deleteOriginal">
+            <input type="checkbox" name="deleteOriginal" value="false" />
+            <i class="fas fa-exclamation-triangle"></i> Delete Original?</label
+        >
+    </div> -->
     {{/if}}
 
     <div class="form-group gradients">
@@ -45,6 +63,7 @@
                 id="reddish"
                 name="gradient"
                 value="linear-gradient(to right, #DC2424 0%, #4A569D  100%)"
+                checked
             />
             <label for="reddish">Reddish</label>
         </div>
@@ -114,6 +133,7 @@
             <label for="pastel">Pastel</label>
         </div>
     </div>
-    <button class="cancel">Cancel</button>
-    <button class="submit">Submit</button>
+    <div class="buttonWrapper">
+        <button class="submit" data-action="submit">Submit</button>
+    </div>
 </form>

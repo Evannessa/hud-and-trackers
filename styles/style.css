@@ -627,9 +627,25 @@
 .clockHud .window-content .headerWrapper h3 {
   white-space: nowrap;
 }
+.clockHud .window-content .headerWrapper [data-action] .tooltip {
+  display: none;
+  position: absolute;
+  min-width: 20ch;
+  background-color: rgba(0, 9, 0, 0.75);
+  border-radius: 10px;
+  margin-left: 28px;
+  /* moves the tooltip to the right */
+  margin-top: 15px;
+  /* moves it down */
+  z-index: 1000;
+}
+.clockHud .window-content .headerWrapper [data-action]:hover .tooltip {
+  display: block;
+}
 .clockHud .window-content .headerWrapper .delete {
   width: 20%;
   color: #a82b2b;
+  font-weight: bold;
 }
 .clockHud .window-content .headerWrapper .share {
   width: 20%;
@@ -638,7 +654,8 @@
   background-color: purple;
   box-shadow: inset 0 0 10px rgba(37, 37, 37, 0.731);
 }
-.clockHud .window-content .headerWrapper .clone {
+.clockHud .window-content .headerWrapper .clone,
+.clockHud .window-content .headerWrapper .changeColor {
   width: 20%;
 }
 .clockHud .window-content .waypointWrapper {
@@ -773,6 +790,28 @@
   flex: 0;
 }
 
+#clockConfig .form-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  text-align: left;
+  align-items: flex-start;
+  background-color: rgba(175, 175, 175, 0.09);
+  border-radius: 5px;
+  padding: 0.5rem 0.5rem;
+}
+#clockConfig .form-group label {
+  color: #8597c5;
+}
+#clockConfig .form-group label.delete {
+  color: rgba(233, 65, 65, 0.841);
+}
+#clockConfig .form-group input {
+  background-color: rgba(255, 255, 255, 0.083);
+}
+#clockConfig .submit {
+  background-color: #35456d;
+}
 #clockConfig .gradients {
   display: flex;
   flex-direction: column;

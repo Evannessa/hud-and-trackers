@@ -873,29 +873,41 @@ export class ClockConfig extends FormApplication {
         if (formData.copyFill) {
             filledSections = this.data.filledSections;
         }
+        //if we're not copying the clock, or copying the labels
+        if (!formData.copyLabels) {
+            //generate all sections as section objects to store
+            for (let i = 0; i < formData.sectionCount; i++) {
+                let sectionID = HelperFunctions.idGenerator();
+                let sectionData = {
+                    id: sectionID,
+                    label: "",
+                    filled: formData.startFilled,
+                };
+                sectionMap[sectionID] = new Section(sectionData);
+            }
 
-        //generate all sections as section objects to store
-        for (let i = 0; i < formData.sectionCount; i++) {
-            let sectionID = HelperFunctions.idGenerator();
-            let sectionData = {
-                id: sectionID,
-                label: "",
-                filled: formData.startFilled,
-            };
-            sectionMap[sectionID] = new Section(sectionData);
+            //populate the break labels with default strings
+            formData.breaks.forEach((el) => {
+                let labelId = HelperFunctions.idGenerator();
+                breakLabels[labelId] = "Input Label";
+
+                let waypointId = HelperFunctions.idGenerator();
+                waypoints[waypointId] = "Waypoint";
+            });
+        } else {
+            //if we are cloning && copying, just set the values to equal the same
+            sectionMap = this.data.sectionMap;
+            breakLabels = this.data.breakLabels;
+            waypoints = this.data.waypoints;
         }
-
-        //populate the break labels with default strings
-        formData.breaks.forEach((el) => {
-            let labelId = HelperFunctions.idGenerator();
-            breakLabels[labelId] = "Input Label";
-
-            let waypointId = HelperFunctions.idGenerator();
-            waypoints[waypointId] = "Waypoint";
-        });
 
         let id = HelperFunctions.idGenerator();
 
+        //TODO: Add functionality to delete original clock
+        // if (formData.deleteOriginal) {
+        //     //delete the property so we don't worry about it
+        //     delete formData.deleteOriginal;
+        // }
         //get the formData, and then all the extra stuff we had to calculate/generate
         const newClockData = {
             ...formData,
@@ -922,10 +934,24 @@ export class ClockConfig extends FormApplication {
             //re-render the clock viewer if it's open
             game.clockViewer.render(true);
         }
-        this.render();
+        // this.render();
     }
 
+    _handleButtonClick(event) {
+        // event.preventDefault(); //keep form from submitting?
+        let clickedElement = $(event.currentTarget);
+        let action = clickedElement.data().action;
+        switch (action) {
+            case "cancel": {
+                event.preventDefault();
+                this.close();
+            }
+        }
+    }
     activateListeners(html) {
+        // html.off("click", ["data-action"]);
+        html.on("click", ["data-action"], this._handleButtonClick.bind(this));
+
         super.activateListeners(html);
         let windowContent = html.closest(".window-content");
         let gradientDivs = windowContent.find(".gradients")[0].children;
@@ -937,11 +963,11 @@ export class ClockConfig extends FormApplication {
             }
         });
 
+        //if this is a cloned of another clock
         if (this.clone) {
+            //set the selected gradient to the original's gradient
             let setGradient = html.find(`[value="${this.data.gradient}"]`);
-            console.log(setGradient);
             setGradient.prop("checked", true);
-            // this.render();
         }
     }
     static get defaultOptions() {
@@ -995,21 +1021,6 @@ class SectionConfig extends FormApplication {
 
     activateListeners(html) {
         super.activateListeners(html);
-    }
-
-    linkEntityDialogue() {
-        let d = new Dialog({
-            title: "Link Entity to Clock",
-            content: `
-			<form class="flexcol">
-				<div class="form-group">
-					<label for="entityName">Entity Name</label>
-					<input type="text" name="entityName" placeholder="Enter entity name">
-				</div>
-			</form>
-			`,
-            callback: () => {},
-        }).render(true);
     }
 }
 
@@ -1068,7 +1079,7 @@ export class ClockViewer extends FormApplication {
         super.activateListeners(html);
         let savedClocks = getClocksByUser(game.userId); //await game.settings.get("hud-and-trackers", "savedClocks");
         this.clocks = savedClocks;
-        html.on("click", ["data-action"], this._handleButtonClick);
+        html.on("click", ["data-action"], this._handleButtonClick); //TODO: Fix this to be "[data-action]" rather than ["data-action"]. Fix references in handleButtonClick as well
         // html.on("click", "button", this._handleButtonClick);
     }
 
