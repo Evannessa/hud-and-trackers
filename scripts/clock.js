@@ -346,6 +346,7 @@ class Clock extends FormApplication {
                         });
                     },
                 }).render(true);
+                break;
             }
             case "delete": {
                 //ask for user's confirmation before deleting clock
