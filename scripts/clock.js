@@ -2,6 +2,26 @@
 import * as HelperFunctions from "./helper-functions.js";
 let socket;
 
+Hooks.on("quenchReady", (quench) => {
+    quench.registerBatch(
+        "Clock Test",
+        (context) => {
+            const { describe, it, assert, expect } = context;
+            describe("Clock Test Suite", function () {
+                describe("Testing Clock Deletion", function () {
+                    //specification for deleting clocks
+                    it("makes sure a clock is deleted", function () {
+                        let clockData = { clockId: ["clockStuff"] };
+                        delete clockData.clockId;
+                        expect(clockData).to.deep.equal({});
+                    });
+                });
+            });
+        },
+        { displayName: "QUENCH: Eva's Clock Test" }
+    );
+});
+
 // also register socket to share clock data
 Hooks.once("socketlib.ready", () => {
     socket = socketlib.registerModule("hud-and-trackers");

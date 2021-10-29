@@ -1,0 +1,25 @@
+{
+    "name": "hud-and-trackers",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "dependencies": {
+        "jest": "^27.3.1"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "test": "jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/EvanesceExotica/hud-and-trackers.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/EvanesceExotica/hud-and-trackers/issues"
+    },
+    "homepage": "https://github.com/EvanesceExotica/hud-and-trackers#readme",
+    "type": "module"
+}
