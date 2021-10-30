@@ -3,7 +3,7 @@
  */
 Hooks.on("ready", () => {
     if (game.user.isGM) {
-        game.partyOverview = new PartyOverview().render(true);
+        // game.partyOverview = new PartyOverview().render(true);
     }
 });
 Hooks.on("sceneInit", () => {
