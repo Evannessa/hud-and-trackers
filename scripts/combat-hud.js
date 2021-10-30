@@ -186,11 +186,11 @@ async function rollNonCombatInitiative(combat) {
         justTokens[token.id] = token;
     }
     //get the enemies by filtering the tokens by disposition
-    enemies = tokens.filter((token) => {
-        return npcTokens.data.disposition == -1;
+    enemies = npcTokens.filter((token) => {
+        return token.data.disposition == -1;
     });
-    npcAllies = tokens.filter((token) => {
-        return npcTokens.data.disposition == 0 || npcTokens.data.disposition == 1;
+    npcAllies = npcTokens.filter((token) => {
+        return token.data.disposition == 0 || token.data.disposition == 1;
     });
 
     //this will make sure there are no duplicate tokens w/ the same actor,
