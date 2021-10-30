@@ -206,6 +206,8 @@ class Clock extends FormApplication {
                     app.data.breakLabels[this.id] = newData;
                 } else if (this.classList.contains("clockName")) {
                     app.data.name = newData;
+                } else if (this.classList.contains("waypointLabel")) {
+                    app.data.waypoints[this.id] = newData;
                 }
                 app.saveAndRenderApp();
             }

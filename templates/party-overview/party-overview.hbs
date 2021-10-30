@@ -1,0 +1,63 @@
+<form class="flex-col">
+    <div><input type="text" id="search" placeholder="Search" /></div>
+    <div class="sceneFilterGroup">
+        <label for="none"><input
+                type="radio"
+                name="sceneFilter"
+                id="none"
+                value="none"
+                checked
+            />
+            None</label>
+        <label for="active"><input
+                type="radio"
+                name="sceneFilter"
+                id="active"
+                value="active"
+            />
+            Active</label>
+        <label for="viewed"><input
+                type="radio"
+                name="sceneFilter"
+                id="viewed"
+                value="viewed"
+            />
+            Viewed</label>
+    </div>
+    {{! <label for="search" class="searchLabel">Search</label> }}
+    <table id="partyTable">
+        <tr>
+            <th>Name</th>
+            <th class="header__might">Might</th>
+            <th class="header__speed">Speed</th>
+            <th class="header__intellect">Intellect</th>
+            <th>Damage Track</th>
+        </tr>
+        {{#each pcs}}
+            <tr class="cellRow">
+                <td class="name"><div>
+                        <img
+                            src="{{this.img}}"
+                            alt="pc avatar"
+                            class="img"
+                        />{{this.name}}
+                    </div></td>
+                {{#with this.data.data.pools}}
+                    <td class="might"><span
+                            class="{{lowPool might.value}}"
+                        >{{might.value}}</span>/{{might.max}}</td>
+                    <td class="speed"><span
+                            class="{{lowPool speed.value}}"
+                        >{{speed.value}}</span>/{{speed.max}}</td>
+                    <td class="intellect"><span
+                            class="{{lowPool intellect.value}}"
+                        >{{intellect.value}}</span>/{{intellect.max}}</td>
+                {{/with}}
+                {{#with this.data.data.damage}}
+                    <td class="dmgTrack {{damageTrack}}">{{damageTrack}}</td>
+                {{/with}}
+            </tr>
+        {{/each}}
+    </table>
+    <!--Add tab to show artifacts & cyphers too-->
+</form>

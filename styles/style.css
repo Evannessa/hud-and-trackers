@@ -1,3 +1,4 @@
+/* SCSS HEX */
 #tracker-app {
   width: 900px;
   height: 40vh;
@@ -826,6 +827,147 @@
 #clockConfig .gradients > div label {
   color: black;
   width: 100%;
+}
+
+/* SCSS HEX */
+#party-overview {
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  height: -webkit-max-content;
+  height: -moz-max-content;
+  height: max-content;
+}
+#party-overview .window-content {
+  background-color: #1d1d1dff;
+}
+#party-overview .window-content .searchLabel {
+  font-size: 1rem;
+  color: #2ab7ca;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+}
+#party-overview .window-content .sceneFilterGroup {
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+#party-overview .window-content .sceneFilterGroup label {
+  cursor: pointer;
+}
+#party-overview .window-content input[type=text] {
+  height: 2rem;
+  box-shadow: unset;
+  border: unset;
+  background-color: #333333ff;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-bottom: 2px solid #2ab7ca;
+  width: 50%;
+  position: relative;
+}
+#party-overview .window-content input[type=text]:after {
+  content: "Search";
+  position: absolute;
+  display: none;
+  color: #2ab7ca;
+}
+#party-overview .window-content input[type=text]:focus:after {
+  content: "Search";
+  display: block;
+  position: absolute;
+  color: #2ab7ca;
+}
+#party-overview .window-content table {
+  background-color: #1d1d1dff;
+  border-collapse: separate;
+  border-spacing: 0rem 1rem;
+  border-bottom: unset;
+  border-top: unset;
+}
+#party-overview .window-content table * {
+  font-size: 1rem;
+}
+#party-overview .window-content table tr {
+  background-color: #272727ff;
+  border-radius: 10px;
+}
+#party-overview .window-content table tr:first-of-type {
+  border-bottom: 2px solid #1d1d1dff;
+  border-top: 2px solid #1d1d1dff;
+}
+#party-overview .window-content table td:first-child,
+#party-overview .window-content table th:first-child {
+  border-radius: 10px 0 0 10px;
+}
+#party-overview .window-content table td:last-child,
+#party-overview .window-content table th:last-child {
+  border-radius: 0 10px 10px 0;
+}
+#party-overview .window-content table th {
+  color: white;
+}
+#party-overview .window-content table th.header__might, #party-overview .window-content table th.header__speed, #party-overview .window-content table th.header__intellect {
+  border-radius: 10rem;
+  color: #121212ff;
+}
+#party-overview .window-content table th.header__might {
+  background-color: #fe4a49;
+}
+#party-overview .window-content table th.header__speed {
+  background-color: #2ab7ca;
+}
+#party-overview .window-content table th.header__intellect {
+  background-color: #fed766;
+}
+#party-overview .window-content table td,
+#party-overview .window-content table th {
+  padding: 1rem 1.5rem;
+  text-align: left;
+}
+#party-overview .window-content table td > div {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+#party-overview .window-content table td > div img {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+#party-overview .window-content table .might,
+#party-overview .window-content table .speed,
+#party-overview .window-content table .intellect {
+  text-align: right;
+}
+#party-overview .window-content table .might {
+  color: #fe4a49;
+}
+#party-overview .window-content table .speed {
+  color: #2ab7ca;
+}
+#party-overview .window-content table .intellect {
+  color: #fed766;
+}
+#party-overview .window-content table .current {
+  font-weight: bold;
+  font-size: 1rem;
+}
+#party-overview .window-content table .current.half {
+  color: orange;
+}
+#party-overview .window-content table .current.low {
+  color: red;
+}
+#party-overview .window-content table .Hale {
+  color: #a2d2ff;
+}
+#party-overview .window-content table .Impaired {
+  color: #cdb4db;
+}
+#party-overview .window-content table .Debilitated {
+  color: #ffafcc;
 }
 
 #clockConfig .reddish,

@@ -1,6 +1,7 @@
 "use strict";
 
 import * as ClockApp from "./clock.js";
+import * as PartyOverview from "./party-overview.js";
 import * as HelperFunctions from "./helper-functions.js";
 
 let hud;
@@ -283,6 +284,11 @@ export class HelperHud extends Application {
         let savePos = windowContent.find(".savePos")[0];
         let addClock = windowContent.find(".addClock")[0];
         let showClock = windowContent.find(".showClocks")[0];
+        let partyOverview = windowContent.find(".partyOverview")[0];
+
+        $(partyOverview).click((event) => {
+            game.partyOverview = new PartyOverview.PartyOverview().render(true);
+        });
 
         $(savePos).click((event) => {
             let combatHudPosition = game.combatHud.app.position;

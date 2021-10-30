@@ -1,3 +1,5 @@
+@import '_variables';
+
 #tracker-app {
 
 	width: 900px;
@@ -1146,6 +1148,117 @@
 		}
 	}
 }
+
+@import "./partials/party-overview";
+// #party-overview {
+// 	width: max-content;
+// 	height: max-content;
+
+// 	table {
+
+// 		background-color: $eerie-black;
+
+// 		td:first-child,
+// 		th:first-child {
+// 			border-radius: 10px 0 0 10px;
+// 		}
+
+// 		td:last-child,
+// 		th:last-child {
+// 			border-radius: 0 10px 10px 0;
+// 		}
+
+// 		// tr:nth-child(even) {
+// 		// 	background-color: unset;
+// 		// }
+
+// 		border-collapse: separate;
+// 		border-spacing: 0rem 1rem;
+
+// 		tr {
+// 			background-color: $eerie-black-4;
+// 			border-radius: 10px;
+// 		}
+
+
+
+// 		* {
+// 			// color: rgb(192, 192, 192);
+// 			font-size: 1.2rem;
+// 		}
+
+// 		th {
+// 			color: white;
+
+// 			&.header {
+// 				&__might {
+
+// 					background-color: $might;
+// 				}
+
+// 				&__speed {
+
+// 					background-color: $speed;
+// 				}
+
+// 				&__intellect {
+// 					background-color: $intellect;
+// 				}
+// 			}
+// 		}
+
+
+// 		td,
+// 		th {
+// 			padding: 1rem 1.5rem;
+// 			text-align: left;
+
+
+// 		}
+
+
+
+// 		.might,
+// 		.speed,
+// 		.intellect {
+// 			text-align: right;
+// 		}
+
+// 		.might {
+// 			color: $might;
+// 		}
+
+// 		.speed {
+// 			color: $speed;
+// 		}
+
+// 		.intellect {
+// 			color: $intellect;
+// 		}
+
+// 		.current {
+// 			&.half {
+// 				color: orange;
+// 			}
+
+// 			&.low {
+// 				color: red;
+// 			}
+// 		}
+
+// 		.Hale {
+// 			color: #a2d2ff;
+// 		}
+
+// 		.Impaired {
+// 			color: #cdb4db;
+// 		}
+
+// 		.Debilitated {
+// 			color: #ffafcc;
+// 		}
+// 	}
+// }
 
 #clockConfig,
 .clockHud,
