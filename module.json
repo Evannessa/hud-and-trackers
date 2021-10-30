@@ -2,7 +2,7 @@
     "name": "hud-and-trackers",
     "title": "HUD and Trackers",
     "description": "An attempt to make tracking stuff easier for me.",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "minimumCoreVersion": "0.7.9",
     "compatibleCoreVersion": "0.8.9",
     "author": "Eva",
