@@ -2,7 +2,14 @@
  * Define your class that extends FormApplication
  */
 Hooks.on("ready", () => {
-    game.partyOverview = new PartyOverview().render(true);
+    if (game.user.isGM) {
+        game.partyOverview = new PartyOverview().render(true);
+    }
+});
+Hooks.on("sceneInit", () => {
+    if (game.user.isGM && game.partyOverview.rendered) {
+        game.partyOverview.render();
+    }
 });
 Hooks.on("updateActor", (actor, data, diff, actorId) => {
     if (actor.data.type == "PC") {
@@ -10,7 +17,9 @@ Hooks.on("updateActor", (actor, data, diff, actorId) => {
         //maybe specify to only re-render if
         if (data.data.pools || data.data.damage) {
             //only update if pools or damage track have changed
-            game.partyOverview.render();
+            if (game.user.isGM && game.partyOverview.rendered) {
+                game.partyOverview.render();
+            }
         }
     }
 });
@@ -57,7 +66,10 @@ export class PartyOverview extends FormApplication {
         } else {
             sceneActors = this.getPCs();
         }
-        return pcArray.filter((actor) => {
+        console.log(activeOrViewed, sceneActors);
+        sceneActors = [...new Set(sceneActors)];
+        return this.filterByFolder(sceneActors, "Main PCs");
+        pcArray.filter((actor) => {
             return sceneActors.includes(actor);
         });
     }
@@ -73,9 +85,13 @@ export class PartyOverview extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
         this.filter();
+        $(`input[type=radio][value=${this.sceneFilter}]`).prop("checked", true);
         let app = this;
         $("input[type=radio]").change(function () {
             app.pcs = app.filterByScene(app.pcs, this.value);
+            app.sceneFilter = this.value;
+            console.log(this.value);
+            app.render();
         });
     }
 
