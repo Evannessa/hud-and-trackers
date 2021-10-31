@@ -941,13 +941,13 @@
   color: #121212ff;
 }
 #party-overview .window-content table th.header__might {
-  background-color: #fe4a49;
+  background-color: #fed766;
 }
 #party-overview .window-content table th.header__speed {
   background-color: #2ab7ca;
 }
 #party-overview .window-content table th.header__intellect {
-  background-color: #fed766;
+  background-color: #947BD3;
 }
 #party-overview .window-content table td,
 #party-overview .window-content table th {
@@ -971,13 +971,13 @@
   text-align: right;
 }
 #party-overview .window-content table .might {
-  color: #fe4a49;
+  color: #fed766;
 }
 #party-overview .window-content table .speed {
   color: #2ab7ca;
 }
 #party-overview .window-content table .intellect {
-  color: #fed766;
+  color: #947BD3;
 }
 #party-overview .window-content table .current {
   font-weight: bold;
@@ -987,7 +987,7 @@
   color: orange;
 }
 #party-overview .window-content table .current.low {
-  color: red;
+  color: #fe4a49;
 }
 #party-overview .window-content table .Hale {
   color: #a2d2ff;
