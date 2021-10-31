@@ -3,7 +3,7 @@
  */
 Hooks.on("ready", () => {
     if (game.user.isGM) {
-        // game.partyOverview = new PartyOverview().render(true);
+        game.partyOverview = new PartyOverview().render(true);
     }
 });
 Hooks.on("sceneInit", () => {
@@ -69,9 +69,6 @@ export class PartyOverview extends FormApplication {
         console.log(activeOrViewed, sceneActors);
         sceneActors = [...new Set(sceneActors)];
         return this.filterByFolder(sceneActors, "Main PCs");
-        pcArray.filter((actor) => {
-            return sceneActors.includes(actor);
-        });
     }
 
     getData() {
@@ -91,6 +88,7 @@ export class PartyOverview extends FormApplication {
             app.pcs = app.filterByScene(app.pcs, this.value);
             app.sceneFilter = this.value;
             console.log(this.value);
+            console.log(this.checked);
             app.render();
         });
     }

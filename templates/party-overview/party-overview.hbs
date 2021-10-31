@@ -1,27 +1,14 @@
 <form class="flex-col">
     <div><input type="text" id="search" placeholder="Search" /></div>
     <div class="sceneFilterGroup">
-        <label for="none"><input
-                type="radio"
-                name="sceneFilter"
-                id="none"
-                value="none"
-                checked
-            />
+        <input type="radio" name="sceneFilter" id="none" value="none" checked />
+        <label for="none">
             None</label>
-        <label for="active"><input
-                type="radio"
-                name="sceneFilter"
-                id="active"
-                value="active"
-            />
+        <input type="radio" name="sceneFilter" id="active" value="active" />
+        <label for="active">
             Active</label>
-        <label for="viewed"><input
-                type="radio"
-                name="sceneFilter"
-                id="viewed"
-                value="viewed"
-            />
+        <input type="radio" name="sceneFilter" id="viewed" value="viewed" />
+        <label for="viewed">
             Viewed</label>
     </div>
     {{! <label for="search" class="searchLabel">Search</label> }}

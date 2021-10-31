@@ -18,12 +18,58 @@
 		}
 
 		.sceneFilterGroup {
+			display: flex;
+			overflow: hidden;
 			margin-top: 1rem;
 			font-size: 1rem;
 
 			label {
+				$self: &;
+				background-color: $jet-3;
+				line-height: 1;
+				text-align: center;
+				margin-right: -1px;
 				cursor: pointer;
+				border: 1px solid rgba(0, 0, 0, 0.2);
+				padding: 0.5rem 0.75rem;
+				box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+				transition: all 0.1s ease-in-out;
+
+				// input:checked {
+
+				// 	// // #{$self} {
+				// 	// @at-root .sceneFilterGroup>label {
+				// 	// 	background-color: $speed;
+				// 	// 	box-shadow: none;
+				// 	// }
+				// }
+
+				&:first-of-type {
+					border-radius: 4px 0 0 4px;
+				}
+
+				&:last-of-type {
+					border-radius: 0 4px 4px 0;
+				}
 			}
+
+			input {
+				position: absolute !important;
+				clip-path: padding-box;
+				height: 1px;
+				width: 1px;
+				border: 0;
+				overflow: hidden;
+
+				&:checked {
+					+label {
+						background-color: $speed;
+						box-shadow: none;
+					}
+				}
+			}
+
+
 		}
 
 		input[type="text"] {
