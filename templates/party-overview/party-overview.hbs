@@ -15,8 +15,8 @@
         <input type="radio" name="dataFilter" id="stats" value="stats" checked />
         <label for="stats">
             Stats</label>
-        <input type="radio" name="dataFilter" id="items" value="items" />
-        <label for="items">
+        <input type="radio" name="dataFilter" id="actorItems" value="actorItems" />
+        <label for="actorItems">
             Items</label>
         <input type="radio" name="dataFilter" id="skills" value="skills" />
         <label for="skills">
@@ -58,6 +58,37 @@
             {{/each}}
         {{/if}}
         {{#if (eq dataFilter "skills")}}
+            <tr>
+                <th>Name</th>
+                <th class="header__skills">Skills</th>
+                <th class="header__abilities">Abilities</th>
+                <th class="header__attacks">Attacks</th>
+            </tr>
+            {{#each pcs}}
+                <tr class="cellRow" id={{this.id}}>
+                    <td class="name" id={{this.id}}><div>
+                            <img
+                                src="{{this.img}}"
+                                alt="pc avatar"
+                                class="img"
+                            />{{this.name}}
+                        </div></td>
+                    {{#with this.data.items}}
+                        <td class="skill">{{#each (filterByType this "skill")}}<li
+                                    id="{{this.id}}"
+                                >{{this.name}}</li>{{/each}}</td>
+                        <td class="ability">{{#each (filterByType this "ability")}}<li
+                                    id="{{this.id}}"
+                                >{{this.name}}</li>{{/each}}</td>
+                        <td class="attack">{{#each (filterByType this "attack")}}<li
+                                    id="{{this.id}}"
+                                >{{this.name}}</li>{{/each}}</td>
+                    {{/with}}
+
+                </tr>
+            {{/each}}
+        {{/if}}
+        {{#if (eq dataFilter "actorItems")}}
             <tr>
                 <th>Name</th>
                 <th class="header__cyphers">Cyphers</th>
