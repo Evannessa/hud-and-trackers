@@ -74,15 +74,21 @@
                             />{{this.name}}
                         </div></td>
                     {{#with this.data.items}}
-                        <td class="skill">{{#each (filterByType this "skill")}}<li
-                                    id="{{this.id}}"
-                                >{{this.name}}</li>{{/each}}</td>
-                        <td class="ability">{{#each (filterByType this "ability")}}<li
-                                    id="{{this.id}}"
-                                >{{this.name}}</li>{{/each}}</td>
-                        <td class="attack">{{#each (filterByType this "attack")}}<li
-                                    id="{{this.id}}"
-                                >{{this.name}}</li>{{/each}}</td>
+                        <td class="skill"><div>
+                                {{#each (filterByType this "skill")}}<li
+                                        id="{{this.id}}"
+                                    >{{this.name}}</li>{{/each}}
+                            </div></td>
+                        <td class="ability"><div>
+                                {{#each (filterByType this "ability")}}<li
+                                        id="{{this.id}}"
+                                    >{{this.name}}</li>{{/each}}
+                            </div></td>
+                        <td class="attack"><div>
+                                {{#each (filterByType this "attack")}}<li
+                                        id="{{this.id}}"
+                                    >{{this.name}}</li>{{/each}}
+                            </div></td>
                     {{/with}}
 
                 </tr>

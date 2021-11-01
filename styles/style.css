@@ -831,9 +831,9 @@
 
 /* SCSS HEX */
 #party-overview {
-  width: -webkit-max-content;
-  width: -moz-max-content;
-  width: max-content;
+  width: -webkit-max-content !important;
+  width: -moz-max-content !important;
+  width: max-content !important;
   height: -webkit-max-content;
   height: -moz-max-content;
   height: max-content;
@@ -971,12 +971,19 @@
   padding: 1rem 1.5rem;
   text-align: left;
 }
-#party-overview .window-content table td > div {
+#party-overview .window-content table td.skill, #party-overview .window-content table td.ability, #party-overview .window-content table td.attack, #party-overview .window-content table td.equipment, #party-overview .window-content table td.artifact, #party-overview .window-content table td.cypher {
+  max-height: 1rem;
+  overflow: hidden;
+}
+#party-overview .window-content table td.skill > div, #party-overview .window-content table td.ability > div, #party-overview .window-content table td.attack > div, #party-overview .window-content table td.equipment > div, #party-overview .window-content table td.artifact > div, #party-overview .window-content table td.cypher > div {
+  max-height: 1rem;
+}
+#party-overview .window-content table td.name > div {
   font-weight: bold;
   display: flex;
   align-items: center;
 }
-#party-overview .window-content table td > div img {
+#party-overview .window-content table td.name > div img {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;

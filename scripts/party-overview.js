@@ -90,7 +90,6 @@ export class PartyOverview extends FormApplication {
         } else {
             sceneActors = this.getPCs();
         }
-        console.log(activeOrViewed, sceneActors);
         sceneActors = [...new Set(sceneActors)];
         return this.filterByFolder(sceneActors, "Main PCs");
     }
@@ -107,8 +106,13 @@ export class PartyOverview extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
         this.filter();
+        //every table row with expanded class, make it visible
+        $("#party-overview tr.expanded").css("overflow", "visible");
+
+        //every radio button whose value is equal to our sceneFilter, or dataFilter, check it
         $(`input[type=radio][value=${this.sceneFilter}]`).prop("checked", true);
         $(`input[type=radio][value=${this.dataFilter}]`).prop("checked", true);
+
         let app = this;
         $("input[type=radio][name='sceneFilter']").change(function () {
             app.pcs = app.filterByScene(app.pcs, this.value);
@@ -116,9 +120,21 @@ export class PartyOverview extends FormApplication {
             app.render();
         });
         $("input[type=radio][name='dataFilter']").change(function () {
-            console.log(this.value);
             app.dataFilter = this.value;
             app.render();
+        });
+        $("#party-overview tr").click((event) => {
+            let row = event.currentTarget;
+            row.classList.toggle("expanded");
+            $("#party-overview tr.expanded *").css({
+                overflow: "visible",
+                "max-height": "max-content",
+            });
+            $("#party-overview tr:not(.expanded) td:not(.name) > div").css({
+                overflow: "hidden",
+                "max-height": "1rem",
+            });
+            // app.render();
         });
         $("#party-overview li").click((event) => {
             event.stopPropagation();
