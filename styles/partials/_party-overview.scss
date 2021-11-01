@@ -18,6 +18,13 @@
 			}
 		}
 
+		.name {
+			&:hover {
+				color: $intellect;
+				cursor: pointer;
+			}
+		}
+
 		.searchLabel {
 			font-size: 1rem;
 			color: $speed;

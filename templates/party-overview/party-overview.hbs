@@ -33,7 +33,7 @@
             </tr>
             {{#each pcs}}
                 <tr class="cellRow">
-                    <td class="name"><div>
+                    <td class="name" id={{this.id}}><div>
                             <img
                                 src="{{this.img}}"
                                 alt="pc avatar"
@@ -66,7 +66,7 @@
             </tr>
             {{#each pcs}}
                 <tr class="cellRow" id={{this.id}}>
-                    <td class="name"><div>
+                    <td class="name" id={{this.id}}><div>
                             <img
                                 src="{{this.img}}"
                                 alt="pc avatar"

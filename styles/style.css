@@ -848,6 +848,10 @@
   color: #947BD3;
   cursor: pointer;
 }
+#party-overview .window-content .name:hover {
+  color: #947BD3;
+  cursor: pointer;
+}
 #party-overview .window-content .searchLabel {
   font-size: 1rem;
   color: #2ab7ca;

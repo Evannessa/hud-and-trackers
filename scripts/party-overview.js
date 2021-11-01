@@ -17,9 +17,24 @@ Hooks.on("updateActor", (actor, data, diff, actorId) => {
         //maybe specify to only re-render if
         if (data.data?.pools || data.data?.damage) {
             //only update if pools or damage track have changed
-            if (game.user.isGM && game.partyOverview.rendered) {
+            if (
+                game.user.isGM &&
+                game.partyOverview.rendered &&
+                game.partyOverview.dataFilter == "stats"
+            ) {
                 game.partyOverview.render();
             }
+        }
+    }
+});
+Hooks.on("createItem", (item, data, id) => {
+    if (item.parent.type == "PC") {
+        if (
+            game.user.isGM &&
+            game.partyOverview.rendered &&
+            game.partyOverview.dataFilter == "skills"
+        ) {
+            game.partyOverview.render();
         }
     }
 });
@@ -118,6 +133,11 @@ export class PartyOverview extends FormApplication {
 
             //render the item sheet
             item.sheet.render(true);
+        });
+        $("#party-overview td.name").click((event) => {
+            let actorId = event.currentTarget.id;
+            let actor = game.actors.get(actorId);
+            actor.sheet.render(true);
         });
     }
 
