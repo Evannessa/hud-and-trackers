@@ -15,7 +15,7 @@ Hooks.on("updateActor", (actor, data, diff, actorId) => {
     if (actor.data.type == "PC") {
         //re-render the party overview if the stats change
         //maybe specify to only re-render if
-        if (data.data.pools || data.data.damage) {
+        if (data.data?.pools || data.data?.damage) {
             //only update if pools or damage track have changed
             if (game.user.isGM && game.partyOverview.rendered) {
                 game.partyOverview.render();
@@ -23,6 +23,7 @@ Hooks.on("updateActor", (actor, data, diff, actorId) => {
         }
     }
 });
+Handlebars.registerPartial("po-items-partial", "{{prefix}}");
 
 Handlebars.registerHelper("lowPool", (value) => {
     if (value < 10) {
@@ -32,11 +33,18 @@ Handlebars.registerHelper("lowPool", (value) => {
     }
 });
 
+Handlebars.registerHelper("filterByType", (items, type) => {
+    return items.filter((item) => {
+        return item.type === type;
+    });
+});
+
 export class PartyOverview extends FormApplication {
     constructor() {
         super();
         this.pcs = this.filterByFolder(this.getPCs(), "Main PCs");
         this.sceneFilter = "none";
+        this.dataFilter = "stats";
     }
 
     static get defaultOptions() {
@@ -44,6 +52,7 @@ export class PartyOverview extends FormApplication {
             classes: ["form"],
             popOut: true,
             minimizable: true,
+            resizable: true,
             template: `modules/hud-and-trackers/templates/party-overview/party-overview.hbs`,
             id: "party-overview",
             title: "Party Overview",
@@ -76,6 +85,7 @@ export class PartyOverview extends FormApplication {
         return {
             pcs: this.pcs,
             sceneFilter: this.sceneFilter,
+            dataFilter: this.dataFilter,
         };
     }
 
@@ -83,13 +93,31 @@ export class PartyOverview extends FormApplication {
         super.activateListeners(html);
         this.filter();
         $(`input[type=radio][value=${this.sceneFilter}]`).prop("checked", true);
+        $(`input[type=radio][value=${this.dataFilter}]`).prop("checked", true);
         let app = this;
-        $("input[type=radio]").change(function () {
+        $("input[type=radio][name='sceneFilter']").change(function () {
             app.pcs = app.filterByScene(app.pcs, this.value);
             app.sceneFilter = this.value;
-            console.log(this.value);
-            console.log(this.checked);
             app.render();
+        });
+        $("input[type=radio][name='dataFilter']").change(function () {
+            console.log(this.value);
+            app.dataFilter = this.value;
+            app.render();
+        });
+        $("#party-overview li").click((event) => {
+            event.stopPropagation();
+
+            //get the id of the item, from the list item, and the actor, from the parent table row
+            let itemId = event.currentTarget.id;
+            let actorId = event.currentTarget.closest("tr").id;
+
+            //find the actor, them find the item on the actor
+            let actor = game.actors.get(actorId);
+            let item = actor.items.find((item) => item.id === itemId);
+
+            //render the item sheet
+            item.sheet.render(true);
         });
     }
 

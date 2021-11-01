@@ -1,0 +1,17 @@
+    <tr>
+        <th>Name</th>
+        <th class="header__cyphers">Cyphers</th>
+        <th class="header__artifacts">Artifacts</th>
+        <th class="header__other">Other</th>
+    </tr>
+    {{#each pcs}}
+        <tr class="cellRow">
+            <td class="name"><div>
+                    <img src="{{this.img}}" alt="pc avatar" class="img" />{{this.name}}
+                </div></td>
+            {{#with this.data.items}}
+				<td class="artifacts">{{#each {{filterByType this artifacts}}}}<li>{{this.name}}</li>{{/each}}</td>
+            {{/with}}
+
+        </tr>
+    {{/each}}

@@ -1,5 +1,36 @@
 export const moduleName = "hud-and-trackers";
 
+//convert PC items to another type of item if it's in the wrong category
+export function convertItems(pc, html) {
+    let items = pc.data.items; //all items on the pc
+    let convertFrom = html.find(".convertFrom")[0].val();
+    let convertTo = html.find(".convertTo")[0].val();
+    let qualifier = html.find("qualifier")[0].val();
+
+    //get only the items that match the type and qualifier
+    items = items
+        .filter((item) => {
+            return item.type == convertFrom;
+        })
+        .filter((item) => {
+            item.name.includes(qualifier);
+        });
+
+    //go through every item, and create a new item on the actor, w/ everything the same BUT the type, which will be "convertTo"'s value
+    items.forEach((item) => {
+        createItemOnActor(pc, item.name, convertTo, item.data);
+    });
+}
+
+export function createItemOnActor(actor, itemName, itemType, itemData) {
+    Item.create({ type: itemType, data: itemData, name: itemName }, { parent: actor });
+}
+
+export function getPCItemsOfType(pc, type) {
+    return pc.data.items.map((item) => {
+        return item.type === type;
+    });
+}
 export function setInvisibleHeader(html, showIcon) {
     let windowHeader = html[0].querySelector(".window-header");
     if (windowHeader) {
