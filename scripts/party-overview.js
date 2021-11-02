@@ -126,14 +126,29 @@ export class PartyOverview extends FormApplication {
         $("#party-overview tr").click((event) => {
             let row = event.currentTarget;
             row.classList.toggle("expanded");
+
+            //when row expanded, make the overflow visible and the height larger to accommodate
             $("#party-overview tr.expanded *").css({
                 overflow: "visible",
                 "max-height": "max-content",
             });
+
+            //when row NOT expanded, make the overflow hidden and the height of inner div smaller
             $("#party-overview tr:not(.expanded) td:not(.name) > div").css({
                 overflow: "hidden",
                 "max-height": "1rem",
             });
+
+            //when not expanded, change the icon to chevron right
+            $("#party-overview tr:not(.expanded) td.name i")
+                .addClass("fa-chevron-circle-right")
+                .removeClass("fa-chevron-circle-down");
+
+            //when not expanded, change the icon to chevron down
+            $("#party-overview tr.expanded td.name i")
+                .addClass("fa-chevron-circle-down")
+                .removeClass("fa-chevron-circle-right");
+
             // app.render();
         });
         $("#party-overview li").click((event) => {

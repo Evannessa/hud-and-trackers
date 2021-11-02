@@ -9,21 +9,6 @@
 
 		background-color: $eerie-black;
 
-		li {
-			list-style-type: none;
-
-			&:hover {
-				color: $intellect;
-				cursor: pointer;
-			}
-		}
-
-		.name {
-			&:hover {
-				color: $intellect;
-				cursor: pointer;
-			}
-		}
 
 		.searchLabel {
 			font-size: 1rem;
@@ -125,16 +110,62 @@
 
 
 			tr {
+				$row: &;
 				background-color: $eerie-black-4;
 				border-radius: 10px;
 				white-space: nowrap;
+				cursor: pointer;
+				transition: all 0.25s;
+				// transition-property: background-color;
+				// transition-duration: 0.25s;
+
+				td {
+					li {
+						list-style-type: none;
+						white-space: normal;
+						word-wrap: break-word;
+						max-width: 10rem;
+
+						&:hover {
+							color: $intellect;
+							background-color: $jet-5;
+							cursor: pointer;
+						}
+
+						.name {
+							&:hover {
+								color: $intellect;
+								cursor: pointer;
+							}
+						}
+					}
+
+					@at-root #{$row}.expanded {
+						li {
+							margin-bottom: 10px;
+							border-bottom: 1px dotted rgba(255, 255, 255, 0.332);
+						}
+					}
+				}
+
+
+
+				&:first-of-type {
+					border-bottom: 2px solid $eerie-black;
+					border-top: 2px solid $eerie-black;
+				}
+
+				&.expanded {
+					background-color: darken(desaturate($speed, 50%), 10%);
+
+					td {
+						vertical-align: top;
+					}
+				}
 
 			}
 
-			tr:first-of-type {
-				border-bottom: 2px solid $eerie-black;
-				border-top: 2px solid $eerie-black;
-			}
+
 
 
 
@@ -199,6 +230,8 @@
 
 					>div {
 						max-height: 1rem;
+						overflow: hidden;
+
 					}
 
 				}
@@ -208,6 +241,10 @@
 						font-weight: bold;
 						display: flex;
 						align-items: center;
+
+						.indicator {
+							margin-right: 0.5rem;
+						}
 
 						img {
 							width: 2.5rem;

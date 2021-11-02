@@ -64,35 +64,7 @@
                 <th class="header__abilities">Abilities</th>
                 <th class="header__attacks">Attacks</th>
             </tr>
-            {{#each pcs}}
-                <tr class="cellRow" id={{this.id}}>
-                    <td class="name" id={{this.id}}><div>
-                            <img
-                                src="{{this.img}}"
-                                alt="pc avatar"
-                                class="img"
-                            />{{this.name}}
-                        </div></td>
-                    {{#with this.data.items}}
-                        <td class="skill"><div>
-                                {{#each (filterByType this "skill")}}<li
-                                        id="{{this.id}}"
-                                    >{{this.name}}</li>{{/each}}
-                            </div></td>
-                        <td class="ability"><div>
-                                {{#each (filterByType this "ability")}}<li
-                                        id="{{this.id}}"
-                                    >{{this.name}}</li>{{/each}}
-                            </div></td>
-                        <td class="attack"><div>
-                                {{#each (filterByType this "attack")}}<li
-                                        id="{{this.id}}"
-                                    >{{this.name}}</li>{{/each}}
-                            </div></td>
-                    {{/with}}
-
-                </tr>
-            {{/each}}
+       {{> "modules/hud-and-trackers/templates/party-overview/po-items-partial.hbs"}} 
         {{/if}}
         {{#if (eq dataFilter "actorItems")}}
             <tr>
@@ -101,31 +73,7 @@
                 <th class="header__artifacts">Artifacts</th>
                 <th class="header__other">Other</th>
             </tr>
-            {{#each pcs}}
-                <tr class="cellRow" id={{this.id}}>
-                    <td class="name" id={{this.id}}><div>
-                            <img
-                                src="{{this.img}}"
-                                alt="pc avatar"
-                                class="img"
-                            />{{this.name}}
-                        </div></td>
-                    {{#with this.data.items}}
-                        {{!-- {{log (filterByType this artifacts)}} --}}
-                        <td class="cypher">{{#each (filterByType this "cypher")}}<li
-                                    id="{{this.id}}"
-                                >{{this.name}}</li>{{/each}}</td>
-                        <td class="artifact">{{#each (filterByType this "artifact")}}<li
-                                    id="{{this.id}}"
-                                >{{this.name}}</li>{{/each}}</td>
-                        <td class="item">{{#each (filterByType this "equipment")}}<li
-                                    id="{{this.id}}"
-                                >{{this.name}}</li>{{/each}}</td>
-                    {{/with}}
-
-                </tr>
-            {{/each}}
-            {{!-- {{> "modules\hud-and-trackers\templates\party-overview\po-items-partial.hbs"}}  --}}
+            {{> "modules/hud-and-trackers/templates/party-overview/po-abilities-partial.hbs"}} 
         {{/if}}
     </table>
     <!--Add tab to show artifacts & cyphers too-->

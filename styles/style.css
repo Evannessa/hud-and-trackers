@@ -841,17 +841,6 @@
 #party-overview .window-content {
   background-color: #1d1d1dff;
 }
-#party-overview .window-content li {
-  list-style-type: none;
-}
-#party-overview .window-content li:hover {
-  color: #947BD3;
-  cursor: pointer;
-}
-#party-overview .window-content .name:hover {
-  color: #947BD3;
-  cursor: pointer;
-}
 #party-overview .window-content .searchLabel {
   font-size: 1rem;
   color: #2ab7ca;
@@ -937,10 +926,38 @@
   background-color: #272727ff;
   border-radius: 10px;
   white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.25s;
 }
+#party-overview .window-content table tr td li {
+  list-style-type: none;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 10rem;
+}
+#party-overview .window-content table tr td li:hover {
+  color: #947BD3;
+  background-color: #383838ff;
+  cursor: pointer;
+}
+#party-overview .window-content table tr td li .name:hover {
+  color: #947BD3;
+  cursor: pointer;
+}
+#party-overview .window-content table tr.expanded li {
+  margin-bottom: 10px;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.332);
+}
+
 #party-overview .window-content table tr:first-of-type {
   border-bottom: 2px solid #1d1d1dff;
   border-top: 2px solid #1d1d1dff;
+}
+#party-overview .window-content table tr.expanded {
+  background-color: #516c70;
+}
+#party-overview .window-content table tr.expanded td {
+  vertical-align: top;
 }
 #party-overview .window-content table td:first-child,
 #party-overview .window-content table th:first-child {
@@ -977,11 +994,15 @@
 }
 #party-overview .window-content table td.skill > div, #party-overview .window-content table td.ability > div, #party-overview .window-content table td.attack > div, #party-overview .window-content table td.equipment > div, #party-overview .window-content table td.artifact > div, #party-overview .window-content table td.cypher > div {
   max-height: 1rem;
+  overflow: hidden;
 }
 #party-overview .window-content table td.name > div {
   font-weight: bold;
   display: flex;
   align-items: center;
+}
+#party-overview .window-content table td.name > div .indicator {
+  margin-right: 0.5rem;
 }
 #party-overview .window-content table td.name > div img {
   width: 2.5rem;
