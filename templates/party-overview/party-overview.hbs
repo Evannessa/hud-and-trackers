@@ -15,12 +15,13 @@
         <input type="radio" name="dataFilter" id="stats" value="stats" checked />
         <label for="stats">
             Stats</label>
+  		<input type="radio" name="dataFilter" id="skills" value="skills" />
+        <label for="skills">
+            Skills</label>
         <input type="radio" name="dataFilter" id="actorItems" value="actorItems" />
         <label for="actorItems">
             Items</label>
-        <input type="radio" name="dataFilter" id="skills" value="skills" />
-        <label for="skills">
-            Skills</label>
+      
     </div>
     <table id="partyTable">
         {{#if (eq dataFilter "stats")}}
@@ -64,7 +65,7 @@
                 <th class="header__abilities">Abilities</th>
                 <th class="header__attacks">Attacks</th>
             </tr>
-       {{> "modules/hud-and-trackers/templates/party-overview/po-items-partial.hbs"}} 
+       {{> "modules/hud-and-trackers/templates/party-overview/po-abilities-partial.hbs"}} 
         {{/if}}
         {{#if (eq dataFilter "actorItems")}}
             <tr>
@@ -73,7 +74,7 @@
                 <th class="header__artifacts">Artifacts</th>
                 <th class="header__other">Other</th>
             </tr>
-            {{> "modules/hud-and-trackers/templates/party-overview/po-abilities-partial.hbs"}} 
+            {{> "modules/hud-and-trackers/templates/party-overview/po-items-partial.hbs"}} 
         {{/if}}
     </table>
     <!--Add tab to show artifacts & cyphers too-->

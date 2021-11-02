@@ -1,0 +1,57 @@
+@import "../variables";
+
+#ambient-dice-pool {
+
+	.footerButtonWrapper,
+	.diceDiv {
+		padding: 1rem 0.5rem;
+	}
+
+	.footerButtonWrapper {
+		display: flex;
+		justify-content: flex-end;
+
+		button {
+			width: fit-content;
+			width: -moz-max-content;
+
+			&.rollBnBButtons {
+				background-color: $intellect;
+				color: black;
+			}
+		}
+
+
+	}
+
+	.boonButtons,
+	.baneButtons {
+		display: flex;
+		flex-direction: row;
+		padding: 1rem 0.5rem;
+
+		.wrapper {
+			position: relative;
+			width: fit-content;
+			height: fit-content;
+
+			.displayNumber {
+				display: inline-block;
+				position: absolute;
+				background-color: orange;
+				text-align: center;
+				padding: 0.25rem 0.1rem;
+				top: -1rem;
+				left: 0;
+				width: 100%;
+			}
+
+			button[data-number] {
+				position: relative;
+				width: max-content;
+
+
+			}
+		}
+	}
+}

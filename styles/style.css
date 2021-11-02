@@ -945,7 +945,7 @@
   cursor: pointer;
 }
 #party-overview .window-content table tr.expanded li {
-  margin-bottom: 10px;
+  padding: 0.5rem 0rem;
   border-bottom: 1px dotted rgba(255, 255, 255, 0.332);
 }
 
@@ -1042,6 +1042,60 @@
 }
 #party-overview .window-content table .Debilitated {
   color: #ffafcc;
+}
+
+/* SCSS HEX */
+#ambient-dice-pool .footerButtonWrapper,
+#ambient-dice-pool .diceDiv {
+  padding: 1rem 0.5rem;
+}
+#ambient-dice-pool .footerButtonWrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+#ambient-dice-pool .footerButtonWrapper button {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  width: -moz-max-content;
+}
+#ambient-dice-pool .footerButtonWrapper button.rollBnBButtons {
+  background-color: #947BD3;
+  color: black;
+}
+#ambient-dice-pool .boonButtons,
+#ambient-dice-pool .baneButtons {
+  display: flex;
+  flex-direction: row;
+  padding: 1rem 0.5rem;
+}
+#ambient-dice-pool .boonButtons .wrapper,
+#ambient-dice-pool .baneButtons .wrapper {
+  position: relative;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+#ambient-dice-pool .boonButtons .wrapper .displayNumber,
+#ambient-dice-pool .baneButtons .wrapper .displayNumber {
+  display: inline-block;
+  position: absolute;
+  background-color: orange;
+  text-align: center;
+  padding: 0.25rem 0.1rem;
+  top: -1rem;
+  left: 0;
+  width: 100%;
+}
+#ambient-dice-pool .boonButtons .wrapper button[data-number],
+#ambient-dice-pool .baneButtons .wrapper button[data-number] {
+  position: relative;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
 }
 
 #clockConfig .reddish,

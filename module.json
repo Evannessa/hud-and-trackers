@@ -25,7 +25,8 @@
         "./scripts/hud.js",
         "./scripts/combat-hud.js",
         "./scripts/clock.js",
-        "./scripts/party-overview.js"
+        "./scripts/party-overview.js",
+        "./scripts/dice-pool.js"
     ],
     "styles": ["styles/style.css"],
     "dependencies": [],

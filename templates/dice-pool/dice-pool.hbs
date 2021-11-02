@@ -1,0 +1,54 @@
+<form action="#">
+    <div class="diceDiv">
+        <h3>Total Dice Roll</h3>
+        <input
+            type="text"
+            name="diceDiv"
+            value="{{data.boonNumber}}d6 - {{data.baneNumber}}d6"
+            disabled
+        />
+    </div>
+    <div class="boonDiv">
+        <h3>Add Boon From</h3>
+        <div class="boonButtons">
+            <div class="wrapper"><button
+                    name="approach"
+                    data-number="0"
+                >Approach</button></div>
+            <div class="wrapper"><button name="bonds" data-number="0">Bonds</button></div>
+            <div class="wrapper"><button
+                    name="conditions"
+                    data-number="0"
+                >Conditions</button></div>
+            <div class="wrapper"><button name="tools" data-number="0">Tools</button></div>
+            <div class="wrapper"><button
+                    name="environment"
+                    data-number="0"
+                >Environment</button></div>
+        </div>
+    </div>
+
+    <div class="baneDiv">
+        <h3>Add Bane From</h3>
+        <div class="baneButtons">
+            <div class="wrapper"><button
+                    name="approach"
+                    data-number="0"
+                >Approach</button></div>
+            <div class="wrapper"><button name="bonds" data-number="0">Bonds</button></div>
+            <div class="wrapper"><button
+                    name="conditions"
+                    data-number="0"
+                >Conditions</button></div>
+            <div class="wrapper"><button name="tools" data-number="0">Tools</button></div>
+            <div class="wrapper"><button
+                    name="environment"
+                    data-number="0"
+                >Environment</button></div>
+        </div>
+    </div>
+    <div class="footerButtonWrapper">
+        <button class="rollBnBButtons">Roll Boons and Banes</button>
+        <button class="cancel">Cancel</button>
+    </div>
+</form>
