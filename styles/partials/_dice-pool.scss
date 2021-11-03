@@ -1,5 +1,25 @@
 @import "../variables";
 
+.flavor-text {
+	font-size: 14px !important;
+
+	hr,
+	.hr-chat {
+		opacity: 50%;
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+
+	.ambient-div {
+		background-color: $jet;
+		border-radius: 10px;
+		padding: 0.45rem;
+	}
+
+
+}
+
+//ambient dice pool
 #ambient-dice-pool {
 
 	.footerButtonWrapper,
@@ -16,7 +36,7 @@
 			width: -moz-max-content;
 
 			&.rollBnBButtons {
-				background-color: $intellect;
+				background-color: transparent;
 				color: black;
 			}
 		}
@@ -35,20 +55,28 @@
 			width: fit-content;
 			height: fit-content;
 
-			.displayNumber {
-				display: inline-block;
-				position: absolute;
-				background-color: orange;
-				text-align: center;
-				padding: 0.25rem 0.1rem;
-				top: -1rem;
-				left: 0;
-				width: 100%;
-			}
+
 
 			button[data-number] {
 				position: relative;
 				width: max-content;
+
+				.displayNumber {
+					display: inline-block;
+					position: absolute;
+					background-color: orange;
+					text-align: center;
+					// padding: 0.25rem 0.1rem;
+					display: flex;
+					left: 0;
+					right: 0;
+					align-items: center;
+					justify-content: center;
+					max-height: 18px;
+					bottom: calc(100% - 2px);
+					border-radius: 4px 4px 0 0;
+					width: 100%;
+				}
 
 
 			}
@@ -59,11 +87,109 @@
 #ambient-prompt {
 	display: flex;
 	flex-direction: column;
+	width: max-content;
 
-	.addBnB {
-		background-color: $intellect;
-		color: black;
-		font-weight: bold;
-		font-size: 1.3rem;
+	* {
+		overflow: visible;
 	}
+
+	[data-action] {
+		position: relative;
+		white-space: nowrap;
+
+
+
+		.tooltip {
+
+
+			display: none;
+			position: absolute;
+			opacity: 0%;
+			font-size: unset;
+			text-transform: none;
+			white-space: normal;
+			min-width: 20ch;
+			color: white;
+			background-color: rgb(61, 62, 82);
+			border-radius: 5px;
+			left: 0;
+			top: calc(100% + 5px);
+			// margin-left: 28px;
+			/* moves the tooltip to the right */
+			// margin-top: 15px;
+			/* moves it down */
+			z-index: 1000;
+			transition: opacity 0.5s;
+		}
+
+		&:hover {
+			.tooltip {
+				display: block;
+				opacity: 100%;
+
+			}
+		}
+	}
+
+	li+li {
+		margin-top: 0.25rem;
+	}
+
+	div {
+		padding: 0.5rem 0.2rem;
+	}
+
+	hr {
+		opacity: 0.24;
+	}
+
+	// @for $i from 0 through 4 {
+	// 	.btn-#{$i} {
+	// 		background-color: mix($low, $speed, $i*20);
+	// 	}
+	// }
+
+	.primaryAction {
+		display: flex;
+		justify-content: flex-end;
+
+		.addBnB {
+			background-color: transparent;
+			text-transform: uppercase;
+			color: saturate($intellect, 30%);
+			// background-color: $intellect;
+			// color: black;
+			font-size: 1.0rem;
+			width: 50%;
+
+
+		}
+	}
+
+	.secondaryAction {
+		display: flex;
+
+
+		button {
+			// border: 1px solid rgba(255, 255, 255, 0.441);
+			width: 75%;
+			border-radius: 80px;
+			background-color: $jet-5;
+
+			transition: 0.25s;
+
+			&:hover,
+			&:focus {
+				box-shadow:
+					inset -5.5em 0 0 0 $intellect,
+					inset 5.5em 0 0 0 $intellect;
+			}
+
+			+button {
+				margin-right: 0.2rem;
+			}
+		}
+	}
+
+
 }

@@ -1045,6 +1045,21 @@
 }
 
 /* SCSS HEX */
+.flavor-text {
+  font-size: 14px !important;
+}
+.flavor-text hr,
+.flavor-text .hr-chat {
+  opacity: 50%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.flavor-text .ambient-div {
+  background-color: #2c2c2cff;
+  border-radius: 10px;
+  padding: 0.45rem;
+}
+
 #ambient-dice-pool .footerButtonWrapper,
 #ambient-dice-pool .diceDiv {
   padding: 1rem 0.5rem;
@@ -1060,7 +1075,7 @@
   width: -moz-max-content;
 }
 #ambient-dice-pool .footerButtonWrapper button.rollBnBButtons {
-  background-color: #947BD3;
+  background-color: transparent;
   color: black;
 }
 #ambient-dice-pool .boonButtons,
@@ -1079,17 +1094,6 @@
   height: -moz-fit-content;
   height: fit-content;
 }
-#ambient-dice-pool .boonButtons .wrapper .displayNumber,
-#ambient-dice-pool .baneButtons .wrapper .displayNumber {
-  display: inline-block;
-  position: absolute;
-  background-color: orange;
-  text-align: center;
-  padding: 0.25rem 0.1rem;
-  top: -1rem;
-  left: 0;
-  width: 100%;
-}
 #ambient-dice-pool .boonButtons .wrapper button[data-number],
 #ambient-dice-pool .baneButtons .wrapper button[data-number] {
   position: relative;
@@ -1097,16 +1101,93 @@
   width: -moz-max-content;
   width: max-content;
 }
+#ambient-dice-pool .boonButtons .wrapper button[data-number] .displayNumber,
+#ambient-dice-pool .baneButtons .wrapper button[data-number] .displayNumber {
+  display: inline-block;
+  position: absolute;
+  background-color: orange;
+  text-align: center;
+  display: flex;
+  left: 0;
+  right: 0;
+  align-items: center;
+  justify-content: center;
+  max-height: 18px;
+  bottom: calc(100% - 2px);
+  border-radius: 4px 4px 0 0;
+  width: 100%;
+}
 
 #ambient-prompt {
   display: flex;
   flex-direction: column;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
 }
-#ambient-prompt .addBnB {
-  background-color: #947BD3;
-  color: black;
-  font-weight: bold;
-  font-size: 1.3rem;
+#ambient-prompt * {
+  overflow: visible;
+}
+#ambient-prompt [data-action] {
+  position: relative;
+  white-space: nowrap;
+}
+#ambient-prompt [data-action] .tooltip {
+  display: none;
+  position: absolute;
+  opacity: 0%;
+  font-size: unset;
+  text-transform: none;
+  white-space: normal;
+  min-width: 20ch;
+  color: white;
+  background-color: #3d3e52;
+  border-radius: 5px;
+  left: 0;
+  top: calc(100% + 5px);
+  /* moves the tooltip to the right */
+  /* moves it down */
+  z-index: 1000;
+  transition: opacity 0.5s;
+}
+#ambient-prompt [data-action]:hover .tooltip {
+  display: block;
+  opacity: 100%;
+}
+#ambient-prompt li + li {
+  margin-top: 0.25rem;
+}
+#ambient-prompt div {
+  padding: 0.5rem 0.2rem;
+}
+#ambient-prompt hr {
+  opacity: 0.24;
+}
+#ambient-prompt .primaryAction {
+  display: flex;
+  justify-content: flex-end;
+}
+#ambient-prompt .primaryAction .addBnB {
+  background-color: transparent;
+  text-transform: uppercase;
+  color: #8961ed;
+  font-size: 1rem;
+  width: 50%;
+}
+#ambient-prompt .secondaryAction {
+  display: flex;
+}
+#ambient-prompt .secondaryAction button {
+  width: 75%;
+  border-radius: 80px;
+  background-color: #383838ff;
+  transition: 0.25s;
+}
+#ambient-prompt .secondaryAction button:hover, #ambient-prompt .secondaryAction button:focus {
+  box-shadow: inset -5.5em 0 0 0 #947BD3, inset 5.5em 0 0 0 #947BD3;
+}
+#ambient-prompt .secondaryAction button + button {
+  margin-right: 0.2rem;
 }
 
 #clockConfig .reddish,

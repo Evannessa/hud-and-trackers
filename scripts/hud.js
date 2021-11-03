@@ -544,7 +544,6 @@ export class Hud extends Application {
                 return btn;
             }
         });
-        console.log(tabs);
         let damage = buttonWrapper.querySelector(".damage");
         if (damage) {
             $(damage).click((event) => {

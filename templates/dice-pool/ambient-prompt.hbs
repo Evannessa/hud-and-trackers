@@ -1,22 +1,69 @@
 <form>
-    <div>
-        <p>Please roll your all-in-one-roll.
-            <br />
-            Its results will be hidden until the Boons and Banes are applied.
-            <br />
-            When finished, click the "Add Boons and Banes" button</p>
-        <h3>Utility Buttons</h3>
-        <div class="secondaryAction">
-            <button data-action="selectCharacter">Select My PC</button>
-            <button data-action="swapCharacter">Swap Character</button>
-            <button data-action="openSheet">Open PC Sheet</button>
-            <button data-action="defaultAllInOne">Roll Default All-in-One</button>
-        </div>
-        <hr />
-        <div class="primaryAction"><button
-                data-action="addBnB"
-                class="addBnB"
-            >Finished</button></div>
-        {{! <button></button> }}
+  <div>
+    <div class="instructions">
+      <h1>
+        Roll All-in-One
+      </h1>
+      <ol>
+        <li>
+          Please roll your all-in-one-roll first.
+        </li>
+        <li>
+          Its results will be hidden until the Boons and Banes are applied.
+        </li>
+        <li>
+          When finished, click the "Add Boons and Banes" button
+        </li>
+      </ol>
     </div>
+    <hr />
+    <h2>
+      Utility Buttons
+    </h2>
+    <div class="secondaryAction">
+      <button class="btn-0" data-action="selectCharacter">
+        <i class="fas fa-user"></i>
+        Select My PC
+        <span class="tooltip">
+          Select your current PC
+        </span>
+      </button>
+      <button class="btn-1" data-action="swapCharacter">
+        <i class="fas fa-exchange-alt"></i>
+        Swap PC
+        <span class="tooltip">
+          Swap to your other PC
+        </span>
+      </button>
+      <button class="btn-2" data-action="openSheet">
+        <i class="fas fa-external-link-alt"></i>
+        Open PC Sheet
+        <span class="tooltip">
+          Open your PC's
+          <br />
+          character sheet
+        </span>
+      </button>
+      <button class="btn-3" data-action="defaultAllInOne">
+        <i class="fas fa-dice-d20"></i>
+        Default
+        {{! <br /> }}
+        All-in-One
+        <span class="tooltip">
+          Bring up the All-in-One Roll Dialog
+        </span>
+      </button>
+    </div>
+    <hr />
+    <div class="primaryAction">
+      <button data-action="addBnB" class="addBnB">
+        <i class="fas fa-dice"></i>
+        Add Boons and Banes
+        <span class="tooltip">
+          Make sure to roll your All-in-One roll first!
+        </span>
+      </button>
+    </div>
+    {{! <button></button> }}
+  </div>
 </form>
