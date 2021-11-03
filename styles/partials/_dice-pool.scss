@@ -22,8 +22,33 @@
 //ambient dice pool
 #ambient-dice-pool {
 
+	form {
+		>div+div {
+			border-top: 1px solid rgba(255, 255, 255, 0.2);
+			padding: 1.5rem 0;
+			// margin-top: 1.5rem;
+		}
+	}
+
 	.footerButtonWrapper,
 	.diceDiv {
+		padding: 1rem 0.5rem;
+
+		input[type=text] {
+			width: 30%;
+			margin: 1rem 0.5rem;
+			padding: 1rem 0.5rem;
+			border-bottom: 2px solid $intellect;
+
+			&:hover,
+			&:focus {
+				background-color: $jet-5;
+			}
+		}
+	}
+
+	.boonDiv,
+	.baneDiv {
 		padding: 1rem 0.5rem;
 	}
 
@@ -37,11 +62,21 @@
 
 			&.rollBnBButtons {
 				background-color: transparent;
-				color: black;
+				color: scale-color($intellect, $saturation: 30%);
+				font-size: 1rem;
+				text-transform: uppercase;
 			}
 		}
 
 
+	}
+
+	.boonButtons {
+		--numColor: turquoise;
+	}
+
+	.baneButtons {
+		--numColor: #fe4a49;
 	}
 
 	.boonButtons,
@@ -61,10 +96,16 @@
 				position: relative;
 				width: max-content;
 
+				+button {
+					margin-right: 0.5rem;
+				}
+
 				.displayNumber {
 					display: inline-block;
 					position: absolute;
-					background-color: orange;
+					background-color: var(--numColor);
+
+					color: black;
 					text-align: center;
 					// padding: 0.25rem 0.1rem;
 					display: flex;
@@ -81,7 +122,9 @@
 
 			}
 		}
+
 	}
+
 }
 
 #ambient-prompt {

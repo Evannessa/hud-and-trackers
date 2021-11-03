@@ -1060,8 +1060,28 @@
   padding: 0.45rem;
 }
 
+#ambient-dice-pool form > div + div {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1.5rem 0;
+}
 #ambient-dice-pool .footerButtonWrapper,
 #ambient-dice-pool .diceDiv {
+  padding: 1rem 0.5rem;
+}
+#ambient-dice-pool .footerButtonWrapper input[type=text],
+#ambient-dice-pool .diceDiv input[type=text] {
+  width: 30%;
+  margin: 1rem 0.5rem;
+  padding: 1rem 0.5rem;
+  border-bottom: 2px solid #947BD3;
+}
+#ambient-dice-pool .footerButtonWrapper input[type=text]:hover, #ambient-dice-pool .footerButtonWrapper input[type=text]:focus,
+#ambient-dice-pool .diceDiv input[type=text]:hover,
+#ambient-dice-pool .diceDiv input[type=text]:focus {
+  background-color: #383838ff;
+}
+#ambient-dice-pool .boonDiv,
+#ambient-dice-pool .baneDiv {
   padding: 1rem 0.5rem;
 }
 #ambient-dice-pool .footerButtonWrapper {
@@ -1076,7 +1096,15 @@
 }
 #ambient-dice-pool .footerButtonWrapper button.rollBnBButtons {
   background-color: transparent;
-  color: black;
+  color: #8e6ee0;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+#ambient-dice-pool .boonButtons {
+  --numColor: turquoise;
+}
+#ambient-dice-pool .baneButtons {
+  --numColor: #fe4a49;
 }
 #ambient-dice-pool .boonButtons,
 #ambient-dice-pool .baneButtons {
@@ -1101,11 +1129,16 @@
   width: -moz-max-content;
   width: max-content;
 }
+#ambient-dice-pool .boonButtons .wrapper button[data-number] + button,
+#ambient-dice-pool .baneButtons .wrapper button[data-number] + button {
+  margin-right: 0.5rem;
+}
 #ambient-dice-pool .boonButtons .wrapper button[data-number] .displayNumber,
 #ambient-dice-pool .baneButtons .wrapper button[data-number] .displayNumber {
   display: inline-block;
   position: absolute;
-  background-color: orange;
+  background-color: var(--numColor);
+  color: black;
   text-align: center;
   display: flex;
   left: 0;

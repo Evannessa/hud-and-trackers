@@ -269,7 +269,7 @@ export class AmbientDicePool extends FormApplication {
         }<li>Ambient Roll Total: ${ambientResult} </li></div>`;
         if (ambientResult < 0) {
             flavor +=
-                "<div style='font-size: 1rem'><span style='color:red'>Banes win.</span> Mixed Success or Failure</div>";
+                "<div style='font-size: 1rem'><span style='color: #fe4a49'>Banes win.</span> Mixed Success or Failure</div>";
         } else {
             flavor +=
                 "<div style='font-size: 1rem'><span style='color:turquoise'>Boons win!</span> Triumph or Mercy</div>";
