@@ -3,7 +3,7 @@
         <h3>Total Dice Roll</h3>
         <input
             type="text"
-            name="diceDiv"
+            class="rollValue"
             value="{{data.boonNumber}}d6 - {{data.baneNumber}}d6"
             disabled
         />
@@ -48,7 +48,7 @@
         </div>
     </div>
     <div class="footerButtonWrapper">
-        <button class="rollBnBButtons">Roll Boons and Banes</button>
+        <button class="rollBnBButtons" data-action="roll">Roll Boons and Banes</button>
         <button class="cancel">Cancel</button>
     </div>
 </form>

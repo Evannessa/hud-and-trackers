@@ -1098,6 +1098,17 @@
   width: max-content;
 }
 
+#ambient-prompt {
+  display: flex;
+  flex-direction: column;
+}
+#ambient-prompt .addBnB {
+  background-color: #947BD3;
+  color: black;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
 #clockConfig .reddish,
 .clockHud .reddish,
 .gradients .reddish {

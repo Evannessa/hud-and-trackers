@@ -1,5 +1,15 @@
 export const moduleName = "hud-and-trackers";
 
+export function selectMyCharacter() {
+    let actor = getActorFromUser(game.user);
+    let tokenDoc = getSceneTokenFromActor(actor);
+    if (tokenDoc) {
+        tokenDoc.object.control({ releaseOthers: true });
+    } else {
+        ui.notifications.warn(`${actor.name} does not have a token on this scene`);
+    }
+}
+
 //convert PC items to another type of item if it's in the wrong category
 export function convertItems(pc, html) {
     let items = pc.data.items; //all items on the pc
