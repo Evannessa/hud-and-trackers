@@ -8,10 +8,7 @@ Hooks.on("ready", () => {
 });
 
 Hooks.on("renderDialog", (app, html) => {
-    // console.log(app, html);
-    console.log(app.data.title);
     if (app.data.title === "All-in-One Roll") {
-        console.log("Rendering all-in-one");
         let button = $("<button style='width: 30%'>Ambient Roll</button>");
         button.click((event) => {
             game.ambientRollPrompt = new PromptAmbientRoll().render(true);
@@ -26,10 +23,7 @@ async function setUserRollMode(rollMode) {
     await game.settings.set("core", "rollMode", rollMode);
 }
 Hooks.on("renderSidebarTab", (app, html) => {
-    console.log(app.options.id);
-    console.log(html);
     if (app.options.id == "chat") {
-        console.log("Rendering chat!");
         let button = $("<button style='margin-bottom: 10px'>Ambient Roll</button>");
         button.click((event) => {
             game.ambientRollPrompt = new PromptAmbientRoll().render(true);
@@ -40,7 +34,7 @@ Hooks.on("renderSidebarTab", (app, html) => {
 
 Hooks.on("preCreateChatMessage", (msg, options, userId) => {});
 Hooks.on("createChatMessage", (data, data1, data2) => {
-    // console.log(data, data1, data2);
+    // data._element.find(".ambient-div");
 });
 
 //TODO: Make this check the previous rolls
@@ -57,22 +51,10 @@ function checkPreviousRolls() {
     chatLog = chatLog.filter((entry) => {
         return entry.data.blind == true;
     });
-    console.log(chatLog);
 
     //? How to handle rerolls?
     let lastEntry = chatLog.pop();
     return lastEntry;
-
-    chatLog.forEach((entry) => {
-        const { terms } = entry._roll;
-        const data = entry.data;
-        terms
-            .filter((die) => die.faces === diceToCheck)
-            .forEach((die) => {
-                rolls = rolls + die.number;
-                total = total + die.total;
-            });
-    });
 }
 
 /**
@@ -135,9 +117,7 @@ class PromptAmbientRoll extends FormApplication {
         }
     }
 
-    async _updateObject(event, formData) {
-        console.log(formData.exampleInput);
-    }
+    async _updateObject(event, formData) {}
 }
 
 export class AmbientDicePool extends FormApplication {
@@ -259,15 +239,36 @@ export class AmbientDicePool extends FormApplication {
 
         let rollValue = $("#ambient-dice-pool .rollValue").val();
         let ambientRoll = await new Roll(rollValue).evaluate({ async: true });
+
+        //add strings for the individual rolls for the boons and banes
+        let boonBaneResultString = "<span class='boonSpan'> Boons: ";
+        ambientRoll.terms.forEach((term) => {
+            console.log(term);
+            if (term.number) {
+                boonBaneResultString +=
+                    "<span class='boonBane'>" + term.number + "</span>";
+                // for (let o of term.results) {
+                //     boonBaneResultString +=
+                //         "<span class='boonBane'>" + o.result + "</span>";
+                // }
+            }
+            if (term.operator) {
+                boonBaneResultString +=
+                    "</span> " + term.operator + " <span class='baneSpan'>Banes: ";
+            }
+        });
+        boonBaneResultString += "</span>";
         let skillRoll = checkPreviousRolls();
         let ambientResult = ambientRoll._total;
 
         let flavor = skillRoll.data.flavor;
-        flavor += `<div class="ambient-div"><h3>Boons & Banes Result</h3>
+        flavor += `<div class="ambient-div"><h3 style='font-weight: bold'>Boons & Banes Result</h3>
 		<div style='font-size: 0.85rem; margin-bottom: 0.25rem'>${
             boonString + baneString
-        }<li>Ambient Roll Total: ${ambientResult} </li></div>`;
-        if (ambientResult < 0) {
+        }<li style="margin-top: 0.2rem">${boonBaneResultString}</li>
+		<li style='margin-top: 0.2rem'><span style='font-weight: bold' class='ambientTotal'>Ambient Roll Total</span>: <span class='ambientResult'>${ambientResult} </span></li></div>`;
+
+        if (ambientResult <= 0) {
             flavor +=
                 "<div style='font-size: 1rem'><span style='color: #fe4a49'>Banes win.</span> Mixed Success or Failure</div>";
         } else {

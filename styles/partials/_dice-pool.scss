@@ -14,6 +14,43 @@
 		background-color: $jet;
 		border-radius: 10px;
 		padding: 0.45rem;
+
+		.ambientResult {
+			font-weight: bold;
+			color: black;
+			background-color: gray;
+			border: 1px solid black;
+			border-radius: 5px;
+			padding: 0 5px;
+		}
+
+		span {
+			&.boonSpan {
+				color: turquoise;
+
+				.boonBane {
+					color: black;
+					background-color: turquoise;
+				}
+			}
+
+			&.baneSpan {
+				color: $low;
+
+				.boonBane {
+					color: black;
+					background-color: $low;
+				}
+
+			}
+
+			&.boonBane {
+				font-weight: bold;
+				border: 1px solid black;
+				border-radius: 5px;
+				padding: 0 5px;
+			}
+		}
 	}
 
 
@@ -35,7 +72,7 @@
 		padding: 1rem 0.5rem;
 
 		input[type=text] {
-			width: 30%;
+			width: 40%;
 			margin: 1rem 0.5rem;
 			padding: 1rem 0.5rem;
 			border-bottom: 2px solid $intellect;

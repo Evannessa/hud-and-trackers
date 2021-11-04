@@ -1059,6 +1059,34 @@
   border-radius: 10px;
   padding: 0.45rem;
 }
+.flavor-text .ambient-div .ambientResult {
+  font-weight: bold;
+  color: black;
+  background-color: gray;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 0 5px;
+}
+.flavor-text .ambient-div span.boonSpan {
+  color: turquoise;
+}
+.flavor-text .ambient-div span.boonSpan .boonBane {
+  color: black;
+  background-color: turquoise;
+}
+.flavor-text .ambient-div span.baneSpan {
+  color: #fe4a49;
+}
+.flavor-text .ambient-div span.baneSpan .boonBane {
+  color: black;
+  background-color: #fe4a49;
+}
+.flavor-text .ambient-div span.boonBane {
+  font-weight: bold;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 0 5px;
+}
 
 #ambient-dice-pool form > div + div {
   border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -1070,7 +1098,7 @@
 }
 #ambient-dice-pool .footerButtonWrapper input[type=text],
 #ambient-dice-pool .diceDiv input[type=text] {
-  width: 30%;
+  width: 40%;
   margin: 1rem 0.5rem;
   padding: 1rem 0.5rem;
   border-bottom: 2px solid #947BD3;
