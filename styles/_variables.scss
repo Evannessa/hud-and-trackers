@@ -3,13 +3,84 @@
 	$speed: #2ab7ca;
 	$might: #fed766;
 	/* SCSS HEX */
-	$rich-black-fogra-39: #121212ff;
-	$eerie-black: #1d1d1dff;
-	$eerie-black-2: #222222ff;
-	$eerie-black-3: #242424ff;
-	$eerie-black-4: #272727ff;
-	$jet: #2c2c2cff;
-	$jet-2: #2d2d2dff;
-	$jet-3: #333333ff;
-	$jet-4: #353535ff;
-	$jet-5: #383838ff;
+
+	$rich-black-fogra-39: #17171c;
+	$eerie-black: #1d1d23;
+	$eerie-black2: #202028;
+	$eerie-black-3: #22222a;
+	$eerie-black-4: #2a2a31;
+	$jet: #2a2a34;
+	$jet-3: #2c2c36;
+	$jet-5: hsla(240, 10%, 22%, 1);
+
+	$black1: var(--palette-app-background, var(--tui-black1));
+	$black1L: var(--palette-app-background-light, var(--tui-black1L));
+	$black2: var(--palette-dialog-background, var(--tui-black2));
+	$black2L: var(--palette-dialog-background-light, var(--tui-black2L));
+
+	$black3: var(--palette-primary, var(--tui-black3));
+	$black3L: var(--palette-primary-light, var(--tui-black3L));
+	$black4: var(--palette-dialog-darker, var(--tui-black4));
+	$black4L: var(--palette-dialog-dark, var(--tui-black4L));
+
+	$white1: var(--palette-dialog-background-contrast-text, var(--tui-white1));
+	$white2: var(--palette-dialog-background-shaded-text, var(--tui-white2));
+	$white3: var(--palette-app-background-contrast-text, var(--tui-white3));
+	$highlight: var(--palette-dark, var(--tui-highlight));
+
+	$accent1: var(--palette-primary, var(--tui-accent1));
+	$accent1L: var(--palette-primary-light, var(--tui-accent1L));
+	$accent2: var(--palette-secondary, var(--tui-accent2));
+	$accent2L: var(--palette-secondary-light, var(--tui-accent2L));
+
+	$success: var(--palette-success, var(--tui-success));
+	$failure: var(--palette-danger, var(--tui-failure));
+	$mixed-roll: var(--palette-info, var(--tui-mixed-roll));
+
+	$whisper: var(--palette-app-background-light, var(--tui-chat-message-whisper));
+	$whisperBorder: var(--palette-app-background-light, var(--tui-chat-message-whisper-border));
+
+	$selection: var(--palette-light, var(--tui-selection));
+
+	$shadow: var(--tui-shadow);
+
+	:root {
+		/* CSS HSL */
+		--white: hsla(0, 0%, 100%, 1);
+		--neon-blue: hsla(230, 100%, 67%, 1);
+		--royal-blue-light: hsla(230, 64%, 57%, 1);
+		--raisin-black: hsla(240, 10%, 22%, 1);
+		--raisin-black-2: hsla(240, 10%, 16%, 1);
+		--raisin-black-3: hsla(231, 10%, 14%, 1);
+		--raisin-black1: hsla(240, 9%, 10%, 1);
+
+		--tui-black1: #17171c;
+		--tui-black1L: #1d1d23;
+		--tui-black2: #202028;
+		--tui-black2L: #22222a;
+		--tui-black3: #2a2a31;
+		--tui-black3L: #2a2a34;
+		--tui-black4: #2c2c36;
+		--tui-black4L: hsla(240, 10%, 22%, 1);
+
+		--tui-white1: rgba(255, 255, 255, .87);
+		--tui-white2: rgba(255, 255, 255, .6);
+		--tui-white3: rgba(255, 255, 255, .4);
+		--tui-highlight: rgba(255, 255, 255, .05);
+
+		--tui-accent1: #f56d12;
+		--tui-accent1L: #ff9955;
+		--tui-accent2: #21122F;
+		--tui-accent2L: #9b8dff;
+
+		--tui-success: #418824;
+		--tui-failure: #cc2d2d;
+		--tui-mixed-roll: #596cf3;
+
+		--tui-chat-message-whisper: #1c1d20;
+		--tui-chat-message-whisper-border: rgba(78, 81, 126, 0.87);
+
+		--tui-selection: #cce2ff;
+
+		--tui-shadow: 0 0 3px var(--palette-dialog-background-shaded-text, var(--tui-white2)) inset;
+	}

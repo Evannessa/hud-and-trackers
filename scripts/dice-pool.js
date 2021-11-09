@@ -2,7 +2,7 @@ import * as HelperFunctions from "./helper-functions.js";
 
 Hooks.on("ready", () => {
     // game.dicePool = new AmbientDicePool().render(true);
-    game.ambientRollPrompt = new PromptAmbientRoll().render(true);
+    // game.ambientRollPrompt = new PromptAmbientRoll().render(true);
     // var originalAllInOne = game.cyphersystem.allInOneRollMacro;
     // game.cyphersystem.allInOneRollDialog = function(actor, title, info, cost, pool, modifier, teen){
 });

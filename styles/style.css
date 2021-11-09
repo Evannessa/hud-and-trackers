@@ -1,4 +1,38 @@
 /* SCSS HEX */
+:root {
+  /* CSS HSL */
+  --white: hsla(0, 0%, 100%, 1);
+  --neon-blue: hsla(230, 100%, 67%, 1);
+  --royal-blue-light: hsla(230, 64%, 57%, 1);
+  --raisin-black: hsla(240, 10%, 22%, 1);
+  --raisin-black-2: hsla(240, 10%, 16%, 1);
+  --raisin-black-3: hsla(231, 10%, 14%, 1);
+  --raisin-black1: hsla(240, 9%, 10%, 1);
+  --tui-black1: #17171c;
+  --tui-black1L: #1d1d23;
+  --tui-black2: #202028;
+  --tui-black2L: #22222a;
+  --tui-black3: #2a2a31;
+  --tui-black3L: #2a2a34;
+  --tui-black4: #2c2c36;
+  --tui-black4L: hsla(240, 10%, 22%, 1);
+  --tui-white1: rgba(255, 255, 255, .87);
+  --tui-white2: rgba(255, 255, 255, .6);
+  --tui-white3: rgba(255, 255, 255, .4);
+  --tui-highlight: rgba(255, 255, 255, .05);
+  --tui-accent1: #f56d12;
+  --tui-accent1L: #ff9955;
+  --tui-accent2: #21122F;
+  --tui-accent2L: #9b8dff;
+  --tui-success: #418824;
+  --tui-failure: #cc2d2d;
+  --tui-mixed-roll: #596cf3;
+  --tui-chat-message-whisper: #1c1d20;
+  --tui-chat-message-whisper-border: rgba(78, 81, 126, 0.87);
+  --tui-selection: #cce2ff;
+  --tui-shadow: 0 0 3px var(--palette-dialog-background-shaded-text, var(--tui-white2)) inset;
+}
+
 #tracker-app {
   width: 900px;
   height: 40vh;
@@ -517,76 +551,6 @@
   display: none;
 }
 
-.clock-drawer {
-  position: absolute;
-  top: 1rem;
-  left: -2rem;
-  width: 2rem;
-  min-height: 10rem;
-  max-height: -webkit-max-content;
-  max-height: -moz-max-content;
-  max-height: max-content;
-  background-color: #1e2130f1;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  -ms-writing-mode: tb-lr;
-      writing-mode: vertical-lr;
-  -webkit-text-orientation: mixed;
-          text-orientation: mixed;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
-  overflow: hidden;
-}
-.clock-drawer.pop-out {
-  left: 0rem;
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
-.clock-drawer.pop-out:hover {
-  left: 0rem;
-}
-.clock-drawer__header {
-  letter-spacing: 3px;
-  font-size: 1rem;
-  text-transform: uppercase;
-  transform: rotate(180deg);
-}
-.clock-drawer .button-holder {
-  width: 10rem;
-  display: none;
-}
-.clock-drawer .button-holder button {
-  text-align: left;
-  border-radius: 0px;
-  padding-left: 1.5rem;
-  background-color: none;
-}
-.clock-drawer .button-holder button + button {
-  padding-top: 0.5rem;
-}
-.clock-drawer:hover {
-  padding: 0.5rem 0rem;
-  left: -10rem;
-  width: 10rem;
-  -ms-writing-mode: inherit;
-      writing-mode: inherit;
-  -webkit-text-orientation: inherit;
-          text-orientation: inherit;
-  justify-content: flex-start;
-  align-items: center;
-}
-.clock-drawer:hover .clock-drawer__header {
-  transform: rotate(0deg);
-}
-.clock-drawer:hover .button-holder {
-  display: block;
-}
-
 .clockHud {
   width: -webkit-max-content !important;
   width: max-content !important;
@@ -710,12 +674,12 @@
   height: 5rem;
   background-color: transparent;
   position: relative;
-  box-shadow: 0px -14px 0px 2px #191716, 0px 14px 0px 2px #191716, 0px 0px 0px 10px #191716;
+  box-shadow: 0px -14px 0px 2px var(--palette-dialog-background, var(--tui-black2)), 0px 14px 0px 2px var(--palette-dialog-background, var(--tui-black2)), 0px 0px 0px 10px var(--palette-dialog-background, var(--tui-black2));
   border-radius: 10px;
   margin-right: 10px;
 }
 .clockHud .window-content .frameWrapper .frameSection:last-child {
-  box-shadow: 0px -14px 0px 2px #191716, 0px 14px 0px 2px #191716;
+  box-shadow: 0px -14px 0px 2px var(--palette-dialog-background, var(--tui-black2)), 0px 14px 0px 2px var(--palette-dialog-background, var(--tui-black2));
   margin-right: 0;
 }
 .clockHud .window-content .clockWrapper {
@@ -742,8 +706,8 @@
   cursor: pointer;
   width: 5rem;
   height: 5rem;
-  background-color: #2c2e2f;
-  box-shadow: #1d1d1d 3px 3px 6px 0px inset, rgba(92, 92, 92, 0.5) -3px -3px 6px 1px inset;
+  background-color: #202028;
+  box-shadow: #171921 3px 3px 6px 0px inset, rgba(60, 60, 73, 0.6) -3px -3px 6px 1px inset;
 }
 .clockHud .window-content .clockSection[data-break] {
   position: relative;
@@ -829,7 +793,111 @@
   width: 100%;
 }
 
+.clock-drawer {
+  position: absolute;
+  top: 1rem;
+  left: -2rem;
+  width: 2rem;
+  min-height: 10rem;
+  max-height: -webkit-max-content;
+  max-height: -moz-max-content;
+  max-height: max-content;
+  background-color: #1e2130f1;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  -ms-writing-mode: tb-lr;
+      writing-mode: vertical-lr;
+  -webkit-text-orientation: mixed;
+          text-orientation: mixed;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  overflow: hidden;
+}
+.clock-drawer.pop-out {
+  left: 0rem;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.clock-drawer.pop-out:hover {
+  left: 0rem;
+}
+.clock-drawer__header {
+  letter-spacing: 3px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  transform: rotate(180deg);
+}
+.clock-drawer .button-holder {
+  width: 10rem;
+  display: none;
+}
+.clock-drawer .button-holder button {
+  text-align: left;
+  border-radius: 0px;
+  padding-left: 1.5rem;
+  background-color: none;
+}
+.clock-drawer .button-holder button + button {
+  padding-top: 0.5rem;
+}
+.clock-drawer:hover {
+  padding: 0.5rem 0rem;
+  left: -10rem;
+  width: 10rem;
+  -ms-writing-mode: inherit;
+      writing-mode: inherit;
+  -webkit-text-orientation: inherit;
+          text-orientation: inherit;
+  justify-content: flex-start;
+  align-items: center;
+}
+.clock-drawer:hover .clock-drawer__header {
+  transform: rotate(0deg);
+}
+.clock-drawer:hover .button-holder {
+  display: block;
+}
+
 /* SCSS HEX */
+:root {
+  /* CSS HSL */
+  --white: hsla(0, 0%, 100%, 1);
+  --neon-blue: hsla(230, 100%, 67%, 1);
+  --royal-blue-light: hsla(230, 64%, 57%, 1);
+  --raisin-black: hsla(240, 10%, 22%, 1);
+  --raisin-black-2: hsla(240, 10%, 16%, 1);
+  --raisin-black-3: hsla(231, 10%, 14%, 1);
+  --raisin-black1: hsla(240, 9%, 10%, 1);
+  --tui-black1: #17171c;
+  --tui-black1L: #1d1d23;
+  --tui-black2: #202028;
+  --tui-black2L: #22222a;
+  --tui-black3: #2a2a31;
+  --tui-black3L: #2a2a34;
+  --tui-black4: #2c2c36;
+  --tui-black4L: hsla(240, 10%, 22%, 1);
+  --tui-white1: rgba(255, 255, 255, .87);
+  --tui-white2: rgba(255, 255, 255, .6);
+  --tui-white3: rgba(255, 255, 255, .4);
+  --tui-highlight: rgba(255, 255, 255, .05);
+  --tui-accent1: #f56d12;
+  --tui-accent1L: #ff9955;
+  --tui-accent2: #21122F;
+  --tui-accent2L: #9b8dff;
+  --tui-success: #418824;
+  --tui-failure: #cc2d2d;
+  --tui-mixed-roll: #596cf3;
+  --tui-chat-message-whisper: #1c1d20;
+  --tui-chat-message-whisper-border: rgba(78, 81, 126, 0.87);
+  --tui-selection: #cce2ff;
+  --tui-shadow: 0 0 3px var(--palette-dialog-background-shaded-text, var(--tui-white2)) inset;
+}
+
 #party-overview {
   width: -webkit-max-content !important;
   width: -moz-max-content !important;
@@ -839,7 +907,7 @@
   height: max-content;
 }
 #party-overview .window-content {
-  background-color: #1d1d1dff;
+  background-color: #1d1d23;
 }
 #party-overview .window-content .searchLabel {
   font-size: 1rem;
@@ -857,7 +925,7 @@
 }
 #party-overview .window-content .sceneFilterGroup label,
 #party-overview .window-content .dataFilterGroup label {
-  background-color: #333333ff;
+  background-color: #2c2c36;
   line-height: 1;
   text-align: center;
   margin-right: -1px;
@@ -893,7 +961,7 @@
   height: 2rem;
   box-shadow: unset;
   border: unset;
-  background-color: #333333ff;
+  background-color: #2c2c36;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
   border-bottom: 2px solid #2ab7ca;
@@ -913,7 +981,7 @@
   color: #2ab7ca;
 }
 #party-overview .window-content table {
-  background-color: #1d1d1dff;
+  background-color: #1d1d23;
   border-collapse: separate;
   border-spacing: 0rem 1rem;
   border-bottom: unset;
@@ -923,7 +991,7 @@
   font-size: 1rem;
 }
 #party-overview .window-content table tr {
-  background-color: #272727ff;
+  background-color: #2a2a31;
   border-radius: 10px;
   white-space: nowrap;
   cursor: pointer;
@@ -937,7 +1005,7 @@
 }
 #party-overview .window-content table tr td li:hover {
   color: #947BD3;
-  background-color: #383838ff;
+  background-color: #32323e;
   cursor: pointer;
 }
 #party-overview .window-content table tr td li .name:hover {
@@ -950,8 +1018,8 @@
 }
 
 #party-overview .window-content table tr:first-of-type {
-  border-bottom: 2px solid #1d1d1dff;
-  border-top: 2px solid #1d1d1dff;
+  border-bottom: 2px solid #1d1d23;
+  border-top: 2px solid #1d1d23;
 }
 #party-overview .window-content table tr.expanded {
   background-color: #516c70;
@@ -972,7 +1040,7 @@
 }
 #party-overview .window-content table th.header__might, #party-overview .window-content table th.header__speed, #party-overview .window-content table th.header__intellect {
   border-radius: 10rem;
-  color: #121212ff;
+  color: #17171c;
 }
 #party-overview .window-content table th.header__might {
   background-color: #fed766;
@@ -1045,6 +1113,40 @@
 }
 
 /* SCSS HEX */
+:root {
+  /* CSS HSL */
+  --white: hsla(0, 0%, 100%, 1);
+  --neon-blue: hsla(230, 100%, 67%, 1);
+  --royal-blue-light: hsla(230, 64%, 57%, 1);
+  --raisin-black: hsla(240, 10%, 22%, 1);
+  --raisin-black-2: hsla(240, 10%, 16%, 1);
+  --raisin-black-3: hsla(231, 10%, 14%, 1);
+  --raisin-black1: hsla(240, 9%, 10%, 1);
+  --tui-black1: #17171c;
+  --tui-black1L: #1d1d23;
+  --tui-black2: #202028;
+  --tui-black2L: #22222a;
+  --tui-black3: #2a2a31;
+  --tui-black3L: #2a2a34;
+  --tui-black4: #2c2c36;
+  --tui-black4L: hsla(240, 10%, 22%, 1);
+  --tui-white1: rgba(255, 255, 255, .87);
+  --tui-white2: rgba(255, 255, 255, .6);
+  --tui-white3: rgba(255, 255, 255, .4);
+  --tui-highlight: rgba(255, 255, 255, .05);
+  --tui-accent1: #f56d12;
+  --tui-accent1L: #ff9955;
+  --tui-accent2: #21122F;
+  --tui-accent2L: #9b8dff;
+  --tui-success: #418824;
+  --tui-failure: #cc2d2d;
+  --tui-mixed-roll: #596cf3;
+  --tui-chat-message-whisper: #1c1d20;
+  --tui-chat-message-whisper-border: rgba(78, 81, 126, 0.87);
+  --tui-selection: #cce2ff;
+  --tui-shadow: 0 0 3px var(--palette-dialog-background-shaded-text, var(--tui-white2)) inset;
+}
+
 .flavor-text {
   font-size: 14px !important;
 }
@@ -1055,7 +1157,7 @@
   margin-bottom: 5px;
 }
 .flavor-text .ambient-div {
-  background-color: #2c2c2cff;
+  background-color: #2a2a34;
   border-radius: 10px;
   padding: 0.45rem;
 }
@@ -1106,7 +1208,7 @@
 #ambient-dice-pool .footerButtonWrapper input[type=text]:hover, #ambient-dice-pool .footerButtonWrapper input[type=text]:focus,
 #ambient-dice-pool .diceDiv input[type=text]:hover,
 #ambient-dice-pool .diceDiv input[type=text]:focus {
-  background-color: #383838ff;
+  background-color: #32323e;
 }
 #ambient-dice-pool .boonDiv,
 #ambient-dice-pool .baneDiv {
@@ -1241,7 +1343,7 @@
 #ambient-prompt .secondaryAction button {
   width: 75%;
   border-radius: 80px;
-  background-color: #383838ff;
+  background-color: #32323e;
   transition: 0.25s;
 }
 #ambient-prompt .secondaryAction button:hover, #ambient-prompt .secondaryAction button:focus {

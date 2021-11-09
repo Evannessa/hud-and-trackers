@@ -1,0 +1,51 @@
+#clockConfig {
+	.form-group {
+		display: flex;
+		flex-direction: column;
+		justify-content: left;
+		text-align: left;
+		align-items: flex-start;
+		background-color: rgba(175, 175, 175, 0.09);
+		border-radius: 5px;
+		padding: 0.5rem 0.5rem;
+		// border-bottom: 2px dotted rgba(255, 255, 255, 0.483);
+
+		label {
+			color: #8597c5;
+
+			// margin-bottom: 0.5rem;
+			&.delete {
+				color: rgba(233, 65, 65, 0.841);
+			}
+		}
+
+		input {
+			background-color: rgba(255, 255, 255, 0.083);
+			// border: 1px solid rgba(255, 255, 255, 0.455);
+		}
+
+	}
+
+	.submit {
+		background-color: #35456d;
+	}
+
+	.gradients {
+		display: flex;
+		flex-direction: column;
+		justify-content: stretch;
+		align-items: stretch;
+
+		>div {
+			cursor: pointer;
+
+			label {
+				color: black;
+				width: 100%;
+			}
+
+			border-radius: 5px;
+			margin: 0.2rem;
+		}
+	}
+}
