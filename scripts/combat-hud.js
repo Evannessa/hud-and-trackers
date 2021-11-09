@@ -27,7 +27,9 @@ Hooks.on("renderCombatHud", (app, html) => {
     if (!game.combatHud.app) {
         game.combatHud.app = app;
     }
-    socket.register("receiveDataAndUpdate", game.combatHud.app.receiveDataAndUpdate);
+    if (!game.user.isGM) {
+        socket.register("receiveDataAndUpdate", game.combatHud.app.receiveDataAndUpdate);
+    }
 });
 
 Hooks.on("init", () => {
@@ -35,9 +37,14 @@ Hooks.on("init", () => {
     game.combatHud.startCombat = startCombat;
 });
 
-Hooks.on("ready", () => {
+Hooks.on("ready", async () => {
     registerSettings();
-    game.combatHud.app = new CombatHud().render(true);
+    let savedCombat = await game.settings.get("hud-and-trackers", "savedCombat");
+    if (savedCombat) {
+        game.combatHud.app = new CombatHud(savedCombat).render(true);
+    } else {
+        game.combatHud.app = new CombatHud().render(true);
+    }
     window.combatHud = game.combatHud.app;
     socket.register("receiveDataAndUpdate", game.combatHud.app.receiveDataAndUpdate);
     createRepresentativeActors();
@@ -82,6 +89,7 @@ async function createRepresentativeActors() {
 }
 
 async function startCombat() {
+    console.log("How many times is this being called?");
     let data;
     if (!game.user.isGM) {
         return;
@@ -131,7 +139,7 @@ async function startCombat() {
 }
 
 function registerCombatSockets() {
-    if (game.combatHud.app) {
+    if (game.combatHud.app && !game.user.isGM) {
         socket.register("requestSetTokenHasActed", game.combatHud.app.setTokenHasActed);
         socket.register("requestIfAllHaveActed", game.combatHud.app.checkIfAllHaveActed);
         console.log("Sockets registered");
@@ -192,13 +200,6 @@ async function rollNonCombatInitiative(combat) {
     npcAllies = npcTokens.filter((token) => {
         return token.data.disposition == 0 || token.data.disposition == 1;
     });
-
-    //this will make sure there are no duplicate tokens w/ the same actor,
-    //which CAN be a problem if not players.
-    // let tokens = Array.from(new Set(controlledTokens.map(token => token.actor.name)))
-    // 	.map(actorName => {
-    // 		return controlledTokens.find(token => token.actor.name == actorName);
-    // })
 
     //find the highest enemy initiative
     let highestEnemyInitiative = 0;
@@ -377,17 +378,18 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
     }
 
     if (round > 0) {
-        game.combatHud.app.currentRound = round;
+        game.combatHud.app.data.currentRound = round;
 
+        //TODO: clean this up so that the names are the same
         let name = combat.combatant.name;
         if (name == "FastPlayer") {
-            game.combatHud.app.currentPhase = "fastPlayersTurn";
+            game.combatHud.app.data.currentPhase = "fastPlayersTurn";
         } else if (name == "Enemies") {
-            game.combatHud.app.currentPhase = "enemiesTurn";
+            game.combatHud.app.data.currentPhase = "enemiesTurn";
         } else if (name == "SlowPlayer") {
-            game.combatHud.app.currentPhase = "slowPlayersTurn";
+            game.combatHud.app.data.currentPhase = "slowPlayersTurn";
         } else if (name == "NPCAllies") {
-            game.combatHud.app.currentPhase = "npcAlliesTurn";
+            game.combatHud.app.data.currentPhase = "npcAlliesTurn";
         }
     }
 });
@@ -415,8 +417,8 @@ Hooks.on("deleteCombat", async (combat) => {
         //delete the ones that match
         scene.deleteEmbeddedDocuments("Token", tokensToDelete);
     }
-    game.combatHud.app.inCombat = false;
-    game.combatHud.app.currentPhase = "fastPlayersTurn";
+    game.combatHud.app.data.inCombat = false;
+    game.combatHud.app.data.currentPhase = "fastPlayersTurn";
 });
 
 /**
@@ -527,16 +529,17 @@ Hooks.on("canvasInit", (canvas) => {
         // if we're back on the original scene
     }
 });
-// if (canvas.scene.data._id != game.combatHud.initialSceneId) {
-//     //store the previous scene, and get a new one
-//     game.combatHud.app.previousSceneId = game.combatHud.initialSceneId;
-//     game.combatHud.initialSceneId = canvas.scene.data._id;
-// }
-// if (game.combatHud.app && game.combatHud.functions) {
-//     for (let tokenId in game.combatHud.functions) {
-//         canvas.app.ticker.remove(game.combatHud.functions[tokenId], tokenId);
-//     }
-// }
+
+Hooks.on("renderCombatHud", async (app, newHtml) => {
+    let windowApp = newHtml.closest(".window-app");
+    //
+    $(windowApp).css({
+        height: "-moz-max-content",
+        height: "fit-content",
+        width: "-moz-max-content",
+        width: "fit-content",
+    });
+});
 
 Hooks.once("renderCombatHud", (app, html) => {
     HelperFunctions.setInvisibleHeader(html, false);
@@ -550,33 +553,36 @@ Hooks.once("renderCombatHud", (app, html) => {
         app.setPosition({ top: value });
     }
 });
+
+function createUniqueCombatant(id, token) {}
+
 /**
  * @param Combat!
  */
 export default class CombatHud extends Application {
     async initOnCombatStart(combat) {
         console.log("INITIALIZING HUD ON COMBAT START");
-        this.isGM = game.user.isGM;
-        this.ourCombat = combat;
-        this.inCombat = true;
-        this.initialized = true;
+        this.data.isGM = game.user.isGM;
+        this.data.combatStarter = game.userId;
+        this.data.ourCombat = combat;
+        this.data.inCombat = true;
+        this.data.initialized = true;
 
         let fastPlayers = convertToArrayOfTokens(fastPlayersStore);
         let slowPlayers = convertToArrayOfTokens(slowPlayersStore);
         let enemies = convertToArrayOfTokens(enemiesStore);
         let npcAllies = convertToArrayOfTokens(npcAlliesStore);
-        console.log("Our combat is, ", ourCombat);
-        this.currentRound = ourCombat.current.round;
+        this.data.currentRound = ourCombat.current.round;
         //if we have no fast players
         if (fastPlayers.length == 0) {
             //set the first turn to enemies
-            this.currentPhase = "enemiesTurn";
+            this.data.currentPhase = "enemiesTurn";
         } else {
             //otherwise, if we have no enemies, we should always have fast players, as there were no enemies to compare to
-            this.currentPhase = "fastPlayersTurn";
+            this.data.currentPhase = "fastPlayersTurn";
         }
 
-        this.activationObject = new ActivationObject(
+        this.data.activationObject = new ActivationObject(
             {},
             fastPlayers,
             slowPlayers,
@@ -586,35 +592,24 @@ export default class CombatHud extends Application {
         game.combatHud.app.render(game.combatHud.app.position);
     }
 
-    constructor(object) {
+    constructor(data = {}) {
         super();
-        this.isGM = game.user.isGM;
-        this.phases = {
-            FASTPC: "fastPlayers",
-            SLOWPC: "slowPlayers",
-            ENEMY: "enemies",
-            NPC: "npcAllies",
-        };
-        this.data = game.settings.get("hud-and-trackers", "savedCombat");
-        this.inCombat = this.data.inCombat;
-        if (this.inCombat) {
-            this.ourCombat = game.combat;
-        }
-        this.currentPhase = this.data.currentPhase;
-        this.currentRound = this.data.currentRound;
-        this.initialized = this.data.initialized;
-        if (
-            this.data.activationObject &&
-            Object.keys(this.data.activationObject).length > 0
-        ) {
-            this.activationObject = new ActivationObject(
+        // super(combatData);
+        this.data = data;
+
+        // this.savedData = game.settings.get("hud-and-trackers", "savedCombat");
+        if (Object.keys(data).length == 0) {
+            //if we don't have any saved combat data
+            this.data = this.initializeDefaultData();
+        } else {
+            //if we do have saved combat data
+            //create a new activation object w/ this saved data of the map
+            this.data.activationObject = new ActivationObject(
                 this.data.activationObject.activationMap
             );
-        } else {
-            this.activationObject = new ActivationObject();
+            //make the combat whatever combat's currently saved by the game
+            this.data.ourCombat = game.combat;
         }
-
-        // this.render(true)
     }
 
     static phases = {
@@ -626,18 +621,21 @@ export default class CombatHud extends Application {
 
     static ID = "combat-hud";
 
-    async manageDisplay(html) {
-        Hooks.call("combatHudStartCombat");
-        Hooks.on("renderCombatHud", async (app, newHtml) => {
-            let windowApp = newHtml.closest(".window-app");
-            //
-            $(windowApp).css({
-                height: "-moz-max-content",
-                height: "fit-content",
-                width: "-moz-max-content",
-                width: "fit-content",
-            });
-        });
+    initializeDefaultData() {
+        return {
+            isGM: game.user.isGM,
+            phases: {
+                FASTPC: "fastPlayers",
+                SLOWPC: "slowPlayers",
+                ENEMY: "enemies",
+                NPC: "npcAllies",
+            },
+            inCombat: false,
+            currentRound: 1,
+            currentPhase: "fastPlayersTurn",
+            initialized: false,
+            activationObject: new ActivationObject(),
+        };
     }
 
     unhighlightAll(tokens) {
@@ -671,7 +669,7 @@ export default class CombatHud extends Application {
         }
 
         //update the activations in the activation object to keep track
-        game.combatHud.app.activationObject.updateActivations(elementId, hasActed);
+        game.combatHud.app.data.activationObject.updateActivations(elementId, hasActed);
 
         game.combatHud.app.render(game.combatHud.app.position);
     }
@@ -681,7 +679,7 @@ export default class CombatHud extends Application {
             `[data-id='${elementId}']`
         );
         let phaseName = element.dataset.phase;
-        let map = game.combatHud.app.activationObject.getSpecificMap(phaseName);
+        let map = game.combatHud.app.data.activationObject.getSpecificMap(phaseName);
         //go through the map, find which items are false.
         //if none are false, all of them have acted, so go to the next
         //turn and reset the activations
@@ -693,7 +691,7 @@ export default class CombatHud extends Application {
             }
         }
         if (allActed) {
-            await game.combatHud.app.ourCombat.nextTurn();
+            await game.combatHud.app.data.ourCombat.nextTurn();
             game.combatHud.app.resetActivations();
             game.combatHud.app.unhighlightAll(game.canvas.tokens.placeables);
             game.combatHud.app.render(game.combatHud.app.position);
@@ -701,11 +699,11 @@ export default class CombatHud extends Application {
     }
 
     getTokensInCurrentPhase() {
-        return this.activationObject.getTokensInPhase(this.currentPhase);
+        return this.data.activationObject.getTokensInPhase(this.data.currentPhase);
     }
 
     resetActivations() {
-        this.activationObject.resetActivations();
+        this.data.activationObject.resetActivations();
     }
 
     /** @override */
@@ -726,57 +724,71 @@ export default class CombatHud extends Application {
     }
 
     getData() {
-        if (game.user.isGM) {
-            return {
-                isGM: game.user.isGM,
-                activationObject: this.activationObject,
-                combatActive: this.inCombat,
-                fastPlayers: convertToArrayOfTokens(
-                    Object.keys(this.returnObjectOrEmpty("fastPlayers"))
-                ),
-                slowPlayers: convertToArrayOfTokens(
-                    Object.keys(this.returnObjectOrEmpty("slowPlayers"))
-                ),
-                enemies: convertToArrayOfTokens(
-                    Object.keys(this.returnObjectOrEmpty("enemies"))
-                ),
-                npcAllies: convertToArrayOfTokens(
-                    Object.keys(this.returnObjectOrEmpty("npcAllies"))
-                ),
-                currentPhase: this.currentPhase,
-                currentRound: this.currentRound,
-            };
-        } else {
-            this.data = game.settings.get("hud-and-trackers", "savedCombat");
-            this.inCombat = this.data.inCombat;
-            if (this.inCombat) {
-                this.ourCombat = game.combat;
+        //convert our activationMap ids to tokens
+        let tokenMap = Object.values(this.data.activationObject.activationMap).map(
+            (obj) => {
+                return convertToArrayOfTokens(Object.keys(obj));
             }
-            this.currentPhase = this.data.currentPhase;
-            this.currentRound = this.data.currentRound;
-            this.activationObject = new ActivationObject(
-                this.data.activationObject.activationMap
-            );
-            return {
-                isGM: game.user.isGM,
-                activationObject: this.activationObject,
-                combatActive: this.inCombat,
-                fastPlayers: convertToArrayOfTokens(
-                    Object.keys(this.returnObjectOrEmpty("fastPlayers"))
-                ),
-                slowPlayers: convertToArrayOfTokens(
-                    Object.keys(this.returnObjectOrEmpty("slowPlayers"))
-                ),
-                enemies: convertToArrayOfTokens(
-                    Object.keys(this.returnObjectOrEmpty("enemies"))
-                ),
-                npcAllies: convertToArrayOfTokens(
-                    Object.keys(this.returnObjectOrEmpty("npcAllies"))
-                ),
-                currentPhase: this.currentPhase,
-                currentRound: this.currentRound,
-            };
-        }
+        );
+        let tokens = {
+            fastPlayers: tokenMap[0],
+            slowPlayers: tokenMap[1],
+            enemies: tokenMap[2],
+            npcAllies: tokenMap[3],
+        };
+
+        return {
+            ...this.data,
+            ...tokens,
+            // isGM: game.user.isGM,
+            // activationObject: this.activationObject,
+            // combatActive: this.inCombat,
+            // fastPlayers: convertToArrayOfTokens(
+            //     Object.keys(this.returnObjectOrEmpty("fastPlayers"))
+            // ),
+            // slowPlayers: convertToArrayOfTokens(
+            //     Object.keys(this.returnObjectOrEmpty("slowPlayers"))
+            // ),
+            // enemies: convertToArrayOfTokens(
+            //     Object.keys(this.returnObjectOrEmpty("enemies"))
+            // ),
+            // npcAllies: convertToArrayOfTokens(
+            //     Object.keys(this.returnObjectOrEmpty("npcAllies"))
+            // ),
+            // currentPhase: this.currentPhase,
+            // currentRound: this.currentRound,
+        };
+        // } else {
+        //     this.data = game.settings.get("hud-and-trackers", "savedCombat");
+        //     this.inCombat = this.data.inCombat;
+        //     if (this.inCombat) {
+        //         this.ourCombat = game.combat;
+        //     }
+        //     this.currentPhase = this.data.currentPhase;
+        //     this.currentRound = this.data.currentRound;
+        //     this.activationObject = new ActivationObject(
+        //         this.data.activationObject.activationMap
+        //     );
+        //     return {
+        //         isGM: game.user.isGM,
+        //         activationObject: this.activationObject,
+        //         combatActive: this.inCombat,
+        //         fastPlayers: convertToArrayOfTokens(
+        //             Object.keys(this.returnObjectOrEmpty("fastPlayers"))
+        //         ),
+        //         slowPlayers: convertToArrayOfTokens(
+        //             Object.keys(this.returnObjectOrEmpty("slowPlayers"))
+        //         ),
+        //         enemies: convertToArrayOfTokens(
+        //             Object.keys(this.returnObjectOrEmpty("enemies"))
+        //         ),
+        //         npcAllies: convertToArrayOfTokens(
+        //             Object.keys(this.returnObjectOrEmpty("npcAllies"))
+        //         ),
+        //         currentPhase: this.currentPhase,
+        //         currentRound: this.currentRound,
+        //     };
+        // }
     }
 
     returnObjectOrEmpty(name) {
@@ -799,27 +811,36 @@ export default class CombatHud extends Application {
         }
     }
 
+    async _onHandleButtonClick(event) {
+        let clickedElement = $(event.currentTarget);
+        let action = clickedElement.data().action;
+
+        switch (action) {
+            case "endCombat":
+                await this.data.ourCombat.endCombat();
+                this.unhighlightAll(game.canvas.tokens.placeables);
+                await game.settings.set(
+                    "hud-and-trackers",
+                    "savedCombat",
+                    this.initializeDefaultData()
+                );
+                game.combatHud.app.render(game.combatHud.app.position);
+                break;
+            case "startCombat":
+                startCombat();
+                game.combatHud.app.render(game.combatHud.app.position);
+                break;
+            default:
+                break;
+        }
+    }
+
     async activateListeners(html) {
         console.log("Activating listeners again");
-        let data = {
-            isGM: game.user.isGM,
-            ourCombat: this.ourCombat,
-            currentPhase: this.currentPhase,
-            currentRound: this.currentRound,
-            inCombat: this.inCombat,
-            initialized: this.initialized,
-            activationObject: this.activationObject,
-        };
 
-        if (game.user.isGM) {
-            await game.settings.set("hud-and-trackers", "savedCombat", data);
-        } else {
-            //PROBLEM IS THE RE-RENDERING. DATA SETTINGS GETTING WIPED EACH TIME.
-            let data2 = await game.settings.get("hud-and-trackers", "savedCombat");
+        if (game.user.isGM && this.data.combatStarter === game.userId) {
+            await game.settings.set("hud-and-trackers", "savedCombat", this.data);
         }
-
-        //set the hooks and stuff
-        this.manageDisplay(html);
 
         //remove app from "ui.windows" to not let it close with the escape key
         delete ui.windows[this.appId];
@@ -828,33 +849,10 @@ export default class CombatHud extends Application {
         let combatantDivs = windowContent.find(".combatant-div");
         let scene = game.scenes.viewed;
 
+        html.on("click", "[data-action]", this._onHandleButtonClick.bind(this));
         //check if in combat
-        if (this.inCombat) {
+        if (this.data.inCombat) {
             //find the in combat button, and allow only the GM to click it
-            let endCombat = windowContent.find(".endCombat")[0];
-            if (game.user.isGM) {
-                if (endCombat) {
-                    endCombat.addEventListener("click", async (event) => {
-                        await this.ourCombat.endCombat();
-
-                        let defaultData = {
-                            ourCombat: null,
-                            currentPhase: "fastPlayersTurn",
-                            currentRound: 0,
-                            inCombat: false,
-                            initialized: false,
-                            activationObject: {},
-                        };
-                        this.unhighlightAll(game.canvas.tokens.placeables);
-                        await game.settings.set(
-                            "hud-and-trackers",
-                            "savedCombat",
-                            defaultData
-                        );
-                        game.combatHud.app.render(game.combatHud.app.position);
-                    });
-                }
-            }
             for (let combatantDiv of combatantDivs) {
                 if (!combatantDiv.classList.contains("activated")) {
                     this.highlightTokenInGroup(combatantDiv.dataset.id, false);
@@ -911,7 +909,7 @@ export default class CombatHud extends Application {
                         }
                     }
                 });
-                let map = this.activationObject.getSpecificMap(
+                let map = this.data.activationObject.getSpecificMap(
                     combatantDiv.dataset.phase
                 );
                 for (let id in map) {
@@ -923,15 +921,10 @@ export default class CombatHud extends Application {
                     }
                 }
             }
-        } else {
-            let startCombatBtn = windowContent.find(".startCombatButton");
-            startCombatBtn.click((event) => {
-                startCombat();
-            });
         }
 
         //send the data once all the GM's stuff has been activated
-        if (game.user.isGM) {
+        if (game.user.isGM && this.data.combatStarter === this.userId) {
             this.shareApp();
         }
     }
@@ -961,25 +954,26 @@ export default class CombatHud extends Application {
     }
 
     shareApp() {
-        let data = {
-            activationObject: this.activationObject,
-            currentPhase: this.currentPhase,
-            currentRound: this.currentRound,
-            inCombat: this.inCombat,
-            initialized: this.initialized,
-        };
-        socket.executeForOthers("receiveDataAndUpdate", data);
+        socket.executeForOthers("receiveDataAndUpdate", this.data);
+    }
+
+    updateApp(data) {
+        this.data = data;
+        game.combatHud.app.render(game.combatHud.app.position);
     }
 
     receiveDataAndUpdate(data) {
-        console.log(this);
-        game.combatHud.app.activationObject = new ActivationObject(
-            data.activationObject.activationMap
-        );
-        game.combatHud.app.currentPhase = data.currentPhase;
-        game.combatHud.app.currentRound = data.currentRound;
-        game.combatHud.app.inCombat = data.inCombat;
-        game.combatHud.app.initialized = data.initialized;
+        //update the data
+        game.combatHud.app.data = { ...data };
+        //re-create the activation object
+        game.combatHud.app.data.activationObject = new ActivationObject({
+            ...data.activationObject.activationMap,
+        });
+        // game.combatHud.app.data.currentPhase = data.currentPhase;
+        // game.combatHud.app.data.currentRound = data.currentRound;
+        // game.combatHud.app.data.inCombat = data.inCombat;
+        // game.combatHud.app.data.initialized = data.initialized;
+        //re-render the app
         game.combatHud.app.render(game.combatHud.app.position);
     }
 }

@@ -1,4 +1,4 @@
-{{#if combatActive}}
+{{#if inCombat}}
 
 <h1 class="roundNumber">Current Round: {{currentRound}}</h1>
 <h1 class="phaseName {{currentPhase}}">{{convertToSentence currentPhase}}</h1>
@@ -49,9 +49,10 @@
     </div>
     {{/each}}
 </div>
+<button class="previousTurn"><i class="fab fa-arrow-alt-from-left"></i></button>
+<button class="nextTurn"><i class="fab fa-arrow-alt-from-right"></i></button>
 {{/if}}
-
-<button class="endCombat"><i class="fas fa-power-off"></i>End Combat</button>
+<button class="endCombat" data-action="endCombat"><i class="fas fa-power-off"></i>End Combat</button>
 {{else}}
-<div><button class="startCombatButton" {{#unless isGM}}disabled{{/unless}}>Start Combat</button></div>
+<div><button class="startCombatButton" data-action="startCombat" {{#unless isGM}}disabled{{/unless}}>Start Combat</button></div>
 {{/if}}
