@@ -48,15 +48,29 @@ Hooks.on("canvasReady", () => {
     }
 });
 
+Hooks.on("updateActor", (actor, data, diff, actorId) => {
+    console.log(game.canvas.tokens.controlled[0].actor + " vs " + actor);
+    if (game.canvas.tokens.controlled[0].actor == actor) {
+        //if this is the same actor as our controlled token
+        hud.render(true);
+    }
+});
+
 Hooks.on("controlToken", async (token, isControlled) => {
+    console.log("Controlling " + token.name);
     let ourToken = token;
     if (!isControlled) {
         if (game.canvas.tokens.controlled.length == 0) {
+            console.log("Controlling no one!!!");
             //** So this will close regardless, as it'll be zero
             //before being set to one
             //as previous control of the tokens is released
             //if we're controlling zero tokens, close the hud
-            hud.close();
+            setTimeout(() => {
+                if (game.canvas.tokens.controlled.length == 0) {
+                    hud.close();
+                }
+            }, 250);
             // hud = null;
         }
     } else if (isControlled) {
