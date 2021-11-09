@@ -49,10 +49,32 @@ Hooks.on("canvasReady", () => {
 });
 
 Hooks.on("updateActor", (actor, data, diff, actorId) => {
-    console.log(game.canvas.tokens.controlled[0].actor + " vs " + actor);
-    if (game.canvas.tokens.controlled[0].actor == actor) {
-        //if this is the same actor as our controlled token
-        hud.render(true);
+    let token = game.canvas.tokens.controlled[0];
+    if (token) {
+        if (token.actor == actor) {
+            //if this is the same actor as our controlled token
+            hud.updateData(game.canvas.tokens.controlled[0]);
+            hud.render(true);
+        }
+    }
+});
+
+Hooks.on("createItem", (data, data2, data3) => {
+    let token = game.canvas.tokens.controlled[0];
+    if (token) {
+        if (game.canvas.tokens.controlled[0].actor.id === data.parent.id) {
+            hud.updateData(game.canvas.tokens.controlled[0]);
+            hud.render(true);
+        }
+    }
+});
+Hooks.on("updateItem", (data, data2, data3) => {
+    let token = game.canvas.tokens.controlled[0];
+    if (token) {
+        if (game.canvas.tokens.controlled[0].actor.id === data.parent.id) {
+            hud.updateData(game.canvas.tokens.controlled[0]);
+            hud.render(true);
+        }
     }
 });
 

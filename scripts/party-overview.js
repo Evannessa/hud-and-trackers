@@ -28,11 +28,25 @@ Hooks.on("updateActor", (actor, data, diff, actorId) => {
     }
 });
 Hooks.on("createItem", (item, data, id) => {
+    let match = /skills|items/g;
     if (item.parent.type == "PC") {
         if (
             game.user.isGM &&
             game.partyOverview.rendered &&
-            game.partyOverview.dataFilter == "skills"
+            game.partyOverview.dataFilter.match(match)
+        ) {
+            game.partyOverview.render();
+        }
+    }
+});
+
+Hooks.on("updateItem", (item, data, id) => {
+    let match = /skills|items/g;
+    if (item.parent.type == "PC") {
+        if (
+            game.user.isGM &&
+            game.partyOverview.rendered &&
+            game.partyOverview.dataFilter.match(match)
         ) {
             game.partyOverview.render();
         }
