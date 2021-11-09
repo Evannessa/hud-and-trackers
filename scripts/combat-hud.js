@@ -927,7 +927,7 @@ export default class CombatHud extends Application {
         }
 
         //send the data once all the GM's stuff has been activated
-        if (game.user.isGM && this.data.combatStarter === this.userId) {
+        if (game.user.isGM && this.data.combatStarter === game.userId) {
             this.shareApp();
         }
     }
@@ -957,6 +957,7 @@ export default class CombatHud extends Application {
     }
 
     shareApp() {
+        console.log("Should be sharing app");
         socket.executeForOthers("receiveDataAndUpdate", this.data);
     }
 
@@ -966,6 +967,7 @@ export default class CombatHud extends Application {
     }
 
     receiveDataAndUpdate(data) {
+        console.log("Should be receiving data");
         //update the data
         game.combatHud.app.data = { ...data };
         //re-create the activation object
