@@ -1,0 +1,187 @@
+#combatHud {
+	width: fit-content !important;
+	width: -moz-max-content !important;
+	height: fit-content !important;
+	height: -moz-max-content !important;
+	background: transparent;
+	position: relative;
+
+	// width: 252.375px;
+	// height: 226px;
+	// bottom: 10px !important;
+	// left: 810px !important;
+	// top: inherit !important;
+	.turnButtonWrapper {
+		display: flex;
+		justify-content: space-between;
+
+		button {
+			width: fit-content;
+		}
+	}
+
+
+	.tooltip {
+		pointer-events: none;
+		// display: none;
+		opacity: 0;
+		width: 200px;
+		position: absolute;
+		z-index: 10;
+		background-color: #161a1db7;
+		left: -200px;
+		padding: 0.5rem;
+		border-radius: 5px;
+		transition-property: opacity;
+		transition-duration: 0.3s;
+
+	}
+
+
+
+	.phaseName {
+		&.enemiesTurn {
+			color: rgb(255, 66, 123);
+		}
+
+		&.npcAlliesTurn {
+			color: hsla(152, 100%, 50%, 1)
+		}
+
+		&.slowPlayersTurn {
+			color: hsl(197, 100%, 64%);
+		}
+
+		&.fastPlayersTurn {
+			color: hsla(16, 100%, 76%, 1);
+		}
+	}
+
+	&:hover {
+
+		.tooltip {
+			// display: block;
+			opacity: 100%;
+
+		}
+	}
+
+	h1,
+	h2 {
+		font-size: 1rem;
+	}
+
+	.window-header {
+		background-color: transparent;
+		// display: none;
+	}
+
+	.window-content {
+		background-color: #161a1da9;
+		overflow-y: visible;
+		overflow-x: visible;
+		transition-property: background-color;
+		transition-duration: 0.3s;
+
+		&:hover {
+			background-color: #161a1dda;
+		}
+	}
+
+	.combatant-wrapper {
+		position: relative;
+		display: flex;
+		flex-direction: row;
+		border-radius: 10px;
+		box-shadow: rgb(0 0 0 / 45%) 1px 1px 19px 6px inset;
+		overflow: hidden;
+		background-color: #2c2e2f;
+		margin: 0.5rem;
+
+
+
+		&:before {
+			content: '';
+			display: block;
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+		}
+
+		.combatant-div {
+			color: black;
+			font-weight: bold;
+			// border: 1px solid black;
+			padding: 0.5rem;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			background: hsla(33, 100%, 53%, 1);
+			background: linear-gradient(90deg, hsla(33, 100%, 53%, 1) 0%, hsla(58, 100%, 68%, 1) 100%);
+			background: -moz-linear-gradient(90deg, hsla(33, 100%, 53%, 1) 0%, hsla(58, 100%, 68%, 1) 100%);
+			background: -webkit-linear-gradient(90deg, hsla(33, 100%, 53%, 1) 0%, hsla(58, 100%, 68%, 1) 100%);
+			box-shadow: rgb(50 50 93 / 58%) 0px 20px 100px -20px, rgb(0 0 0 / 54%) 0px 30px 60px -30px, rgb(33 60 95 / 79%) 0px -4px 12px 1px inset;
+
+			&[data-phase="enemies"] {
+				background: hsla(333, 100%, 53%, 1);
+				background: linear-gradient(90deg, hsla(333, 100%, 53%, 1) 0%, hsla(33, 94%, 57%, 1) 100%);
+				background: -moz-linear-gradient(90deg, hsla(333, 100%, 53%, 1) 0%, hsla(33, 94%, 57%, 1) 100%);
+				background: -webkit-linear-gradient(90deg, hsla(333, 100%, 53%, 1) 0%, hsla(33, 94%, 57%, 1) 100%);
+			}
+
+			&[data-phase="slowPlayers"] {
+				background: hsla(339, 100%, 55%, 1);
+				background: linear-gradient(90deg, hsla(339, 100%, 55%, 1) 0%, hsl(197, 100%, 64%) 100%);
+				background: -moz-linear-gradient(90deg, hsla(339, 100%, 55%, 1) 0%, hsla(197, 100%, 64%, 1) 100%);
+				background: -webkit-linear-gradient(90deg, hsla(339, 100%, 55%, 1) 0%, hsla(197, 100%, 64%, 1) 100%);
+			}
+
+			&[data-phase="fastPlayers"] {
+				background: hsla(16, 100%, 76%, 1);
+				background: linear-gradient(90deg, hsla(16, 100%, 76%, 1) 0%, hsla(49, 100%, 81%, 1) 100%);
+				background: -moz-linear-gradient(90deg, hsla(16, 100%, 76%, 1) 0%, hsla(49, 100%, 81%, 1) 100%);
+				background: -webkit-linear-gradient(90deg, hsla(16, 100%, 76%, 1) 0%, hsla(49, 100%, 81%, 1) 100%);
+			}
+
+			&[data-phase="npcAllies"] {
+				background: hsla(152, 100%, 50%, 1);
+				background: linear-gradient(90deg, hsla(152, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);
+				background: -moz-linear-gradient(90deg, hsla(152, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);
+				background: -webkit-linear-gradient(90deg, hsla(152, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%);
+			}
+
+			img {
+				width: 3rem;
+				height: 3rem;
+			}
+
+			&.activated {
+				backdrop-filter: grayscale(0.5);
+				position: relative;
+
+				&::after {
+					content: '';
+					display: block;
+					position: absolute;
+					width: 100%;
+					height: 100%;
+					background: rgba(0, 0, 0, 0.25);
+				}
+
+				box-shadow: rgba(21, 21, 39, 0.705) 3px 3px 6px 0px inset,
+				rgba(0, 9, 0, 0.5) -3px -3px 6px 1px inset;
+			}
+
+
+			&:hover {
+				cursor: pointer;
+				background: #09F;
+				color: white;
+			}
+		}
+	}
+
+}

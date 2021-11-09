@@ -812,11 +812,13 @@ export default class CombatHud extends Application {
     }
 
     async _onHandleButtonClick(event) {
+        event.preventDefault();
         let clickedElement = $(event.currentTarget);
         let action = clickedElement.data().action;
-
+        console.log(action, "Clicking on button, expecting action");
         switch (action) {
             case "endCombat":
+                console.log("Ending combat");
                 await this.data.ourCombat.endCombat();
                 this.unhighlightAll(game.canvas.tokens.placeables);
                 await game.settings.set(
@@ -849,7 +851,8 @@ export default class CombatHud extends Application {
         let combatantDivs = windowContent.find(".combatant-div");
         let scene = game.scenes.viewed;
 
-        html.on("click", "[data-action]", this._onHandleButtonClick.bind(this));
+        windowContent.off("click", "[data-action]");
+        windowContent.on("click", "[data-action]", this._onHandleButtonClick.bind(this));
         //check if in combat
         if (this.data.inCombat) {
             //find the in combat button, and allow only the GM to click it

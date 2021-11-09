@@ -419,6 +419,15 @@
   background: transparent;
   position: relative;
 }
+#combatHud .turnButtonWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+#combatHud .turnButtonWrapper button {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
 #combatHud .tooltip {
   pointer-events: none;
   opacity: 0;

@@ -49,9 +49,11 @@
     </div>
     {{/each}}
 </div>
-<button class="previousTurn"><i class="fab fa-arrow-alt-from-left"></i></button>
-<button class="nextTurn"><i class="fab fa-arrow-alt-from-right"></i></button>
 {{/if}}
+<div class="turnButtonWrapper">
+	<button class="previousTurn" data-action="previousTurn"><<i class="fas fa-arrow-alt-from-left"></i></button>
+	<button class="nextTurn" data-action="nextTurn">><i class="fas fa-arrow-alt-from-right"></i></button>
+</div>
 <button class="endCombat" data-action="endCombat"><i class="fas fa-power-off"></i>End Combat</button>
 {{else}}
 <div><button class="startCombatButton" data-action="startCombat" {{#unless isGM}}disabled{{/unless}}>Start Combat</button></div>
