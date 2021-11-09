@@ -10,10 +10,7 @@
     <button class="showArtifacts show" data-type="artifacts">Artifacts</button>
     {{#if isGM}} {{#if (eq type "NPC")}}
     <button class="damage">Apply Dmg</button>
-    <button class="effort">
-        Use<br />
-        Effort
-    </button>
+    <button class="effort">Use Effort</button>
     {{/if}} {{/if}}
 </div>
 <br />
@@ -37,7 +34,7 @@
     <div class="break"></div>
     {{#each attacks}} {{>
     "modules/hud-and-trackers/templates/hud-partials/attack-partial.html"}} {{/each}}
-    {{/if}} {{#if (eq type "PC")}} {{log type}}
+    {{/if}} {{#if (eq type "PC")}}
     <!-- Skills -->
     {{#if (eq showTab "skills")}}
     <div class="pinnedDiv">

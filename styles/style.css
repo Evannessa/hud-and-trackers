@@ -210,6 +210,8 @@
   margin: 0.5rem;
 }
 #tokenHud .button-wrapper button {
+  white-space: nowrap;
+  padding-inline: 0.75rem;
   background-color: rgba(66, 78, 87, 0.9);
 }
 #tokenHud .button-wrapper button.pinned {

@@ -79,11 +79,9 @@ Hooks.on("updateItem", (data, data2, data3) => {
 });
 
 Hooks.on("controlToken", async (token, isControlled) => {
-    console.log("Controlling " + token.name);
     let ourToken = token;
     if (!isControlled) {
         if (game.canvas.tokens.controlled.length == 0) {
-            console.log("Controlling no one!!!");
             //** So this will close regardless, as it'll be zero
             //before being set to one
             //as previous control of the tokens is released
@@ -404,24 +402,24 @@ export class Hud extends Application {
         this.render();
     }
 
-    setFields(object) {
+    async setFields(object) {
         this.isGM = game.user.isGM;
         this.ourToken = object;
-        this.ourActor = this.getActor(this.ourToken);
-        this.attacks = this.getStuffFromSheet(this.ourToken, "attack");
-        this.abilities = this.getStuffFromSheet(this.ourToken, "ability");
-        this.skills = this.getStuffFromSheet(this.ourToken, "skill");
-        this.cyphers = this.getStuffFromSheet(this.ourToken, "cypher");
-        this.artifacts = this.getStuffFromSheet(this.ourToken, "artifact");
-        if (!this.ourToken.getFlag("hud-and-trackers", "showTab")) {
+        this.ourActor = this.ourToken.actor; //this.getActor(this.ourToken);
+        this.attacks = this.getStuffFromSheet(this.ourActor, "attack");
+        this.abilities = this.getStuffFromSheet(this.ourActor, "ability");
+        this.skills = this.getStuffFromSheet(this.ourActor, "skill");
+        this.cyphers = this.getStuffFromSheet(this.ourActor, "cypher");
+        this.artifacts = this.getStuffFromSheet(this.ourActor, "artifact");
+        if (!this.ourActor.getFlag("hud-and-trackers", "showTab")) {
             this.showTab = "abilities";
         } else {
-            this.showTab = this.ourToken.getFlag("hud-and-trackers", "showTab");
+            this.showTab = this.ourActor.getFlag("hud-and-trackers", "showTab");
         }
-        if (!this.ourToken.getFlag("hud-and-trackers", "pinnedTab")) {
+        if (!this.ourActor.getFlag("hud-and-trackers", "pinnedTab")) {
             this.pinnedTab = "none";
         } else {
-            this.pinnedTab = this.ourToken.getFlag("hud-and-trackers", "pinnedTab");
+            this.pinnedTab = this.ourActor.getFlag("hud-and-trackers", "pinnedTab");
         }
         //pinned items will be an object that holds an array of each pinned type
         if (!this.ourActor.getFlag("hud-and-trackers", "pinnedItems")) {
@@ -450,6 +448,7 @@ export class Hud extends Application {
                 "pinnedAbilities"
             );
         }
+        console.log(this.showTab);
         this.combatActive = inCombat;
     }
 
@@ -494,6 +493,9 @@ export class Hud extends Application {
         }
         // console.log(this.pinnedItems);
         // this.pinnedAbilities = this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities").map( pin => new Item(pin));
+        console.log(this.cyphers);
+        console.log(this.skills);
+        console.log(this.abilities);
 
         return {
             ourToken: this.ourToken,
@@ -507,7 +509,7 @@ export class Hud extends Application {
             artifacts: this.artifacts,
             pinnedItems: this.pinnedItems,
             pinnedAbilities: this.pinnedAbilities, //this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities"),
-            showTab: this.ourToken.getFlag("hud-and-trackers", "showTab"),
+            showTab: this.showTab,
             combatActive: this.combatActive,
         };
     }
@@ -570,7 +572,7 @@ export class Hud extends Application {
                 return;
             }
             this.showTab = "none";
-            await this.ourToken.setFlag("hud-and-trackers", "showTab", "none");
+            await this.ourActor.setFlag("hud-and-trackers", "showTab", "none");
             lastTab = "none";
             this.render();
         });
@@ -613,7 +615,7 @@ export class Hud extends Application {
                 let element = event.currentTarget;
                 Hud.setActive(element);
                 this.showTab = type;
-                await this.ourToken.setFlag("hud-and-trackers", "showTab", type);
+                await this.ourActor.setFlag("hud-and-trackers", "showTab", type);
                 lastTab = type;
                 this.render();
             });
@@ -622,14 +624,14 @@ export class Hud extends Application {
                 if (this.pinnedTab == type) {
                     //if already pinned, unpin, and re-render
                     this.pinnedTab = "none";
-                    await this.ourToken.setFlag("hud-and-trackers", "pinnedTab", "none");
+                    await this.ourActor.setFlag("hud-and-trackers", "pinnedTab", "none");
                     this.render();
                 } else {
                     //if not pinned, pin, and re-render
                     let element = event.currentTarget;
                     Hud.setPinned(element);
                     this.pinnedTab = type;
-                    await this.ourToken.setFlag("hud-and-trackers", "pinnedTab", type);
+                    await this.ourActor.setFlag("hud-and-trackers", "pinnedTab", type);
                     this.render();
                 }
             });
@@ -638,7 +640,7 @@ export class Hud extends Application {
 
         for (let hudItem of hudItems) {
             //if we have an actor connected, get it
-            let actor = this.getActor(this.ourToken);
+            let actor = this.ourActor;
 
             if (actor) {
                 if (actor.data.type == "PC") {
@@ -755,13 +757,12 @@ export class Hud extends Application {
         );
     }
 
-    getActor(ourToken) {
+    async getActor(ourToken) {
         return game.actors.get(ourToken.data.actorId);
     }
 
-    getStuffFromSheet(ourToken, type) {
-        let actor = this.getActor(ourToken);
-        let items = actor.data.items.contents.filter((item) => {
+    getStuffFromSheet(ourActor, type) {
+        let items = ourActor.data.items.contents.filter((item) => {
             return item.data.type === type;
         });
         return items.sort();

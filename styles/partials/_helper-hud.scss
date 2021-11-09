@@ -1,0 +1,77 @@
+#helperHud {
+
+	// top: 500px !important;
+	// left: 10px !important;
+	width: max-content !important;
+	height: max-content !important;
+
+	.hoverBar {
+		font-size: 1.2rem;
+		text-align: center;
+		padding: 0.5rem;
+		cursor: pointer;
+		background-color: #161a1d9c;
+	}
+
+	// 	&:hover+.utility {
+	// 		display: flex;
+	// 		flex-direction: column;
+	// 	}
+	// }
+
+	&:hover {
+		.utility {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.window-header {
+			display: block;
+		}
+	}
+
+	*,
+	*::before,
+	*::after {
+		padding: 0;
+		margin: 0;
+	}
+
+	background-color: transparent;
+	background: none;
+	box-shadow: none;
+
+	.window-content {
+		background-color: transparent;
+		background: none;
+		box-shadow: none;
+
+
+	}
+
+	.window-header {
+		// display: none;
+	}
+
+	.utility {
+		display: none;
+		flex-direction: column;
+
+
+		button {
+			width: max-content;
+			padding: 0.5rem;
+			margin: 0.1rem;
+			box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+		}
+
+		button:nth-child(even) {
+			background-color: #09F;
+			color: black;
+
+			&:hover {
+				background-color: lighten(#09F, 20%);
+			}
+		}
+	}
+}
