@@ -320,8 +320,9 @@ export class HelperHud extends Application {
         let showClock = windowContent.find(".showClocks")[0];
         let partyOverview = windowContent.find(".partyOverview")[0];
 
-        $(partyOverview).click((event) => {
-            game.partyOverview = new PartyOverview.PartyOverview().render(true);
+        $(partyOverview).click(async (event) => {
+            let data = await game.user.getFlag("hud-and-trackers", "partyOverviewData");
+            game.partyOverview = new PartyOverview.PartyOverview(data).render(true);
         });
 
         $(savePos).click((event) => {

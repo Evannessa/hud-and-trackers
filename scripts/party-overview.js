@@ -69,11 +69,23 @@ Handlebars.registerHelper("filterByType", (items, type) => {
 });
 
 export class PartyOverview extends FormApplication {
-    constructor() {
-        super();
-        this.pcs = this.filterByFolder(this.getPCs(), "Main PCs");
-        this.sceneFilter = "none";
-        this.dataFilter = "stats";
+    constructor(data) {
+        super(data);
+        // let savedData = game.user.getFlag("hud-and-trackers", "partyOverviewData");
+        this.data = data;
+        if (!this.data || Object.keys(this.data).length == 0) {
+            this.data = {
+                pcs: this.filterByFolder(this.getPCs(), "Main PCs"),
+                sceneFilter: "none",
+                dataFilter: "stats",
+            };
+        } else {
+            //so we have the actual actor objects rather than just the data
+            this.data.pcs = this.filterByFolder(this.getPCs(), "Main PCs");
+        }
+        // this.pcs = this.filterByFolder(this.getPCs(), "Main PCs");
+        // this.sceneFilter = "none";
+        // this.dataFilter = "stats";
     }
 
     static get defaultOptions() {
@@ -110,11 +122,8 @@ export class PartyOverview extends FormApplication {
 
     getData() {
         // Send data to the template
-        return {
-            pcs: this.pcs,
-            sceneFilter: this.sceneFilter,
-            dataFilter: this.dataFilter,
-        };
+        console.log(this.data);
+        return this.data;
     }
 
     activateListeners(html) {
@@ -124,17 +133,17 @@ export class PartyOverview extends FormApplication {
         $("#party-overview tr.expanded").css("overflow", "visible");
 
         //every radio button whose value is equal to our sceneFilter, or dataFilter, check it
-        $(`input[type=radio][value=${this.sceneFilter}]`).prop("checked", true);
-        $(`input[type=radio][value=${this.dataFilter}]`).prop("checked", true);
+        $(`input[type=radio][value=${this.data.sceneFilter}]`).prop("checked", true);
+        $(`input[type=radio][value=${this.data.dataFilter}]`).prop("checked", true);
 
         let app = this;
         $("input[type=radio][name='sceneFilter']").change(function () {
-            app.pcs = app.filterByScene(app.pcs, this.value);
-            app.sceneFilter = this.value;
+            app.data.pcs = app.filterByScene(app.data.pcs, this.value);
+            app.data.sceneFilter = this.value;
             app.render();
         });
         $("input[type=radio][name='dataFilter']").change(function () {
-            app.dataFilter = this.value;
+            app.data.dataFilter = this.value;
             app.render();
         });
         $("#party-overview tr").click((event) => {
@@ -184,9 +193,15 @@ export class PartyOverview extends FormApplication {
             let actor = game.actors.get(actorId);
             actor.sheet.render(true);
         });
+        //save the data
+        if (game.user.isGM) {
+            game.user.setFlag("hud-and-trackers", "partyOverviewData", this.data);
+        }
     }
 
-    async _updateObject(event, formData) {}
+    async _updateObject(event, formData) {
+        console.log(formData);
+    }
     getPCs() {
         return Array.from(game.actors).filter((actor) => {
             return actor.data.type == "PC";
