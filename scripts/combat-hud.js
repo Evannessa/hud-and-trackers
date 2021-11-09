@@ -27,9 +27,9 @@ Hooks.on("renderCombatHud", (app, html) => {
     if (!game.combatHud.app) {
         game.combatHud.app = app;
     }
-    if (!game.user.isGM) {
-        socket.register("receiveDataAndUpdate", game.combatHud.app.receiveDataAndUpdate);
-    }
+    // if (!game.user.isGM) {
+    //     socket.register("receiveDataAndUpdate", game.combatHud.app.receiveDataAndUpdate);
+    // }
 });
 
 Hooks.on("init", () => {
@@ -42,6 +42,14 @@ Hooks.on("ready", async () => {
     let savedCombat = await game.settings.get("hud-and-trackers", "savedCombat");
     if (savedCombat) {
         game.combatHud.app = new CombatHud(savedCombat).render(true);
+        registerCombatSockets();
+        // Hooks.call("combatHudStartCombat");
+        // if (!game.user.isGM) {
+        //     socket.register(
+        //         "receiveDataAndUpdate",
+        //         game.combatHud.app.receiveDataAndUpdate
+        //     );
+        // }
     } else {
         game.combatHud.app = new CombatHud().render(true);
     }
@@ -139,7 +147,7 @@ async function startCombat() {
 }
 
 function registerCombatSockets() {
-    if (game.combatHud.app && !game.user.isGM) {
+    if (game.combatHud.app) {
         socket.register("requestSetTokenHasActed", game.combatHud.app.setTokenHasActed);
         socket.register("requestIfAllHaveActed", game.combatHud.app.checkIfAllHaveActed);
         console.log("Sockets registered");
@@ -365,6 +373,11 @@ async function setRepTokenInitiative(combat) {
 let refreshed = false;
 
 Hooks.on("updateCombat", async (combat, roundData, diff) => {
+    console.log(combat, roundData, diff);
+    if (combat.current.round > combat.previous.round) {
+        //if it's a new round
+        game.combatHud.app.resetActivations();
+    }
     if (roundData.round) {
         //If not undefined, think this means it's a new round?
         game.combatHud.app.unhighlightAll(canvas.tokens.placeables);
@@ -681,8 +694,6 @@ export default class CombatHud extends Application {
         let phaseName = element.dataset.phase;
         let map = game.combatHud.app.data.activationObject.getSpecificMap(phaseName);
         //go through the map, find which items are false.
-        //if none are false, all of them have acted, so go to the next
-        //turn and reset the activations
         //*maybe re-render the combat too?
         let allActed = true;
         for (let mapItem in map) {
@@ -690,9 +701,13 @@ export default class CombatHud extends Application {
                 allActed = false;
             }
         }
+        //if none are false, all of them have acted, so go to the next
+        //turn and reset the activations
         if (allActed) {
+            //switch to the next turn, reset all the activations, unhighlight all of the tokens, and re-render the hud
             await game.combatHud.app.data.ourCombat.nextTurn();
-            game.combatHud.app.resetActivations();
+            //TODO: Maybe put this back in
+            // game.combatHud.app.resetActivations();
             game.combatHud.app.unhighlightAll(game.canvas.tokens.placeables);
             game.combatHud.app.render(game.combatHud.app.position);
         }
@@ -815,7 +830,7 @@ export default class CombatHud extends Application {
         event.preventDefault();
         let clickedElement = $(event.currentTarget);
         let action = clickedElement.data().action;
-        console.log(action, "Clicking on button, expecting action");
+
         switch (action) {
             case "endCombat":
                 console.log("Ending combat");
@@ -830,6 +845,14 @@ export default class CombatHud extends Application {
                 break;
             case "startCombat":
                 startCombat();
+                game.combatHud.app.render(game.combatHud.app.position);
+                break;
+            case "nextTurn":
+                await this.data.ourCombat.nextTurn();
+                game.combatHud.app.render(game.combatHud.app.position);
+                break;
+            case "previousTurn":
+                await this.data.ourCombat.previousTurn();
                 game.combatHud.app.render(game.combatHud.app.position);
                 break;
             default:
@@ -944,9 +967,7 @@ export default class CombatHud extends Application {
     }
 
     checkIfUserIsTokenOwner(tokenId, userId) {
-        console.log(tokenId);
         let token = getCanvasToken(tokenId);
-        console.log(token);
         let actor = getActor(token);
         let permission = actor.data.permission[userId];
         if (permission == 3) {
