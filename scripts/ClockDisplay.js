@@ -29,8 +29,16 @@ export class ClockDisplay extends FormApplication {
         for (var clockId in this.clocks) {
             this.handleBreaksAndWaypoints(this.clocks[clockId]);
             this.refillSections(this.clocks[clockId]);
+            this.applyGradient(this.clocks[clockId]);
         }
     }
+    async applyGradient(clockData) {
+        let clockWrapper = $(`#clock-display form#${clockData.ourId} .clockWrapper`);
+        console.log(clockWrapper);
+        //make the background wrapper's gradient look like the chosen one
+        clockWrapper.css("backgroundImage", clockData.gradient);
+    }
+
     async refillSections(clockData) {
         let filled = 0;
         let sectionsArray = $(

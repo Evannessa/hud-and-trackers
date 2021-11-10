@@ -34,8 +34,14 @@ Hooks.once("socketlib.ready", () => {
 //attack all the clocks to their linked entities' render hooks
 // start a rendered clock object to keep track of
 // all the rendered clocks
-Hooks.on("ready", () => {
-    game.sharedClocks = {};
+Hooks.on("ready", async () => {
+    game.settings.register(HelperFunctions.moduleName, "sharedClocks", {
+        scope: "client",
+        config: false,
+        type: Object,
+        default: {},
+    });
+    game.sharedClocks = await game.settings.get("hud-and-trackers", "sharedClocks");
     game.clockDisplay = new ClockDisplay().render(true);
     game.renderedClocks = {};
     hookEntities();
@@ -46,10 +52,12 @@ Hooks.on("renderClockViewer", (app, html) => {
 
 function addToSharedClocks(clock) {
     game.sharedClocks[clock.ourId] = { ...clock };
+    game.settings.set("hud-and-trackers", "sharedClocks", game.sharedClocks);
     updateClockDisplay();
 }
 function removeFromSharedClocks(clock) {
     delete game.sharedClocks[clock.ourId];
+    game.settings.set("hud-and-trackers", "sharedClocks", game.sharedClocks);
     updateClockDisplay();
 }
 

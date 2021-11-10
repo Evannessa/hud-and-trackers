@@ -1,6 +1,8 @@
 "use strict";
 
 import * as ClockApp from "./clock.js";
+import { ClockViewer } from "./ClockViewer.js";
+import { ClockConfig } from "./ClockConfig.js";
 import * as PartyOverview from "./party-overview.js";
 import * as HelperFunctions from "./helper-functions.js";
 
@@ -346,11 +348,11 @@ export class HelperHud extends Application {
         });
         //add clock
         addClock.addEventListener("click", (event) => {
-            new ClockApp.ClockConfig().render(true);
+            new ClockConfig().render(true);
         });
         //show clock
         showClock.addEventListener("click", (event) => {
-            new ClockApp.ClockViewer().render(true);
+            new ClockViewer().render(true);
         });
         if (this.isGM) {
             //utility stuff

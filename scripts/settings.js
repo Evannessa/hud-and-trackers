@@ -2,6 +2,13 @@ import CombatHud from "./combat-hud.js";
 import * as HelperFunctions from "./helper-functions.js";
 
 export default function registerSettings() {
+    // game.settings.register(HelperFunctions.moduleName, "sharedClocks", {
+    //     scope: "client",
+    //     config: false,
+    //     type: Object,
+    //     default: {},
+    // });
+
     game.settings.register(HelperFunctions.moduleName, "combatHudPosition", {
         scope: "client",
         config: false,
