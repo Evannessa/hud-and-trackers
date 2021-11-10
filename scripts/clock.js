@@ -44,7 +44,7 @@ Hooks.on("renderClockViewer", (app, html) => {
 });
 
 function addToSharedClocks(clock) {
-    game.sharedClocks[clock.ourId] = clock;
+    game.sharedClocks[clock.ourId] = { ...clock };
     updateClockDisplay();
 }
 function removeFromSharedClocks(clock) {
@@ -53,7 +53,7 @@ function removeFromSharedClocks(clock) {
 }
 
 function updateSharedClocks(clock) {
-    game.sharedClocks[clock.ourId] = clock;
+    game.sharedClocks[clock.ourId] = { ...clock };
     updateClockDisplay();
 }
 

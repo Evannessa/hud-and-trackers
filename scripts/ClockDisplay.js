@@ -28,37 +28,54 @@ export class ClockDisplay extends FormApplication {
         super.activateListeners(html);
         for (var clockId in this.clocks) {
             this.handleBreaksAndWaypoints(this.clocks[clockId]);
+            this.refillSections(this.clocks[clockId]);
         }
-        // this.clocks.forEach((element) => {
-        //     this.handleBreaksAndWaypoints(element);
-        // });
     }
-    async handleBreaksAndWaypoints(element) {
-        console.log("Clock data should be", element);
+    async refillSections(clockData) {
+        let filled = 0;
+        let sectionsArray = $(
+            `#clock-display form#${clockData.ourId} .clockSection`
+        ).toArray();
+        sectionsArray.forEach((element) => {
+            //refilling the sections after refresh
+            if (filled < clockData.filledSections) {
+                element.classList.add("filled");
+                filled++;
+                clockData.sectionMap[element.id].filled = true;
+            }
+        });
+    }
+    async handleBreaksAndWaypoints(clockData) {
         //adding breaks if we have any
-        let sectionsArray = $(`form#${element.ourId} .clockSection`).toArray();
-        let framesArray = $(`form#${element.ourId} .frameSection`).toArray();
-        let breakLabels = $(`form#${element.ourId} .breakLabel`).toArray();
-        let waypoints = $(`form#${element.ourId} .waypoint`).toArray();
+        let sectionsArray = $(
+            `#clock-display form#${clockData.ourId} .clockSection`
+        ).toArray();
+        let framesArray = $(
+            `#clock-display form#${clockData.ourId} .frameSection`
+        ).toArray();
+        let breakLabels = $(
+            `#clock-display form#${clockData.ourId} .breakLabel`
+        ).toArray();
+        let waypoints = $(`#clock-display form#${clockData.ourId} .waypoint`).toArray();
         let count = 0;
         //go through all the sub-sections if there are some
-        if (element.breaks.length > 0) {
+        if (clockData.breaks.length > 0) {
             //if breaks is = [2, 1, 2]
-            element.breaks.forEach((num) => {
+            clockData.breaks.forEach((num) => {
                 count += num; //count = 2, first time around, 3 second time around, 5 3rd time around
                 $(sectionsArray[count - 1]).attr("data-break", true); //(we're subtracting one since array indices start at zero)
             });
             let i = 0;
 
-            for (i = 0; i < element.breaks.length; i++) {
+            for (i = 0; i < clockData.breaks.length; i++) {
                 $(framesArray[i]).width((index, currentWidth) => {
-                    return currentWidth * element.breaks[i];
+                    return currentWidth * clockData.breaks[i];
                 });
                 $(breakLabels[i]).width((index, currentWidth) => {
-                    return currentWidth * element.breaks[i];
+                    return currentWidth * clockData.breaks[i];
                 });
                 $(waypoints[i]).width((index, currentWidth) => {
-                    return currentWidth * element.breaks[i];
+                    return currentWidth * clockData.breaks[i];
                 });
             }
         }
