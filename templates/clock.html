@@ -27,8 +27,8 @@
     <div class="contentWrapper">
         <div class="waypointWrapper">
             {{#each waypoints}}
-            <div class="waypoint">
-                <p class="waypointLabel" contenteditable="true">Hello</p>
+            <div class="waypoint" id="{{@key}}">
+                <p class="waypointLabel" contenteditable="true">{{this}}</p>
             </div>
             {{/each}}
         </div>

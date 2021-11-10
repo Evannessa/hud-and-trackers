@@ -207,7 +207,10 @@ class Clock extends FormApplication {
                 } else if (this.classList.contains("clockName")) {
                     app.data.name = newData;
                 } else if (this.classList.contains("waypointLabel")) {
-                    app.data.waypoints[this.id] = newData;
+                    console.log(app.data.waypoints);
+                    console.log(this.parentNode);
+                    app.data.waypoints[this.parentNode.id] = newData;
+                    console.log(app.data.waypoints);
                 }
                 app.saveAndRenderApp();
             }
