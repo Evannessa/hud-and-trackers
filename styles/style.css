@@ -913,6 +913,7 @@
 
 #clock-display {
   max-height: 50vh;
+  background: transparent;
 }
 
 /* SCSS HEX */

@@ -1,5 +1,6 @@
 <form>
 	{{#each this}}
 	{{> 'modules/hud-and-trackers/templates/clock.html'  sections=(getValues sectionMap) user=game.user}}
+	<hr>
 	{{/each}}
 </form>
