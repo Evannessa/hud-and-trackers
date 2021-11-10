@@ -91,7 +91,7 @@ async function loadHandleBarTemplates() {
         "modules/hud-and-trackers/templates/hud-partials/attack-partial.html",
         "modules/hud-and-trackers/templates/party-overview/po-items-partial.hbs",
         "modules/hud-and-trackers/templates/party-overview/po-abilities-partial.hbs",
-        "modules/hud-and-trackers/templates/clock.html",
+        "modules/hud-and-trackers/templates/clock.hbs",
     ];
     return loadTemplates(templatePaths);
 }

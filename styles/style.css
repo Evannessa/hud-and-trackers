@@ -562,8 +562,7 @@
   display: none;
 }
 
-.clockHud,
-#clock-display {
+.clockHud {
   width: -webkit-max-content !important;
   width: max-content !important;
   width: -moz-max-content !important;
@@ -571,18 +570,15 @@
   height: max-content !important;
   height: -moz-max-content !important;
 }
-.clockHud .window-content,
-#clock-display .window-content {
+.clockHud .window-content {
   display: flex;
   flex-direction: column;
   justify-content: stretch;
 }
-.clockHud .window-content .clockName,
-#clock-display .window-content .clockName {
+.clockHud .window-content .clockName {
   flex: 0;
 }
-.clockHud .window-content .contentWrapper,
-#clock-display .window-content .contentWrapper {
+.clockHud .window-content .contentWrapper {
   display: grid;
   width: -webkit-max-content;
   width: -moz-max-content;
@@ -593,26 +589,21 @@
   grid-template-rows: 2rem 1fr max-content;
 }
 .clockHud .window-content .contentWrapper .frameWrapper,
-.clockHud .window-content .contentWrapper .clockWrapper,
-#clock-display .window-content .contentWrapper .frameWrapper,
-#clock-display .window-content .contentWrapper .clockWrapper {
+.clockHud .window-content .contentWrapper .clockWrapper {
   grid-row: 2;
   grid-column: 1;
 }
-.clockHud .window-content .headerWrapper,
-#clock-display .window-content .headerWrapper {
+.clockHud .window-content .headerWrapper {
   display: flex;
   flex: content;
   justify-content: space-between;
   align-items: flex-start;
   margin: 0.5rem 0.5rem;
 }
-.clockHud .window-content .headerWrapper h3,
-#clock-display .window-content .headerWrapper h3 {
+.clockHud .window-content .headerWrapper h3 {
   white-space: nowrap;
 }
-.clockHud .window-content .headerWrapper [data-action] .tooltip,
-#clock-display .window-content .headerWrapper [data-action] .tooltip {
+.clockHud .window-content .headerWrapper [data-action] .tooltip {
   display: none;
   position: absolute;
   min-width: 20ch;
@@ -624,50 +615,40 @@
   /* moves it down */
   z-index: 1000;
 }
-.clockHud .window-content .headerWrapper [data-action]:hover .tooltip,
-#clock-display .window-content .headerWrapper [data-action]:hover .tooltip {
+.clockHud .window-content .headerWrapper [data-action]:hover .tooltip {
   display: block;
 }
-.clockHud .window-content .headerWrapper .delete,
-#clock-display .window-content .headerWrapper .delete {
+.clockHud .window-content .headerWrapper .delete {
   width: 20%;
   color: #a82b2b;
   font-weight: bold;
 }
-.clockHud .window-content .headerWrapper .share,
-#clock-display .window-content .headerWrapper .share {
+.clockHud .window-content .headerWrapper .share {
   width: 20%;
 }
-.clockHud .window-content .headerWrapper .share.active,
-#clock-display .window-content .headerWrapper .share.active {
+.clockHud .window-content .headerWrapper .share.active {
   background-color: purple;
   box-shadow: inset 0 0 10px rgba(37, 37, 37, 0.731);
 }
 .clockHud .window-content .headerWrapper .clone,
-.clockHud .window-content .headerWrapper .changeColor,
-#clock-display .window-content .headerWrapper .clone,
-#clock-display .window-content .headerWrapper .changeColor {
+.clockHud .window-content .headerWrapper .changeColor {
   width: 20%;
 }
-.clockHud .window-content .waypointWrapper,
-#clock-display .window-content .waypointWrapper {
+.clockHud .window-content .waypointWrapper {
   display: flex;
   z-index: 20;
   justify-content: space-around;
 }
-.clockHud .window-content .waypointWrapper .waypoint,
-#clock-display .window-content .waypointWrapper .waypoint {
+.clockHud .window-content .waypointWrapper .waypoint {
   width: 5rem;
   text-align: right;
 }
-.clockHud .window-content .waypointWrapper .waypointLabel,
-#clock-display .window-content .waypointWrapper .waypointLabel {
+.clockHud .window-content .waypointWrapper .waypointLabel {
   position: relative;
   transform: translateX(-10px);
   padding-right: 0.5rem;
 }
-.clockHud .window-content .waypointWrapper .waypointLabel::after,
-#clock-display .window-content .waypointWrapper .waypointLabel::after {
+.clockHud .window-content .waypointWrapper .waypointLabel::after {
   content: "";
   position: absolute;
   border-top: 7px solid #f5f5f576;
@@ -676,8 +657,7 @@
   bottom: 0;
   transform: translateX(10px);
 }
-.clockHud .window-content .breakLabelWrapper,
-#clock-display .window-content .breakLabelWrapper {
+.clockHud .window-content .breakLabelWrapper {
   grid-column: 1;
   grid-row: 3;
   padding-top: 0.5rem;
@@ -686,14 +666,12 @@
   justify-content: space-between;
   text-align: center;
 }
-.clockHud .window-content .breakLabelWrapper .breakLabel,
-#clock-display .window-content .breakLabelWrapper .breakLabel {
+.clockHud .window-content .breakLabelWrapper .breakLabel {
   width: 5rem;
   overflow: hidden;
   overflow-wrap: break-word;
 }
-.clockHud .window-content .frameWrapper,
-#clock-display .window-content .frameWrapper {
+.clockHud .window-content .frameWrapper {
   display: flex;
   flex-direction: row;
   border-radius: 15px;
@@ -702,8 +680,7 @@
   pointer-events: none;
   z-index: 10;
 }
-.clockHud .window-content .frameWrapper .frameSection,
-#clock-display .window-content .frameWrapper .frameSection {
+.clockHud .window-content .frameWrapper .frameSection {
   width: 5rem;
   height: 5rem;
   background-color: transparent;
@@ -712,13 +689,11 @@
   border-radius: 10px;
   margin-right: 10px;
 }
-.clockHud .window-content .frameWrapper .frameSection:last-child,
-#clock-display .window-content .frameWrapper .frameSection:last-child {
+.clockHud .window-content .frameWrapper .frameSection:last-child {
   box-shadow: 0px -14px 0px 2px var(--palette-dialog-background, var(--tui-black2)), 0px 14px 0px 2px var(--palette-dialog-background, var(--tui-black2));
   margin-right: 0;
 }
-.clockHud .window-content .clockWrapper,
-#clock-display .window-content .clockWrapper {
+.clockHud .window-content .clockWrapper {
   display: flex;
   flex-direction: row;
   border-radius: 15px;
@@ -727,17 +702,14 @@
   background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 100%);
   background-position: right;
 }
-.clockHud .window-content .clockWrapper .innerWrapper,
-#clock-display .window-content .clockWrapper .innerWrapper {
+.clockHud .window-content .clockWrapper .innerWrapper {
   display: flex;
   flex-direction: row;
 }
-.clockHud .window-content .clockWrapper .innerWrapper + .innerWrapper,
-#clock-display .window-content .clockWrapper .innerWrapper + .innerWrapper {
+.clockHud .window-content .clockWrapper .innerWrapper + .innerWrapper {
   margin: 1rem;
 }
-.clockHud .window-content .clockSection,
-#clock-display .window-content .clockSection {
+.clockHud .window-content .clockSection {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -748,41 +720,34 @@
   background-color: #202028;
   box-shadow: #171921 3px 3px 6px 0px inset, rgba(60, 60, 73, 0.6) -3px -3px 6px 1px inset;
 }
-.clockHud .window-content .clockSection[data-break],
-#clock-display .window-content .clockSection[data-break] {
+.clockHud .window-content .clockSection[data-break] {
   position: relative;
   margin-right: 10px;
 }
-.clockHud .window-content .clockSection[data-break]:last-child,
-#clock-display .window-content .clockSection[data-break]:last-child {
+.clockHud .window-content .clockSection[data-break]:last-child {
   margin-right: 0;
 }
-.clockHud .window-content .clockSection .label,
-#clock-display .window-content .clockSection .label {
+.clockHud .window-content .clockSection .label {
   color: white;
   font-weight: bold;
   z-index: 200;
 }
-.clockHud .window-content .clockSection.filled,
-#clock-display .window-content .clockSection.filled {
+.clockHud .window-content .clockSection.filled {
   box-shadow: none;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
   background-color: white;
   mix-blend-mode: multiply;
 }
-.clockHud .window-content .clockSection.filled .label,
-#clock-display .window-content .clockSection.filled .label {
+.clockHud .window-content .clockSection.filled .label {
   color: black;
 }
-.clockHud .window-content .clockSection.filled:hover,
-#clock-display .window-content .clockSection.filled:hover {
+.clockHud .window-content .clockSection.filled:hover {
   background-position: right center;
   /* change the direction of the change here */
   color: #fff;
   text-decoration: none;
 }
-.clockHud .window-content .clockSection .edit,
-#clock-display .window-content .clockSection .edit {
+.clockHud .window-content .clockSection .edit {
   position: absolute;
   width: 1rem !important;
   height: 1rem !important;
@@ -790,16 +755,14 @@
   background-color: transparent;
   background: none;
 }
-.clockHud .window-content .entityLinkWrapper,
-#clock-display .window-content .entityLinkWrapper {
+.clockHud .window-content .entityLinkWrapper {
   display: flex;
   flex-wrap: wrap;
   max-width: -webkit-fit-content;
   max-width: fit-content;
   max-width: -moz-fit-content;
 }
-.clockHud .window-content .entityLinkWrapper .entityLink,
-#clock-display .window-content .entityLinkWrapper .entityLink {
+.clockHud .window-content .entityLinkWrapper .entityLink {
   flex: 0;
 }
 
@@ -913,7 +876,173 @@
 
 #clock-display {
   max-height: 50vh;
-  background: transparent;
+  font-size: 10px;
+  width: -webkit-max-content !important;
+  width: max-content !important;
+  width: -moz-max-content !important;
+  height: -webkit-max-content !important;
+  height: max-content !important;
+  height: -moz-max-content !important;
+}
+#clock-display .window-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
+#clock-display .window-content .clockName {
+  flex: 0;
+}
+#clock-display .window-content .contentWrapper {
+  display: grid;
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+  grid-template-columns: -webkit-min-content;
+  grid-template-columns: min-content;
+  grid-template-rows: 0.5em 1fr -webkit-max-content;
+  grid-template-rows: 0.5em 1fr max-content;
+}
+#clock-display .window-content .contentWrapper .frameWrapper,
+#clock-display .window-content .contentWrapper .clockWrapper {
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+  grid-row: 2;
+  grid-column: 1;
+}
+#clock-display .window-content .headerWrapper {
+  display: flex;
+  flex: content;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 0.5em 0.5em;
+}
+#clock-display .window-content .headerWrapper h3 {
+  white-space: nowrap;
+}
+#clock-display .window-content .waypointWrapper {
+  display: flex;
+  z-index: 20;
+  justify-content: space-around;
+}
+#clock-display .window-content .waypointWrapper .waypoint {
+  width: 5em;
+  text-align: right;
+}
+#clock-display .window-content .waypointWrapper .waypointLabel {
+  position: relative;
+  transform: translateX(-5px);
+  padding-right: 0.5em;
+}
+#clock-display .window-content .waypointWrapper .waypointLabel::after {
+  content: "";
+  position: absolute;
+  border-top: 7px solid #f5f5f576;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  bottom: 0;
+  transform: translateX(5px);
+}
+#clock-display .window-content .breakLabelWrapper {
+  grid-column: 1;
+  grid-row: 3;
+  padding-top: 0.5em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  text-align: center;
+}
+#clock-display .window-content .breakLabelWrapper .breakLabel {
+  width: 5em;
+  max-width: 5em;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+#clock-display .window-content .frameWrapper {
+  display: flex;
+  flex-direction: row;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  pointer-events: none;
+  z-index: 10;
+}
+#clock-display .window-content .frameWrapper .frameSection {
+  width: 5em;
+  height: 5em;
+  background-color: transparent;
+  position: relative;
+  box-shadow: 0px -7px 0px 1px var(--palette-dialog-background, var(--tui-black2)), 0px 7px 0px 1px var(--palette-dialog-background, var(--tui-black2)), 0px 0px 0px 5px var(--palette-dialog-background, var(--tui-black2));
+  border-radius: 5px;
+  margin-right: 5px;
+}
+#clock-display .window-content .frameWrapper .frameSection:last-child {
+  box-shadow: 0px -7px 0px 1px var(--palette-dialog-background, var(--tui-black2)), 0px 7px 0px 1px var(--palette-dialog-background, var(--tui-black2));
+  margin-right: 0;
+}
+#clock-display .window-content .clockWrapper {
+  display: flex;
+  flex-direction: row;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 100%);
+  background-position: right;
+}
+#clock-display .window-content .clockWrapper .innerWrapper {
+  display: flex;
+  flex-direction: row;
+}
+#clock-display .window-content .clockWrapper .innerWrapper + .innerWrapper {
+  margin: 1em;
+}
+#clock-display .window-content .clockSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  width: 5em;
+  height: 5em;
+  background-color: #202028;
+  box-shadow: #171921 3px 3px 6px 0px inset, rgba(60, 60, 73, 0.6) -3px -3px 6px 1px inset;
+}
+#clock-display .window-content .clockSection[data-break] {
+  position: relative;
+  margin-right: 5px;
+}
+#clock-display .window-content .clockSection[data-break]:last-child {
+  margin-right: 0;
+}
+#clock-display .window-content .clockSection .label {
+  color: white;
+  font-weight: bold;
+  z-index: 200;
+}
+#clock-display .window-content .clockSection.filled {
+  box-shadow: none;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  background-color: white;
+  mix-blend-mode: multiply;
+}
+#clock-display .window-content .clockSection.filled .label {
+  color: black;
+}
+#clock-display .window-content .clockSection.filled:hover {
+  background-position: right center;
+  /* change the direction of the change here */
+  color: #fff;
+  text-decoration: none;
+}
+#clock-display .window-content .entityLinkWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: -webkit-fit-content;
+  max-width: fit-content;
+  max-width: -moz-fit-content;
+}
+#clock-display .window-content .entityLinkWrapper .entityLink {
+  flex: 0;
 }
 
 /* SCSS HEX */

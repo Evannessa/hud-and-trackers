@@ -2,6 +2,7 @@
     <div class="headerWrapper">
         <h3 class="clockName" name="clockName" contenteditable="true">{{name}}</h3>
         {{#if (eq user.id creator)}}
+		{{#unless miniDisplay}}
         <div class="headerButtonWrapper">
             <button class="share {{#if shared}}active{{/if}}" data-action="share">
                 <span class="tooltip">Share with other users</span>
@@ -21,10 +22,12 @@
             </button>
         </div>
 
+		{{/unless}}
         {{/if}}
     </div>
 
     <div class="contentWrapper">
+		{{#if showWaypoints}}
         <div class="waypointWrapper">
             {{#each waypoints}}
             <div class="waypoint" id="{{@key}}">
@@ -32,6 +35,7 @@
             </div>
             {{/each}}
         </div>
+		{{/if}}
         <div class="breakLabelWrapper">
             {{#each breakLabels}}
             <h3 class="breakLabel" id="{{@key}}" contenteditable="true">{{this}}</h3>
@@ -55,6 +59,7 @@
             {{/each}}
         </div>
     </div>
+	{{#unless miniDisplay}}
     <div class="entityLinkWrapper">
         {{#each linkedEntities}}
         <button
@@ -69,4 +74,5 @@
         {{/each}}
         <!-- <input type="text" class="entityLinkBox" placeholder="drag linked entity here" /> -->
     </div>
+	{{/unless}}
 </form>

@@ -10,7 +10,7 @@ export class ClockDisplay extends FormApplication {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["form"],
+            classes: ["form", "clockHud"],
             popOut: true,
             template: `modules/hud-and-trackers/templates/clock-partials/clock-display.hbs`,
             id: "clock-display",
@@ -19,22 +19,44 @@ export class ClockDisplay extends FormApplication {
     }
 
     getData() {
-        return {
-            ...this.clocks,
+        let testClock = {
+            name: "none",
+            breakLabels: {},
+            breaks: [],
+            filledSections: 2,
+            gradient: "",
+            linkedEntities: {},
+            ourId: "id0",
+            sectionCount: 3,
+            sectionMap: {},
+            showWayPoints: false,
+            startFilled: false,
+            waypoints: {},
+            user: game.user,
         };
+        let data = {};
+        for (let clockId in this.clocks) {
+            data[clockId] = { ...this.clocks[clockId] };
+            data[clockId].sections = Object.values(this.clocks[clockId].sectionMap);
+            data[clockId].user = game.user;
+        }
+        return data;
     }
 
     activateListeners(html) {
-        super.activateListeners(html);
+        // super.activateListeners(html);
+        let i = 0;
         for (var clockId in this.clocks) {
+            //! this seems to be a workaround
+            $(`#clock-display section > div`).wrapAll(`<form id=${clockId}>`);
             this.handleBreaksAndWaypoints(this.clocks[clockId]);
             this.refillSections(this.clocks[clockId]);
             this.applyGradient(this.clocks[clockId]);
+            i++;
         }
     }
     async applyGradient(clockData) {
         let clockWrapper = $(`#clock-display form#${clockData.ourId} .clockWrapper`);
-        console.log(clockWrapper);
         //make the background wrapper's gradient look like the chosen one
         clockWrapper.css("backgroundImage", clockData.gradient);
     }
@@ -91,3 +113,6 @@ export class ClockDisplay extends FormApplication {
 
     async _updateObject(event, formData) {}
 }
+Handlebars.registerHelper("spreadObject", (object) => {
+    return { ...object };
+});

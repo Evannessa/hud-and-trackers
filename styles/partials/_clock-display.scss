@@ -1,4 +1,212 @@
 #clock-display {
 	max-height: 50vh;
-	background: transparent;
+	font-size: 10px;
+
+
+
+	width: max-content !important;
+	width: -moz-max-content !important;
+	height: max-content !important;
+	height: -moz-max-content !important;
+
+	.window-content {
+
+		display: flex;
+		flex-direction: column;
+		justify-content: stretch;
+
+		.clockName {
+			flex: 0;
+		}
+
+		.contentWrapper {
+			display: grid;
+			width: min-content;
+			grid-template-columns: min-content;
+			grid-template-rows: 0.5em 1fr max-content;
+
+			.frameWrapper,
+			.clockWrapper {
+				width: min-content;
+				grid-row: 2;
+				grid-column: 1;
+			}
+		}
+
+
+
+		.headerWrapper {
+			display: flex;
+			flex: content;
+			justify-content: space-between;
+			align-items: flex-start;
+			margin: 0.5em 0.5em;
+
+			h3 {
+				white-space: nowrap;
+			}
+
+		}
+
+		.waypointWrapper {
+			// grid-column: 1;
+			// grid-row: 1;
+			display: flex;
+			z-index: 20;
+			justify-content: space-around;
+
+			.waypoint {
+				// border-right: 3px solid black;
+				width: 5em;
+				text-align: right;
+
+				&Label {
+					position: relative;
+					transform: translateX(-5px);
+					padding-right: 0.5em;
+
+					&::after {
+						content: '';
+						position: absolute;
+						border-top: 7px solid #f5f5f576;
+						border-left: 7px solid transparent;
+						border-right: 7px solid transparent;
+						bottom: 0;
+						transform: translateX(5px);
+					}
+				}
+			}
+		}
+
+		.breakLabelWrapper {
+			grid-column: 1;
+			grid-row: 3;
+			padding-top: 0.5em;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-evenly;
+			text-align: center;
+
+			.breakLabel {
+				width: 5em;
+				max-width: 5em;
+				// min-width: 5em;
+				// max-width: 5em;
+				overflow: hidden;
+				overflow-wrap: break-word;
+			}
+		}
+
+		.frameWrapper {
+			display: flex;
+			flex-direction: row;
+			border-radius: 15px;
+			overflow: hidden;
+			position: relative;
+			pointer-events: none;
+			z-index: 10;
+
+			.frameSection {
+				width: 5em;
+				height: 5em;
+				background-color: transparent;
+				position: relative;
+				box-shadow: 0px -7px 0px 1px $black2, 0px 7px 0px 1px $black2, 0px 0px 0px 5px $black2;
+				border-radius: 5px;
+				margin-right: 5px;
+
+				&:last-child {
+					box-shadow: 0px -7px 0px 1px $black2, 0px 7px 0px 1px $black2;
+					margin-right: 0;
+				}
+
+			}
+		}
+
+		.clockWrapper {
+			display: flex;
+			flex-direction: row;
+			border-radius: 15px;
+			overflow: hidden;
+			position: relative;
+			background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 100%);
+			// background-image: linear-gradient(to right, #ff6e7f 0%, #bfe9ff 100%);
+			background-position: right;
+
+
+
+
+			.innerWrapper {
+				display: flex;
+				flex-direction: row;
+
+				+.innerWrapper {
+					margin: 1em;
+				}
+			}
+
+		}
+
+		.clockSection {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			cursor: pointer;
+			width: 5em;
+			height: 5em;
+			background-color: #202028;
+			box-shadow: hsl(230deg 17% 11%) 3px 3px 6px 0px inset, hsl(240deg 10% 26% / 60%) -3px -3px 6px 1px inset;
+			// background-color: #2c2e2f;
+			// box-shadow: rgb(29, 29, 29) 3px 3px 6px 0px inset, rgba(92, 92, 92, 0.5) -3px -3px 6px 1px inset;
+
+			&[data-break] {
+				position: relative;
+				margin-right: 5px;
+
+				&:last-child {
+					margin-right: 0;
+				}
+			}
+
+			.label {
+				color: white;
+				font-weight: bold;
+				z-index: 200;
+			}
+
+			&.filled {
+				box-shadow: none;
+				box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+				// box-shadow: rgb(50 50 93 / 25%) 0px 20px 20px -20px, rgb(0 0 0 / 30%) 1px 20px 20px 0px, rgb(10 37 64 / 35%) -5px -6px 6px 2px inset;
+				background-color: white;
+				mix-blend-mode: multiply;
+
+				.label {
+					color: black;
+				}
+
+				&:hover {
+					background-position: right center;
+					/* change the direction of the change here */
+					color: #fff;
+					text-decoration: none;
+				}
+			}
+
+
+
+		}
+
+		.entityLinkWrapper {
+			display: flex;
+			flex-wrap: wrap;
+			max-width: fit-content;
+			max-width: -moz-fit-content;
+
+			.entityLink {
+				flex: 0;
+			}
+		}
+	}
 }

@@ -52,6 +52,7 @@ Hooks.on("renderClockViewer", (app, html) => {
 
 function addToSharedClocks(clock) {
     game.sharedClocks[clock.ourId] = { ...clock };
+    // game.sharedClocks[clock.ourId + 1] = { ...clock };
     game.settings.set("hud-and-trackers", "sharedClocks", game.sharedClocks);
     updateClockDisplay();
 }
@@ -63,6 +64,7 @@ function removeFromSharedClocks(clock) {
 
 function updateSharedClocks(clock) {
     game.sharedClocks[clock.ourId] = { ...clock };
+    game.settings.set("hud-and-trackers", "sharedClocks", game.sharedClocks);
     updateClockDisplay();
 }
 
@@ -586,8 +588,8 @@ export class Clock extends FormApplication {
             minimizable: false,
             resizable: false,
             background: "none",
-            template: "modules/hud-and-trackers/templates/clock.html",
-            title: "clockHud",
+            template: "modules/hud-and-trackers/templates/clock.hbs",
+            title: "Clock",
             dragDrop: [{ dragSelector: ".entity", dropSelector: ".contentWrapper" }],
         });
     }
