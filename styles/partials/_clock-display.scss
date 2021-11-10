@@ -3,20 +3,44 @@
 	font-size: 10px;
 
 
-
 	width: max-content !important;
 	width: -moz-max-content !important;
 	height: max-content !important;
 	height: -moz-max-content !important;
+	position: fixed;
+	left: -380px !important;
+	top: 50vh !important;
+	transform: translateX(0);
+	transition: all 0.25s;
+
+	&.expanded {
+		transform: translateX(100%);
+	}
 
 	.window-content {
 
+		overflow: visible;
 		display: flex;
 		flex-direction: column;
 		justify-content: stretch;
 
 		.clockName {
 			flex: 0;
+		}
+
+		position: relative;
+
+		.showClocks {
+			position: absolute;
+			right: -3.5rem;
+			top: 0;
+			width: min-content;
+			text-align: left;
+			background-color: none;
+			writing-mode: vertical-lr;
+			transform: rotate(90deg);
+			text-orientation: mixed;
+			text-align: center;
 		}
 
 		.contentWrapper {

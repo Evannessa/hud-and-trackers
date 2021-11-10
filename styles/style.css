@@ -883,14 +883,40 @@
   height: -webkit-max-content !important;
   height: max-content !important;
   height: -moz-max-content !important;
+  position: fixed;
+  left: -380px !important;
+  top: 50vh !important;
+  transform: translateX(0);
+  transition: all 0.25s;
+}
+#clock-display.expanded {
+  transform: translateX(100%);
 }
 #clock-display .window-content {
+  overflow: visible;
   display: flex;
   flex-direction: column;
   justify-content: stretch;
+  position: relative;
 }
 #clock-display .window-content .clockName {
   flex: 0;
+}
+#clock-display .window-content .showClocks {
+  position: absolute;
+  right: -3.5rem;
+  top: 0;
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+  text-align: left;
+  background-color: none;
+  -ms-writing-mode: tb-lr;
+      writing-mode: vertical-lr;
+  transform: rotate(90deg);
+  -webkit-text-orientation: mixed;
+          text-orientation: mixed;
+  text-align: center;
 }
 #clock-display .window-content .contentWrapper {
   display: grid;

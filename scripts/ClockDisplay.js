@@ -1,6 +1,20 @@
 "use strict";
 import { getClocksByUser } from "./clock.js";
 
+Hooks.once("renderClockDisplay", (app, html) => {
+    // HelperFunctions.setInvisibleHeader(html, false);
+    // let windowWidth = $(document).width();
+    // console.log(windowWidth);
+    let appWidth = app.position.width;
+    // console.log(appWidth);
+    // let value = windowWidth - appWidth + 10;
+    // let value = -(windowWidth + appWidth);
+    // console.log(value);
+    // let windowHeight = $(document).height();
+    // let appHeight = app.position.height;
+    // let value = windowHeight - (appHeight + 200);
+    app.setPosition({ left: -appWidth });
+});
 export class ClockDisplay extends FormApplication {
     constructor(data = {}) {
         super(data);
@@ -12,6 +26,8 @@ export class ClockDisplay extends FormApplication {
         return mergeObject(super.defaultOptions, {
             classes: ["form", "clockHud"],
             popOut: true,
+            // top: 200,
+            left: -380,
             template: `modules/hud-and-trackers/templates/clock-partials/clock-display.hbs`,
             id: "clock-display",
             title: "Clock Display",
@@ -43,8 +59,22 @@ export class ClockDisplay extends FormApplication {
         return data;
     }
 
+    handleButtonClick(event) {
+        event.preventDefault();
+        let el = $(event.currentTarget);
+        let action = el.data().action;
+        switch (action) {
+            case "showClocks":
+                console.log("Showing clock");
+                el.closest("#clock-display").toggleClass("expanded");
+                console.log(el.closest("#clock-display"));
+                break;
+        }
+    }
+
     activateListeners(html) {
         // super.activateListeners(html);
+        html.on("click", "[data-action]", this.handleButtonClick.bind(this));
         let i = 0;
         for (var clockId in this.clocks) {
             //! this seems to be a workaround
