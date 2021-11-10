@@ -33,6 +33,7 @@ Hooks.once("socketlib.ready", () => {
 // start a rendered clock object to keep track of
 // all the rendered clocks
 Hooks.on("ready", () => {
+    game.clockDisplay = new ClockDisplay().render(true);
     game.renderedClocks = {};
     hookEntities();
 });
@@ -1104,6 +1105,45 @@ export class ClockViewer extends FormApplication {
                 await new Clock(clockData).render(true);
             }
         }
+    }
+
+    async _updateObject(event, formData) {}
+}
+
+Handlebars.registerHelper("getValues", (data) => {
+    return Object.values(data);
+});
+class ClockDisplay extends FormApplication {
+    constructor(data = {}) {
+        super(data);
+        //TODO: We want to show the shared clocks, but this is fine for now
+        this.clocks = getClocksByUser(game.userId);
+    }
+
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            classes: ["form"],
+            popOut: true,
+            template: `modules/hud-and-trackers/templates/clock-partials/clock-display.hbs`,
+            id: "clock-display",
+            title: "Clock Display",
+        });
+    }
+
+    getData() {
+        //     ...this.data,
+        //     sections: Object.values(this.data.sectionMap),
+        //     user: game.user,
+        // // Send data to the template
+        console.log(this.clocks);
+
+        return {
+            ...this.clocks,
+        };
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html);
     }
 
     async _updateObject(event, formData) {}
