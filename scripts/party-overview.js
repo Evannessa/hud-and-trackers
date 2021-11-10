@@ -78,6 +78,10 @@ export class PartyOverview extends FormApplication {
                 pcs: this.filterByFolder(this.getPCs(), "Main PCs"),
                 sceneFilter: "none",
                 dataFilter: "stats",
+                expandedRows: {
+                    skills: [],
+                    items: [],
+                },
             };
         } else {
             //so we have the actual actor objects rather than just the data
@@ -122,7 +126,6 @@ export class PartyOverview extends FormApplication {
 
     getData() {
         // Send data to the template
-        console.log(this.data);
         return this.data;
     }
 
@@ -131,6 +134,27 @@ export class PartyOverview extends FormApplication {
         this.filter();
         //every table row with expanded class, make it visible
         $("#party-overview tr.expanded").css("overflow", "visible");
+        // if (this.data.expandedRows && this.data.expandedRows.length > 0) {
+        //     console.log(this.data.expandedRows);
+        //     this.data.expandedRows.each((element) => {
+        //         element.classList.toggle("expanded");
+        //         console.log(element);
+        //     });
+        // }
+        console.log(this.data.dataFilter);
+        console.log(this.data.expandedRows.skills);
+        if (this.data.dataFilter == "skills") {
+            this.data.expandedRows.skills.forEach((element) => {
+                console.log(element);
+                console.log(`#party-overview tr.skills#${element}`);
+                $(`#party-overview tr.skills#${element}`).classList.add("expanded");
+            });
+        }
+        if (this.data.dataFilter == "items") {
+            this.data.expandedRows.items.forEach((element) => {
+                $(`#party-overview tr.skills#${element}`).classList.add("expanded");
+            });
+        }
 
         //every radio button whose value is equal to our sceneFilter, or dataFilter, check it
         $(`input[type=radio][value=${this.data.sceneFilter}]`).prop("checked", true);
@@ -146,9 +170,23 @@ export class PartyOverview extends FormApplication {
             app.data.dataFilter = this.value;
             app.render();
         });
-        $("#party-overview tr").click((event) => {
+        $("#party-overview tr:not(.stats)").click((event) => {
             let row = event.currentTarget;
             row.classList.toggle("expanded");
+            this.data.expandedRows.skills = $(
+                "#party-overview tr.skills.expanded"
+            ).toArray();
+            this.data.expandedRows.items = $(
+                "#party-overview tr.items.expanded"
+            ).toArray();
+            this.data.expandedRows.skills = this.data.expandedRows.skills
+                .filter((item) => {
+                    item.classList.contains("expanded");
+                })
+                .map((item) => item.id);
+            this.data.expandedRows.items = this.data.expandedRows.items
+                .filter((item) => item.classList.contains("expanded"))
+                .map((item) => item.id);
 
             //when row expanded, make the overflow visible and the height larger to accommodate
             $("#party-overview tr.expanded *").css({
@@ -193,6 +231,7 @@ export class PartyOverview extends FormApplication {
             let actor = game.actors.get(actorId);
             actor.sheet.render(true);
         });
+        console.log(this.data.expandedRows);
         //save the data
         if (game.user.isGM) {
             game.user.setFlag("hud-and-trackers", "partyOverviewData", this.data);

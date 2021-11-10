@@ -1,25 +1,39 @@
 {{#each pcs}}
-    <tr class="cellRow" id={{this.id}}>
-        <td class="name" id={{this.id}}><div>
-                <img src="{{this.img}}" alt="pc avatar" class="img" />{{this.name}}
-            </div></td>
-        {{#with this.data.items}}
-            <td class="cypher"><div>
-                    {{#each (filterByType this "cypher")}}<li
-                            id="{{this.id}}"
-                        >{{this.name}}</li>{{/each}}
-                </div></td>
-            <td class="artifact"><div>
-                    {{#each (filterByType this "artifact")}}<li
-                            id="{{this.id}}"
-                        >{{this.name}}</li>{{/each}}
-                </div></td>
-            <td class="equipment"><div>
-                    {{#each (filterByType this "equipment")}}<li
-                            id="{{this.id}}"
-                        >{{this.name}}</li>{{/each}}
-                </div></td>
-        {{/with}}
-
-    </tr>
+  <tr class="cellRow items" id={{this.id}}>
+    <td class="name" id={{this.id}}>
+      <div>
+        <img src="{{this.img}}" alt="pc avatar" class="img" />
+        {{this.name}}
+      </div>
+    </td>
+    {{#with this.data.items}}
+      <td class="cypher">
+        <div>
+          {{#each (filterByType this "cypher")}}
+            <li id="{{this.id}}">
+              {{this.name}}
+            </li>
+          {{/each}}
+        </div>
+      </td>
+      <td class="artifact">
+        <div>
+          {{#each (filterByType this "artifact")}}
+            <li id="{{this.id}}">
+              {{this.name}}
+            </li>
+          {{/each}}
+        </div>
+      </td>
+      <td class="equipment">
+        <div>
+          {{#each (filterByType this "equipment")}}
+            <li id="{{this.id}}">
+              {{this.name}}
+            </li>
+          {{/each}}
+        </div>
+      </td>
+    {{/with}}
+  </tr>
 {{/each}}
