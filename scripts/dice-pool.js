@@ -57,6 +57,14 @@ function checkPreviousRolls() {
     return lastEntry;
 }
 
+Hooks.on("closeApplication", (app, html) => {
+    if (app.id === "ambient-prompt") {
+        console.log("closing ambient prompt!");
+        //set the roll mode back to normal
+        setUserRollMode("roll");
+    }
+});
+
 /**
  * Define your class that extends FormApplication
  */
