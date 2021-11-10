@@ -911,6 +911,10 @@
   display: block;
 }
 
+#clock-display {
+  max-height: 50vh;
+}
+
 /* SCSS HEX */
 :root {
   /* CSS HSL */

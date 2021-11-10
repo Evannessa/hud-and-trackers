@@ -1,4 +1,5 @@
 "use strict";
+import { ClockDisplay } from "./ClockDisplay.js";
 import * as HelperFunctions from "./helper-functions.js";
 let socket;
 
@@ -33,6 +34,7 @@ Hooks.once("socketlib.ready", () => {
 // start a rendered clock object to keep track of
 // all the rendered clocks
 Hooks.on("ready", () => {
+    game.sharedClocks = {};
     game.clockDisplay = new ClockDisplay().render(true);
     game.renderedClocks = {};
     hookEntities();
@@ -40,6 +42,29 @@ Hooks.on("ready", () => {
 Hooks.on("renderClockViewer", (app, html) => {
     game.clockViewer = app;
 });
+
+function addToSharedClocks(clock) {
+    game.sharedClocks[clock.ourId] = clock;
+    updateClockDisplay();
+}
+function removeFromSharedClocks(clock) {
+    delete game.sharedClocks[clock.ourId];
+    updateClockDisplay();
+}
+
+function updateSharedClocks(clock) {
+    game.sharedClocks[clock.ourId] = clock;
+    updateClockDisplay();
+}
+
+function updateClockDisplay() {
+    if (game.clockDisplay) {
+        game.clockDisplay.clocks = game.sharedClocks;
+        game.clockDisplay.render(true);
+    }
+}
+
+//**HANDLEBAR HELPERS =================== */
 Handlebars.registerHelper("isNumber", function (value) {
     return Number.isNaN(value);
 });
@@ -53,6 +78,7 @@ Handlebars.registerHelper("times", function (n, block) {
     return accum;
 });
 
+/**For showing clocks */
 class Clock extends FormApplication {
     constructor(clockData) {
         super({
@@ -149,9 +175,13 @@ class Clock extends FormApplication {
         event.preventDefault();
         if (this.data.shared) {
             this.data.shared = false;
+            //remove from shared clocks
+            removeFromSharedClocks(this.data);
             ui.notifications.notify("Stopped sharing clock");
         } else {
             this.data.shared = true;
+            //add to shared clocks
+            addToSharedClocks(this.data);
             ui.notifications.notify("Sharing clock");
         }
         this.saveAndRenderApp();
@@ -203,16 +233,20 @@ class Clock extends FormApplication {
             if ($(this).data("initialText") !== $(this).html()) {
                 // ... check if it's the title or a label, then save and render it
                 let newData = $(this).html();
+
+                //if we're editing a break label
                 if (this.classList.contains("breakLabel")) {
                     app.data.breakLabels[this.id] = newData;
+
+                    //if we're editing the clock's name
                 } else if (this.classList.contains("clockName")) {
                     app.data.name = newData;
+
+                    //if we're editing the waypoint
                 } else if (this.classList.contains("waypointLabel")) {
-                    console.log(app.data.waypoints);
-                    console.log(this.parentNode);
                     app.data.waypoints[this.parentNode.id] = newData;
-                    console.log(app.data.waypoints);
                 }
+                //save and render the app
                 app.saveAndRenderApp();
             }
         });
@@ -372,6 +406,36 @@ class Clock extends FormApplication {
                 console.log("Invalid action");
         }
     }
+
+    async handleBreaksAndWaypoints() {
+        //adding breaks if we have any
+        let sectionsArray = Array.from(sections);
+        let framesArray = Array.from(frames);
+        breakLabels = Array.from(breakLabels);
+        let count = 0;
+        //go through all the sub-sections if there are some
+        if (this.data.breaks.length > 0) {
+            //if breaks is = [2, 1, 2]
+            this.data.breaks.forEach((num) => {
+                count += num; //count = 2, first time around, 3 second time around, 5 3rd time around
+                $(sectionsArray[count - 1]).attr("data-break", true); //(we're subtracting one since array indices start at zero)
+            });
+            let i = 0;
+
+            for (i = 0; i < this.data.breaks.length; i++) {
+                $(framesArray[i]).width((index, currentWidth) => {
+                    return currentWidth * this.data.breaks[i];
+                });
+                $(breakLabels[i]).width((index, currentWidth) => {
+                    return currentWidth * this.data.breaks[i];
+                });
+                $(waypoints[i]).width((index, currentWidth) => {
+                    return currentWidth * this.data.breaks[i];
+                });
+            }
+        }
+    }
+
     //activating all the listeners on the app
     async activateListeners(html) {
         super.activateListeners(html);
@@ -496,6 +560,7 @@ class Clock extends FormApplication {
 
         //if we're sharing this, update on other users' ends
         if (this.data.shared) {
+            updateSharedClocks(this.data);
             socket.executeForOthers("renderNewClockFromData", this.data);
         }
 
@@ -711,7 +776,7 @@ async function saveClock(clock) {
  * @param {String} userId - the Id of the user whose saved clocks we want to get
  * @returns the users clocks, which should be an Object with ids and Clock data
  */
-function getClocksByUser(userId) {
+export function getClocksByUser(userId) {
     return game.users.get(userId)?.getFlag("hud-and-trackers", "savedClocks");
 }
 /**
@@ -1113,38 +1178,3 @@ export class ClockViewer extends FormApplication {
 Handlebars.registerHelper("getValues", (data) => {
     return Object.values(data);
 });
-class ClockDisplay extends FormApplication {
-    constructor(data = {}) {
-        super(data);
-        //TODO: We want to show the shared clocks, but this is fine for now
-        this.clocks = getClocksByUser(game.userId);
-    }
-
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            classes: ["form"],
-            popOut: true,
-            template: `modules/hud-and-trackers/templates/clock-partials/clock-display.hbs`,
-            id: "clock-display",
-            title: "Clock Display",
-        });
-    }
-
-    getData() {
-        //     ...this.data,
-        //     sections: Object.values(this.data.sectionMap),
-        //     user: game.user,
-        // // Send data to the template
-        console.log(this.clocks);
-
-        return {
-            ...this.clocks,
-        };
-    }
-
-    activateListeners(html) {
-        super.activateListeners(html);
-    }
-
-    async _updateObject(event, formData) {}
-}
