@@ -171,6 +171,7 @@ export class Clock extends FormApplication {
 
             await unlinkClockFromEntity(ourEntity, app.data.ourId);
         }
+        removeFromSharedClocks(app.data);
         //delete us from the saved clocks setting
         deleteClock(app.data.ourId);
 
@@ -729,7 +730,7 @@ async function showClockDrawer(app, html, linkedClocks) {
 }
 
 //check if the clock is already rendered
-function isClockRendered(clockId) {
+export function isClockRendered(clockId) {
     return game.renderedClocks[clockId];
 }
 //event handler for when the clock is rendered
@@ -759,7 +760,7 @@ function registerSceneHook() {
  * renders a new clock from saved clock data, or updates and brings-to-top the clock if it is already rendered
  * @param {Object} clockData - an object holding the clock's data
  */
-async function renderNewClockFromData(clockData) {
+export async function renderNewClockFromData(clockData) {
     if (!isClockRendered(clockData.ourId)) {
         await new Clock(clockData).render(true);
     } else {
@@ -794,7 +795,7 @@ export function getClocksByUser(userId) {
  * this method will return all the clocks combined from every user
  * @returns allClocks - returns every clock of every user, combined together as one
  */
-function getAllClocks() {
+export function getAllClocks() {
     const allClocks = game.users.reduce((accumulator, user) => {
         const userClocks = getClocksByUser(user.id);
 

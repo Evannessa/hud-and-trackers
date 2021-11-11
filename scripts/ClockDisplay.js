@@ -1,20 +1,18 @@
 "use strict";
-import { getClocksByUser } from "./clock.js";
+import {
+    Clock,
+    getAllClocks,
+    isClockRendered,
+    renderNewClockFromData,
+    getClocksByUser,
+} from "./clock.js";
 
-Hooks.once("renderClockDisplay", (app, html) => {
-    // HelperFunctions.setInvisibleHeader(html, false);
-    // let windowWidth = $(document).width();
-    // console.log(windowWidth);
-    let appWidth = app.position.width;
-    // console.log(appWidth);
-    // let value = windowWidth - appWidth + 10;
-    // let value = -(windowWidth + appWidth);
-    // console.log(value);
-    // let windowHeight = $(document).height();
-    // let appHeight = app.position.height;
-    // let value = windowHeight - (appHeight + 200);
-    app.setPosition({ left: -appWidth });
-});
+// Hooks.once("renderClockDisplay", (app, html) => {
+
+//     let appWidth = app.position.width;
+
+//     app.setPosition({ left: -appWidth });
+// });
 export class ClockDisplay extends FormApplication {
     constructor(data = {}) {
         super(data);
@@ -35,21 +33,6 @@ export class ClockDisplay extends FormApplication {
     }
 
     getData() {
-        let testClock = {
-            name: "none",
-            breakLabels: {},
-            breaks: [],
-            filledSections: 2,
-            gradient: "",
-            linkedEntities: {},
-            ourId: "id0",
-            sectionCount: 3,
-            sectionMap: {},
-            showWayPoints: false,
-            startFilled: false,
-            waypoints: {},
-            user: game.user,
-        };
         let data = {};
         for (let clockId in this.clocks) {
             data[clockId] = { ...this.clocks[clockId] };
@@ -65,20 +48,31 @@ export class ClockDisplay extends FormApplication {
         let action = el.data().action;
         switch (action) {
             case "showClocks":
-                console.log("Showing clock");
                 el.closest("#clock-display").toggleClass("expanded");
-                console.log(el.closest("#clock-display"));
                 break;
+        }
+    }
+
+    openClock(event) {
+        event.preventDefault();
+        let el = $(event.currentTarget);
+        let id = el.attr("id");
+        if (!isClockRendered()) {
+            renderNewClockFromData(getAllClocks()[id]);
         }
     }
 
     activateListeners(html) {
         // super.activateListeners(html);
         html.on("click", "[data-action]", this.handleButtonClick.bind(this));
+        html.on("click", ".clockApp", this.openClock);
         let i = 0;
         for (var clockId in this.clocks) {
-            //! this seems to be a workaround
-            $(`#clock-display section > div`).wrapAll(`<form id=${clockId}>`);
+            //! this seems to be a workaround for the first clock being dropped
+            //! into the template without a form wrapped around it
+            $(`#clock-display section > div`).wrapAll(
+                `<form class="clockApp" id=${clockId}>`
+            );
             this.handleBreaksAndWaypoints(this.clocks[clockId]);
             this.refillSections(this.clocks[clockId]);
             this.applyGradient(this.clocks[clockId]);

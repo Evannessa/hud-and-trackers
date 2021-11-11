@@ -880,9 +880,7 @@
   width: -webkit-max-content !important;
   width: max-content !important;
   width: -moz-max-content !important;
-  height: -webkit-max-content !important;
-  height: max-content !important;
-  height: -moz-max-content !important;
+  height: 50vh;
   position: fixed;
   left: -380px !important;
   top: 50vh !important;
@@ -893,7 +891,8 @@
   transform: translateX(100%);
 }
 #clock-display .window-content {
-  overflow: visible;
+  overflow-x: visible;
+  overflow-y: visible;
   display: flex;
   flex-direction: column;
   justify-content: stretch;
@@ -902,10 +901,22 @@
 #clock-display .window-content .clockName {
   flex: 0;
 }
+#clock-display .window-content section {
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+#clock-display .window-content section form:hover {
+  background-color: gray;
+  cursor: pointer;
+}
 #clock-display .window-content .showClocks {
   position: absolute;
-  right: -3.5rem;
-  top: 0;
+  right: -4.5rem;
+  top: 1rem;
+  font-size: 1.12rem;
+  white-space: nowrap;
   width: -webkit-min-content;
   width: -moz-min-content;
   width: min-content;

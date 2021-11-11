@@ -5,8 +5,9 @@
 
 	width: max-content !important;
 	width: -moz-max-content !important;
-	height: max-content !important;
-	height: -moz-max-content !important;
+	height: 50vh;
+	// height: max-content !important;
+	// height: -moz-max-content !important;
 	position: fixed;
 	left: -380px !important;
 	top: 50vh !important;
@@ -19,7 +20,8 @@
 
 	.window-content {
 
-		overflow: visible;
+		overflow-x: visible;
+		overflow-y: visible;
 		display: flex;
 		flex-direction: column;
 		justify-content: stretch;
@@ -28,12 +30,28 @@
 			flex: 0;
 		}
 
+		section {
+			overflow-y: scroll;
+			display: flex;
+			flex-direction: column;
+			flex-wrap: wrap;
+
+			form {
+				&:hover {
+					background-color: gray;
+					cursor: pointer;
+				}
+			}
+		}
+
 		position: relative;
 
 		.showClocks {
 			position: absolute;
-			right: -3.5rem;
-			top: 0;
+			right: -4.5rem;
+			top: 1rem;
+			font-size: 1.12rem;
+			white-space: nowrap;
 			width: min-content;
 			text-align: left;
 			background-color: none;
@@ -42,6 +60,7 @@
 			text-orientation: mixed;
 			text-align: center;
 		}
+
 
 		.contentWrapper {
 			display: grid;

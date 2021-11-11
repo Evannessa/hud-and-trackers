@@ -2,7 +2,6 @@
 	<button class="showClocks" data-action="showClocks">Show Clocks</button>
 	<section>
 	{{#each this}}
-	{{!-- {{> 'modules/hud-and-trackers/templates/clock.html'  (spreadObject this) sections=(getValues sectionMap) user=game.user}} --}}
 	{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
 	<hr>
 	{{/each}}
