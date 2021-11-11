@@ -54,9 +54,15 @@
 				// padding: 0.25rem;
 
 				&:hover {
-					outline: 1px solid navy;
-					// background-color: gray;
+					// outline: 1px solid navy;
+					outline: 1px solid #4776E6;
+					background-clip: content-box;
 					cursor: pointer;
+
+					* {
+
+						color: #4776E6;
+					}
 				}
 			}
 		}
@@ -76,6 +82,10 @@
 			transform: rotate(90deg);
 			text-orientation: mixed;
 			text-align: center;
+
+			&:hover {
+				background-color: #4776E6;
+			}
 		}
 
 

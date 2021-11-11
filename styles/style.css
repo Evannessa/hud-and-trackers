@@ -918,8 +918,12 @@
   flex-wrap: wrap;
 }
 #clock-display .window-content section form.clockApp:hover {
-  outline: 1px solid navy;
+  outline: 1px solid #4776E6;
+  background-clip: content-box;
   cursor: pointer;
+}
+#clock-display .window-content section form.clockApp:hover * {
+  color: #4776E6;
 }
 #clock-display .window-content .showClocks {
   position: absolute;
@@ -938,6 +942,9 @@
   -webkit-text-orientation: mixed;
           text-orientation: mixed;
   text-align: center;
+}
+#clock-display .window-content .showClocks:hover {
+  background-color: #4776E6;
 }
 #clock-display .window-content .contentWrapper {
   display: grid;
