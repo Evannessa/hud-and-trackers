@@ -874,6 +874,16 @@
   display: block;
 }
 
+#clock-display,
+#clock-display > .window-content,
+#clock-display .window-content > form {
+  background-color: transparent;
+}
+
+#clock-display .window-content > form > section {
+  background-color: rgba(19, 22, 26, 0.603);
+}
+
 #clock-display {
   max-height: 50vh;
   font-size: 10px;
@@ -907,8 +917,8 @@
   flex-direction: column;
   flex-wrap: wrap;
 }
-#clock-display .window-content section form:hover {
-  background-color: gray;
+#clock-display .window-content section form.clockApp:hover {
+  outline: 1px solid navy;
   cursor: pointer;
 }
 #clock-display .window-content .showClocks {

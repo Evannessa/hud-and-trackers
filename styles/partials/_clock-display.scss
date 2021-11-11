@@ -1,3 +1,13 @@
+#clock-display,
+#clock-display>.window-content,
+#clock-display .window-content>form {
+	background-color: transparent;
+}
+
+#clock-display .window-content>form>section {
+	background-color: rgba(19, 22, 26, 0.603);
+}
+
 #clock-display {
 	max-height: 50vh;
 	font-size: 10px;
@@ -13,6 +23,7 @@
 	top: 50vh !important;
 	transform: translateX(0);
 	transition: all 0.25s;
+
 
 	&.expanded {
 		transform: translateX(100%);
@@ -30,15 +41,21 @@
 			flex: 0;
 		}
 
+
+
 		section {
 			overflow-y: scroll;
 			display: flex;
 			flex-direction: column;
 			flex-wrap: wrap;
 
-			form {
+			// padding: 0.25rem;
+			form.clockApp {
+				// padding: 0.25rem;
+
 				&:hover {
-					background-color: gray;
+					outline: 1px solid navy;
+					// background-color: gray;
 					cursor: pointer;
 				}
 			}
