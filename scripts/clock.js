@@ -208,7 +208,6 @@ export class Clock extends FormApplication {
 
     //this will handle if the clock's delete button is clicked
     async handleClockDeletion(event, app) {
-        console.log("How many times is this being called?");
         event.preventDefault();
         //delete us in all our linked entities
         for (let entityId in app.data.linkedEntities) {
@@ -623,7 +622,9 @@ export class Clock extends FormApplication {
         //if we're sharing this, update on other users' ends
         if (this.data.shared) {
             updateSharedClocks(this.data);
-            socket.executeForOthers("renderNewClockFromData", this.data);
+            //!we want to take this off so we're not automatically updating
+            //!but we do want to re-render if it's already open
+            // socket.executeForOthers("renderNewClockFromData", this.data);
         }
 
         //re-render
@@ -769,7 +770,6 @@ async function showClockDrawer(app, html, linkedClocks) {
             return;
         }
         const action = clickedElement.data().action;
-        console.log(clickedElement);
         let clockData = linkedClocks[clickedElement.attr("id")];
         switch (action) {
             case "open": {
