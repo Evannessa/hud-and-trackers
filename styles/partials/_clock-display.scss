@@ -11,22 +11,23 @@
 #clock-display {
 	max-height: 50vh;
 	font-size: 10px;
-
-
 	width: max-content !important;
 	width: -moz-max-content !important;
 	height: 50vh;
 	// height: max-content !important;
 	// height: -moz-max-content !important;
 	position: fixed;
-	left: -380px !important;
+	// left: -100% !important;
 	top: 50vh !important;
-	transform: translateX(0);
+	transform: translateX(-100%);
 	transition: all 0.25s;
 
+	.window-header {
+		display: none;
+	}
 
 	&.expanded {
-		transform: translateX(100%);
+		transform: translateX(0%);
 	}
 
 	.window-content {
@@ -36,43 +37,60 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: stretch;
+		flex-wrap: wrap;
 
 		.clockName {
 			flex: 0;
 		}
 
-
-
-		section {
-			overflow-y: scroll;
-			display: flex;
-			flex-direction: column;
-			flex-wrap: wrap;
-
+		form.clockApp {
 			// padding: 0.25rem;
-			form.clockApp {
-				// padding: 0.25rem;
 
-				&:hover {
-					// outline: 1px solid navy;
-					outline: 1px solid #4776E6;
-					background-clip: content-box;
-					cursor: pointer;
+			&:hover {
+				// outline: 1px solid navy;
+				outline: 1px solid #4776E6;
+				background-clip: content-box;
+				cursor: pointer;
 
-					* {
+				* {
 
-						color: #4776E6;
-					}
+					color: #4776E6;
 				}
 			}
 		}
+
+
+		// form {
+		// 	overflow: visible;
+		// 	display: flex;
+		// 	flex-direction: column;
+		// 	flex-wrap: wrap;
+		// 	max-height: 50vh;
+
+		// 	// padding: 0.25rem;
+		// 	form.clockApp {
+		// 		// padding: 0.25rem;
+
+		// 		&:hover {
+		// 			// outline: 1px solid navy;
+		// 			outline: 1px solid #4776E6;
+		// 			background-clip: content-box;
+		// 			cursor: pointer;
+
+		// 			* {
+
+		// 				color: #4776E6;
+		// 			}
+		// 		}
+		// 	}
+		// }
 
 		position: relative;
 
 		.showClocks {
 			position: absolute;
 			right: -4.5rem;
-			top: 1rem;
+			top: 3rem;
 			font-size: 1.12rem;
 			white-space: nowrap;
 			width: min-content;
@@ -268,15 +286,5 @@
 
 		}
 
-		.entityLinkWrapper {
-			display: flex;
-			flex-wrap: wrap;
-			max-width: fit-content;
-			max-width: -moz-fit-content;
-
-			.entityLink {
-				flex: 0;
-			}
-		}
 	}
 }

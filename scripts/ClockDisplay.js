@@ -13,7 +13,7 @@ import {
 
 //     app.setPosition({ left: -appWidth });
 // });
-export class ClockDisplay extends FormApplication {
+export class ClockDisplay extends Application {
     constructor(data = {}) {
         super(data);
         //TODO: We want to show the shared clocks, but this is fine for now
@@ -54,7 +54,7 @@ export class ClockDisplay extends FormApplication {
     }
 
     openClock(event) {
-        event.preventDefault();
+        // event.preventDefault();
         let el = $(event.currentTarget);
         let id = el.attr("id");
         if (!isClockRendered()) {
@@ -63,16 +63,20 @@ export class ClockDisplay extends FormApplication {
     }
 
     activateListeners(html) {
-        // super.activateListeners(html);
-        html.on("click", "[data-action]", this.handleButtonClick.bind(this));
-        html.on("click", ".clockApp", this.openClock);
+        //! The "html" will be different depending on if you're using application or form-application
+        //
+        super.activateListeners(html);
+        html = html.closest(".app");
+        // $(html).on("click", "button", this.handleButtonClick.bind(this));
+        $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
+        $(html).on("click", ".clockApp", this.openClock);
         let i = 0;
         for (var clockId in this.clocks) {
             //! this seems to be a workaround for the first clock being dropped
             //! into the template without a form wrapped around it
-            $(`#clock-display section > div`).wrapAll(
-                `<form class="clockApp" id=${clockId}>`
-            );
+            // $(`#clock-display .window-content > form > div`).wrapAll(
+            //     `<form class="clockApp" id=${clockId}>`
+            // );
             this.handleBreaksAndWaypoints(this.clocks[clockId]);
             this.refillSections(this.clocks[clockId]);
             this.applyGradient(this.clocks[clockId]);

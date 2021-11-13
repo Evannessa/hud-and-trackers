@@ -1,9 +1,5 @@
-<form>
 	<button class="showClocks" data-action="showClocks">Show Clocks</button>
-	<section>
 	{{#each this}}
 	{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
 	<hr>
 	{{/each}}
-</section>
-</form>

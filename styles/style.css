@@ -892,13 +892,15 @@
   width: -moz-max-content !important;
   height: 50vh;
   position: fixed;
-  left: -380px !important;
   top: 50vh !important;
-  transform: translateX(0);
+  transform: translateX(-100%);
   transition: all 0.25s;
 }
+#clock-display .window-header {
+  display: none;
+}
 #clock-display.expanded {
-  transform: translateX(100%);
+  transform: translateX(0%);
 }
 #clock-display .window-content {
   overflow-x: visible;
@@ -906,29 +908,24 @@
   display: flex;
   flex-direction: column;
   justify-content: stretch;
+  flex-wrap: wrap;
   position: relative;
 }
 #clock-display .window-content .clockName {
   flex: 0;
 }
-#clock-display .window-content section {
-  overflow-y: scroll;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-}
-#clock-display .window-content section form.clockApp:hover {
+#clock-display .window-content form.clockApp:hover {
   outline: 1px solid #4776E6;
   background-clip: content-box;
   cursor: pointer;
 }
-#clock-display .window-content section form.clockApp:hover * {
+#clock-display .window-content form.clockApp:hover * {
   color: #4776E6;
 }
 #clock-display .window-content .showClocks {
   position: absolute;
   right: -4.5rem;
-  top: 1rem;
+  top: 3rem;
   font-size: 1.12rem;
   white-space: nowrap;
   width: -webkit-min-content;
@@ -1087,16 +1084,6 @@
   /* change the direction of the change here */
   color: #fff;
   text-decoration: none;
-}
-#clock-display .window-content .entityLinkWrapper {
-  display: flex;
-  flex-wrap: wrap;
-  max-width: -webkit-fit-content;
-  max-width: fit-content;
-  max-width: -moz-fit-content;
-}
-#clock-display .window-content .entityLinkWrapper .entityLink {
-  flex: 0;
 }
 
 /* SCSS HEX */
