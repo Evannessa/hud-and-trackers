@@ -65,9 +65,12 @@ export class ClockDisplay extends Application {
     activateListeners(html) {
         //! The "html" will be different depending on if you're using application or form-application
         //
+        console.log(html);
         super.activateListeners(html);
         html = html.closest(".app");
         // $(html).on("click", "button", this.handleButtonClick.bind(this));
+        $(html).off("click", "[data-action]");
+        $(html).off("click", ".clockApp");
         $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
         $(html).on("click", ".clockApp", this.openClock);
         let i = 0;
