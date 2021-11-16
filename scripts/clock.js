@@ -58,11 +58,17 @@ async function updateSetting(settingScope, settingName, settingValue) {
     await game.settings.set(settingScope, settingName, settingValue);
 }
 
-async function saveAndUpdateClockDisplays() {
+/**
+ * this method will save the sharedClocks in the game settings
+ * then update everyone else's clockDisplays
+ */
+async function saveAndUpdateClockDisplays(clock) {
     //update the setting to save between sessions
     if (game.user.isGM) {
         await game.settings.set("hud-and-trackers", "sharedClocks", game.sharedClocks);
     } else {
+        //if we're not the GM, execute updating the setting as the GM
+        //TODO: need to test this
         await socket.executeAsGM(
             "updateSetting",
             "hud-and-trackers",
@@ -70,58 +76,57 @@ async function saveAndUpdateClockDisplays() {
             game.sharedClocks
         );
     }
-    updateClockDisplay(true); //update your own display
-    socket.executeForOthers("updateClockDisplay", false); //update everyone else's display
+    updateClockDisplay(true, clock); //update your own display
+    socket.executeForOthers("updateClockDisplay", false, clock); //update everyone else's display
 }
+
+/**
+ * this method adds a new clock to the shared clocks,
+ * then calls the saveAndUpdateClockDisplays method to save
+ * @param {Object} clock - the clock we're sharing
+ */
 async function addToSharedClocks(clock) {
     game.sharedClocks[clock.ourId] = { ...clock };
-    await saveAndUpdateClockDisplays();
-    // if (game.user.isGM) {
-    //     await game.settings.set("hud-and-trackers", "sharedClocks", game.sharedClocks);
-    // } else {
-    //     await socket.executeAsGM(
-    //         "updateSetting",
-    //         "hud-and-trackers",
-    //         "sharedClocks",
-    //         game.sharedClocks
-    //     );
-    // }
-    // updateClockDisplay();
+    await saveAndUpdateClockDisplays(clock);
 }
+/**
+ * this method removes a clock from the shared clocks Object,
+ * then calls saveAndUpdateClockDisplays method to save
+ * @param {Object} clock - the clock to be deleted
+ */
 async function removeFromSharedClocks(clock) {
     delete game.sharedClocks[clock.ourId];
-    await saveAndUpdateClockDisplays();
-    // if (game.user.isGM) {
-    //     game.settings.set("hud-and-trackers", "sharedClocks", game.sharedClocks);
-    // } else {
-    //     socket.executeAsGM(
-    //         "updateSetting",
-    //         "hud-and-trackers",
-    //         "sharedClocks",
-    //         game.sharedClocks
-    //     );
-    // }
-    // // game.settings.set("hud-and-trackers", "sharedClocks", game.sharedClocks);
-    // updateClockDisplay();
+    await saveAndUpdateClockDisplays(clock);
 }
 
+/**
+ * this method updates one of the clocks in the sharedClocks object of game,
+ * then calls {@code saveAndUpdateClockDisplays} method to save
+ * @param {clock} clock - the clock that's been updated
+ */
 async function updateSharedClocks(clock) {
     game.sharedClocks[clock.ourId] = { ...clock };
-    await saveAndUpdateClockDisplays();
-    //this needs to be saved by the GM
-    // await game.settings.set("hud-and-trackers", "sharedClocks", game.sharedClocks);
-    // updateClockDisplay();
-    // socket.executeForOthers("updateClockDisplay"); //update everyone else's display
+    await saveAndUpdateClockDisplays(clock);
 }
 
-async function updateClockDisplay(isCreator) {
+/**
+ * this visually updates the clock display if any shared clocks change
+ * @param isCreator - is the current user the creator?
+ * */
+async function updateClockDisplay(isCreator, clock) {
     console.log("Clock display updating");
+    //if the current user is NOT the creator, set sharedClocks to the game settings
     if (!isCreator) {
         game.sharedClocks = await game.settings.get("hud-and-trackers", "sharedClocks");
     }
+    //if we do have a clock display, update its clocks to be the shared clocks, and re-render it
     if (game.clockDisplay) {
         game.clockDisplay.clocks = game.sharedClocks;
         game.clockDisplay.render(true);
+    }
+    //if the player has the clock open, re-render
+    if (isClockRendered(clock.data.ourId)) {
+        reRenderClock(clock.data);
     }
 }
 
@@ -807,16 +812,27 @@ function registerSceneHook() {
     });
 }
 /**
- * renders a new clock from saved clock data, or updates and brings-to-top the clock if it is already rendered
+ * renders a new clock from saved clock data,
+ * or updates and brings-to-top the clock if it is already rendered
  * @param {Object} clockData - an object holding the clock's data
  */
 export async function renderNewClockFromData(clockData) {
     if (!isClockRendered(clockData.ourId)) {
         await new Clock(clockData).render(true);
     } else {
-        game.renderedClocks[clockData.ourId].updateEntireClock(clockData);
-        game.renderedClocks[clockData.ourId].bringToTop();
+        reRenderClock(clockData);
+        // game.renderedClocks[clockData.ourId].updateEntireClock(clockData);
+        // game.renderedClocks[clockData.ourId].bringToTop();
     }
+}
+
+/**
+ * updates and brings-to-top an already rendered clock
+ * @param {Object} clockData - object holding clock's data
+ */
+export async function reRenderClock(clockData) {
+    game.renderedClocks[clockData.ourId].updateEntireClock(clockData);
+    game.renderedClocks[clockData.ourId].bringToTop();
 }
 
 //external functions for socket to handle internal function of Clock Object
