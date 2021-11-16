@@ -61,8 +61,9 @@ async function updateSetting(settingScope, settingName, settingValue) {
 /**
  * this method will save the sharedClocks in the game settings
  * then update everyone else's clockDisplays
+ * @param {Object} clockData - the clock data being passed
  */
-async function saveAndUpdateClockDisplays(clock) {
+async function saveAndUpdateClockDisplays(clockData) {
     //update the setting to save between sessions
     if (game.user.isGM) {
         await game.settings.set("hud-and-trackers", "sharedClocks", game.sharedClocks);
@@ -76,44 +77,46 @@ async function saveAndUpdateClockDisplays(clock) {
             game.sharedClocks
         );
     }
-    updateClockDisplay(true, clock); //update your own display
-    socket.executeForOthers("updateClockDisplay", false, clock); //update everyone else's display
+    updateClockDisplay(true, clockData); //update your own display
+    socket.executeForOthers("updateClockDisplay", false, clockData); //update everyone else's display
 }
 
 /**
  * this method adds a new clock to the shared clocks,
  * then calls the saveAndUpdateClockDisplays method to save
- * @param {Object} clock - the clock we're sharing
+ * @param {Object} clockData - the clock data we're sharing
  */
-async function addToSharedClocks(clock) {
-    game.sharedClocks[clock.ourId] = { ...clock };
-    await saveAndUpdateClockDisplays(clock);
+async function addToSharedClocks(clockData) {
+    game.sharedClocks[clockData.ourId] = { ...clockData };
+    await saveAndUpdateClockDisplays(clockData);
 }
 /**
  * this method removes a clock from the shared clocks Object,
  * then calls saveAndUpdateClockDisplays method to save
- * @param {Object} clock - the clock to be deleted
+ * @param {Object} clockData - the clock to be deleted
  */
-async function removeFromSharedClocks(clock) {
-    delete game.sharedClocks[clock.ourId];
-    await saveAndUpdateClockDisplays(clock);
+async function removeFromSharedClocks(clockData) {
+    delete game.sharedClocks[clockData.ourId];
+    await saveAndUpdateClockDisplays(clockData);
 }
 
 /**
  * this method updates one of the clocks in the sharedClocks object of game,
  * then calls {@code saveAndUpdateClockDisplays} method to save
- * @param {clock} clock - the clock that's been updated
+ * @param {clock} clockData - the clock that's been updated
  */
-async function updateSharedClocks(clock) {
-    game.sharedClocks[clock.ourId] = { ...clock };
-    await saveAndUpdateClockDisplays(clock);
+async function updateSharedClocks(clockData) {
+    console.log("Updating clock ", clockData);
+    game.sharedClocks[clockData.ourId] = { ...clockData };
+    await saveAndUpdateClockDisplays(clockData);
 }
 
 /**
  * this visually updates the clock display if any shared clocks change
  * @param isCreator - is the current user the creator?
  * */
-async function updateClockDisplay(isCreator, clock) {
+async function updateClockDisplay(isCreator, clockData) {
+    console.log(clockData);
     console.log("Clock display updating");
     //if the current user is NOT the creator, set sharedClocks to the game settings
     if (!isCreator) {
@@ -124,9 +127,11 @@ async function updateClockDisplay(isCreator, clock) {
         game.clockDisplay.clocks = game.sharedClocks;
         game.clockDisplay.render(true);
     }
-    //if the player has the clock open, re-render
-    if (isClockRendered(clock.data.ourId)) {
-        reRenderClock(clock.data);
+    //if the player has the clock open, and we're not the clock's creator who just changed the clock
+    //re-render the clock
+    if (isClockRendered(clockData.ourId) && !isCreator) {
+        //TODO: is this causing the bug?
+        reRenderClock(clockData);
     }
 }
 
