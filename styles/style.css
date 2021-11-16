@@ -934,8 +934,6 @@
   width: min-content;
   text-align: left;
   background-color: none;
-  -ms-writing-mode: tb-lr;
-      writing-mode: vertical-lr;
   transform: rotate(90deg);
   -webkit-text-orientation: mixed;
           text-orientation: mixed;
