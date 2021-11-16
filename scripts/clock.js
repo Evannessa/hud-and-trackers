@@ -48,6 +48,8 @@ Hooks.on("ready", async () => {
     game.clockDisplay = new ClockDisplay().render(true);
     game.renderedClocks = {};
     hookEntities();
+
+    getClocksLinkedToEntity(game.actors.getName("Asunder").id);
 });
 Hooks.on("renderClockViewer", (app, html) => {
     game.clockViewer = app;
@@ -130,7 +132,6 @@ async function updateClockDisplay(isCreator, clockData) {
     //if the player has the clock open, and we're not the clock's creator who just changed the clock
     //re-render the clock
     if (isClockRendered(clockData.ourId) && !isCreator) {
-        //TODO: is this causing the bug?
         reRenderClock(clockData);
     }
 }
@@ -695,7 +696,8 @@ export class Clock extends FormApplication {
 
             //set the entity flag *after* the linkedEntities is updated, so that the entity
             //gets the most recent version
-            await ourEntity.setFlag("hud-and-trackers", "linkedClocks", newLinkedClocks);
+            //TODO: Make sure the below is not necessary
+            // await ourEntity.setFlag("hud-and-trackers", "linkedClocks", newLinkedClocks);
             this.saveAndRenderApp();
         }
     }
@@ -883,6 +885,19 @@ export function getAllClocks() {
         }
     }, {});
     return allClocks;
+}
+
+/**
+ * return clocks that have this entity linked to them
+ * @param {string} entityId - the id of the entity we're looking for linkedClocks on
+ * @returns linkedClocks - the linked clocks found on this entity
+ */
+export function getClocksLinkedToEntity(entityId) {
+    let linkedClocks = Object.values(getAllClocks()).filter((clock) => {
+        //if our linked entities keys includes this entity, include it in allClocks
+        return Object.keys(clock.linkedEntities).includes(entityId);
+    });
+    return linkedClocks;
 }
 
 /**
