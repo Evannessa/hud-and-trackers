@@ -5,7 +5,7 @@ export const ClockHelpers = async function () {
         let action = el.data().action;
         switch (action) {
             case "showClocks":
-                el.closest("#clock-display").toggleClass("expanded");
+                el.closest(".app-child").toggleClass("expanded");
                 break;
         }
     }
@@ -19,22 +19,26 @@ export const ClockHelpers = async function () {
         }
     }
 
-    function activateListeners(html, clocks) {
+    function _activateListeners(html, clocks) {
+        console.log(document);
         //! The "html" will be different depending on if you're using application or form-application
+        console.log(html, "Clock listener html");
         $(html).off("click", "[data-action]");
         $(html).off("click", ".clockApp");
         $(html).on("click", "[data-action]", handleButtonClick);
         $(html).on("click", ".clockApp", openClock);
         let i = 0;
         for (var clockId in clocks) {
-            handleBreaksAndWaypoints(clocks[clockId]);
-            refillSections(clocks[clockId]);
-            applyGradient(clocks[clockId]);
+            handleBreaksAndWaypoints.call(html, clocks[clockId]);
+            refillSections.call(html, clocks[clockId]);
+            applyGradient.call(html, clocks[clockId]);
             i++;
         }
     }
     async function applyGradient(clockData) {
-        let clockWrapper = $(`#clock-display form#${clockData.ourId} .clockWrapper`);
+        console.log(this);
+        console.log("Applying gradient", clockData);
+        let clockWrapper = $(`.app-child form#${clockData.ourId} .clockWrapper`);
         //make the background wrapper's gradient look like the chosen one
         clockWrapper.css("backgroundImage", clockData.gradient);
     }
@@ -42,7 +46,7 @@ export const ClockHelpers = async function () {
     async function refillSections(clockData) {
         let filled = 0;
         let sectionsArray = $(
-            `#clock-display form#${clockData.ourId} .clockSection`
+            `.app-child form#${clockData.ourId} .clockSection`
         ).toArray();
         sectionsArray.forEach((element) => {
             //refilling the sections after refresh
@@ -56,15 +60,11 @@ export const ClockHelpers = async function () {
     async function handleBreaksAndWaypoints(clockData) {
         //adding breaks if we have any
         let sectionsArray = $(
-            `#clock-display form#${clockData.ourId} .clockSection`
+            `.app-child form#${clockData.ourId} .clockSection`
         ).toArray();
-        let framesArray = $(
-            `#clock-display form#${clockData.ourId} .frameSection`
-        ).toArray();
-        let breakLabels = $(
-            `#clock-display form#${clockData.ourId} .breakLabel`
-        ).toArray();
-        let waypoints = $(`#clock-display form#${clockData.ourId} .waypoint`).toArray();
+        let framesArray = $(`.app-child form#${clockData.ourId} .frameSection`).toArray();
+        let breakLabels = $(`.app-child form#${clockData.ourId} .breakLabel`).toArray();
+        let waypoints = $(`.app-child form#${clockData.ourId} .waypoint`).toArray();
         let count = 0;
         //go through all the sub-sections if there are some
         if (clockData.breaks.length > 0) {
@@ -88,4 +88,13 @@ export const ClockHelpers = async function () {
             }
         }
     }
+
+    return {
+        handleButtonClick: handleButtonClick,
+        openClock: openClock,
+        _activateListeners: _activateListeners,
+        applyGradient: applyGradient,
+        refillSections: refillSections,
+        handleBreaksAndWaypoints: handleBreaksAndWaypoints,
+    };
 };

@@ -8,7 +8,8 @@
 	background-color: rgba(19, 22, 26, 0.603);
 }
 
-#clock-display {
+#clock-display,
+.app-child {
 	max-height: 50vh;
 	font-size: 10px;
 	width: max-content !important;
@@ -287,8 +288,29 @@
 	}
 }
 
-#clock-display {
-	&.app-child {
-		position: absolute;
+.app-child {
+	position: absolute;
+	z-index: -10;
+	top: 50% !important;
+	transform: translateX(0);
+	right: 0;
+
+	&.expanded {
+		transform: translateX(100%);
 	}
+
+	// .clock-container,
+	// .clock-container * {
+	// 	width: 0px;
+	// }
+
+	// &.expanded {
+	// 	.clock-container {
+	// 		width: max-content;
+
+	// 		* {
+	// 			width: inherit;
+	// 		}
+	// 	}
+	// }
 }

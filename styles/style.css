@@ -884,7 +884,8 @@
   background-color: rgba(19, 22, 26, 0.603);
 }
 
-#clock-display {
+#clock-display,
+.app-child {
   max-height: 50vh;
   font-size: 10px;
   width: -webkit-max-content !important;
@@ -896,14 +897,18 @@
   transform: translateX(-100%);
   transition: all 0.25s;
 }
-#clock-display .window-header {
+#clock-display .window-header,
+.app-child .window-header {
   display: none;
 }
-#clock-display.expanded {
+#clock-display.expanded,
+.app-child.expanded {
   transform: translateX(0%);
 }
 #clock-display .window-content,
-#clock-display .clock-container {
+#clock-display .clock-container,
+.app-child .window-content,
+.app-child .clock-container {
   overflow-x: visible;
   overflow-y: visible;
   display: flex;
@@ -913,21 +918,29 @@
   position: relative;
 }
 #clock-display .window-content .clockName,
-#clock-display .clock-container .clockName {
+#clock-display .clock-container .clockName,
+.app-child .window-content .clockName,
+.app-child .clock-container .clockName {
   flex: 0;
 }
 #clock-display .window-content form.clockApp:hover,
-#clock-display .clock-container form.clockApp:hover {
+#clock-display .clock-container form.clockApp:hover,
+.app-child .window-content form.clockApp:hover,
+.app-child .clock-container form.clockApp:hover {
   outline: 1px solid #4776E6;
   background-clip: content-box;
   cursor: pointer;
 }
 #clock-display .window-content form.clockApp:hover *,
-#clock-display .clock-container form.clockApp:hover * {
+#clock-display .clock-container form.clockApp:hover *,
+.app-child .window-content form.clockApp:hover *,
+.app-child .clock-container form.clockApp:hover * {
   color: #4776E6;
 }
 #clock-display .window-content .showClocks,
-#clock-display .clock-container .showClocks {
+#clock-display .clock-container .showClocks,
+.app-child .window-content .showClocks,
+.app-child .clock-container .showClocks {
   position: absolute;
   right: -4.5rem;
   top: 3rem;
@@ -945,11 +958,15 @@
   text-align: center;
 }
 #clock-display .window-content .showClocks:hover,
-#clock-display .clock-container .showClocks:hover {
+#clock-display .clock-container .showClocks:hover,
+.app-child .window-content .showClocks:hover,
+.app-child .clock-container .showClocks:hover {
   background-color: #4776E6;
 }
 #clock-display .window-content .contentWrapper,
-#clock-display .clock-container .contentWrapper {
+#clock-display .clock-container .contentWrapper,
+.app-child .window-content .contentWrapper,
+.app-child .clock-container .contentWrapper {
   display: grid;
   width: -webkit-min-content;
   width: -moz-min-content;
@@ -962,7 +979,11 @@
 #clock-display .window-content .contentWrapper .frameWrapper,
 #clock-display .window-content .contentWrapper .clockWrapper,
 #clock-display .clock-container .contentWrapper .frameWrapper,
-#clock-display .clock-container .contentWrapper .clockWrapper {
+#clock-display .clock-container .contentWrapper .clockWrapper,
+.app-child .window-content .contentWrapper .frameWrapper,
+.app-child .window-content .contentWrapper .clockWrapper,
+.app-child .clock-container .contentWrapper .frameWrapper,
+.app-child .clock-container .contentWrapper .clockWrapper {
   width: -webkit-min-content;
   width: -moz-min-content;
   width: min-content;
@@ -970,7 +991,9 @@
   grid-column: 1;
 }
 #clock-display .window-content .headerWrapper,
-#clock-display .clock-container .headerWrapper {
+#clock-display .clock-container .headerWrapper,
+.app-child .window-content .headerWrapper,
+.app-child .clock-container .headerWrapper {
   display: flex;
   flex: content;
   justify-content: space-between;
@@ -978,28 +1001,38 @@
   margin: 0.5em 0.5em;
 }
 #clock-display .window-content .headerWrapper h3,
-#clock-display .clock-container .headerWrapper h3 {
+#clock-display .clock-container .headerWrapper h3,
+.app-child .window-content .headerWrapper h3,
+.app-child .clock-container .headerWrapper h3 {
   white-space: nowrap;
 }
 #clock-display .window-content .waypointWrapper,
-#clock-display .clock-container .waypointWrapper {
+#clock-display .clock-container .waypointWrapper,
+.app-child .window-content .waypointWrapper,
+.app-child .clock-container .waypointWrapper {
   display: flex;
   z-index: 20;
   justify-content: space-around;
 }
 #clock-display .window-content .waypointWrapper .waypoint,
-#clock-display .clock-container .waypointWrapper .waypoint {
+#clock-display .clock-container .waypointWrapper .waypoint,
+.app-child .window-content .waypointWrapper .waypoint,
+.app-child .clock-container .waypointWrapper .waypoint {
   width: 5em;
   text-align: right;
 }
 #clock-display .window-content .waypointWrapper .waypointLabel,
-#clock-display .clock-container .waypointWrapper .waypointLabel {
+#clock-display .clock-container .waypointWrapper .waypointLabel,
+.app-child .window-content .waypointWrapper .waypointLabel,
+.app-child .clock-container .waypointWrapper .waypointLabel {
   position: relative;
   transform: translateX(-5px);
   padding-right: 0.5em;
 }
 #clock-display .window-content .waypointWrapper .waypointLabel::after,
-#clock-display .clock-container .waypointWrapper .waypointLabel::after {
+#clock-display .clock-container .waypointWrapper .waypointLabel::after,
+.app-child .window-content .waypointWrapper .waypointLabel::after,
+.app-child .clock-container .waypointWrapper .waypointLabel::after {
   content: "";
   position: absolute;
   border-top: 7px solid #f5f5f576;
@@ -1009,7 +1042,9 @@
   transform: translateX(5px);
 }
 #clock-display .window-content .breakLabelWrapper,
-#clock-display .clock-container .breakLabelWrapper {
+#clock-display .clock-container .breakLabelWrapper,
+.app-child .window-content .breakLabelWrapper,
+.app-child .clock-container .breakLabelWrapper {
   grid-column: 1;
   grid-row: 3;
   padding-top: 0.5em;
@@ -1019,14 +1054,18 @@
   text-align: center;
 }
 #clock-display .window-content .breakLabelWrapper .breakLabel,
-#clock-display .clock-container .breakLabelWrapper .breakLabel {
+#clock-display .clock-container .breakLabelWrapper .breakLabel,
+.app-child .window-content .breakLabelWrapper .breakLabel,
+.app-child .clock-container .breakLabelWrapper .breakLabel {
   width: 5em;
   max-width: 5em;
   overflow: hidden;
   overflow-wrap: break-word;
 }
 #clock-display .window-content .frameWrapper,
-#clock-display .clock-container .frameWrapper {
+#clock-display .clock-container .frameWrapper,
+.app-child .window-content .frameWrapper,
+.app-child .clock-container .frameWrapper {
   display: flex;
   flex-direction: row;
   border-radius: 15px;
@@ -1036,7 +1075,9 @@
   z-index: 10;
 }
 #clock-display .window-content .frameWrapper .frameSection,
-#clock-display .clock-container .frameWrapper .frameSection {
+#clock-display .clock-container .frameWrapper .frameSection,
+.app-child .window-content .frameWrapper .frameSection,
+.app-child .clock-container .frameWrapper .frameSection {
   width: 5em;
   height: 5em;
   background-color: transparent;
@@ -1046,12 +1087,16 @@
   margin-right: 5px;
 }
 #clock-display .window-content .frameWrapper .frameSection:last-child,
-#clock-display .clock-container .frameWrapper .frameSection:last-child {
+#clock-display .clock-container .frameWrapper .frameSection:last-child,
+.app-child .window-content .frameWrapper .frameSection:last-child,
+.app-child .clock-container .frameWrapper .frameSection:last-child {
   box-shadow: 0px -7px 0px 1px var(--palette-dialog-background, var(--tui-black2)), 0px 7px 0px 1px var(--palette-dialog-background, var(--tui-black2));
   margin-right: 0;
 }
 #clock-display .window-content .clockWrapper,
-#clock-display .clock-container .clockWrapper {
+#clock-display .clock-container .clockWrapper,
+.app-child .window-content .clockWrapper,
+.app-child .clock-container .clockWrapper {
   display: flex;
   flex-direction: row;
   border-radius: 15px;
@@ -1061,16 +1106,22 @@
   background-position: right;
 }
 #clock-display .window-content .clockWrapper .innerWrapper,
-#clock-display .clock-container .clockWrapper .innerWrapper {
+#clock-display .clock-container .clockWrapper .innerWrapper,
+.app-child .window-content .clockWrapper .innerWrapper,
+.app-child .clock-container .clockWrapper .innerWrapper {
   display: flex;
   flex-direction: row;
 }
 #clock-display .window-content .clockWrapper .innerWrapper + .innerWrapper,
-#clock-display .clock-container .clockWrapper .innerWrapper + .innerWrapper {
+#clock-display .clock-container .clockWrapper .innerWrapper + .innerWrapper,
+.app-child .window-content .clockWrapper .innerWrapper + .innerWrapper,
+.app-child .clock-container .clockWrapper .innerWrapper + .innerWrapper {
   margin: 1em;
 }
 #clock-display .window-content .clockSection,
-#clock-display .clock-container .clockSection {
+#clock-display .clock-container .clockSection,
+.app-child .window-content .clockSection,
+.app-child .clock-container .clockSection {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1082,41 +1133,60 @@
   box-shadow: #171921 3px 3px 6px 0px inset, rgba(60, 60, 73, 0.6) -3px -3px 6px 1px inset;
 }
 #clock-display .window-content .clockSection[data-break],
-#clock-display .clock-container .clockSection[data-break] {
+#clock-display .clock-container .clockSection[data-break],
+.app-child .window-content .clockSection[data-break],
+.app-child .clock-container .clockSection[data-break] {
   position: relative;
   margin-right: 5px;
 }
 #clock-display .window-content .clockSection[data-break]:last-child,
-#clock-display .clock-container .clockSection[data-break]:last-child {
+#clock-display .clock-container .clockSection[data-break]:last-child,
+.app-child .window-content .clockSection[data-break]:last-child,
+.app-child .clock-container .clockSection[data-break]:last-child {
   margin-right: 0;
 }
 #clock-display .window-content .clockSection .label,
-#clock-display .clock-container .clockSection .label {
+#clock-display .clock-container .clockSection .label,
+.app-child .window-content .clockSection .label,
+.app-child .clock-container .clockSection .label {
   color: white;
   font-weight: bold;
   z-index: 200;
 }
 #clock-display .window-content .clockSection.filled,
-#clock-display .clock-container .clockSection.filled {
+#clock-display .clock-container .clockSection.filled,
+.app-child .window-content .clockSection.filled,
+.app-child .clock-container .clockSection.filled {
   box-shadow: none;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
   background-color: white;
   mix-blend-mode: multiply;
 }
 #clock-display .window-content .clockSection.filled .label,
-#clock-display .clock-container .clockSection.filled .label {
+#clock-display .clock-container .clockSection.filled .label,
+.app-child .window-content .clockSection.filled .label,
+.app-child .clock-container .clockSection.filled .label {
   color: black;
 }
 #clock-display .window-content .clockSection.filled:hover,
-#clock-display .clock-container .clockSection.filled:hover {
+#clock-display .clock-container .clockSection.filled:hover,
+.app-child .window-content .clockSection.filled:hover,
+.app-child .clock-container .clockSection.filled:hover {
   background-position: right center;
   /* change the direction of the change here */
   color: #fff;
   text-decoration: none;
 }
 
-#clock-display.app-child {
+.app-child {
   position: absolute;
+  z-index: -10;
+  top: 50% !important;
+  transform: translateX(0);
+  right: 0;
+}
+.app-child.expanded {
+  transform: translateX(100%);
 }
 
 /* SCSS HEX */

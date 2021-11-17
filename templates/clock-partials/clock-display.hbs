@@ -1,6 +1,7 @@
 	<button class="showClocks" data-action="showClocks">Show Clocks</button>
+	{{log this}}
 	{{#each this}}
 	{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
 	<hr>
 	{{/each}}
-	<button class="addClock" data-action="addClock">Add New Clock</button>
+	<button class="addClock" data-action="addClock"><i class="fas fa-plus"></i>New Clock</button>

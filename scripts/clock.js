@@ -2,6 +2,8 @@
 import { ClockConfig } from "./ClockConfig.js";
 import { ClockDisplay } from "./ClockDisplay.js";
 import { ClockHelpers } from "./ClockHelpers.js";
+var clockHelpers;
+ClockHelpers().then((value) => (clockHelpers = value));
 import * as HelperFunctions from "./helper-functions.js";
 let socket;
 
@@ -735,8 +737,8 @@ function registerHooks(hookName) {
  * @param {*} app - the application instance
  */
 async function showClockDrawer(app) {
-    console.log("Our app is", app);
     let entity = app.object;
+    let element = app.element;
     let linkedClocks = await getClocksLinkedToEntity(entity.id);
 
     //this is turning the array into an object w/ ids as key and obj literal as value
@@ -751,10 +753,15 @@ async function showClockDrawer(app) {
         "modules/hud-and-trackers/templates/clock-partials/clock-display.hbs";
 
     //render the handlebars template
-    var drawerHtml = await renderTemplate(template, {
-        clocks: linkedClocks,
-        // entityType: entity.entity,
-    });
+    let data = {};
+    for (let clockId in linkedClocks) {
+        data[clockId] = { ...linkedClocks[clockId] };
+        data[clockId].sections = Object.values(linkedClocks[clockId].sectionMap);
+        data[clockId].user = game.user;
+    }
+    var drawerHtml = await renderTemplate(template, data);
+    // console.log(clockHelpers._activateListeners);
+
     // ClockHelpers.activateListeners(drawerHtml, linkedClocks);
 
     //convert it to a jquery object
@@ -767,48 +774,60 @@ async function showClockDrawer(app) {
     //get the app's element and append this
     app.element.append(drawerHtml);
     drawerHtml.wrapAll(
-        "<div id='clock-display' class='app-child'><section class='clock-container'></section></div>"
+        "<div class='app-child'><section class='clock-container'></section></div>"
     );
 
+    clockHelpers._activateListeners(drawerHtml.closest(".app-child"), linkedClocks);
+    // $(drawerHtml).off("click", "[data-action]");
+    // $(drawerHtml).off("click", ".clockApp");
+    // $(drawerHtml).on("click", "[data-action]", handleButtonClick);
+    // $(drawerHtml).on("click", ".clockApp", openClock);
+    // let i = 0;
+    // for (var clockId in linkedClocks) {
+    //     clockHelpers.handleBreaksAndWaypoints(linkedClocks[clockId]);
+    //     clockHelpers.refillSections(linkedClocks[clockId]);
+    //     clockHelpers.applyGradient(linkedClocks[clockId]);
+    //     i++;
+    // }
     //find all the buttons, (filter to avoid grabbing anything that's not a button)
-    let buttons = drawerHtml.find(".button-holder").children(); //[0].children());
-    buttons = buttons.filter("button");
+    // let buttons = drawerHtml.find(".button-holder").children(); //[0].children());
+    // buttons = buttons.filter("button");
 
-    //get the DOM object from the jquery object, loop through, and add event listeners
-    buttons.get().forEach((element) => {
-        $(element).mouseenter((event) => {
-            if (event.altKey) {
-                $(element).css("background-color", "red");
-            }
-        });
-        $(element).mouseleave((event) => {
-            $(element).css("background-color", "#252423");
-        });
-        $(element).keydown((event) => {
-            console.log(event);
-        });
-    });
+    // //get the DOM object from the jquery object, loop through, and add event listeners
+    // buttons.get().forEach((element) => {
+    //     $(element).mouseenter((event) => {
+    //         if (event.altKey) {
+    //             $(element).css("background-color", "red");
+    //         }
+    //     });
+    //     $(element).mouseleave((event) => {
+    //         $(element).css("background-color", "#252423");
+    //     });
+    //     $(element).keydown((event) => {
+    //         console.log(event);
+    //     });
+    // });
 
-    //add click event listener for all of the button elements with "data-action"
-    drawerHtml.on("click", "[data-action]", async (event) => {
-        event.preventDefault();
-        const clickedElement = $(event.currentTarget);
-        //if we have the alt key held down, unlink instead
-        if (event.altKey) {
-            await unlinkClockFromEntity(entity, clickedElement.id);
-            //re-render this sheet and return
-            drawerHtml.remove();
-            // app.render(true);
-            return;
-        }
-        const action = clickedElement.data().action;
-        let clockData = linkedClocks[clickedElement.attr("id")];
-        switch (action) {
-            case "open": {
-                await renderNewClockFromData(clockData);
-            }
-        }
-    });
+    // //add click event listener for all of the button elements with "data-action"
+    // drawerHtml.on("click", "[data-action]", async (event) => {
+    //     event.preventDefault();
+    //     const clickedElement = $(event.currentTarget);
+    //     //if we have the alt key held down, unlink instead
+    //     if (event.altKey) {
+    //         await unlinkClockFromEntity(entity, clickedElement.id);
+    //         //re-render this sheet and return
+    //         drawerHtml.remove();
+    //         // app.render(true);
+    //         return;
+    //     }
+    //     const action = clickedElement.data().action;
+    //     let clockData = linkedClocks[clickedElement.attr("id")];
+    //     switch (action) {
+    //         case "open": {
+    //             await renderNewClockFromData(clockData);
+    //         }
+    //     }
+    // });
 }
 
 //check if the clock is already rendered
