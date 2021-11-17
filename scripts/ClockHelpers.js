@@ -1,56 +1,5 @@
-"use strict";
-import {
-    Clock,
-    getAllClocks,
-    isClockRendered,
-    renderNewClockFromData,
-    getClocksByUser,
-} from "./clock.js";
-
-// Hooks.once("renderClockDisplay", (app, html) => {
-
-//     let appWidth = app.position.width;
-
-//     app.setPosition({ left: -appWidth });
-// });
-export class ClockDisplay extends Application {
-    constructor(data = {}, parent) {
-        if (!parent) {
-            super(data, { id: "clock-display" });
-            this.options.id = "clock-display";
-        } else {
-            super(data, { id: "clock-display_app-child" });
-            this.options.id = "clock-display_app-child";
-            console.log("Our data is", data);
-        }
-        // this.clocks = game.sharedClocks;
-        this.clocks = data;
-        this.parent = parent;
-    }
-
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            classes: ["form", "clockHud"],
-            popOut: true,
-            // top: 200,
-            left: -380,
-            template: `modules/hud-and-trackers/templates/clock-partials/clock-display.hbs`,
-            // id: "clock-display",
-            title: "Clock Display",
-        });
-    }
-
-    getData() {
-        let data = {};
-        for (let clockId in this.clocks) {
-            data[clockId] = { ...this.clocks[clockId] };
-            data[clockId].sections = Object.values(this.clocks[clockId].sectionMap);
-            data[clockId].user = game.user;
-        }
-        return data;
-    }
-
-    handleButtonClick(event) {
+export const ClockHelpers = async function () {
+    function handleButtonClick(event) {
         event.preventDefault();
         let el = $(event.currentTarget);
         let action = el.data().action;
@@ -61,7 +10,7 @@ export class ClockDisplay extends Application {
         }
     }
 
-    openClock(event) {
+    function openClock(event) {
         // event.preventDefault();
         let el = $(event.currentTarget);
         let id = el.attr("id");
@@ -70,32 +19,27 @@ export class ClockDisplay extends Application {
         }
     }
 
-    activateListeners(html) {
+    function activateListeners(html, clocks) {
         //! The "html" will be different depending on if you're using application or form-application
-        //
-        console.log(html);
-        super.activateListeners(html);
-        html = html.closest(".app");
-        // $(html).on("click", "button", this.handleButtonClick.bind(this));
         $(html).off("click", "[data-action]");
         $(html).off("click", ".clockApp");
-        $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
-        $(html).on("click", ".clockApp", this.openClock);
+        $(html).on("click", "[data-action]", handleButtonClick);
+        $(html).on("click", ".clockApp", openClock);
         let i = 0;
-        for (var clockId in this.clocks) {
-            this.handleBreaksAndWaypoints(this.clocks[clockId]);
-            this.refillSections(this.clocks[clockId]);
-            this.applyGradient(this.clocks[clockId]);
+        for (var clockId in clocks) {
+            handleBreaksAndWaypoints(clocks[clockId]);
+            refillSections(clocks[clockId]);
+            applyGradient(clocks[clockId]);
             i++;
         }
     }
-    async applyGradient(clockData) {
+    async function applyGradient(clockData) {
         let clockWrapper = $(`#clock-display form#${clockData.ourId} .clockWrapper`);
         //make the background wrapper's gradient look like the chosen one
         clockWrapper.css("backgroundImage", clockData.gradient);
     }
 
-    async refillSections(clockData) {
+    async function refillSections(clockData) {
         let filled = 0;
         let sectionsArray = $(
             `#clock-display form#${clockData.ourId} .clockSection`
@@ -109,7 +53,7 @@ export class ClockDisplay extends Application {
             }
         });
     }
-    async handleBreaksAndWaypoints(clockData) {
+    async function handleBreaksAndWaypoints(clockData) {
         //adding breaks if we have any
         let sectionsArray = $(
             `#clock-display form#${clockData.ourId} .clockSection`
@@ -144,9 +88,4 @@ export class ClockDisplay extends Application {
             }
         }
     }
-
-    async _updateObject(event, formData) {}
-}
-Handlebars.registerHelper("spreadObject", (object) => {
-    return { ...object };
-});
+};

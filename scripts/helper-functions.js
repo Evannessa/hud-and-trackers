@@ -36,6 +36,16 @@ export function createItemOnActor(actor, itemName, itemType, itemData) {
     Item.create({ type: itemType, data: itemData, name: itemName }, { parent: actor });
 }
 
+/**
+ * this turns array of object literals into objects, w/ the objects id property as the key
+ * @param {array} array - the array we want to convert into an object
+ * @returns an object with id keys and obj literal values
+ */
+export function convertArrayIntoObjectById(array) {
+    let obj = array.reduce((obj, item) => ((obj[item.ourId] = item), obj), {});
+    return obj;
+}
+
 export function getPCItemsOfType(pc, type) {
     return pc.data.items.map((item) => {
         return item.type === type;

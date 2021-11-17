@@ -1,6 +1,7 @@
 "use strict";
 import { ClockConfig } from "./ClockConfig.js";
 import { ClockDisplay } from "./ClockDisplay.js";
+import { ClockHelpers } from "./ClockHelpers.js";
 import * as HelperFunctions from "./helper-functions.js";
 let socket;
 
@@ -45,7 +46,7 @@ Hooks.on("ready", async () => {
         default: {},
     });
     game.sharedClocks = await game.settings.get("hud-and-trackers", "sharedClocks");
-    game.clockDisplay = new ClockDisplay().render(true);
+    game.clockDisplay = new ClockDisplay(game.sharedClocks, false).render(true);
     game.renderedClocks = {};
     hookEntities();
 
@@ -704,7 +705,6 @@ export class Clock extends FormApplication {
 
     async _updateObject(event, formData) {
         let clockData = await getAllClocks()[this.data.ourId];
-        console.log(clockData);
         this.updateEntireClock(clockData, true);
     }
 }
@@ -712,43 +712,63 @@ export class Clock extends FormApplication {
 //registers the hooks for journal sheets, actor sheets, item sheets
 function registerHooks(hookName) {
     Hooks.on(hookName, async (app, html) => {
-        console.log("Rendering actor sheet!");
-        let linkedClocks = await app.object.getFlag("hud-and-trackers", "linkedClocks");
-        //if we have linked clocks
-        if (linkedClocks && Object.keys(linkedClocks).length > 0) {
-            app.element.css("position", "relative");
-            // $(html[0]).css("position", "relative");
-            if (app.element.find(".clock-drawer").length == 0) {
-                await showClockDrawer(app, html, linkedClocks);
-            }
-            // for (let clockId in linkedClocks) {
-            //     // renderNewClockFromData(linkedClocks[clockId]);
-            // }
+        //TODO: Have it ignore scenes for now
+        if (app.element.find(".clock-display").length == 0) {
+            await showClockDrawer(app);
         }
+        // let linkedClocks = await app.object.getFlag("hud-and-trackers", "linkedClocks");
+        // let linkedClocks
+        //if we have linked clocks
+        // if (linkedClocks && Object.keys(linkedClocks).length > 0) {
+        // app.element.css("position", "relative");
+        // $(html[0]).css("position", "relative");
+        // if (app.element.find(".clock-drawer").length == 0) {
+        // await showClockDrawer(app, html, linkedClocks);
+        // }
+        // for (let clockId in linkedClocks) {
+        //     // renderNewClockFromData(linkedClocks[clockId]);
+        // }
     });
 }
-//show a floating clock drawer on sheets that have linked clocks
-async function showClockDrawer(app, html, linkedClocks) {
+/**
+ * show a floating clock drawer on entity/document sheets that have linked clocks
+ * @param {*} app - the application instance
+ */
+async function showClockDrawer(app) {
+    console.log("Our app is", app);
     let entity = app.object;
+    let linkedClocks = await getClocksLinkedToEntity(entity.id);
 
-    //get the handlebars template
+    //this is turning the array into an object w/ ids as key and obj literal as value
+    linkedClocks = HelperFunctions.convertArrayIntoObjectById(linkedClocks);
+
+    // app.clockDrawer = new ClockDisplay(linkedClocks, true).render(true);
+    // let parentAppPosition = position;
+    // app.clockDrawer.setPosition({ left: app.position.left, top: app.position.top });
+
+    // get the handlebars template
     const template =
-        "modules/hud-and-trackers/templates/clock-partials/clock-drawer.html";
+        "modules/hud-and-trackers/templates/clock-partials/clock-display.hbs";
 
     //render the handlebars template
     var drawerHtml = await renderTemplate(template, {
         clocks: linkedClocks,
-        entityType: entity.entity,
+        // entityType: entity.entity,
     });
+    // ClockHelpers.activateListeners(drawerHtml, linkedClocks);
 
     //convert it to a jquery object
     drawerHtml = $(drawerHtml);
+
     drawerHtml.on("keydown", function (e) {
         console.log(e);
     });
 
     //get the app's element and append this
     app.element.append(drawerHtml);
+    drawerHtml.wrapAll(
+        "<div id='clock-display' class='app-child'><section class='clock-container'></section></div>"
+    );
 
     //find all the buttons, (filter to avoid grabbing anything that's not a button)
     let buttons = drawerHtml.find(".button-holder").children(); //[0].children());

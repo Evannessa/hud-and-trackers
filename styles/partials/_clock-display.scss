@@ -14,10 +14,7 @@
 	width: max-content !important;
 	width: -moz-max-content !important;
 	height: 50vh;
-	// height: max-content !important;
-	// height: -moz-max-content !important;
 	position: fixed;
-	// left: -100% !important;
 	top: 50vh !important;
 	transform: translateX(-100%);
 	transition: all 0.25s;
@@ -30,7 +27,8 @@
 		transform: translateX(0%);
 	}
 
-	.window-content {
+	.window-content,
+	.clock-container {
 
 		overflow-x: visible;
 		overflow-y: visible;
@@ -286,5 +284,11 @@
 
 		}
 
+	}
+}
+
+#clock-display {
+	&.app-child {
+		position: absolute;
 	}
 }
