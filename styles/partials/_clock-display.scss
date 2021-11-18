@@ -10,6 +10,7 @@
 
 #clock-display,
 .app-child {
+	box-sizing: border-box;
 	max-height: 50vh;
 	font-size: 10px;
 	width: max-content !important;
@@ -37,6 +38,24 @@
 		flex-direction: column;
 		justify-content: stretch;
 		flex-wrap: wrap;
+		background-color: rgba(85, 106, 140, 0.25);
+		border: 1px solid rgba(255, 255, 255, 0.125);
+		min-height: 10em;
+		position: relative;
+
+		@supports((-webkit-backdrop-filter: blur()) or (backdrop-filter: blur())) {
+			-webkit-backdrop-filter: blur(1.25px);
+			backdrop-filter: blur(1.25px);
+		}
+
+		// &:before {
+		// 	content: '';
+		// 	position: absolute;
+		// 	width: 100%;
+		// 	height: 100%;
+		// 	background-color: rgba(85, 106, 140, 0.75);
+		// 	filter: blur(10%);
+		// }
 
 		.clockName {
 			flex: 0;
@@ -99,6 +118,10 @@
 			transform: rotate(90deg);
 			text-orientation: mixed;
 			text-align: center;
+			border: 1px solid rgba(255, 255, 255, 0.5);
+			box-shadow: var(--shadow-elevation-high);
+
+
 
 			&:hover {
 				background-color: #4776E6;
@@ -288,10 +311,13 @@
 	}
 }
 
+
+
 .app-child {
+	display: block;
 	position: absolute;
 	z-index: -10;
-	top: 50% !important;
+	top: 10% !important;
 	transform: translateX(0);
 	right: 0;
 
@@ -299,18 +325,21 @@
 		transform: translateX(100%);
 	}
 
-	// .clock-container,
-	// .clock-container * {
-	// 	width: 0px;
-	// }
+	.clock-container {
+		box-shadow: var(--shadow-elevation-high);
+	}
+}
 
-	// &.expanded {
-	// 	.clock-container {
-	// 		width: max-content;
+.window-app {
+	&.sheet {
+		&.minimized {
+			.app-child {
+				display: none;
+				// min-height: max-content;
+				// top: 0;
+				// padding: 0.1rem;
 
-	// 		* {
-	// 			width: inherit;
-	// 		}
-	// 	}
-	// }
+			}
+		}
+	}
 }

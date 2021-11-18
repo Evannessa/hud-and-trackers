@@ -31,6 +31,25 @@
   --tui-chat-message-whisper-border: rgba(78, 81, 126, 0.87);
   --tui-selection: #cce2ff;
   --tui-shadow: 0 0 3px var(--palette-dialog-background-shaded-text, var(--tui-white2)) inset;
+  --shadow-color: 0deg 0% 12%;
+  --shadow-elevation-low:
+  	0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.41),
+  	0.6px 0.6px 0.9px -1.4px hsl(var(--shadow-color) / 0.38),
+  	1.4px 1.5px 2.2px -2.7px hsl(var(--shadow-color) / 0.36);
+  --shadow-elevation-medium:
+  	0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.43),
+  	1.1px 1.1px 1.7px -0.9px hsl(var(--shadow-color) / 0.41),
+  	2.8px 2.9px 4.4px -1.8px hsl(var(--shadow-color) / 0.39),
+  	6.9px 7.3px 10.9px -2.7px hsl(var(--shadow-color) / 0.37);
+  --shadow-elevation-high:
+  	0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.4),
+  	1.9px 2px 3px -0.4px hsl(var(--shadow-color) / 0.39),
+  	3.6px 3.8px 5.7px -0.8px hsl(var(--shadow-color) / 0.38),
+  	6.1px 6.4px 9.6px -1.2px hsl(var(--shadow-color) / 0.37),
+  	9.9px 10.4px 15.6px -1.6px hsl(var(--shadow-color) / 0.36),
+  	15.8px 16.6px 24.9px -2px hsl(var(--shadow-color) / 0.35),
+  	24.3px 25.5px 38.3px -2.4px hsl(var(--shadow-color) / 0.34),
+  	36px 37.9px 56.8px -2.7px hsl(var(--shadow-color) / 0.34);
 }
 
 #tracker-app {
@@ -886,6 +905,7 @@
 
 #clock-display,
 .app-child {
+  box-sizing: border-box;
   max-height: 50vh;
   font-size: 10px;
   width: -webkit-max-content !important;
@@ -915,7 +935,20 @@
   flex-direction: column;
   justify-content: stretch;
   flex-wrap: wrap;
+  background-color: rgba(85, 106, 140, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.125);
+  min-height: 10em;
   position: relative;
+  position: relative;
+}
+@supports ((-webkit-backdrop-filter: blur()) or (backdrop-filter: blur())) {
+  #clock-display .window-content,
+#clock-display .clock-container,
+.app-child .window-content,
+.app-child .clock-container {
+    -webkit-backdrop-filter: blur(1.25px);
+    backdrop-filter: blur(1.25px);
+  }
 }
 #clock-display .window-content .clockName,
 #clock-display .clock-container .clockName,
@@ -956,6 +989,8 @@
   -webkit-text-orientation: mixed;
           text-orientation: mixed;
   text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: var(--shadow-elevation-high);
 }
 #clock-display .window-content .showClocks:hover,
 #clock-display .clock-container .showClocks:hover,
@@ -1179,14 +1214,22 @@
 }
 
 .app-child {
+  display: block;
   position: absolute;
   z-index: -10;
-  top: 50% !important;
+  top: 10% !important;
   transform: translateX(0);
   right: 0;
 }
 .app-child.expanded {
   transform: translateX(100%);
+}
+.app-child .clock-container {
+  box-shadow: var(--shadow-elevation-high);
+}
+
+.window-app.sheet.minimized .app-child {
+  display: none;
 }
 
 /* SCSS HEX */
@@ -1222,6 +1265,25 @@
   --tui-chat-message-whisper-border: rgba(78, 81, 126, 0.87);
   --tui-selection: #cce2ff;
   --tui-shadow: 0 0 3px var(--palette-dialog-background-shaded-text, var(--tui-white2)) inset;
+  --shadow-color: 0deg 0% 12%;
+  --shadow-elevation-low:
+  	0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.41),
+  	0.6px 0.6px 0.9px -1.4px hsl(var(--shadow-color) / 0.38),
+  	1.4px 1.5px 2.2px -2.7px hsl(var(--shadow-color) / 0.36);
+  --shadow-elevation-medium:
+  	0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.43),
+  	1.1px 1.1px 1.7px -0.9px hsl(var(--shadow-color) / 0.41),
+  	2.8px 2.9px 4.4px -1.8px hsl(var(--shadow-color) / 0.39),
+  	6.9px 7.3px 10.9px -2.7px hsl(var(--shadow-color) / 0.37);
+  --shadow-elevation-high:
+  	0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.4),
+  	1.9px 2px 3px -0.4px hsl(var(--shadow-color) / 0.39),
+  	3.6px 3.8px 5.7px -0.8px hsl(var(--shadow-color) / 0.38),
+  	6.1px 6.4px 9.6px -1.2px hsl(var(--shadow-color) / 0.37),
+  	9.9px 10.4px 15.6px -1.6px hsl(var(--shadow-color) / 0.36),
+  	15.8px 16.6px 24.9px -2px hsl(var(--shadow-color) / 0.35),
+  	24.3px 25.5px 38.3px -2.4px hsl(var(--shadow-color) / 0.34),
+  	36px 37.9px 56.8px -2.7px hsl(var(--shadow-color) / 0.34);
 }
 
 #party-overview {
@@ -1471,6 +1533,25 @@
   --tui-chat-message-whisper-border: rgba(78, 81, 126, 0.87);
   --tui-selection: #cce2ff;
   --tui-shadow: 0 0 3px var(--palette-dialog-background-shaded-text, var(--tui-white2)) inset;
+  --shadow-color: 0deg 0% 12%;
+  --shadow-elevation-low:
+  	0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.41),
+  	0.6px 0.6px 0.9px -1.4px hsl(var(--shadow-color) / 0.38),
+  	1.4px 1.5px 2.2px -2.7px hsl(var(--shadow-color) / 0.36);
+  --shadow-elevation-medium:
+  	0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.43),
+  	1.1px 1.1px 1.7px -0.9px hsl(var(--shadow-color) / 0.41),
+  	2.8px 2.9px 4.4px -1.8px hsl(var(--shadow-color) / 0.39),
+  	6.9px 7.3px 10.9px -2.7px hsl(var(--shadow-color) / 0.37);
+  --shadow-elevation-high:
+  	0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.4),
+  	1.9px 2px 3px -0.4px hsl(var(--shadow-color) / 0.39),
+  	3.6px 3.8px 5.7px -0.8px hsl(var(--shadow-color) / 0.38),
+  	6.1px 6.4px 9.6px -1.2px hsl(var(--shadow-color) / 0.37),
+  	9.9px 10.4px 15.6px -1.6px hsl(var(--shadow-color) / 0.36),
+  	15.8px 16.6px 24.9px -2px hsl(var(--shadow-color) / 0.35),
+  	24.3px 25.5px 38.3px -2.4px hsl(var(--shadow-color) / 0.34),
+  	36px 37.9px 56.8px -2.7px hsl(var(--shadow-color) / 0.34);
 }
 
 .flavor-text {

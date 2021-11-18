@@ -22,12 +22,19 @@ export class ClockConfig extends FormApplication {
         if (Object.keys(this.data).length == 0) {
             return defaultData;
         } else {
-            this.data.breaks = this.data.breaks.toString();
-            this.data.name = this.data.name + "(copy)";
-            return {
-                ...this.data,
-                isClone: this.clone,
-            };
+            if (this.clone) {
+                this.data.breaks = this.data.breaks.toString();
+                this.data.name = this.data.name + "(copy)";
+                return {
+                    ...this.data,
+                    isClone: this.clone,
+                };
+            }
+            //we're not a clone, but we're changing some of the default data
+            //such as being called from an entity sheet
+            else {
+                return defaultData;
+            }
         }
     }
     async _updateObject(event, formData) {
@@ -50,7 +57,10 @@ export class ClockConfig extends FormApplication {
         //initialize the section map to an empty object, and filledSections to zero, and break labels to empty array
         //initialize extra values that don't come from the form
         //!TODO: copy these when clock is cloned
-        let linkedEntities = {};
+        //I'm thinking (hoping) this means it'll set it to an empty object if linkedEntities doesn't exist
+        let linkedEntities = (this.data.linkedEntities ||= {});
+        console.log(linkedEntities);
+
         let sectionMap = {};
         let filledSections = 0;
         let breakLabels = {};

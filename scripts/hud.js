@@ -451,7 +451,6 @@ export class Hud extends Application {
                 "pinnedAbilities"
             );
         }
-        console.log(this.showTab);
         this.combatActive = inCombat;
     }
 
@@ -496,9 +495,6 @@ export class Hud extends Application {
         }
         // console.log(this.pinnedItems);
         // this.pinnedAbilities = this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities").map( pin => new Item(pin));
-        console.log(this.cyphers);
-        console.log(this.skills);
-        console.log(this.abilities);
 
         return {
             ourToken: this.ourToken,

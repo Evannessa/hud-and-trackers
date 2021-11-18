@@ -51,8 +51,7 @@ Hooks.on("ready", async () => {
     game.clockDisplay = new ClockDisplay(game.sharedClocks, false).render(true);
     game.renderedClocks = {};
     hookEntities();
-
-    getClocksLinkedToEntity(game.actors.getName("Asunder").id);
+    // getSharedClocks();
 });
 Hooks.on("renderClockViewer", (app, html) => {
     game.clockViewer = app;
@@ -139,6 +138,16 @@ async function updateClockDisplay(isCreator, clockData) {
     }
 }
 
+function getSharedClocks() {
+    let allClocks = getAllClocks();
+    console.log(allClocks);
+    let sharedClocks = Object.values(allClocks).filter((clockData) => {
+        return clockData.shared;
+    });
+    sharedClocks = HelperFunctions.convertArrayIntoObjectById(sharedClocks);
+    return sharedClocks;
+}
+
 //**HANDLEBAR HELPERS =================== */
 Handlebars.registerHelper("isNumber", function (value) {
     return Number.isNaN(value);
@@ -223,17 +232,17 @@ export class Clock extends FormApplication {
     //this will handle if the clock's delete button is clicked
     async handleClockDeletion(event, app) {
         event.preventDefault();
-        //delete us in all our linked entities
-        for (let entityId in app.data.linkedEntities) {
-            //special syntax for deleting a specific key in flag objects
-            let ourEntity;
-            await HelperFunctions.getEntityById(
-                this.data.linkedEntities[entityId].entity,
-                entityId
-            ).then((value) => (ourEntity = value));
+        // //delete us in all our linked entities
+        // for (let entityId in app.data.linkedEntities) {
+        //     //special syntax for deleting a specific key in flag objects
+        //     let ourEntity;
+        //     await HelperFunctions.getEntityById(
+        //         this.data.linkedEntities[entityId].entity,
+        //         entityId
+        //     ).then((value) => (ourEntity = value));
 
-            await unlinkClockFromEntity(ourEntity, app.data.ourId);
-        }
+        //     await unlinkClockFromEntity(ourEntity, app.data.ourId);
+        // }
         removeFromSharedClocks(app.data);
         //delete us from the saved clocks setting
         deleteClock(app.data.ourId);
@@ -767,67 +776,18 @@ async function showClockDrawer(app) {
     //convert it to a jquery object
     drawerHtml = $(drawerHtml);
 
-    drawerHtml.on("keydown", function (e) {
-        console.log(e);
-    });
-
     //get the app's element and append this
     app.element.append(drawerHtml);
     drawerHtml.wrapAll(
         "<div class='app-child'><section class='clock-container'></section></div>"
     );
 
-    clockHelpers._activateListeners(drawerHtml.closest(".app-child"), linkedClocks);
-    // $(drawerHtml).off("click", "[data-action]");
-    // $(drawerHtml).off("click", ".clockApp");
-    // $(drawerHtml).on("click", "[data-action]", handleButtonClick);
-    // $(drawerHtml).on("click", ".clockApp", openClock);
-    // let i = 0;
-    // for (var clockId in linkedClocks) {
-    //     clockHelpers.handleBreaksAndWaypoints(linkedClocks[clockId]);
-    //     clockHelpers.refillSections(linkedClocks[clockId]);
-    //     clockHelpers.applyGradient(linkedClocks[clockId]);
-    //     i++;
-    // }
-    //find all the buttons, (filter to avoid grabbing anything that's not a button)
-    // let buttons = drawerHtml.find(".button-holder").children(); //[0].children());
-    // buttons = buttons.filter("button");
-
-    // //get the DOM object from the jquery object, loop through, and add event listeners
-    // buttons.get().forEach((element) => {
-    //     $(element).mouseenter((event) => {
-    //         if (event.altKey) {
-    //             $(element).css("background-color", "red");
-    //         }
-    //     });
-    //     $(element).mouseleave((event) => {
-    //         $(element).css("background-color", "#252423");
-    //     });
-    //     $(element).keydown((event) => {
-    //         console.log(event);
-    //     });
-    // });
-
-    // //add click event listener for all of the button elements with "data-action"
-    // drawerHtml.on("click", "[data-action]", async (event) => {
-    //     event.preventDefault();
-    //     const clickedElement = $(event.currentTarget);
-    //     //if we have the alt key held down, unlink instead
-    //     if (event.altKey) {
-    //         await unlinkClockFromEntity(entity, clickedElement.id);
-    //         //re-render this sheet and return
-    //         drawerHtml.remove();
-    //         // app.render(true);
-    //         return;
-    //     }
-    //     const action = clickedElement.data().action;
-    //     let clockData = linkedClocks[clickedElement.attr("id")];
-    //     switch (action) {
-    //         case "open": {
-    //             await renderNewClockFromData(clockData);
-    //         }
-    //     }
-    // });
+    //must be put in the dom first
+    clockHelpers._activateListeners(
+        drawerHtml.closest(".app-child"),
+        linkedClocks,
+        entity
+    );
 }
 
 //check if the clock is already rendered
@@ -946,6 +906,7 @@ export function getClocksLinkedToEntity(entityId) {
  * @param {String} userId - the id of the user whose clock this is, and whose flags we will update
  */
 export async function updateClock(clockId, updateData, userId) {
+    console.log(updateData);
     if (!userId) {
         const relevantClock = getAllClocks()[clockId];
         userId = relevantClock.creator;
@@ -956,6 +917,7 @@ export async function updateClock(clockId, updateData, userId) {
     let user = game.users.get(userId);
 
     let result = await user.setFlag("hud-and-trackers", "savedClocks", updateInfo);
+    Hooks.call("clockUpdated", clockId, updateData);
 }
 
 /**
@@ -970,6 +932,23 @@ async function deleteClock(clockId) {
     };
     let user = game.users.get(relevantClock.creator);
     user.setFlag("hud-and-trackers", "savedClocks", keyDeletion);
+    Hooks.call("clockDeleted", clockId, relevantClock);
+    console.log("Relevant clock?", relevantClock);
+}
+
+/**
+ *
+ * @param {Object} ourEntity - the entity that's linked to us
+ * @param {string} clockId - the id of the clock that's linked
+ */
+function reRenderLinkedEntity(ourEntity, clockId) {
+    if (ourEntity.sheet.rendered) {
+        //if the entity sheet is rendered, re-render it
+        if (ourEntity.sheet.element.find(".app-child")) {
+            ourEntity.sheet.element.remove(".app-child");
+        }
+        ourEntity.sheet.render(true);
+    }
 }
 
 /**
@@ -978,17 +957,11 @@ async function deleteClock(clockId) {
  * @param {String} clockId - the id of the clock we want to delete
  */
 async function unlinkClockFromEntity(ourEntity, clockId) {
-    await ourEntity.setFlag("hud-and-trackers", "linkedClocks", {
-        [`-=${clockId}`]: null,
-    });
+    // await ourEntity.setFlag("hud-and-trackers", "linkedClocks", {
+    //     [`-=${clockId}`]: null,
+    // });
+    reRenderLinkedEntity(ourEntity);
 
-    if (ourEntity.sheet.rendered) {
-        //if the entity sheet is rendered, re-render it
-        if (ourEntity.sheet.element.find(".clock-drawer")) {
-            ourEntity.sheet.element.remove(".clock-drawer");
-        }
-        ourEntity.sheet.render(true);
-    }
     //get the clock and delete the linked entity from the clock
     let clockData = getClocksByUser(game.userId)[clockId];
 
@@ -1007,6 +980,47 @@ async function unlinkClockFromEntity(ourEntity, clockId) {
         game.renderedClocks[clockId].updateEntireClock(newClockData, true);
     }
 }
+
+Hooks.on("clockDeleted", async (clockId, clockData) => {
+    //re-render the sheets of every entity linked to this clock
+    for (let entityId in clockData.linkedEntities) {
+        let entityData = clockData.linkedEntities[entityId];
+        console.log(entityData);
+        let entity;
+        await HelperFunctions.getEntityById(entityData.entity, entityId).then(
+            (value) => (entity = value)
+        );
+        console.log(entity);
+        //TODO: How to handle if a token sheet instead?
+        if (entity?.sheet && entity.sheet.rendered) {
+            entity.sheet.render();
+        }
+    }
+    //re-render the ClockDisplay
+    if (game.clockDisplay) {
+        game.clockDisplay.render();
+    }
+    //close any rendered clocks
+    if (isClockRendered(clockId)) {
+        game.renderedClocks[clockId].close();
+    }
+});
+Hooks.on("clockUpdated", (clockId, clockData) => {
+    for (let entityId in clockData.linkedEntities) {
+        let entity = HelperFunctions.getEntityById(entityId);
+        if (entity?.sheet && entity.sheet.rendered) {
+            entity.sheet.render(true);
+        }
+    }
+    //re-render the ClockDisplay
+    if (game.clockDisplay) {
+        game.clockDisplay.render();
+    }
+    //re-render any renderedClocks
+    if (isClockRendered(clockId)) {
+        reRenderClock(clockData);
+    }
+});
 
 // ==================================
 
