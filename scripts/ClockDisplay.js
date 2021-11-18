@@ -57,6 +57,10 @@ export class ClockDisplay extends Application {
         }
     }
 
+    functionExtractionTest(object) {
+        console.log(test);
+    }
+
     applyTemplateDressing(object, parentName) {
         var i = 0;
         for (var clockId in object) {
