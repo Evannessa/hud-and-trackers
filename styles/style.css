@@ -957,6 +957,12 @@
   display: grid;
   grid-template-columns: auto auto auto;
 }
+#clock-display .window-content .clockCategory__wrapper .clockCategory + .clockCategory,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory + .clockCategory,
+.app-child .window-content .clockCategory__wrapper .clockCategory + .clockCategory,
+.app-child .clock-container .clockCategory__wrapper .clockCategory + .clockCategory {
+  padding-left: 1rem;
+}
 #clock-display .window-content .clockName,
 #clock-display .clock-container .clockName,
 .app-child .window-content .clockName,

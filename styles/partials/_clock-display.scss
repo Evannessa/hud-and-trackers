@@ -51,6 +51,12 @@
 		.clockCategory__wrapper {
 			display: grid;
 			grid-template-columns: auto auto auto;
+
+			.clockCategory {
+				+.clockCategory {
+					padding-left: 1rem;
+				}
+			}
 		}
 
 		// &:before {

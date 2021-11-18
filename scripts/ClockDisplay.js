@@ -57,12 +57,12 @@ export class ClockDisplay extends Application {
         }
     }
 
-    applyTemplateDressing(object, parentObject) {
+    applyTemplateDressing(object, parentName) {
         var i = 0;
         for (var clockId in object) {
-            this.handleBreaksAndWaypoints(object[clockId]);
-            this.refillSections(object[clockId]);
-            this.applyGradient(object[clockId]);
+            this.handleBreaksAndWaypoints(object[clockId], parentName);
+            this.refillSections(object[clockId], parentName);
+            this.applyGradient(object[clockId], parentName);
             i++;
         }
     }
@@ -120,18 +120,15 @@ export class ClockDisplay extends Application {
 
     activateListeners(html) {
         //! The "html" will be different depending on if you're using application or form-application
-        //
-        console.log(html);
         super.activateListeners(html);
         html = html.closest(".app");
-        // $(html).on("click", "button", this.handleButtonClick.bind(this));
         $(html).off("click", "[data-action]");
         $(html).off("click", ".clockApp");
         $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
         $(html).on("click", ".clockApp", this.openClock);
-        this.applyTemplateDressing(this.otherClocks.sharedClocks);
-        this.applyTemplateDressing(this.otherClocks.myClocks);
-        this.applyTemplateDressing(this.otherClocks.sceneClocks);
+        this.applyTemplateDressing(this.otherClocks.sharedClocks, "sharedClocks");
+        this.applyTemplateDressing(this.otherClocks.myClocks, "myClocks");
+        this.applyTemplateDressing(this.otherClocks.sceneClocks, "sceneClocks");
         // let i = 0;
         // for (var clockId in this.clocks) {
         //     this.handleBreaksAndWaypoints(this.clocks[clockId]);
@@ -140,18 +137,18 @@ export class ClockDisplay extends Application {
         //     i++;
         // }
     }
-    async applyGradient(clockData) {
+    async applyGradient(clockData, parentName) {
         let clockWrapper = $(
-            `#clock-display form[data-id='${clockData.ourId}'] .clockWrapper`
+            `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockWrapper`
         );
         //make the background wrapper's gradient look like the chosen one
         clockWrapper.css("backgroundImage", clockData.gradient);
     }
 
-    async refillSections(clockData) {
+    async refillSections(clockData, parentName) {
         let filled = 0;
         let sectionsArray = $(
-            `#clock-display form[data-id='${clockData.ourId}'] .clockSection`
+            `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockSection`
         ).toArray();
         console.log("Sections array!", sectionsArray);
         sectionsArray.forEach((element) => {
@@ -163,19 +160,21 @@ export class ClockDisplay extends Application {
             }
         });
     }
-    async handleBreaksAndWaypoints(clockData) {
+    async handleBreaksAndWaypoints(clockData, parentName) {
         //adding breaks if we have any
+        let string = `#clock-display .${parentName} form[data-id='${clockData.ourId}']`;
+        //TODO: Replace all these long strings with the above + .clockSection
         let sectionsArray = $(
-            `#clock-display form[data-id='${clockData.ourId}'] .clockSection`
+            `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockSection`
         ).toArray();
         let framesArray = $(
-            `#clock-display form[data-id='${clockData.ourId}'] .frameSection`
+            `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .frameSection`
         ).toArray();
         let breakLabels = $(
-            `#clock-display form[data-id='${clockData.ourId}'] .breakLabel`
+            `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .breakLabel`
         ).toArray();
         let waypoints = $(
-            `#clock-display form[data-id='${clockData.ourId}'] .waypoint`
+            `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .waypoint`
         ).toArray();
         let count = 0;
         //go through all the sub-sections if there are some
