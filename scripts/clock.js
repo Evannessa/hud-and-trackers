@@ -74,6 +74,14 @@ Handlebars.registerHelper("times", function (n, block) {
     return accum;
 });
 
+Handlebars.registerHelper("objectEmpty", function (object) {
+    if (isObjectEmpty(object)) {
+        return "true";
+    } else {
+        return "false";
+    }
+});
+
 /**For showing clocks */
 export class Clock extends FormApplication {
     constructor(clockData) {

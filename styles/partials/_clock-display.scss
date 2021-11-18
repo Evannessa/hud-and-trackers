@@ -48,6 +48,11 @@
 			backdrop-filter: blur(1.25px);
 		}
 
+		.clockCategory__wrapper {
+			display: grid;
+			grid-template-columns: auto auto auto;
+		}
+
 		// &:before {
 		// 	content: '';
 		// 	position: absolute;

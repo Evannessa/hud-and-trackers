@@ -1,22 +1,29 @@
 	<button class="showClocks" data-action="showClocks">Show Clocks</button>
-	{{log this}}
-	{{log sharedClocks}}
-	<div class="clockCategory sharedClocks">
-		{{#each sharedClocks}}
+	<div class="clockCategory__wrapper">
+		<div class="clockCategory sharedClocks">
+			<h3>Shared Clocks</h3>
+			{{#each sharedClocks}}
+			{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
+			<hr>
+			{{/each}}
+		</div>
+		{{log sceneClocks}}
+		{{log this}}
+		{{#unless (eq (objectEmpty sceneClocks) "true")}}
+		<div class="clockCategory sceneClocks">
+			<h3>Scene-Specific Clocks</h3>
+			{{#each sceneClocks}}
 		{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
 		<hr>
-		{{/each}}
-	</div>
-	<div class="clockCategory sceneClocks">
-		{{#each sceneClocks}}
-	{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
-	<hr>
-		{{/each}}
-	</div>
-	<div class="clockCategory myClocks">
-		{{#each myClocks}}
-	{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
-	<hr>
-		{{/each}}
+			{{/each}}
+		</div>
+		{{/unless}}
+		<div class="clockCategory myClocks">
+			<h3>Your Clocks</h3>
+			{{#each myClocks}}
+		{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
+		<hr>
+			{{/each}}
+		</div>
 	</div>
 	<button class="addClock" data-action="addClock"><i class="fas fa-plus"></i>New Clock</button>

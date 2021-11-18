@@ -950,6 +950,13 @@
     backdrop-filter: blur(1.25px);
   }
 }
+#clock-display .window-content .clockCategory__wrapper,
+#clock-display .clock-container .clockCategory__wrapper,
+.app-child .window-content .clockCategory__wrapper,
+.app-child .clock-container .clockCategory__wrapper {
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
 #clock-display .window-content .clockName,
 #clock-display .clock-container .clockName,
 .app-child .window-content .clockName,
