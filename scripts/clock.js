@@ -667,9 +667,15 @@ async function showClockDrawer(app) {
 
     //get the app's element and append this
     app.element.append(drawerHtml);
-    drawerHtml.wrapAll(
-        "<div class='app-child'><section class='clock-container'></section></div>"
-    );
+    let wrapString =
+        "<div class='app-child'><section class='clock-container'></section></div>";
+
+    //if the drawer was expanded, we want it to be expanded when we refresh too
+    if (await entity.getFlag("hud-and-trackers", "clockDrawerExpanded")) {
+        wrapString =
+            "<div class='app-child expanded'><section class='clock-container'></section></div>";
+    }
+    drawerHtml.wrapAll(wrapString);
 
     //must be put in the dom first
     clockHelpers._activateListeners(
@@ -814,14 +820,15 @@ async function deleteClock(clockId) {
  * @param {Object} ourEntity - the entity that's linked to us
  * @param {string} clockId - the id of the clock that's linked
  */
-function reRenderLinkedEntity(ourEntity, clockId) {
+async function reRenderLinkedEntity(ourEntity, clockId) {
     if (ourEntity.sheet.rendered) {
         //if the entity sheet is rendered, re-render it
-        console.log(ourEntity.sheet.element.find(".app-child"));
-        if (ourEntity.sheet.element.find(".app-child")) {
-            ourEntity.sheet.element.remove(".app-child");
-            ourEntity.sheet.element.find(".app-child").remove();
+        let clockDrawer = ourEntity.sheet.element.find(".app-child");
+        let expanded = clockDrawer.hasClass("expanded");
+        if (clockDrawer) {
+            clockDrawer.remove();
         }
+        await ourEntity.setFlag("hud-and-trackers", "clockDrawerExpanded", expanded);
         ourEntity.sheet.render();
     }
 }
@@ -862,7 +869,6 @@ async function refreshClockDependentItems(clockId, clockData, isDeletion) {
         if (entity?.sheet && entity.sheet.rendered) {
             console.log("rerendering linked entity");
             reRenderLinkedEntity(entity, clockId);
-            // entity.sheet.render();
         }
     }
     //re-render the ClockDisplay
