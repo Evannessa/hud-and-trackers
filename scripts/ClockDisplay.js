@@ -26,6 +26,10 @@ export class ClockDisplay extends Application {
         }
         // this.clocks = game.sharedClocks;
         this.clocks = data;
+        this.otherClocks = {
+            myClocks: getClocksByUser(),
+            sceneClocks: {},
+        };
         this.parent = parent;
     }
 

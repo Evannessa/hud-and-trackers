@@ -34,16 +34,10 @@ Hooks.once("socketlib.ready", () => {
     socket.register("refreshClockDependentItems", refreshClockDependentItems);
     // socket.register("updateSetting", updateSetting);
 });
-//attack all the clocks to their linked entities' render hooks
+//attach all the clocks to their linked entities' render hooks
 // start a rendered clock object to keep track of
 // all the rendered clocks
 Hooks.on("ready", async () => {
-    game.settings.register(HelperFunctions.moduleName, "sharedClocks", {
-        scope: "world",
-        config: false,
-        type: Object,
-        default: {},
-    });
     game.clockDisplay = new ClockDisplay(getSharedClocks(), false).render(true);
     game.renderedClocks = {};
     hookEntities();
@@ -161,11 +155,9 @@ export class Clock extends FormApplication {
         event.preventDefault();
         if (this.data.shared) {
             this.data.shared = false;
-            //remove from shared clocks
             ui.notifications.notify("Stopped sharing clock");
         } else {
             this.data.shared = true;
-            //add to shared clocks
             ui.notifications.notify("Sharing clock");
         }
         this.saveAndRenderApp();
@@ -183,7 +175,8 @@ export class Clock extends FormApplication {
 
         if (event.altKey) {
             //if alt key is pressed, we're going to unlink the entity
-            await unlinkClockFromEntity(ourEntity, this.data.ourId);
+            this.unlinkEntity(ourEntity);
+            // await unlinkClockFromEntity(ourEntity, this.data.ourId);
             // this.saveAndRenderApp();
             return;
         }
@@ -531,24 +524,7 @@ export class Clock extends FormApplication {
      * this will update our app with saved values
      */
     async saveAndRenderApp() {
-        // if (!this.userIsCreator()) {
-        //     //if we're not the creator
-        //     //just render it and don't save it
-        //     this.render();
-        //     return;
-        // }
-
         await updateClock(this.data.ourId, this.data);
-        // //get saved clocks from settings
-
-        // //if we're sharing this, update on other users' ends
-        // if (this.data.shared) {
-        //     updateSharedClocks(this.data);
-        // }
-
-        //re-render
-        //TODO: maybe put this back in, but might be handled fine by Hook
-        // this.render();
     }
 
     static get defaultOptions() {
@@ -586,7 +562,6 @@ export class Clock extends FormApplication {
         await HelperFunctions.getEntityById(data.type, data.id).then(
             (value) => (ourEntity = value)
         );
-        console.log(ourEntity);
 
         if (ourEntity) {
             //save the linked entity on our clock
@@ -598,17 +573,12 @@ export class Clock extends FormApplication {
             //get our linked entities, and find the id of this entity, and add the linked entities to this data
             this.data.linkedEntities[data.id] = entityData;
 
-            //make a new object for storing the clock on the entity as well
-            const newLinkedClocks = {
-                [this.data.ourId]: this.data,
-            };
-
-            //set the entity flag *after* the linkedEntities is updated, so that the entity
-            //gets the most recent version
-            //TODO: Make sure the below is not necessary
-            // await ourEntity.setFlag("hud-and-trackers", "linkedClocks", newLinkedClocks);
             this.saveAndRenderApp();
         }
+    }
+    async unlinkEntity(data) {
+        delete this.data.linkedEntities[data.id];
+        this.saveAndRenderApp();
     }
 
     async _updateObject(event, formData) {
@@ -785,7 +755,6 @@ export function getClocksLinkedToEntity(entityId) {
  * @param {String} userId - the id of the user whose clock this is, and whose flags we will update
  */
 export async function updateClock(clockId, updateData, userId) {
-    console.log(updateData);
     if (!userId) {
         const relevantClock = getAllClocks()[clockId];
         userId = relevantClock.creator;

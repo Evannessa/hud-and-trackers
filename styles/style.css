@@ -976,7 +976,7 @@
 .app-child .clock-container .showClocks {
   position: absolute;
   right: -4.5rem;
-  top: 3rem;
+  top: 45%;
   border-radius: 5px 5px 0 0;
   font-size: 1.12rem;
   white-space: nowrap;
