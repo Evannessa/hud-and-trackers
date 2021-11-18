@@ -1,6 +1,7 @@
 "use strict";
 import {
     Clock,
+    getSharedClocks,
     getAllClocks,
     isClockRendered,
     renderNewClockFromData,
@@ -41,6 +42,7 @@ export class ClockDisplay extends Application {
     }
 
     getData() {
+        this.clocks = getSharedClocks();
         let data = {};
         for (let clockId in this.clocks) {
             data[clockId] = { ...this.clocks[clockId] };

@@ -32,6 +32,7 @@ Hooks.once("socketlib.ready", () => {
     socket = socketlib.registerModule("hud-and-trackers");
     socket.register("renderNewClockFromData", renderNewClockFromData);
     socket.register("saveAndRenderApp", saveAndRenderApp);
+    socket.register("refreshClockDependentItems", refreshClockDependentItems);
     socket.register("saveClock", saveClock);
     socket.register("updateClockDisplay", updateClockDisplay);
     socket.register("updateSharedClocks", updateSharedClocks);
@@ -47,8 +48,8 @@ Hooks.on("ready", async () => {
         type: Object,
         default: {},
     });
-    game.sharedClocks = await game.settings.get("hud-and-trackers", "sharedClocks");
-    game.clockDisplay = new ClockDisplay(game.sharedClocks, false).render(true);
+    // game.sharedClocks = await game.settings.get("hud-and-trackers", "sharedClocks");
+    game.clockDisplay = new ClockDisplay(getSharedClocks(), false).render(true);
     game.renderedClocks = {};
     hookEntities();
     // getSharedClocks();
@@ -138,7 +139,11 @@ async function updateClockDisplay(isCreator, clockData) {
     }
 }
 
-function getSharedClocks() {
+/**
+ * tries to find the clocks of all users whose share property is set to true
+ * @returns an object with id keys of all sharedClocks that were found
+ */
+export function getSharedClocks() {
     let allClocks = getAllClocks();
     console.log(allClocks);
     let sharedClocks = Object.values(allClocks).filter((clockData) => {
@@ -243,14 +248,14 @@ export class Clock extends FormApplication {
 
         //     await unlinkClockFromEntity(ourEntity, app.data.ourId);
         // }
-        removeFromSharedClocks(app.data);
+        // removeFromSharedClocks(app.data);
         //delete us from the saved clocks setting
         deleteClock(app.data.ourId);
 
-        if (game.clockViewer && game.clockViewer.rendered) {
-            //TODO: Find way to delay this until after the clocks are updated
-            game.clockViewer.render(true);
-        }
+        // if (game.clockViewer && game.clockViewer.rendered) {
+        //     //TODO: Find way to delay this until after the clocks are updated
+        //     game.clockViewer.render(true);
+        // }
         this.close();
     }
 
@@ -260,12 +265,12 @@ export class Clock extends FormApplication {
         if (this.data.shared) {
             this.data.shared = false;
             //remove from shared clocks
-            removeFromSharedClocks(this.data);
+            // removeFromSharedClocks(this.data);
             ui.notifications.notify("Stopped sharing clock");
         } else {
             this.data.shared = true;
             //add to shared clocks
-            addToSharedClocks(this.data);
+            // addToSharedClocks(this.data);
             ui.notifications.notify("Sharing clock");
         }
         this.saveAndRenderApp();
@@ -346,7 +351,6 @@ export class Clock extends FormApplication {
 
         const elementId = clickedElement.id;
 
-        console.log(action);
         switch (action) {
             case "share": {
                 this.handleShareClock(event, this);
@@ -632,26 +636,24 @@ export class Clock extends FormApplication {
      * this will update our app with saved values
      */
     async saveAndRenderApp() {
-        if (!this.userIsCreator()) {
-            //if we're not the creator
-            //just render it and don't save it
-            this.render();
-            return;
-        }
+        // if (!this.userIsCreator()) {
+        //     //if we're not the creator
+        //     //just render it and don't save it
+        //     this.render();
+        //     return;
+        // }
 
         await updateClock(this.data.ourId, this.data);
         // //get saved clocks from settings
 
-        //if we're sharing this, update on other users' ends
-        if (this.data.shared) {
-            updateSharedClocks(this.data);
-            //!we want to take this off so we're not automatically updating
-            //!but we do want to re-render if it's already open
-            // socket.executeForOthers("renderNewClockFromData", this.data);
-        }
+        // //if we're sharing this, update on other users' ends
+        // if (this.data.shared) {
+        //     updateSharedClocks(this.data);
+        // }
 
         //re-render
-        this.render();
+        //TODO: maybe put this back in, but might be handled fine by Hook
+        // this.render();
     }
 
     static get defaultOptions() {
@@ -917,7 +919,7 @@ export async function updateClock(clockId, updateData, userId) {
     let user = game.users.get(userId);
 
     let result = await user.setFlag("hud-and-trackers", "savedClocks", updateInfo);
-    Hooks.call("clockUpdated", clockId, updateData);
+    Hooks.call("clockUpdated", clockId, updateData, false);
 }
 
 /**
@@ -931,8 +933,8 @@ async function deleteClock(clockId) {
         [`-=${clockId}`]: null,
     };
     let user = game.users.get(relevantClock.creator);
-    user.setFlag("hud-and-trackers", "savedClocks", keyDeletion);
-    Hooks.call("clockDeleted", clockId, relevantClock);
+    await user.setFlag("hud-and-trackers", "savedClocks", keyDeletion);
+    Hooks.call("clockUpdated", clockId, relevantClock, true);
     console.log("Relevant clock?", relevantClock);
 }
 
@@ -960,11 +962,12 @@ async function unlinkClockFromEntity(ourEntity, clockId) {
     // await ourEntity.setFlag("hud-and-trackers", "linkedClocks", {
     //     [`-=${clockId}`]: null,
     // });
-    reRenderLinkedEntity(ourEntity);
+    // reRenderLinkedEntity(ourEntity);
 
     //get the clock and delete the linked entity from the clock
     let clockData = getClocksByUser(game.userId)[clockId];
 
+    //delete the specific linked entity from the clock
     let deletion = {
         [clockId]: {
             linkedEntities: {
@@ -972,20 +975,23 @@ async function unlinkClockFromEntity(ourEntity, clockId) {
             },
         },
     };
-    let result = await game.user.setFlag("hud-and-trackers", "savedClocks", deletion);
 
-    if (isClockRendered(clockId)) {
-        let clocks = await game.user.getFlag("hud-and-trackers", "savedClocks");
-        let newClockData = clocks[clockId];
-        game.renderedClocks[clockId].updateEntireClock(newClockData, true);
-    }
+    //save it
+    let result = await game.user.setFlag("hud-and-trackers", "savedClocks", deletion);
+    Hooks.call("clockUpdated", clockId, clockData, false);
+
+    // if (isClockRendered(clockId)) {
+    //     let clocks = await game.user.getFlag("hud-and-trackers", "savedClocks");
+    //     let newClockData = clocks[clockId];
+    //     game.renderedClocks[clockId].updateEntireClock(newClockData, true);
+    // }
 }
 
-Hooks.on("clockDeleted", async (clockId, clockData) => {
+async function refreshClockDependentItems(clockId, clockData, isDeletion) {
+    console.log("Refreshing!");
     //re-render the sheets of every entity linked to this clock
     for (let entityId in clockData.linkedEntities) {
         let entityData = clockData.linkedEntities[entityId];
-        console.log(entityData);
         let entity;
         await HelperFunctions.getEntityById(entityData.entity, entityId).then(
             (value) => (entity = value)
@@ -998,29 +1004,71 @@ Hooks.on("clockDeleted", async (clockId, clockData) => {
     }
     //re-render the ClockDisplay
     if (game.clockDisplay) {
-        game.clockDisplay.render();
+        console.log("re-rendering clock display");
+        console.log(getSharedClocks());
+        game.clockDisplay.render(true);
     }
-    //close any rendered clocks
+    //close or re-render any rendered clocks
     if (isClockRendered(clockId)) {
-        game.renderedClocks[clockId].close();
-    }
-});
-Hooks.on("clockUpdated", (clockId, clockData) => {
-    for (let entityId in clockData.linkedEntities) {
-        let entity = HelperFunctions.getEntityById(entityId);
-        if (entity?.sheet && entity.sheet.rendered) {
-            entity.sheet.render(true);
+        if (isDeletion) {
+            game.renderedClocks[clockId].close();
+        } else {
+            if (game.userId == clockData.creator) {
+                game.renderedClocks[clockId].render();
+            } else {
+                reRenderClock(clockData);
+            }
         }
     }
-    //re-render the ClockDisplay
-    if (game.clockDisplay) {
-        game.clockDisplay.render();
-    }
-    //re-render any renderedClocks
-    if (isClockRendered(clockId)) {
-        reRenderClock(clockData);
-    }
+}
+
+Hooks.on("clockUpdated", async (clockId, clockData, isDeletion) => {
+    refreshClockDependentItems(clockId, clockData, isDeletion);
+    //TODO: put that back i nV V V
+    socket.executeForOthers("refreshClockDependentItems", clockId, clockData, isDeletion);
+    //re-render the sheets of every entity linked to this clock
+    // for (let entityId in clockData.linkedEntities) {
+    //     let entityData = clockData.linkedEntities[entityId];
+    //     let entity;
+    //     await HelperFunctions.getEntityById(entityData.entity, entityId).then(
+    //         (value) => (entity = value)
+    //     );
+    //     console.log(entity);
+    //     //TODO: How to handle if a token sheet instead?
+    //     if (entity?.sheet && entity.sheet.rendered) {
+    //         entity.sheet.render();
+    //     }
+    // }
+    // //re-render the ClockDisplay
+    // if (game.clockDisplay) {
+    //     game.clockDisplay.render();
+    // }
+    // //close any rendered clocks
+    // if (isClockRendered(clockId)) {
+    //     if (isDeletion) {
+    //         game.renderedClocks[clockId].close();
+    //     } else {
+    //         reRenderClock(clockData);
+    //     }
+    // }
 });
+// Hooks.on("clockUpdated", (clockId, clockData) => {
+//     for (let entityId in clockData.linkedEntities) {
+//         let entity = HelperFunctions.getEntityById(entityId);
+//         if (entity?.sheet && entity.sheet.rendered) {
+//             entity.sheet.render(true);
+//         }
+//     }
+//     //re-render the ClockDisplay
+//     //socket to re-render the other users' ClockDisplay too?
+//     if (game.clockDisplay) {
+//         game.clockDisplay.render();
+//     }
+//     //re-render any renderedClocks
+//     if (isClockRendered(clockId)) {
+//         reRenderClock(clockData);
+//     }
+// });
 
 // ==================================
 
