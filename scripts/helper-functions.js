@@ -46,6 +46,8 @@ export function convertArrayIntoObjectById(array) {
     return obj;
 }
 
+export function getClocksByScene() {}
+
 export function getPCItemsOfType(pc, type) {
     return pc.data.items.map((item) => {
         return item.type === type;
