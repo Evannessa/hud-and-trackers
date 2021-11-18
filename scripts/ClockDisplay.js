@@ -2,11 +2,13 @@
 import {
     Clock,
     getSharedClocks,
+    getClocksLinkedToEntity,
     getAllClocks,
     isClockRendered,
     renderNewClockFromData,
     getClocksByUser,
 } from "./clock.js";
+import { convertArrayIntoObjectById } from "./helper-functions.js";
 
 // Hooks.once("renderClockDisplay", (app, html) => {
 
@@ -27,8 +29,10 @@ export class ClockDisplay extends Application {
         // this.clocks = game.sharedClocks;
         this.clocks = data;
         this.otherClocks = {
-            myClocks: getClocksByUser(),
-            sceneClocks: {},
+            myClocks: getClocksByUser(game.userId),
+            sceneClocks: convertArrayIntoObjectById(
+                getClocksLinkedToEntity(game.scenes.viewed.id)
+            ),
         };
         this.parent = parent;
     }
@@ -44,15 +48,49 @@ export class ClockDisplay extends Application {
             title: "Clock Display",
         });
     }
+    convertTemplateData(object, parentObject) {
+        for (let clockId in object) {
+            parentObject[clockId] = { ...object[clockId] };
+            parentObject[clockId].sections = Object.values(object[clockId].sectionMap);
+            parentObject[clockId].user = game.user;
+        }
+    }
+
+    applyTemplateDressing(object, parentObject) {
+        var i = 0;
+        for (var clockId in object) {
+            this.handleBreaksAndWaypoints(object[clockId]);
+            this.refillSections(object[clockId]);
+            this.applyGradient(object[clockId]);
+            i++;
+        }
+    }
 
     getData() {
         this.clocks = getSharedClocks();
-        let data = {};
-        for (let clockId in this.clocks) {
-            data[clockId] = { ...this.clocks[clockId] };
-            data[clockId].sections = Object.values(this.clocks[clockId].sectionMap);
-            data[clockId].user = game.user;
-        }
+        this.otherClocks = {
+            sharedClocks: getSharedClocks(),
+            myClocks: getClocksByUser(game.userId),
+            sceneClocks: convertArrayIntoObjectById(
+                getClocksLinkedToEntity(game.scenes.viewed.id)
+            ),
+        };
+        console.log(this.otherClocks);
+        let data = {
+            sharedClocks: {},
+            myClocks: {},
+            otherClocks: {},
+        };
+        // for (let clockId in this.clocks) {
+        //     data[clockId] = { ...this.clocks[clockId] };
+        //     data[clockId].sections = Object.values(this.clocks[clockId].sectionMap);
+        //     data[clockId].user = game.user;
+        // }
+        this.convertTemplateData(this.otherClocks.sharedClocks, data.sharedClocks);
+        this.convertTemplateData(this.otherClocks.myClocks, data.myClocks);
+        this.convertTemplateData(this.otherClocks.sceneClocks, data.otherClocks);
+        console.log(data);
+
         return data;
     }
 
@@ -87,13 +125,16 @@ export class ClockDisplay extends Application {
         $(html).off("click", ".clockApp");
         $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
         $(html).on("click", ".clockApp", this.openClock);
-        let i = 0;
-        for (var clockId in this.clocks) {
-            this.handleBreaksAndWaypoints(this.clocks[clockId]);
-            this.refillSections(this.clocks[clockId]);
-            this.applyGradient(this.clocks[clockId]);
-            i++;
-        }
+        this.applyTemplateDressing(this.otherClocks.sharedClocks);
+        this.applyTemplateDressing(this.otherClocks.myClocks);
+        this.applyTemplateDressing(this.otherClocks.sceneClocks);
+        // let i = 0;
+        // for (var clockId in this.clocks) {
+        //     this.handleBreaksAndWaypoints(this.clocks[clockId]);
+        //     this.refillSections(this.clocks[clockId]);
+        //     this.applyGradient(this.clocks[clockId]);
+        //     i++;
+        // }
     }
     async applyGradient(clockData) {
         let clockWrapper = $(`#clock-display form#${clockData.ourId} .clockWrapper`);

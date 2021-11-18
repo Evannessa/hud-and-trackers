@@ -46,7 +46,10 @@ export function convertArrayIntoObjectById(array) {
     return obj;
 }
 
-export function getClocksByScene() {}
+// export function getClocksLinkedToScene(scene) {
+// 	let viewedScene = game.scenes.viewed;
+
+// }
 
 export function getPCItemsOfType(pc, type) {
     return pc.data.items.map((item) => {
