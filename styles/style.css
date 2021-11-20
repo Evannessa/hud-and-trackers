@@ -988,7 +988,7 @@
 .app-child .window-content .showClocks,
 .app-child .clock-container .showClocks {
   position: absolute;
-  right: -4.5rem;
+  right: -4.7rem;
   top: 45%;
   border-radius: 5px 5px 0 0;
   font-size: 1.12rem;
@@ -1003,7 +1003,6 @@
           text-orientation: mixed;
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: var(--shadow-elevation-high);
 }
 #clock-display .window-content .showClocks:hover,
 #clock-display .clock-container .showClocks:hover,
