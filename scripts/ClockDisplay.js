@@ -11,12 +11,6 @@ import {
 import { convertArrayIntoObjectById } from "./helper-functions.js";
 import { ClockConfig } from "./ClockConfig.js";
 
-// Hooks.once("renderClockDisplay", (app, html) => {
-
-//     let appWidth = app.position.width;
-
-//     app.setPosition({ left: -appWidth });
-// });
 export class ClockDisplay extends Application {
     constructor(data = {}, parent) {
         if (!parent) {
@@ -27,7 +21,11 @@ export class ClockDisplay extends Application {
             this.options.id = "clock-display_app-child";
             console.log("Our data is", data);
         }
-        // this.clocks = game.sharedClocks;
+        this.categoriesShown = {
+            sharedClocks: true,
+            myClocks: false,
+            sceneClocks: false,
+        };
         this.clocks = data;
         this.otherClocks = {
             myClocks: getClocksByUser(game.userId),
@@ -42,7 +40,6 @@ export class ClockDisplay extends Application {
         return mergeObject(super.defaultOptions, {
             classes: ["form", "clockHud"],
             popOut: true,
-            // top: 200,
             left: -380,
             template: `modules/hud-and-trackers/templates/clock-partials/clock-display.hbs`,
             // id: "clock-display",
@@ -57,10 +54,6 @@ export class ClockDisplay extends Application {
         }
     }
 
-    functionExtractionTest(object) {
-        console.log(test);
-    }
-
     applyTemplateDressing(object, parentName) {
         var i = 0;
         for (var clockId in object) {
@@ -71,8 +64,9 @@ export class ClockDisplay extends Application {
         }
     }
 
-    getData() {
+    async getData() {
         this.clocks = getSharedClocks();
+
         this.otherClocks = {
             sharedClocks: getSharedClocks(),
             myClocks: getClocksByUser(game.userId),
@@ -80,23 +74,24 @@ export class ClockDisplay extends Application {
                 getClocksLinkedToEntity(game.scenes.viewed.id)
             ),
         };
-        console.log(this.otherClocks);
+        this.categoriesShown = await game.user.getFlag(
+            "hud-and-trackers",
+            "displayCategoriesShown"
+        );
         let data = {
             sharedClocks: {},
             myClocks: {},
             sceneClocks: {},
         };
-        // for (let clockId in this.clocks) {
-        //     data[clockId] = { ...this.clocks[clockId] };
-        //     data[clockId].sections = Object.values(this.clocks[clockId].sectionMap);
-        //     data[clockId].user = game.user;
-        // }
-        this.convertTemplateData(this.otherClocks.sharedClocks, data.sharedClocks);
-        this.convertTemplateData(this.otherClocks.myClocks, data.myClocks);
-        this.convertTemplateData(this.otherClocks.sceneClocks, data.sceneClocks);
-        console.log(data);
 
-        return data;
+        for (let clockType in this.otherClocks) {
+            this.convertTemplateData(this.otherClocks[clockType], data[clockType]);
+        }
+
+        return {
+            data: data,
+            categoriesShown: this.categoriesShown,
+        };
     }
 
     handleButtonClick(event) {
@@ -111,6 +106,21 @@ export class ClockDisplay extends Application {
                 let clockConfig = new ClockConfig({}, false).render(true);
                 break;
         }
+    }
+    //if one of the toggle switches (checkboxes) is checked
+    async handleInputChange(event) {
+        event.preventDefault();
+        let el = $(event.currentTarget);
+        let name = el.data().name;
+        this.categoriesShown[name] = el.prop("checked");
+        //set the variable to equal whether it is checked or not
+        //save that in the user's flags
+        await game.user.setFlag(
+            "hud-and-trackers",
+            "displayCategoriesShown",
+            this.categoriesShown
+        );
+        console.log(this.categoriesShown);
     }
 
     openClock(event) {
@@ -130,16 +140,10 @@ export class ClockDisplay extends Application {
         $(html).off("click", ".clockApp");
         $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
         $(html).on("click", ".clockApp", this.openClock);
-        this.applyTemplateDressing(this.otherClocks.sharedClocks, "sharedClocks");
-        this.applyTemplateDressing(this.otherClocks.myClocks, "myClocks");
-        this.applyTemplateDressing(this.otherClocks.sceneClocks, "sceneClocks");
-        // let i = 0;
-        // for (var clockId in this.clocks) {
-        //     this.handleBreaksAndWaypoints(this.clocks[clockId]);
-        //     this.refillSections(this.clocks[clockId]);
-        //     this.applyGradient(this.clocks[clockId]);
-        //     i++;
-        // }
+        $(html).on("change", "input[type='checkbox']", this.handleInputChange.bind(this));
+        for (let clockType in this.otherClocks) {
+            this.applyTemplateDressing(this.otherClocks[clockType], clockType);
+        }
     }
     async applyGradient(clockData, parentName) {
         let clockWrapper = $(
@@ -149,12 +153,14 @@ export class ClockDisplay extends Application {
         clockWrapper.css("backgroundImage", clockData.gradient);
     }
 
+    /**
+     * refill the sections based on how many sections are filled
+     */
     async refillSections(clockData, parentName) {
         let filled = 0;
         let sectionsArray = $(
             `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockSection`
         ).toArray();
-        console.log("Sections array!", sectionsArray);
         sectionsArray.forEach((element) => {
             //refilling the sections after refresh
             if (filled < clockData.filledSections) {
@@ -168,18 +174,10 @@ export class ClockDisplay extends Application {
         //adding breaks if we have any
         let string = `#clock-display .${parentName} form[data-id='${clockData.ourId}']`;
         //TODO: Replace all these long strings with the above + .clockSection
-        let sectionsArray = $(
-            `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockSection`
-        ).toArray();
-        let framesArray = $(
-            `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .frameSection`
-        ).toArray();
-        let breakLabels = $(
-            `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .breakLabel`
-        ).toArray();
-        let waypoints = $(
-            `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .waypoint`
-        ).toArray();
+        let sectionsArray = $(`${string} .clockSection`).toArray();
+        let framesArray = $(`${string} .frameSection`).toArray();
+        let breakLabels = $(`${string} .breakLabel`).toArray();
+        let waypoints = $(`${string} .waypoint`).toArray();
         let count = 0;
         //go through all the sub-sections if there are some
         if (clockData.breaks.length > 0) {

@@ -1,5 +1,24 @@
 	<button class="showClocks" data-action="showClocks">Show Clocks</button>
+	{{#with data}}
 	<div class="clockCategory__wrapper">
+		{{#each this}}
+		<label class="switch">
+			<input type="checkbox" data-name="{{@key}}">
+			<span class="slider round"></span>
+			{{@key}}
+		</label>
+		{{/each}}
+		{{#each this}}
+		{{log 'this is this' this}}
+			<div class="clockCategory {{@key}}">
+			<h3>{{@key}}</h3>
+			{{#each this}}
+			{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
+			<hr>
+			{{/each}}
+		</div>
+		{{/each}}
+{{!-- 
 		{{#unless (eq (objectEmpty sharedClocks) "true")}}
 		<div class="clockCategory sharedClocks">
 			<h3>Shared Clocks</h3>
@@ -28,6 +47,7 @@
 		<hr>
 			{{/each}}
 		</div>
-		{{/unless}}
+		{{/unless}} --}}
 	</div>
+	{{/with}}
 	<button class="addClock" data-action="addClock"><i class="fas fa-plus"></i>New Clock</button>
