@@ -1,21 +1,19 @@
 	<button class="showClocks" data-action="showClocks">Show Clocks</button>
 	{{#with data}}
-	<div class="clockCategory__wrapper">
+	<div class="categoryFilter">
 		{{#each this}}
-		<input type="checkbox" id="{{@key}}" data-name="{{@key}}">
-		<label for="{{@key}}">{{convertToSentence @key}}</label>
-		{{!-- <label class="switch">
-			<input type="checkbox" data-name="{{@key}}">
-			{{@key}}
-		</label> --}}
+			<input type="checkbox" id="{{@key}}" data-name="{{@key}}">
+			<label for="{{@key}}">{{convertToSentence @key}}</label>
 		{{/each}}
+	</div>
+	<div class="clockCategory__wrapper">
+	
 		{{#each this}}
 			{{#if (lookup @root.categoriesShown @key)}}
 			<div class="clockCategory {{@key}}">
 			<h3>{{convertToSentence @key}}</h3>
 			{{#each this}}
 			{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
-			<hr>
 			{{/each}}
 		</div>
 			{{/if}}

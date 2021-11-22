@@ -135,7 +135,9 @@ export class ClockDisplay extends Application {
     //if one of the toggle switches (checkboxes) is checked
     async handleInputChange(event) {
         event.preventDefault();
+        event.stopPropagation();
         let el = $(event.currentTarget);
+        console.log("clicking on this ", el);
         let name = el.data().name;
         this.categoriesShown[name] = el.prop("checked");
         //set the variable to equal whether it is checked or not
@@ -163,9 +165,16 @@ export class ClockDisplay extends Application {
         html = html.closest(".app");
         $(html).off("click", "[data-action]");
         $(html).off("click", ".clockApp");
+        $(html).off("change", "input[type='checkbox']");
         $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
         $(html).on("click", ".clockApp", this.openClock);
         $(html).on("change", "input[type='checkbox']", this.handleInputChange.bind(this));
+        console.log($(".window-app:not(.expanded) .showClocks").text());
+        $(".window-app.expanded .showClocks").text("Hide Clocks");
+        $(".window-app:not(.expanded) .showClocks").text("Show Clocks");
+        // if ($(".showClocks").closest(".window-app").hasClass("expanded")) {
+        //     $(".showClocks");
+        // }
         for (let clockType in this.categoriesShown) {
             //set the toggle switches values to equal what's stored in "categories shown"
             $(`input[data-name='${clockType}']`).prop(
