@@ -33,6 +33,14 @@
 
 	.window-content,
 	.clock-container {
+		.glass {
+			background-color: $glass;
+			border-top: 2px solid $glass-rim;
+			border-right: 1.5px solid $glass-rim;
+			border-bottom: 1px solid rgba($glass-rim, 0.25);
+			border-left: 1px solid rgba($glass-rim, 0.25);
+			border-radius: 5px;
+		}
 
 		border-radius: 0 10px 10px 0;
 		overflow-x: visible;
@@ -69,12 +77,6 @@
 			grid-template-columns: auto auto auto;
 
 			.clockCategory {
-				background-color: $glass;
-				border-top: 2px solid $glass-rim;
-				border-right: 1.5px solid $glass-rim;
-				border-bottom: 1px solid rgba($glass-rim, 0.25);
-				border-left: 1px solid rgba($glass-rim, 0.25);
-				border-radius: 5px;
 				padding: 0.5rem 0.5rem 0.5rem 0.5rem;
 				min-height: 380px;
 				width: fit-content;
@@ -85,34 +87,49 @@
 					// border-left: 1px solid rgba(255, 255, 255, 0.486);
 				}
 
+				&__inner {
+					&.hidden {
+						display: none;
+					}
+
+				}
+
 				button {
-					@extend .clockCategory;
 
 					&.collapsed {
 						// transform: rotate(90deg);
-						@extend .clockCategory;
 						position: relative;
+						// transform: rotate(270deg);
+						// transform: origin(0 0);
 
 						span {
 							display: block;
-							position: absolute;
+							// position: absolute;
+							// bottom: 0;
+							// left: 0;
 							transform: rotate(270deg);
+							width: 1.5rem;
+							height: fit-content;
+							text-align: center;
 							transform: origin(0 0);
-							bottom: 0;
-							left: 0;
-							margin-left: -30px;
+							// margin-left: -30px;
 							text-transform: uppercase;
 							white-space: nowrap;
 						}
 
-						// margin: 0;
-						height: 2rem;
-						width: 2rem;
+						width: 100%;
+						height: 100%;
 
-						&:hover {
-							color: $intellect;
-							box-shadow: $shadow;
-						}
+						// margin: 0;
+						// height: 2rem;
+						// width: 2rem;
+
+
+					}
+
+					&:hover {
+						color: $intellect;
+						box-shadow: $shadow;
 					}
 
 					&__title {

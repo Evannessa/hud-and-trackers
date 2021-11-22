@@ -119,7 +119,7 @@ export class ClockDisplay extends Application {
         };
     }
 
-    handleButtonClick(event) {
+    async handleButtonClick(event) {
         event.preventDefault();
         let el = $(event.currentTarget);
         let action = el.data().action;
@@ -129,6 +129,21 @@ export class ClockDisplay extends Application {
                 break;
             case "addClock":
                 let clockConfig = new ClockConfig({}, false).render(true);
+                break;
+            case "expand":
+                let category = el.closest(".clockCategory");
+                let container = el.next(".clockCategory__inner");
+                let name = category.data().name;
+                //hopefully this should reverse the boolean
+                container.toggleClass("hidden");
+                el.toggleClass("collapsed");
+                this.categoriesShown[name] = !this.categoriesShown[name];
+                await game.user.setFlag(
+                    "hud-and-trackers",
+                    "displayCategoriesShown",
+                    this.categoriesShown
+                );
+                // this.render();
                 break;
         }
     }

@@ -972,6 +972,17 @@
   position: relative;
   position: relative;
 }
+#clock-display .window-content .glass,
+#clock-display .clock-container .glass,
+.app-child .window-content .glass,
+.app-child .clock-container .glass {
+  background-color: rgba(135, 130, 163, 0.5);
+  border-top: 2px solid rgba(135, 130, 163, 0.75);
+  border-right: 1.5px solid rgba(135, 130, 163, 0.75);
+  border-bottom: 1px solid rgba(135, 130, 163, 0.25);
+  border-left: 1px solid rgba(135, 130, 163, 0.25);
+  border-radius: 5px;
+}
 @supports ((-webkit-backdrop-filter: blur()) or (backdrop-filter: blur())) {
   #clock-display .window-content,
 #clock-display .clock-container,
@@ -1001,304 +1012,63 @@
   display: grid;
   grid-template-columns: auto auto auto;
 }
-#clock-display .window-content .clockCategory__wrapper .clockCategory, #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed,
+#clock-display .window-content .clockCategory__wrapper .clockCategory,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory,
-#clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed,
 .app-child .window-content .clockCategory__wrapper .clockCategory,
-.app-child .window-content .clockCategory__wrapper .clockCategory .collapsed,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed,
-.app-child .clock-container .clockCategory__wrapper .clockCategory,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed,
-.app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed {
-  background-color: rgba(135, 130, 163, 0.5);
-  border-top: 2px solid rgba(135, 130, 163, 0.75);
-  border-right: 1.5px solid rgba(135, 130, 163, 0.75);
-  border-bottom: 1px solid rgba(135, 130, 163, 0.25);
-  border-left: 1px solid rgba(135, 130, 163, 0.25);
-  border-radius: 5px;
+.app-child .clock-container .clockCategory__wrapper .clockCategory {
   padding: 0.5rem 0.5rem 0.5rem 0.5rem;
   min-height: 380px;
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
 }
-#clock-display .window-content .clockCategory__wrapper .clockCategory + .clockCategory, #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-#clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-#clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-#clock-display .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory, #clock-display .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed, #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-#clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-#clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child #clock-display .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-#clock-display .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
+#clock-display .window-content .clockCategory__wrapper .clockCategory + .clockCategory,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory + .clockCategory,
-#clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-#clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-#clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-#clock-display .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-#clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-#clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-#clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-#clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child #clock-display .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-#clock-display .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
 .app-child .window-content .clockCategory__wrapper .clockCategory + .clockCategory,
-.app-child #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-#clock-display .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child #clock-display .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-#clock-display .app-child .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .clock-container .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container .clockCategory__wrapper .clockCategory + .clockCategory,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-#clock-display .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .clockCategory,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-#clock-display .app-child .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child .clock-container #clock-display .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container .clockCategory__wrapper .clockCategory .clockCategory + .collapsed,
-.app-child .clock-container #clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .window-content .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child #clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-#clock-display .app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed,
-.app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed + .collapsed {
+.app-child .clock-container .clockCategory__wrapper .clockCategory + .clockCategory {
   padding-left: 0.5rem;
   margin-left: 0.5rem;
 }
-#clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed,
-#clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed,
-.app-child .window-content .clockCategory__wrapper .clockCategory .collapsed,
-.app-child .window-content .clockCategory__wrapper .clockCategory .collapsed .collapsed,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed .collapsed,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed .collapsed,
-.app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed .collapsed,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed .collapsed,
-.app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed .collapsed {
-  position: relative;
-  height: 2rem;
-  width: 2rem;
+#clock-display .window-content .clockCategory__wrapper .clockCategory__inner.hidden,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory__inner.hidden,
+.app-child .window-content .clockCategory__wrapper .clockCategory__inner.hidden,
+.app-child .clock-container .clockCategory__wrapper .clockCategory__inner.hidden {
+  display: none;
 }
-#clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed span,
-#clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed span,
-.app-child .window-content .clockCategory__wrapper .clockCategory .collapsed span,
-.app-child .window-content .clockCategory__wrapper .clockCategory .collapsed .collapsed span,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed .collapsed span,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed .collapsed span,
-.app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed span,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed .collapsed span,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed .collapsed span,
-.app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed .collapsed span {
+#clock-display .window-content .clockCategory__wrapper .clockCategory button.collapsed,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory button.collapsed,
+.app-child .window-content .clockCategory__wrapper .clockCategory button.collapsed,
+.app-child .clock-container .clockCategory__wrapper .clockCategory button.collapsed {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+#clock-display .window-content .clockCategory__wrapper .clockCategory button.collapsed span,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory button.collapsed span,
+.app-child .window-content .clockCategory__wrapper .clockCategory button.collapsed span,
+.app-child .clock-container .clockCategory__wrapper .clockCategory button.collapsed span {
   display: block;
-  position: absolute;
   transform: rotate(270deg);
+  width: 1.5rem;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  text-align: center;
   transform: origin(0 0);
-  bottom: 0;
-  left: 0;
-  margin-left: -30px;
   text-transform: uppercase;
   white-space: nowrap;
 }
-#clock-display .window-content .clockCategory__wrapper .clockCategory .collapsed:hover,
-#clock-display .clock-container .clockCategory__wrapper .clockCategory .collapsed:hover,
-.app-child .window-content .clockCategory__wrapper .clockCategory .collapsed:hover,
-.app-child .window-content .clockCategory__wrapper .clockCategory .collapsed .collapsed:hover,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed .collapsed:hover,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed .collapsed:hover,
-.app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed:hover,
-.app-child .clock-container .window-content .clockCategory__wrapper .clockCategory .collapsed .collapsed:hover,
-.app-child .window-content .clock-container .clockCategory__wrapper .clockCategory .collapsed .collapsed:hover,
-.app-child .clock-container .clockCategory__wrapper .clockCategory .collapsed .collapsed:hover {
+#clock-display .window-content .clockCategory__wrapper .clockCategory button:hover,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory button:hover,
+.app-child .window-content .clockCategory__wrapper .clockCategory button:hover,
+.app-child .clock-container .clockCategory__wrapper .clockCategory button:hover {
   color: #947BD3;
   box-shadow: var(--tui-shadow);
 }
-#clock-display .window-content .clockCategory__wrapper .clockCategory__title,
-#clock-display .clock-container .clockCategory__wrapper .clockCategory__title,
-.app-child .window-content .clockCategory__wrapper .clockCategory__title,
-.app-child .clock-container .clockCategory__wrapper .clockCategory__title {
+#clock-display .window-content .clockCategory__wrapper .clockCategory button__title,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory button__title,
+.app-child .window-content .clockCategory__wrapper .clockCategory button__title,
+.app-child .clock-container .clockCategory__wrapper .clockCategory button__title {
   font-weight: bold;
   font-size: 1.5em;
 }
