@@ -2,17 +2,17 @@
 	{{#with data}}
 	<div class="clockCategory__wrapper">
 		{{#each this}}
-		<label class="switch">
+		<input type="checkbox" id="{{@key}}" data-name="{{@key}}">
+		<label for="{{@key}}">{{convertToSentence @key}}</label>
+		{{!-- <label class="switch">
 			<input type="checkbox" data-name="{{@key}}">
-			<span class="slider round"></span>
 			{{@key}}
-		</label>
+		</label> --}}
 		{{/each}}
 		{{#each this}}
-			{{log "looking up" @key @root (lookup @root.categoriesShown @key)}}
 			{{#if (lookup @root.categoriesShown @key)}}
 			<div class="clockCategory {{@key}}">
-			<h3>{{@key}}</h3>
+			<h3>{{convertToSentence @key}}</h3>
 			{{#each this}}
 			{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
 			<hr>

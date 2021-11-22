@@ -52,7 +52,6 @@ Hooks.on("renderClockViewer", (app, html) => {
  */
 export function getSharedClocks() {
     let allClocks = getAllClocks();
-    console.log(allClocks);
     let sharedClocks = Object.values(allClocks).filter((clockData) => {
         return clockData.shared;
     });

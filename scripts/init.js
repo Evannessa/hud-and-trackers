@@ -4,12 +4,14 @@ import { TrackedItem } from "./classes/TrackedItem.js";
 import { TrackerCollection } from "./classes/TrackerCollection.js";
 import { TrackedItemConfig } from "./classes/TrackedItemConfig.js";
 import { ContextMenu } from "./classes/context-menu.js";
+import registerAllHandlebarHelpers from "./our-handlebar-helpers.js";
 
 var myApp;
 //this array will keep track of all of the trackers during the session
 let trackerCollection;
 
 Hooks.once("init", async () => {
+    registerAllHandlebarHelpers();
     loadHandleBarTemplates();
 
     game.settings.register("hud-and-trackers", "trackerList", {

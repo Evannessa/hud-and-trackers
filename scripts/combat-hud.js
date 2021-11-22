@@ -12,12 +12,6 @@ let fastPlayersStore;
 let enemiesStore;
 let npcAlliesStore;
 
-Handlebars.registerHelper("convertToSentence", function (strInputCode) {
-    let result = strInputCode.replace(/([A-Z])/g, " $1");
-    let finalResult = result.charAt(0).toUpperCase() + result.slice(1);
-    return finalResult;
-});
-
 Hooks.once("socketlib.ready", () => {
     socket = socketlib.registerModule("hud-and-trackers");
 });
