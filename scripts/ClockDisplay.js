@@ -26,6 +26,13 @@ export class ClockDisplay extends Application {
             myClocks: false,
             sceneClocks: false,
         };
+        if (!game.user.getFlag("hud-and-trackers", "displayCategoriesShown")) {
+            game.user.setFlag(
+                "hud-and-trackers",
+                "displayCategoriesShown",
+                this.categoriesShown
+            );
+        }
         this.clocks = data;
         this.otherClocks = {
             myClocks: getClocksByUser(game.userId),
@@ -74,10 +81,24 @@ export class ClockDisplay extends Application {
                 getClocksLinkedToEntity(game.scenes.viewed.id)
             ),
         };
+
         this.categoriesShown = await game.user.getFlag(
             "hud-and-trackers",
             "displayCategoriesShown"
         );
+        //if the flag returns null, create it, and set it to these defaults
+        if (!this.categoriesShown) {
+            this.categoriesShown = {
+                sharedClocks: true,
+                myClocks: false,
+                sceneClocks: false,
+            };
+            await game.user.setFlag(
+                "hud-and-trackers",
+                "displayCategoriesShown",
+                this.categoriesShown
+            );
+        }
         let data = {
             sharedClocks: {},
             myClocks: {},
@@ -91,6 +112,10 @@ export class ClockDisplay extends Application {
         return {
             data: data,
             categoriesShown: this.categoriesShown,
+            //  await game.user.getFlag(
+            //     "hud-and-trackers",
+            //     "displayCategoriesShown"
+            // ),
         };
     }
 
@@ -120,7 +145,7 @@ export class ClockDisplay extends Application {
             "displayCategoriesShown",
             this.categoriesShown
         );
-        console.log(this.categoriesShown);
+        this.render();
     }
 
     openClock(event) {
@@ -141,6 +166,13 @@ export class ClockDisplay extends Application {
         $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
         $(html).on("click", ".clockApp", this.openClock);
         $(html).on("change", "input[type='checkbox']", this.handleInputChange.bind(this));
+        for (let clockType in this.categoriesShown) {
+            //set the toggle switches values to equal what's stored in "categories shown"
+            $(`input[data-name='${clockType}']`).prop(
+                "checked",
+                this.categoriesShown[clockType]
+            );
+        }
         for (let clockType in this.otherClocks) {
             this.applyTemplateDressing(this.otherClocks[clockType], clockType);
         }

@@ -597,17 +597,17 @@ export class Clock extends FormApplication {
 
 //registers the hooks for journal sheets, actor sheets, item sheets
 function registerHooks(hookName) {
-    //TODO: Put this back in
-    // Hooks.on(hookName, async (app, html) => {
-    //     //TODO: Have it ignore scenes for now
-    //     if (app.element.find(".app-child").length == 0) {
-    //         //TODO: put these back in
-    //         // console.log("No app child. showing drawer");
-    //         // await showClockDrawer(app);
-    //     } else {
-    //         // console.log("App child found. Not adding new one.");
-    //     }
-    // });
+    // TODO: Put this back in
+    Hooks.on(hookName, async (app, html) => {
+        //TODO: Have it ignore scenes for now
+        if (app.element.find(".app-child").length == 0) {
+            //TODO: put these back in
+            console.log("No app child. showing drawer");
+            await showClockDrawer(app);
+        } else {
+            console.log("App child found. Not adding new one.");
+        }
+    });
 }
 /**
  * show a floating clock drawer on entity/document sheets that have linked clocks
