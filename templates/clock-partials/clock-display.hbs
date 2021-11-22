@@ -1,22 +1,27 @@
 	<button class="showClocks" data-action="showClocks">Show Clocks</button>
 	{{#with data}}
-	<div class="categoryFilter">
+	{{!-- <div class="categoryFilter">
 		{{#each this}}
 			<input type="checkbox" id="{{@key}}" data-name="{{@key}}">
-			<label for="{{@key}}">{{convertToSentence @key}}</label>
+			<label for="{{@key}}"><span class="filter__icon"></span>{{convertToSentence @key}}</label>
 		{{/each}}
-	</div>
+	</div> --}}
 	<div class="clockCategory__wrapper">
 	
 		{{#each this}}
-			{{#if (lookup @root.categoriesShown @key)}}
 			<div class="clockCategory {{@key}}">
-			<h3>{{convertToSentence @key}}</h3>
-			{{#each this}}
-			{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
-			{{/each}}
-		</div>
-			{{/if}}
+			<button class="{{#unless (lookup @root.categoriesShown @key)}}collapsed{{/unless}}"><span class="accordionBtn__text">{{convertToSentence @key}}</span></button>
+				{{!-- <h3 class="clockCategory__title">{{convertToSentence @key}}</h3> --}}
+				{{#if (lookup @root.categoriesShown @key)}}
+				{{#each this}}
+				{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
+				{{/each}}
+				{{/if}}
+			</div>
+			{{!-- {{else}} --}}
+			{{!-- <button class="clockCategory collapsed"> --}}
+				{{!-- <h3 class="clockCategory__title">{{convertToSentence @key}}</h3> --}}
+			{{!-- </button> --}}
 		{{/each}}
 {{!-- 
 		{{#unless (eq (objectEmpty sharedClocks) "true")}}

@@ -10,8 +10,8 @@ input[type="checkbox"]+label {
 	background-color: #fff;
 	color: black;
 	border: solid 2px #7d7d7d;
-	padding: 0.5em 1em;
-	width: 9em;
+	padding: 0.5em 0.7em;
+	width: 9.5em;
 	display: inline-block;
 	text-align: center;
 	// -moz-user-select: -moz-none;
@@ -26,5 +26,9 @@ input[type="checkbox"]:checked+label {
 	background-color: #fc6c27;
 	color: white;
 	border-color: #fc6c27;
+
+	span {
+		margin-right: 10px;
+	}
 
 }

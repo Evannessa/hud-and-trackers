@@ -13,6 +13,13 @@
 	$jet-3: #2c2c36;
 	$jet-5: hsla(240, 10%, 22%, 1);
 
+	//Glass light mode
+	// $glass: rgba(205, 214, 249, 0.384);
+	// $glass-rim: rgba(205, 214, 249, 0.63);
+
+	//Glass dark mode
+	$glass: rgb(135, 130, 163, 0.5);
+	$glass-rim: rgba(135, 130, 163, 0.75);
 	$black1: var(--palette-app-background, var(--tui-black1));
 	$black1L: var(--palette-app-background-light, var(--tui-black1L));
 	$black2: var(--palette-dialog-background, var(--tui-black2));

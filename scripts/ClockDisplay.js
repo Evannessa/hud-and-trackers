@@ -137,9 +137,15 @@ export class ClockDisplay extends Application {
         event.preventDefault();
         event.stopPropagation();
         let el = $(event.currentTarget);
-        console.log("clicking on this ", el);
         let name = el.data().name;
         this.categoriesShown[name] = el.prop("checked");
+        if (el.prop("checked")) {
+            //insert a check icon
+            el.next("label").children("span").html('<i class="fas fa-check"></i>');
+        } else {
+            //insert a plus icon
+            el.next("label").children("span").html(`<i class="fas fa-plus"></i>`);
+        }
         //set the variable to equal whether it is checked or not
         //save that in the user's flags
         await game.user.setFlag(
@@ -175,6 +181,8 @@ export class ClockDisplay extends Application {
         // if ($(".showClocks").closest(".window-app").hasClass("expanded")) {
         //     $(".showClocks");
         // }
+        //insert a check icon
+
         for (let clockType in this.categoriesShown) {
             //set the toggle switches values to equal what's stored in "categories shown"
             $(`input[data-name='${clockType}']`).prop(
@@ -182,6 +190,15 @@ export class ClockDisplay extends Application {
                 this.categoriesShown[clockType]
             );
         }
+        $("input[type='checkbox']:not(:checked)")
+            .next("label")
+            .children("span")
+            .html(`<i class="fas fa-plus"></i>`);
+        //insert a plus icon
+        $("input[type='checkbox']:checked")
+            .next("label")
+            .children("span")
+            .html('<i class="fas fa-check"></i>');
         for (let clockType in this.otherClocks) {
             this.applyTemplateDressing(this.otherClocks[clockType], clockType);
         }
