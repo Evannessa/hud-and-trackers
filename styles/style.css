@@ -970,6 +970,10 @@
   border-right: 1px solid rgba(135, 130, 163, 0.75);
   min-height: 10em;
   position: relative;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  transition: width 0.2s ease;
   position: relative;
 }
 #clock-display .window-content .glass,
@@ -1021,6 +1025,7 @@
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
+  display: flex;
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory + .clockCategory,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory + .clockCategory,
@@ -1029,11 +1034,44 @@
   padding-left: 0.5rem;
   margin-left: 0.5rem;
 }
+#clock-display .window-content .clockCategory__wrapper .clockCategory__inner,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory__inner,
+.app-child .window-content .clockCategory__wrapper .clockCategory__inner,
+.app-child .clock-container .clockCategory__wrapper .clockCategory__inner {
+  transform: translate(0px, 0px);
+  transition: transform 0.5s ease-out;
+  position: inherit;
+  overflow: hidden;
+}
 #clock-display .window-content .clockCategory__wrapper .clockCategory__inner.hidden,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__inner.hidden,
 .app-child .window-content .clockCategory__wrapper .clockCategory__inner.hidden,
 .app-child .clock-container .clockCategory__wrapper .clockCategory__inner.hidden {
-  display: none;
+  position: absolute;
+  transform: translate(-999px, 0px);
+  transition: transform 0.5s ease-out;
+  overflow: hidden;
+}
+#clock-display .window-content .clockCategory__wrapper .clockCategory button,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory button,
+.app-child .window-content .clockCategory__wrapper .clockCategory button,
+.app-child .clock-container .clockCategory__wrapper .clockCategory button {
+  width: 2rem;
+}
+#clock-display .window-content .clockCategory__wrapper .clockCategory button span,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory button span,
+.app-child .window-content .clockCategory__wrapper .clockCategory button span,
+.app-child .clock-container .clockCategory__wrapper .clockCategory button span {
+  display: block;
+  transform: rotate(270deg);
+  width: 1.5rem;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  text-align: center;
+  transform: origin(0 0);
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory button.collapsed,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory button.collapsed,
@@ -1042,6 +1080,8 @@
   position: relative;
   width: 100%;
   height: 100%;
+  transition: width 0.5s ease-out;
+  transition: height 0.5s ease-out;
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory button.collapsed span,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory button.collapsed span,

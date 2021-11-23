@@ -135,7 +135,8 @@ export class ClockDisplay extends Application {
                 let container = el.next(".clockCategory__inner");
                 let name = category.data().name;
                 //hopefully this should reverse the boolean
-                container.toggleClass("hidden");
+                // container.toggleClass("hidden");
+                container.toggle(500);
                 el.toggleClass("collapsed");
                 this.categoriesShown[name] = !this.categoriesShown[name];
                 await game.user.setFlag(
