@@ -1,4 +1,6 @@
 "use strict";
+// import { gsap } from "../../../../scripts/greensock/esm/all.js";
+// gsap.registerPlugin(Flip);
 import {
     Clock,
     getSharedClocks,
@@ -134,10 +136,17 @@ export class ClockDisplay extends Application {
                 let category = el.closest(".clockCategory");
                 let container = el.next(".clockCategory__inner");
                 let name = category.data().name;
+                // const state = Flip.getState(container);
+                // container.toggleClass("hidden");
+                // Flip.from(state, {
+                //     duration: 1,
+                //     ease: "power1.inOut",
+                //     absolute: true,
+                // });
                 //hopefully this should reverse the boolean
                 // container.toggleClass("hidden");
                 container.toggle(500);
-                el.toggleClass("collapsed");
+                // el.toggleClass("collapsed");
                 this.categoriesShown[name] = !this.categoriesShown[name];
                 await game.user.setFlag(
                     "hud-and-trackers",

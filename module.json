@@ -19,7 +19,7 @@
             "entity": "Macro"
         }
     ],
-    "scripts": ["scripts/draggabilly.min.js"],
+    "scripts": ["scripts/draggabilly.min.js", "greensock/dist/gsap.min.js"],
     "esmodules": [
         "./scripts/init.js",
         "./scripts/hud.js",

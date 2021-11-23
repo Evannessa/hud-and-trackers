@@ -10,9 +10,12 @@
 	
 		{{#each this}}
 			<div class="clockCategory {{@key}} glass" data-name="{{@key}}">
-			<button class="btn {{#unless (lookup @root.categoriesShown @key)}}collapsed{{/unless}} glass" data-action="expand"><span class="accordionBtn__text">{{convertToSentence @key}}</span></button>
+			<button class="btn glass" data-action="expand"><span class="accordionBtn__text">{{convertToSentence @key}}</span></button>
+			{{!-- <button class="btn {{#unless (lookup @root.categoriesShown @key)}}collapsed{{/unless}} glass" data-action="expand"><span class="accordionBtn__text">{{convertToSentence @key}}</span></button> --}}
 				{{!-- <h3 class="clockCategory__title">{{convertToSentence @key}}</h3> --}}
-				<div class="clockCategory__inner {{#unless (lookup @root.categoriesShown @key)}}hidden{{/unless}}">
+				<div class="clockCategory__inner">
+
+				{{!-- </div> {{#unless (lookup @root.categoriesShown @key)}}hidden{{/unless}}"> --}}
 					{{#each this}}
 					{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
 					{{/each}}
