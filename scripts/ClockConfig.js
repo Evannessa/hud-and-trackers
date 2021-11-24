@@ -59,7 +59,7 @@ export class ClockConfig extends FormApplication {
         //!TODO: copy these when clock is cloned
         //I'm thinking (hoping) this means it'll set it to an empty object if linkedEntities doesn't exist
         let linkedEntities = (this.data.linkedEntities ||= {});
-        console.log(linkedEntities);
+        let shared = (this.data.shared ||= false);
 
         let sectionMap = {};
         let filledSections = 0;
@@ -119,7 +119,7 @@ export class ClockConfig extends FormApplication {
             breakLabels: breakLabels,
             waypoints: waypoints,
             linkedEntities: linkedEntities,
-            shared: false,
+            shared: shared,
             creator: game.user.id,
             ourId: id,
         };

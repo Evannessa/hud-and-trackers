@@ -793,7 +793,6 @@ async function deleteClock(clockId) {
     let user = game.users.get(relevantClock.creator);
     await user.setFlag("hud-and-trackers", "savedClocks", keyDeletion);
     Hooks.call("clockUpdated", clockId, relevantClock, true);
-    console.log("Relevant clock?", relevantClock);
 }
 
 /**

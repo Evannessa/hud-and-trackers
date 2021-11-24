@@ -107,6 +107,17 @@ export class ClockDisplay extends Application {
             sceneClocks: {},
         };
 
+        let tooltipText = {
+            sharedClocks: "Clocks that have been shared with you",
+            myClocks: "Clocks you've personally created",
+            sceneClocks: "Clocks linked to the scene you're viewing",
+        };
+        let addClockTooltipText = {
+            sharedClocks: "Add new clock that'll automatically be shared",
+            myClocks: "Add new personal clock only you can see",
+            sceneClock: "Add new clock linked to the scene you're viewing",
+        };
+
         for (let clockType in this.otherClocks) {
             this.convertTemplateData(this.otherClocks[clockType], data[clockType]);
         }
@@ -114,23 +125,43 @@ export class ClockDisplay extends Application {
         return {
             data: data,
             categoriesShown: this.categoriesShown,
-            //  await game.user.getFlag(
-            //     "hud-and-trackers",
-            //     "displayCategoriesShown"
-            // ),
+            tooltipText: tooltipText,
+            addClockTooltipText: addClockTooltipText,
         };
     }
 
+    /**
+     * Handles buttons clicked on the ClockDisplay
+     * @param {Object} event - the button click event
+     */
     async handleButtonClick(event) {
         event.preventDefault();
         let el = $(event.currentTarget);
         let action = el.data().action;
+
         switch (action) {
             case "showClocks":
                 el.closest("#clock-display").toggleClass("expanded");
                 break;
             case "addClock":
-                let clockConfig = new ClockConfig({}, false).render(true);
+                let categoryName = el.closest(".clockCategory").data().name;
+                let data = {};
+                if (categoryName === "sharedClocks") {
+                    //if we create a clock in the shared clock category
+                    //set it to be shared by default
+                    data = { shared: true };
+                } else if (categoryName === "sceneClocks") {
+                    //if we create a clock in the scene clocks category
+                    //set its linked entities to include the viewed scene
+                    //by default
+                    let scene = game.scenes.viewed;
+                    data = {
+                        linkedEntities: {
+                            [scene.id]: { name: scene.name, entity: scene.entity },
+                        },
+                    };
+                }
+                new ClockConfig(data, false).render(true);
                 break;
             case "expand":
                 let category = el.closest(".clockCategory");
@@ -201,13 +232,6 @@ export class ClockDisplay extends Application {
         $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
         $(html).on("click", ".clockApp", this.openClock);
         // $(html).on("change", "input[type='checkbox']", this.handleInputChange.bind(this));
-        // console.log($(".window-app:not(.expanded) .showClocks").text());
-        // $(".window-app.expanded .showClocks").text("Hide Clocks");
-        // $(".window-app:not(.expanded) .showClocks").text("Show Clocks");
-        // if ($(".showClocks").closest(".window-app").hasClass("expanded")) {
-        //     $(".showClocks");
-        // }
-        //insert a check icon
 
         for (let clockType in this.categoriesShown) {
             //set the toggle switches values to equal what's stored in "categories shown"

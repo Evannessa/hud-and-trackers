@@ -1,0 +1,29 @@
+.tooltip {
+	color: white;
+	// display: none;
+	transform: scale(0);
+	transform-origin: left;
+	transition: transform 0.25s;
+	transition-delay: 300ms;
+	position: absolute;
+	font-size: 1rem;
+	min-width: 20ch;
+	background-color: $black2;
+	// background-color: rgba(0, 9, 0, 0.75);
+	border-radius: 5px;
+	padding: 0.5rem 0.5rem;
+	margin-left: 28px;
+	/* moves the tooltip to the right */
+	margin-top: 15px;
+	/* moves it down */
+	z-index: 1000;
+	pointer-events: none;
+}
+
+&:hover {
+
+	.tooltip {
+		transform: scale(1);
+		// display: block;
+	}
+}

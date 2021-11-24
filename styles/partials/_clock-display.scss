@@ -19,7 +19,7 @@
 	position: fixed;
 	top: 50vh !important;
 	transform: translateX(-100%);
-	transition: all 0.25s;
+	transition: transform 0.25s cubic-bezier(0.4, 0.0, 1, 1);
 
 	@import '_chip_checkbox.scss';
 
@@ -29,6 +29,7 @@
 
 	&.expanded {
 		transform: translateX(0%);
+		transition: transform 0.25s cubic-bezier(0.0, 0.0, 0.2, 1);
 	}
 
 	.window-content,
@@ -75,13 +76,15 @@
 		}
 
 		.clockCategory__wrapper {
-			display: grid;
-			grid-template-columns: auto auto auto;
+			display: flex;
+			// grid-template-columns: auto auto auto;
+			max-height: 40vh;
 
 			.clockCategory {
 				padding: 0.5rem 0.5rem 0.5rem 0.5rem;
 				min-height: 380px;
 				width: fit-content;
+				max-height: inherit;
 
 				display: flex;
 
@@ -97,6 +100,20 @@
 					transition: transform 0.5s ease-out;
 					position: inherit;
 					overflow: hidden;
+					display: grid;
+					grid-auto-flow: column;
+					grid-template-columns: (repeat 3, auto);
+					min-width: 160px; //todo: maybe don't use pixel values
+					max-height: inherit;
+
+					.addClock.actionButton {
+						align-self: center;
+						width: 4rem;
+						height: 4rem;
+						font-size: 2rem;
+						border: 2px solid $glass-rim;
+						@import 'tooltip';
+					}
 
 					&.hidden {
 						position: absolute;
@@ -123,41 +140,37 @@
 
 				}
 
-				button {
+				&__btn {
 					width: 2rem;
+					@import 'tooltip';
+					position: relative;
+					transition: all 100ms ease-out;
+					display: flex;
+					align-items: center;
+					justify-content: center;
 
-					span {
+					.accordionBtn__text {
 						display: block;
-						// position: absolute;
-						// bottom: 0;
-						// left: 0;
 						transform: rotate(270deg);
 						width: 1.5rem;
 						height: fit-content;
 						text-align: center;
 						transform: origin(0 0);
-						// margin-left: -30px;
 						text-transform: uppercase;
 						white-space: nowrap;
 					}
 
 					&.collapsed {
-						// transform: rotate(90deg);
 						position: relative;
-						// transform: rotate(270deg);
-						// transform: origin(0 0);
+
 
 						span {
 							display: block;
-							// position: absolute;
-							// bottom: 0;
-							// left: 0;
 							transform: rotate(270deg);
 							width: 1.5rem;
 							height: fit-content;
 							text-align: center;
 							transform: origin(0 0);
-							// margin-left: -30px;
 							text-transform: uppercase;
 							white-space: nowrap;
 						}
@@ -166,12 +179,6 @@
 						height: 100%;
 						transition: width 0.5s ease-out;
 						transition: height 0.5s ease-out;
-
-						// margin: 0;
-						// height: 2rem;
-						// width: 2rem;
-
-
 					}
 
 					&:hover {
