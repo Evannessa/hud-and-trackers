@@ -1046,7 +1046,7 @@
   overflow: hidden;
   display: grid;
   grid-auto-flow: column;
-  grid-template-columns: repeat(3, auto);
+  grid-template-rows: repeat(3, auto);
   min-width: 160px;
   max-height: inherit;
 }
