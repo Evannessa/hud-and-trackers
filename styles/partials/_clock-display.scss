@@ -102,7 +102,7 @@
 					overflow: hidden;
 					display: grid;
 					grid-auto-flow: column;
-					grid-template-columns: (repeat 3, auto);
+					grid-template-columns: repeat(3, auto);
 					min-width: 160px; //todo: maybe don't use pixel values
 					max-height: inherit;
 
