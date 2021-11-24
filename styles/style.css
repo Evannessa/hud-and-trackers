@@ -1104,6 +1104,7 @@
 .app-child .clock-container .clockCategory__wrapper .clockCategory button:hover {
   color: #947BD3;
   box-shadow: var(--tui-shadow);
+  background: rgba(108, 103, 139, 0.5);
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory button__title,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory button__title,

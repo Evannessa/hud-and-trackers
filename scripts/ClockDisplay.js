@@ -145,7 +145,7 @@ export class ClockDisplay extends Application {
                 // });
                 //hopefully this should reverse the boolean
                 // container.toggleClass("hidden");
-                container.toggle(500);
+                container.toggle(200);
                 // el.toggleClass("collapsed");
                 this.categoriesShown[name] = !this.categoriesShown[name];
                 await game.user.setFlag(
@@ -153,6 +153,7 @@ export class ClockDisplay extends Application {
                     "displayCategoriesShown",
                     this.categoriesShown
                 );
+                console.log(this.categoriesShown);
                 // this.render();
                 break;
         }
@@ -199,10 +200,10 @@ export class ClockDisplay extends Application {
         $(html).off("change", "input[type='checkbox']");
         $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
         $(html).on("click", ".clockApp", this.openClock);
-        $(html).on("change", "input[type='checkbox']", this.handleInputChange.bind(this));
-        console.log($(".window-app:not(.expanded) .showClocks").text());
-        $(".window-app.expanded .showClocks").text("Hide Clocks");
-        $(".window-app:not(.expanded) .showClocks").text("Show Clocks");
+        // $(html).on("change", "input[type='checkbox']", this.handleInputChange.bind(this));
+        // console.log($(".window-app:not(.expanded) .showClocks").text());
+        // $(".window-app.expanded .showClocks").text("Hide Clocks");
+        // $(".window-app:not(.expanded) .showClocks").text("Show Clocks");
         // if ($(".showClocks").closest(".window-app").hasClass("expanded")) {
         //     $(".showClocks");
         // }
@@ -210,20 +211,25 @@ export class ClockDisplay extends Application {
 
         for (let clockType in this.categoriesShown) {
             //set the toggle switches values to equal what's stored in "categories shown"
-            $(`input[data-name='${clockType}']`).prop(
-                "checked",
-                this.categoriesShown[clockType]
-            );
+            if (this.categoriesShown[clockType] === false) {
+                $(
+                    `.clockCategory[data-name='${clockType}'] .clockCategory__inner`
+                ).hide();
+            }
+            // $(`input[data-name='${clockType}']`).prop(
+            //     "checked",
+            //     this.categoriesShown[clockType]
+            // );
         }
-        $("input[type='checkbox']:not(:checked)")
-            .next("label")
-            .children("span")
-            .html(`<i class="fas fa-plus"></i>`);
-        //insert a plus icon
-        $("input[type='checkbox']:checked")
-            .next("label")
-            .children("span")
-            .html('<i class="fas fa-check"></i>');
+        // $("input[type='checkbox']:not(:checked)")
+        //     .next("label")
+        //     .children("span")
+        //     .html(`<i class="fas fa-plus"></i>`);
+        // //insert a plus icon
+        // $("input[type='checkbox']:checked")
+        //     .next("label")
+        //     .children("span")
+        //     .html('<i class="fas fa-check"></i>');
         for (let clockType in this.otherClocks) {
             this.applyTemplateDressing(this.otherClocks[clockType], clockType);
         }

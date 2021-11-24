@@ -177,6 +177,7 @@
 					&:hover {
 						color: $intellect;
 						box-shadow: $shadow;
+						background: darken($glass, 10%);
 					}
 
 					&__title {
