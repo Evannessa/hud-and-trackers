@@ -992,6 +992,12 @@
   border-left: 1px solid rgba(135, 130, 163, 0.25);
   border-radius: 5px;
 }
+#clock-display .window-content .glass__btn,
+#clock-display .clock-container .glass__btn,
+.app-child .window-content .glass__btn,
+.app-child .clock-container .glass__btn {
+  background-color: transparent;
+}
 @supports ((-webkit-backdrop-filter: blur()) or (backdrop-filter: blur())) {
   #clock-display .window-content,
 #clock-display .clock-container,
@@ -1025,25 +1031,39 @@
 #clock-display .clock-container .clockCategory__wrapper .clockCategory,
 .app-child .window-content .clockCategory__wrapper .clockCategory,
 .app-child .clock-container .clockCategory__wrapper .clockCategory {
-  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
   min-height: 380px;
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
   max-height: inherit;
   display: flex;
+  border-radius: 0;
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory + .clockCategory,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory + .clockCategory,
 .app-child .window-content .clockCategory__wrapper .clockCategory + .clockCategory,
 .app-child .clock-container .clockCategory__wrapper .clockCategory + .clockCategory {
-  padding-left: 0.5rem;
-  margin-left: 0.5rem;
+  margin-left: 0.25rem;
+}
+#clock-display .window-content .clockCategory__wrapper .clockCategory:first-child,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory:first-child,
+.app-child .window-content .clockCategory__wrapper .clockCategory:first-child,
+.app-child .clock-container .clockCategory__wrapper .clockCategory:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+#clock-display .window-content .clockCategory__wrapper .clockCategory:last-child,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory:last-child,
+.app-child .window-content .clockCategory__wrapper .clockCategory:last-child,
+.app-child .clock-container .clockCategory__wrapper .clockCategory:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__inner,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__inner,
 .app-child .window-content .clockCategory__wrapper .clockCategory__inner,
 .app-child .clock-container .clockCategory__wrapper .clockCategory__inner {
+  padding: 0.5rem 0rem;
   transform: translate(0px, 0px);
   transition: transform 0.5s ease-out;
   position: inherit;
@@ -1134,6 +1154,7 @@
   align-items: center;
   justify-content: center;
   color: black;
+  padding: 0;
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__btn .tooltip,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn .tooltip,
@@ -1215,7 +1236,6 @@
 .app-child .clock-container .clockCategory__wrapper .clockCategory__btn:hover {
   color: #947BD3;
   box-shadow: var(--tui-shadow);
-  background: rgba(108, 103, 139, 0.5);
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__btn__title,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn__title,

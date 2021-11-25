@@ -47,6 +47,10 @@
 			border-bottom: 1px solid rgba($glass-rim, 0.25);
 			border-left: 1px solid rgba($glass-rim, 0.25);
 			border-radius: 5px;
+
+			&__btn {
+				background-color: transparent;
+			}
 		}
 
 		border-radius: 0 10px 10px 0;
@@ -87,20 +91,32 @@
 			max-height: 40vh;
 
 			.clockCategory {
-				padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+				// padding: 0.5rem 0.5rem 0.5rem 0.5rem;
 				min-height: 380px;
 				width: fit-content;
 				max-height: inherit;
 
 				display: flex;
+				border-radius: 0;
 
 				+.clockCategory {
-					padding-left: 0.5rem;
-					margin-left: 0.5rem;
+					// padding-left: 0.5rem;
+					margin-left: 0.25rem;
 					// border-left: 1px solid rgba(255, 255, 255, 0.486);
 				}
 
+				&:first-child {
+					border-top-left-radius: 5px;
+					border-bottom-left-radius: 5px;
+				}
+
+				&:last-child {
+					border-top-right-radius: 5px;
+					border-bottom-right-radius: 5px;
+				}
+
 				&__inner {
+					padding: 0.5rem 0rem;
 					// transform: scale(1, 1);
 					transform: translate(0px, 0px);
 					transition: transform 0.5s ease-out;
@@ -170,6 +186,7 @@
 					align-items: center;
 					justify-content: center;
 					color: black;
+					padding: 0;
 
 					&.open {
 						color: $intellect;
@@ -210,7 +227,7 @@
 					&:hover {
 						color: $intellect;
 						box-shadow: $shadow;
-						background: darken($glass, 10%);
+						// background: darken($glass, 10%);
 					}
 
 					&__title {
