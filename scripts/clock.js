@@ -596,11 +596,8 @@ export class Clock extends FormApplication {
 
 //registers the hooks for journal sheets, actor sheets, item sheets
 function registerHooks(hookName) {
-    // TODO: Put this back in
     Hooks.on(hookName, async (app, html) => {
-        //TODO: Have it ignore scenes for now
         if (app.element.find(".app-child").length == 0) {
-            //TODO: put these back in
             console.log("No app child. showing drawer");
             await showClockDrawer(app);
         } else {
@@ -686,12 +683,7 @@ Hooks.on("closeClock", (app, html) => {
 //registers the hooks for scenes
 function registerSceneHook() {
     Hooks.on("canvasReady", (canvas) => {
-        let linkedClocks = canvas.scene.getFlag("hud-and-trackers", "linkedClocks");
-        if (linkedClocks) {
-            for (let clockId in linkedClocks) {
-                renderNewClockFromData(linkedClocks[clockId]);
-            }
-        }
+        game.clockDisplay.render();
     });
 }
 /**

@@ -10,16 +10,15 @@
 	
 		{{#each this}}
 			<div class="clockCategory {{@key}} glass" data-name="{{@key}}">
-			<button class="clockCategory__btn glass" data-action="expand"><span class="tooltip">{{lookup @root.tooltipText @key}}</span><span class="accordionBtn__text">{{convertToSentence @key}}</span></button>
+			<button class="clockCategory__btn glass {{#if (lookup @root.categoriesShown @key)}}open{{/if}}" data-action="expand" title="{{lookup @root.tooltipText @key}}"><span class="accordionBtn__text">{{convertToSentence @key}}</span></button>
 				<div class="clockCategory__inner">
+				{{!-- <div class="clockCategory__inner {{#if (lookup @root.categoriesShown @key)}}is-visible{{else}}is-hidden{{/if}}"> --}}
 					{{#each this}}
 					{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
 					{{/each}}
-					{{!-- <button class="addClock actionButton glass" data-action="addClock" title="{{lookup @root.addClockTooltipText @key}}"><span class="tooltip">{{lookup @root.addClockTooltipText @key}}</span><i class="fas fa-plus"></i></button> --}}
 					<button class="addClock actionButton glass" data-action="addClock" title="{{lookup @root.addClockTooltipText @key}}"><i class="fas fa-plus"></i></button>
 				</div>
 			</div>
 		{{/each}}
 	</div>
 	{{/with}}
-	{{!-- <button class="addClock" data-action="addClock"><i class="fas fa-plus"></i>New Clock</button> --}}

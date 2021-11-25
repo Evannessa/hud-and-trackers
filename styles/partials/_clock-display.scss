@@ -21,6 +21,12 @@
 	transform: translateX(-100%);
 	transition: transform 0.25s cubic-bezier(0.4, 0.0, 1, 1);
 
+	&.no-transition * {
+		transition: none !important;
+	}
+
+
+
 	@import '_chip_checkbox.scss';
 
 	.window-header {
@@ -102,12 +108,27 @@
 					overflow: hidden;
 					display: grid;
 					grid-auto-flow: column;
-					grid-template-rows: repeat(3, auto);
+					grid-template-rows: repeat(3, min-content);
 					min-width: 160px; //todo: maybe don't use pixel values
 					max-height: inherit;
+					transition: max-width 250ms cubic-bezier(0.4, 0.0, 0.2, 1), min-width 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+
+					&.no-transition {
+						transition: none;
+					}
+
+					&.is-hidden {
+						max-width: 0;
+						min-width: 0;
+					}
+
+					&.is-visible {
+						max-width: var(--expanded, 70px);
+						min-width: var(--expanded, 70px);
+					}
 
 					.addClock.actionButton {
-						align-self: center;
+						justify-self: center;
 						width: 4rem;
 						height: 4rem;
 						font-size: 2rem;
@@ -148,6 +169,11 @@
 					display: flex;
 					align-items: center;
 					justify-content: center;
+					color: black;
+
+					&.open {
+						color: $intellect;
+					}
 
 					.accordionBtn__text {
 						display: block;
