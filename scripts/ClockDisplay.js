@@ -53,7 +53,7 @@ export class ClockDisplay extends Application {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["form", "clockHud"],
+            classes: ["form"],
             popOut: true,
             left: -380,
             template: `modules/hud-and-trackers/templates/clock-partials/clock-display.hbs`,
@@ -289,12 +289,22 @@ export class ClockDisplay extends Application {
 
         $(".clockCategory").each(this.measureAccordionContents);
     }
+
+    replaceGradientDirection(gradientString) {
+        const regex = /(\d+)deg/i;
+        return gradientString.replace(regex, "to bottom");
+    }
+
     async applyGradient(clockData, parentName) {
         let clockWrapper = $(
             `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockWrapper`
         );
         //make the background wrapper's gradient look like the chosen one
-        clockWrapper.css("backgroundImage", clockData.gradient);
+        // clockWrapper.css("backgroundImage", clockData.gradient);
+        let newGradient = this.replaceGradientDirection(clockData.gradient);
+        clockWrapper.children(".clockSection.filled").each((index, element) => {
+            $(element).css("backgroundImage", newGradient);
+        });
     }
 
     /**

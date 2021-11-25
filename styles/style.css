@@ -912,7 +912,9 @@
   width: -webkit-max-content !important;
   width: max-content !important;
   width: -moz-max-content !important;
-  height: 50vh;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
   position: fixed;
   top: 50vh !important;
   transform: translateX(-100%);
@@ -1092,8 +1094,8 @@
   overflow: hidden;
   display: grid;
   grid-auto-flow: column;
-  grid-template-rows: repeat(3, -webkit-min-content);
-  grid-template-rows: repeat(3, min-content);
+  grid-template-rows: repeat(4, -webkit-min-content);
+  grid-template-rows: repeat(4, min-content);
   min-width: 160px;
   max-height: inherit;
   transition: max-width 250ms cubic-bezier(0.4, 0, 0.2, 1), min-width 200ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -1275,7 +1277,7 @@
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn:hover span,
 .app-child .window-content .clockCategory__wrapper .clockCategory__btn:hover span,
 .app-child .clock-container .clockCategory__wrapper .clockCategory__btn:hover span {
-  transform: scale(1.25) rotate(270deg);
+  transform: scale(1.15) rotate(270deg);
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__btn__title,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn__title,
@@ -1474,7 +1476,6 @@
   border-radius: 15px;
   overflow: hidden;
   position: relative;
-  background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 100%);
   background-position: right;
 }
 #clock-display .window-content .clockWrapper .innerWrapper,
@@ -1501,8 +1502,7 @@
   cursor: pointer;
   width: 5em;
   height: 5em;
-  background-color: #b9a9a9;
-  mix-blend-mode: multiply;
+  background-color: transparent;
   box-shadow: rgba(50, 50, 93, 0.25) 0px -20px 19px 0px inset, rgba(0, 0, 0, 0.3) -2px 8px 13px 0px inset;
 }
 #clock-display .window-content .clockSection[data-break],
@@ -1532,8 +1532,6 @@
 .app-child .clock-container .clockSection.filled {
   box-shadow: none;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
-  background-color: white;
-  mix-blend-mode: multiply;
 }
 #clock-display .window-content .clockSection.filled .label,
 #clock-display .clock-container .clockSection.filled .label,
