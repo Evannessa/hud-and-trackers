@@ -43,6 +43,13 @@ export class ClockDisplay extends Application {
             ),
         };
         this.parent = parent;
+        this.initialized = false;
+        this.clocksInitialized = {
+            sharedClocks: false,
+            myClocks: false,
+            sceneClocks: false,
+        };
+        console.log("CLOCK DISPLAY CONSTRUCTOR CALLED");
     }
 
     static get defaultOptions() {
@@ -167,17 +174,9 @@ export class ClockDisplay extends Application {
                 let category = el.closest(".clockCategory");
                 let container = el.next(".clockCategory__inner");
                 let name = category.data().name;
-                // const state = Flip.getState(container);
-                // container.toggleClass("hidden");
-                // Flip.from(state, {
-                //     duration: 1,
-                //     ease: "power1.inOut",
-                //     absolute: true,
-                // });
-                //hopefully this should reverse the boolean
-                // container.toggleClass("hidden");
-                container.toggle(200);
-                // el.toggleClass("collapsed");
+
+                el.toggleClass("open");
+                this.expandButtonClicked(el);
                 this.categoriesShown[name] = !this.categoriesShown[name];
                 await game.user.setFlag(
                     "hud-and-trackers",
@@ -185,10 +184,58 @@ export class ClockDisplay extends Application {
                     this.categoriesShown
                 );
                 console.log(this.categoriesShown);
-                // this.render();
                 break;
         }
     }
+    async measureAccordionContents(index, element) {
+        var contentWidth = $(element).find(".clockCategory__inner").outerWidth();
+        let cs = await game.user.getFlag(
+            "hud-and-trackers",
+            "displayCategoriesShown",
+            this.categoriesShown
+        );
+        let elementName = $(element).data().name;
+        let inner = $(element).find(".clockCategory__inner");
+        let parent = $(element).closest(".app");
+        if (game.clockDisplay.clocksInitialized[elementName] == false) {
+            game.clockDisplay.clocksInitialized[elementName] = true;
+        } else {
+            //turn off transition
+            parent.addClass("no-transition");
+            console.log(parent);
+        }
+        // set default class toggles
+        if (cs[$(element).data().name]) {
+            $(element).find(".clockCategory__inner").toggleClass("is-visible");
+        } else {
+            $(element).find(".clockCategory__inner").toggleClass("is-hidden");
+        }
+        //turn transition back on
+        setTimeout(() => {
+            if (parent.hasClass("no-transition")) {
+                parent.removeClass("no-transition");
+            }
+        }, 300);
+
+        // if (game.clockDisplay.clocksInitialized[$(element).data().name] === false) {
+        //     if (cs[$(element).data().name]) {
+        //         $(element).find(".clockCategory__inner").toggleClass("is-visible");
+        //     } else {
+        //         $(element).find(".clockCategory__inner").toggleClass("is-hidden");
+        //     }
+        //     game.clockDisplay.clocksInitialized[$(element).data().name] = true;
+        // } else {
+        //     //if this category is not displayed
+        // }
+        element.style.setProperty("--expanded", contentWidth + "px");
+    }
+
+    async expandButtonClicked(element) {
+        var clickedItem = element;
+        var content = $(clickedItem).parent().find(".clockCategory__inner");
+        content.toggleClass("is-visible").toggleClass("is-hidden");
+    }
+
     //if one of the toggle switches (checkboxes) is checked
     async handleInputChange(event) {
         event.preventDefault();
@@ -231,32 +278,21 @@ export class ClockDisplay extends Application {
         $(html).off("change", "input[type='checkbox']");
         $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
         $(html).on("click", ".clockApp", this.openClock);
-        // $(html).on("change", "input[type='checkbox']", this.handleInputChange.bind(this));
 
         for (let clockType in this.categoriesShown) {
             //set the toggle switches values to equal what's stored in "categories shown"
             if (this.categoriesShown[clockType] === false) {
-                $(
-                    `.clockCategory[data-name='${clockType}'] .clockCategory__inner`
-                ).hide();
+                // $(
+                //     `.clockCategory[data-name='${clockType}'] .clockCategory__inner`
+                // ).hide();
             }
-            // $(`input[data-name='${clockType}']`).prop(
-            //     "checked",
-            //     this.categoriesShown[clockType]
-            // );
         }
-        // $("input[type='checkbox']:not(:checked)")
-        //     .next("label")
-        //     .children("span")
-        //     .html(`<i class="fas fa-plus"></i>`);
-        // //insert a plus icon
-        // $("input[type='checkbox']:checked")
-        //     .next("label")
-        //     .children("span")
-        //     .html('<i class="fas fa-check"></i>');
+
         for (let clockType in this.otherClocks) {
             this.applyTemplateDressing(this.otherClocks[clockType], clockType);
         }
+
+        $(".clockCategory").each(this.measureAccordionContents);
     }
     async applyGradient(clockData, parentName) {
         let clockWrapper = $(
