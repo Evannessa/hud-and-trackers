@@ -1038,6 +1038,7 @@
   max-height: inherit;
   display: flex;
   border-radius: 0;
+  background-image: url("../../images/Aurora-Lights.jpg");
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory + .clockCategory,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory + .clockCategory,
@@ -1196,7 +1197,9 @@
 .app-child .clock-container .clockCategory__wrapper .clockCategory__btn .accordionBtn__text {
   display: block;
   transform: rotate(270deg);
-  width: 1.5rem;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;

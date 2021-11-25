@@ -98,6 +98,8 @@
 
 				display: flex;
 				border-radius: 0;
+				background-image: url("../../images/Aurora-Lights.jpg");
+				// background-image: url("modules/hud-and-trackers/images/Aurora-Lights.jpg");
 
 				+.clockCategory {
 					// padding-left: 0.5rem;
@@ -195,12 +197,13 @@
 					.accordionBtn__text {
 						display: block;
 						transform: rotate(270deg);
-						width: 1.5rem;
+						width: fit-content;
 						height: fit-content;
 						text-align: center;
 						transform: origin(0 0);
 						text-transform: uppercase;
 						white-space: nowrap;
+
 					}
 
 					&.collapsed {
