@@ -34,6 +34,7 @@ export class ClockDisplay extends Application {
                 this.categoriesShown
             );
         }
+
         this.clocks = data;
         this.otherClocks = {
             myClocks: getClocksByUser(game.userId),
@@ -122,6 +123,11 @@ export class ClockDisplay extends Application {
             myClocks: "Add new personal clock only you can see",
             sceneClock: "Add new clock linked to the scene you're viewing",
         };
+        let emptyText = {
+            sharedClocks: "No clocks are being shared by other users.",
+            myClocks: "You haven't created any clocks.",
+            sceneClocks: "You haven't linked any clocks to this scene",
+        };
 
         for (let clockType in this.otherClocks) {
             this.convertTemplateData(this.otherClocks[clockType], data[clockType]);
@@ -132,6 +138,7 @@ export class ClockDisplay extends Application {
             categoriesShown: this.categoriesShown,
             tooltipText: tooltipText,
             addClockTooltipText: addClockTooltipText,
+            emptyText: emptyText,
         };
     }
 

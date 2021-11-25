@@ -14,8 +14,10 @@
 				<div class="clockCategory__inner">
 					{{#each this}}
 					{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
+					{{else}}
+					<p class="empty">{{lookup @root.emptyText @key}}</p>
 					{{/each}}
-					<button class="addClock actionButton glass" data-action="addClock" title="{{lookup @root.addClockTooltipText @key}}"><i class="fas fa-plus"></i></button>
+					<button class="addClock actionButton" data-action="addClock" title="{{lookup @root.addClockTooltipText @key}}"><i class="fas fa-plus"></i></button>
 				</div>
 			</div>
 		{{/each}}
