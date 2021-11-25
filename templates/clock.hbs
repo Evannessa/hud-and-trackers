@@ -1,4 +1,4 @@
-<form id="{{ourId}}" class="clockApp" data-id="{{ourId}}">
+<form id="{{ourId}}" class="clockApp" data-id="{{ourId}}" {{#if miniDisplay}}title="click to open clock"{{/if}}>
     <div class="headerWrapper">
         <h3 class="clockName" name="clockName" contenteditable="true">{{name}}</h3>
         {{#if (eq user.id creator)}}
@@ -26,7 +26,7 @@
         {{/if}}
     </div>
 
-    <div class="contentWrapper" {{#if miniDisplay}}title="click to open clock"{{/if}}>
+    <div class="contentWrapper" >
 		{{#if showWaypoints}}
         <div class="waypointWrapper">
             {{#each waypoints}}

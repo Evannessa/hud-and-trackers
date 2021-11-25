@@ -1245,14 +1245,14 @@
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn.open,
 .app-child .window-content .clockCategory__wrapper .clockCategory__btn.open,
 .app-child .clock-container .clockCategory__wrapper .clockCategory__btn.open {
-  color: #947BD3;
+  color: #472d88;
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__btn .accordionBtn__text,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn .accordionBtn__text,
 .app-child .window-content .clockCategory__wrapper .clockCategory__btn .accordionBtn__text,
 .app-child .clock-container .clockCategory__wrapper .clockCategory__btn .accordionBtn__text {
   display: block;
-  transform: rotate(270deg);
+  transform: scale(1) rotate(270deg);
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
@@ -1263,38 +1263,19 @@
   transform: origin(0 0);
   text-transform: uppercase;
   white-space: nowrap;
-}
-#clock-display .window-content .clockCategory__wrapper .clockCategory__btn.collapsed,
-#clock-display .clock-container .clockCategory__wrapper .clockCategory__btn.collapsed,
-.app-child .window-content .clockCategory__wrapper .clockCategory__btn.collapsed,
-.app-child .clock-container .clockCategory__wrapper .clockCategory__btn.collapsed {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: width 0.5s ease-out;
-  transition: height 0.5s ease-out;
-}
-#clock-display .window-content .clockCategory__wrapper .clockCategory__btn.collapsed span,
-#clock-display .clock-container .clockCategory__wrapper .clockCategory__btn.collapsed span,
-.app-child .window-content .clockCategory__wrapper .clockCategory__btn.collapsed span,
-.app-child .clock-container .clockCategory__wrapper .clockCategory__btn.collapsed span {
-  display: block;
-  transform: rotate(270deg);
-  width: 1.5rem;
-  height: -webkit-fit-content;
-  height: -moz-fit-content;
-  height: fit-content;
-  text-align: center;
-  transform: origin(0 0);
-  text-transform: uppercase;
-  white-space: nowrap;
+  transition: transform 150ms ease-out;
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__btn:hover,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn:hover,
 .app-child .window-content .clockCategory__wrapper .clockCategory__btn:hover,
 .app-child .clock-container .clockCategory__wrapper .clockCategory__btn:hover {
-  color: #947BD3;
-  box-shadow: var(--tui-shadow);
+  color: #472d88;
+}
+#clock-display .window-content .clockCategory__wrapper .clockCategory__btn:hover span,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory__btn:hover span,
+.app-child .window-content .clockCategory__wrapper .clockCategory__btn:hover span,
+.app-child .clock-container .clockCategory__wrapper .clockCategory__btn:hover span {
+  transform: scale(1.25) rotate(270deg);
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__btn__title,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn__title,
@@ -1313,22 +1294,16 @@
 #clock-display .clock-container form.clockApp,
 .app-child .window-content form.clockApp,
 .app-child .clock-container form.clockApp {
-  padding: 0.25em 0.5em;
+  padding: 0.5em 0.5em;
   border-radius: 5px;
+  margin-bottom: 0.5rem;
+  margin-right: 0.25rem;
 }
 #clock-display .window-content form.clockApp:hover,
 #clock-display .clock-container form.clockApp:hover,
 .app-child .window-content form.clockApp:hover,
 .app-child .clock-container form.clockApp:hover {
-  outline: 1px solid #4776E6;
-  background-clip: content-box;
   cursor: pointer;
-}
-#clock-display .window-content form.clockApp:hover *,
-#clock-display .clock-container form.clockApp:hover *,
-.app-child .window-content form.clockApp:hover *,
-.app-child .clock-container form.clockApp:hover * {
-  color: #4776E6;
 }
 #clock-display .window-content .showClocks,
 #clock-display .clock-container .showClocks,
@@ -2128,38 +2103,86 @@
 .gradients .reddish {
   background-image: linear-gradient(to right, #DC2424 0%, #4A569D 100%);
 }
+#clockConfig .reddish.mix,
+.clockHud .reddish.mix,
+.gradients .reddish.mix {
+  background-image: none;
+  background: #924d85;
+}
 #clockConfig .purple,
 .clockHud .purple,
 .gradients .purple {
   background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 100%);
+}
+#clockConfig .purple.mix,
+.clockHud .purple.mix,
+.gradients .purple.mix {
+  background-image: none;
+  background: #6b65e8;
 }
 #clockConfig .bluePink,
 .clockHud .bluePink,
 .gradients .bluePink {
   background-image: linear-gradient(62deg, #15d5eb 0%, #ff00bf 100%);
 }
+#clockConfig .bluePink.mix,
+.clockHud .bluePink.mix,
+.gradients .bluePink.mix {
+  background-image: none;
+  background: #8a6bd5;
+}
 #clockConfig .turquoise,
 .clockHud .turquoise,
 .gradients .turquoise {
   background-image: linear-gradient(132deg, #a1ffff 0%, #00d8d8 100%);
+}
+#clockConfig .turquoise.mix,
+.clockHud .turquoise.mix,
+.gradients .turquoise.mix {
+  background-image: none;
+  background: #51ecec;
 }
 #clockConfig .pinkLemonade,
 .clockHud .pinkLemonade,
 .gradients .pinkLemonade {
   background-image: linear-gradient(132deg, #fd7088 0%, #ffd3a5 100%);
 }
+#clockConfig .pinkLemonade.mix,
+.clockHud .pinkLemonade.mix,
+.gradients .pinkLemonade.mix {
+  background-image: none;
+  background: #fea297;
+}
 #clockConfig .fire,
 .clockHud .fire,
 .gradients .fire {
   background-image: linear-gradient(132deg, #faaa00 0%, #ed1313 50%, #d54aff 100%);
+}
+#clockConfig .fire.mix,
+.clockHud .fire.mix,
+.gradients .fire.mix {
+  background-image: none;
+  background: #f45f37;
 }
 #clockConfig .magic,
 .clockHud .magic,
 .gradients .magic {
   background-image: linear-gradient(132deg, #00ff9d 0%, #e32baf 100%);
 }
+#clockConfig .magic.mix,
+.clockHud .magic.mix,
+.gradients .magic.mix {
+  background-image: none;
+  background: #7295a6;
+}
 #clockConfig .pastel,
 .clockHud .pastel,
 .gradients .pastel {
   background-image: linear-gradient(132deg, #ffceec 0%, #9796f0 100%);
+}
+#clockConfig .pastel.mix,
+.clockHud .pastel.mix,
+.gradients .pastel.mix {
+  background-image: none;
+  background: #cbb2ee;
 }/*# sourceMappingURL=style.css.map */
