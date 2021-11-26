@@ -51,6 +51,49 @@
   	15.8px 16.6px 24.9px -2px hsl(var(--shadow-color) / 0.35),
   	24.3px 25.5px 38.3px -2.4px hsl(var(--shadow-color) / 0.34),
   	36px 37.9px 56.8px -2.7px hsl(var(--shadow-color) / 0.34);
+  --fs-teensy: 0.25rem;
+  --fs-tiny: 0.5rem;
+  --fs-small: 0.75rem;
+  --fs-normal: 1rem;
+  --fs-large: 1.5rem;
+  --fs-larger1: 2rem;
+  --fs-larger2: 3rem;
+  --fs-huge: 4rem;
+  --fs-huge1: 6rem;
+  --fs-huge2: 8rem;
+  --fs-gargantuan: 12rem;
+  --fs-gargantuan1: 16rem;
+  --fs-gargantuan2: 24rem;
+  --fs-colossal: 32rem;
+  --fs-colossal1: 40rem;
+  --fs-titanic: 48rem;
+  --primary-darkest-color: hsl(240, 58%, 28%);
+  --primary-color-800: hsl(240, 58%, 30%);
+  --primary-color-700: hsl(240, 58%, 40%);
+  --primary-color-600: hsl(240, 60%, 50%);
+  --primary-base-color: hsl(240, 60%, 60%);
+  --primary-color-400: hsl(240, 60%, 68%);
+  --primary-color-300: hsl(240, 65%, 75%);
+  --primary-color-200: hsl(240, 75%, 85%);
+  --primary-lightest-color: hsl(240, 86%, 92%);
+  --accent-darkest: hsl(221, 98%, 20%);
+  --accent-700: hsl(215, 98%, 30%);
+  --accent-700: hsl(210, 98%, 40%);
+  --accent-600: hsl(205, 98%, 52%);
+  --accent-base: hsl(199, 98%, 63%);
+  --accent-400: hsl(190, 99%, 70%);
+  --accent-300: hsl(185, 100%, 80%);
+  --accent-lightest: hsl(175, 100%, 90%);
+  --shadow-none: none;
+  --shadow-lowest: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-lower: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  --shadow-medium: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  --shadow-higher: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  --shadow-highest: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+  --shadow-raised-top: inset 0 1px 0 hsl(224, 84%, 74%);
+  --shadow-raised-bottom: 0 1px 3px hsla(0, 0%, 0%, .2);
+  --shadow-inset-bottom: inset 0 -2px 0 rgba(136, 135, 135, 0.15);
+  --shadow-inset-top: inset 0 2px 2px hsla(0, 0%, 0%, 0.1);
 }
 
 #tracker-app {
@@ -1151,7 +1194,7 @@
   border-radius: 50%;
   font-size: 1.5rem;
   transform: translateY(0px);
-  background-color: #7555c6;
+  background-color: var(--primary-base-color);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
@@ -1193,7 +1236,7 @@
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover,
 .app-child .window-content .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover,
 .app-child .clock-container .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover {
-  background-color: #8468cd;
+  background-color: var(--primary-color-400);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   transform: translateY(-3px);
 }
@@ -1311,7 +1354,7 @@
 .app-child .clock-container form.clockApp {
   padding: 0.5em 0.5em;
   border-radius: 5px;
-  background-color: #2c2e35db;
+  background-color: #1e2025bd;
   margin-bottom: 0.5rem;
   margin-right: 0.25rem;
   transform: translateY(0px);
@@ -1653,6 +1696,49 @@
   	15.8px 16.6px 24.9px -2px hsl(var(--shadow-color) / 0.35),
   	24.3px 25.5px 38.3px -2.4px hsl(var(--shadow-color) / 0.34),
   	36px 37.9px 56.8px -2.7px hsl(var(--shadow-color) / 0.34);
+  --fs-teensy: 0.25rem;
+  --fs-tiny: 0.5rem;
+  --fs-small: 0.75rem;
+  --fs-normal: 1rem;
+  --fs-large: 1.5rem;
+  --fs-larger1: 2rem;
+  --fs-larger2: 3rem;
+  --fs-huge: 4rem;
+  --fs-huge1: 6rem;
+  --fs-huge2: 8rem;
+  --fs-gargantuan: 12rem;
+  --fs-gargantuan1: 16rem;
+  --fs-gargantuan2: 24rem;
+  --fs-colossal: 32rem;
+  --fs-colossal1: 40rem;
+  --fs-titanic: 48rem;
+  --primary-darkest-color: hsl(240, 58%, 28%);
+  --primary-color-800: hsl(240, 58%, 30%);
+  --primary-color-700: hsl(240, 58%, 40%);
+  --primary-color-600: hsl(240, 60%, 50%);
+  --primary-base-color: hsl(240, 60%, 60%);
+  --primary-color-400: hsl(240, 60%, 68%);
+  --primary-color-300: hsl(240, 65%, 75%);
+  --primary-color-200: hsl(240, 75%, 85%);
+  --primary-lightest-color: hsl(240, 86%, 92%);
+  --accent-darkest: hsl(221, 98%, 20%);
+  --accent-700: hsl(215, 98%, 30%);
+  --accent-700: hsl(210, 98%, 40%);
+  --accent-600: hsl(205, 98%, 52%);
+  --accent-base: hsl(199, 98%, 63%);
+  --accent-400: hsl(190, 99%, 70%);
+  --accent-300: hsl(185, 100%, 80%);
+  --accent-lightest: hsl(175, 100%, 90%);
+  --shadow-none: none;
+  --shadow-lowest: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-lower: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  --shadow-medium: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  --shadow-higher: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  --shadow-highest: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+  --shadow-raised-top: inset 0 1px 0 hsl(224, 84%, 74%);
+  --shadow-raised-bottom: 0 1px 3px hsla(0, 0%, 0%, .2);
+  --shadow-inset-bottom: inset 0 -2px 0 rgba(136, 135, 135, 0.15);
+  --shadow-inset-top: inset 0 2px 2px hsla(0, 0%, 0%, 0.1);
 }
 
 #party-overview {
@@ -1921,6 +2007,49 @@
   	15.8px 16.6px 24.9px -2px hsl(var(--shadow-color) / 0.35),
   	24.3px 25.5px 38.3px -2.4px hsl(var(--shadow-color) / 0.34),
   	36px 37.9px 56.8px -2.7px hsl(var(--shadow-color) / 0.34);
+  --fs-teensy: 0.25rem;
+  --fs-tiny: 0.5rem;
+  --fs-small: 0.75rem;
+  --fs-normal: 1rem;
+  --fs-large: 1.5rem;
+  --fs-larger1: 2rem;
+  --fs-larger2: 3rem;
+  --fs-huge: 4rem;
+  --fs-huge1: 6rem;
+  --fs-huge2: 8rem;
+  --fs-gargantuan: 12rem;
+  --fs-gargantuan1: 16rem;
+  --fs-gargantuan2: 24rem;
+  --fs-colossal: 32rem;
+  --fs-colossal1: 40rem;
+  --fs-titanic: 48rem;
+  --primary-darkest-color: hsl(240, 58%, 28%);
+  --primary-color-800: hsl(240, 58%, 30%);
+  --primary-color-700: hsl(240, 58%, 40%);
+  --primary-color-600: hsl(240, 60%, 50%);
+  --primary-base-color: hsl(240, 60%, 60%);
+  --primary-color-400: hsl(240, 60%, 68%);
+  --primary-color-300: hsl(240, 65%, 75%);
+  --primary-color-200: hsl(240, 75%, 85%);
+  --primary-lightest-color: hsl(240, 86%, 92%);
+  --accent-darkest: hsl(221, 98%, 20%);
+  --accent-700: hsl(215, 98%, 30%);
+  --accent-700: hsl(210, 98%, 40%);
+  --accent-600: hsl(205, 98%, 52%);
+  --accent-base: hsl(199, 98%, 63%);
+  --accent-400: hsl(190, 99%, 70%);
+  --accent-300: hsl(185, 100%, 80%);
+  --accent-lightest: hsl(175, 100%, 90%);
+  --shadow-none: none;
+  --shadow-lowest: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-lower: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  --shadow-medium: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  --shadow-higher: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  --shadow-highest: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+  --shadow-raised-top: inset 0 1px 0 hsl(224, 84%, 74%);
+  --shadow-raised-bottom: 0 1px 3px hsla(0, 0%, 0%, .2);
+  --shadow-inset-bottom: inset 0 -2px 0 rgba(136, 135, 135, 0.15);
+  --shadow-inset-top: inset 0 2px 2px hsla(0, 0%, 0%, 0.1);
 }
 
 .flavor-text {

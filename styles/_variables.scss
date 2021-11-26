@@ -1,117 +1,186 @@
-	$low: #fe4a49;
-	$intellect:#947BD3;
-	$speed: #2ab7ca;
-	$might: #fed766;
-	/* SCSS HEX */
+$low: #fe4a49;
+$intellect:#947BD3;
+$speed: #2ab7ca;
+$might: #fed766;
+/* SCSS HEX */
 
-	$rich-black-fogra-39: #17171c;
-	$eerie-black: #1d1d23;
-	$eerie-black2: #202028;
-	$eerie-black-3: #22222a;
-	$eerie-black-4: #2a2a31;
-	$jet: #2a2a34;
-	$jet-3: #2c2c36;
-	$jet-5: hsla(240, 10%, 22%, 1);
+$rich-black-fogra-39: #17171c;
+$eerie-black: #1d1d23;
+$eerie-black2: #202028;
+$eerie-black-3: #22222a;
+$eerie-black-4: #2a2a31;
+$jet: #2a2a34;
+$jet-3: #2c2c36;
+$jet-5: hsla(240, 10%, 22%, 1);
 
-	//Glass light mode
-	// $glass: rgba(205, 214, 249, 0.384);
-	// $glass-rim: rgba(205, 214, 249, 0.63);
+//Glass light mode
+// $glass: rgba(205, 214, 249, 0.384);
+// $glass-rim: rgba(205, 214, 249, 0.63);
 
-	//Glass dark mode
-	// $glass: rgba(135, 130, 163, 0.527);
-	// $glass-rim: rgba(178, 174, 202, 0.685);
+//Glass dark mode
+// $glass: rgba(135, 130, 163, 0.527);
+// $glass-rim: rgba(178, 174, 202, 0.685);
 
-	$glass: #202028c4;
-	$glass-faint: #20202829;
-	$glass-rim: rgba(91, 91, 112, 0.568);
-	$black1: var(--palette-app-background, var(--tui-black1));
-	$black1L: var(--palette-app-background-light, var(--tui-black1L));
-	$black2: var(--palette-dialog-background, var(--tui-black2));
-	$black2L: var(--palette-dialog-background-light, var(--tui-black2L));
+$glass: #202028c4;
+$glass-faint: #20202829;
+$glass-rim: rgba(91, 91, 112, 0.568);
+$black1: var(--palette-app-background, var(--tui-black1));
+$black1L: var(--palette-app-background-light, var(--tui-black1L));
+$black2: var(--palette-dialog-background, var(--tui-black2));
+$black2L: var(--palette-dialog-background-light, var(--tui-black2L));
 
-	$black3: var(--palette-primary, var(--tui-black3));
-	$black3L: var(--palette-primary-light, var(--tui-black3L));
-	$black4: var(--palette-dialog-darker, var(--tui-black4));
-	$black4L: var(--palette-dialog-dark, var(--tui-black4L));
+$black3: var(--palette-primary, var(--tui-black3));
+$black3L: var(--palette-primary-light, var(--tui-black3L));
+$black4: var(--palette-dialog-darker, var(--tui-black4));
+$black4L: var(--palette-dialog-dark, var(--tui-black4L));
 
-	$white1: var(--palette-dialog-background-contrast-text, var(--tui-white1));
-	$white2: var(--palette-dialog-background-shaded-text, var(--tui-white2));
-	$white3: var(--palette-app-background-contrast-text, var(--tui-white3));
-	$highlight: var(--palette-dark, var(--tui-highlight));
+$white1: var(--palette-dialog-background-contrast-text, var(--tui-white1));
+$white2: var(--palette-dialog-background-shaded-text, var(--tui-white2));
+$white3: var(--palette-app-background-contrast-text, var(--tui-white3));
+$highlight: var(--palette-dark, var(--tui-highlight));
 
-	$accent1: var(--palette-primary, var(--tui-accent1));
-	$accent1L: var(--palette-primary-light, var(--tui-accent1L));
-	$accent2: var(--palette-secondary, var(--tui-accent2));
-	$accent2L: var(--palette-secondary-light, var(--tui-accent2L));
+$accent1: var(--palette-primary, var(--tui-accent1));
+$accent1L: var(--palette-primary-light, var(--tui-accent1L));
+$accent2: var(--palette-secondary, var(--tui-accent2));
+$accent2L: var(--palette-secondary-light, var(--tui-accent2L));
 
-	$success: var(--palette-success, var(--tui-success));
-	$failure: var(--palette-danger, var(--tui-failure));
-	$mixed-roll: var(--palette-info, var(--tui-mixed-roll));
+$success: var(--palette-success, var(--tui-success));
+$failure: var(--palette-danger, var(--tui-failure));
+$mixed-roll: var(--palette-info, var(--tui-mixed-roll));
 
-	$whisper: var(--palette-app-background-light, var(--tui-chat-message-whisper));
-	$whisperBorder: var(--palette-app-background-light, var(--tui-chat-message-whisper-border));
+$whisper: var(--palette-app-background-light, var(--tui-chat-message-whisper));
+$whisperBorder: var(--palette-app-background-light, var(--tui-chat-message-whisper-border));
 
-	$selection: var(--palette-light, var(--tui-selection));
+$selection: var(--palette-light, var(--tui-selection));
 
-	$shadow: var(--tui-shadow);
+$shadow: var(--tui-shadow);
 
-	:root {
-		/* CSS HSL */
-		--white: hsla(0, 0%, 100%, 1);
-		--neon-blue: hsla(230, 100%, 67%, 1);
-		--royal-blue-light: hsla(230, 64%, 57%, 1);
-		--raisin-black: hsla(240, 10%, 22%, 1);
-		--raisin-black-2: hsla(240, 10%, 16%, 1);
-		--raisin-black-3: hsla(231, 10%, 14%, 1);
-		--raisin-black1: hsla(240, 9%, 10%, 1);
+:root {
+	/* CSS HSL */
+	--white: hsla(0, 0%, 100%, 1);
+	--neon-blue: hsla(230, 100%, 67%, 1);
+	--royal-blue-light: hsla(230, 64%, 57%, 1);
+	--raisin-black: hsla(240, 10%, 22%, 1);
+	--raisin-black-2: hsla(240, 10%, 16%, 1);
+	--raisin-black-3: hsla(231, 10%, 14%, 1);
+	--raisin-black1: hsla(240, 9%, 10%, 1);
 
-		--tui-black1: #17171c;
-		--tui-black1L: #1d1d23;
-		--tui-black2: #202028;
-		--tui-black2L: #22222a;
-		--tui-black3: #2a2a31;
-		--tui-black3L: #2a2a34;
-		--tui-black4: #2c2c36;
-		--tui-black4L: hsla(240, 10%, 22%, 1);
+	--tui-black1: #17171c;
+	--tui-black1L: #1d1d23;
+	--tui-black2: #202028;
+	--tui-black2L: #22222a;
+	--tui-black3: #2a2a31;
+	--tui-black3L: #2a2a34;
+	--tui-black4: #2c2c36;
+	--tui-black4L: hsla(240, 10%, 22%, 1);
 
-		--tui-white1: rgba(255, 255, 255, .87);
-		--tui-white2: rgba(255, 255, 255, .6);
-		--tui-white3: rgba(255, 255, 255, .4);
-		--tui-highlight: rgba(255, 255, 255, .05);
+	--tui-white1: rgba(255, 255, 255, .87);
+	--tui-white2: rgba(255, 255, 255, .6);
+	--tui-white3: rgba(255, 255, 255, .4);
+	--tui-highlight: rgba(255, 255, 255, .05);
 
-		--tui-accent1: #f56d12;
-		--tui-accent1L: #ff9955;
-		--tui-accent2: #21122F;
-		--tui-accent2L: #9b8dff;
+	--tui-accent1: #f56d12;
+	--tui-accent1L: #ff9955;
+	--tui-accent2: #21122F;
+	--tui-accent2L: #9b8dff;
 
-		--tui-success: #418824;
-		--tui-failure: #cc2d2d;
-		--tui-mixed-roll: #596cf3;
+	--tui-success: #418824;
+	--tui-failure: #cc2d2d;
+	--tui-mixed-roll: #596cf3;
 
-		--tui-chat-message-whisper: #1c1d20;
-		--tui-chat-message-whisper-border: rgba(78, 81, 126, 0.87);
+	--tui-chat-message-whisper: #1c1d20;
+	--tui-chat-message-whisper-border: rgba(78, 81, 126, 0.87);
 
-		--tui-selection: #cce2ff;
+	--tui-selection: #cce2ff;
 
-		--tui-shadow: 0 0 3px var(--palette-dialog-background-shaded-text, var(--tui-white2)) inset;
+	--tui-shadow: 0 0 3px var(--palette-dialog-background-shaded-text, var(--tui-white2)) inset;
 
-		--shadow-color: 0deg 0% 12%;
-		--shadow-elevation-low:
-			0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.41),
-			0.6px 0.6px 0.9px -1.4px hsl(var(--shadow-color) / 0.38),
-			1.4px 1.5px 2.2px -2.7px hsl(var(--shadow-color) / 0.36);
-		--shadow-elevation-medium:
-			0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.43),
-			1.1px 1.1px 1.7px -0.9px hsl(var(--shadow-color) / 0.41),
-			2.8px 2.9px 4.4px -1.8px hsl(var(--shadow-color) / 0.39),
-			6.9px 7.3px 10.9px -2.7px hsl(var(--shadow-color) / 0.37);
-		--shadow-elevation-high:
-			0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.4),
-			1.9px 2px 3px -0.4px hsl(var(--shadow-color) / 0.39),
-			3.6px 3.8px 5.7px -0.8px hsl(var(--shadow-color) / 0.38),
-			6.1px 6.4px 9.6px -1.2px hsl(var(--shadow-color) / 0.37),
-			9.9px 10.4px 15.6px -1.6px hsl(var(--shadow-color) / 0.36),
-			15.8px 16.6px 24.9px -2px hsl(var(--shadow-color) / 0.35),
-			24.3px 25.5px 38.3px -2.4px hsl(var(--shadow-color) / 0.34),
-			36px 37.9px 56.8px -2.7px hsl(var(--shadow-color) / 0.34);
-	}
+	--shadow-color: 0deg 0% 12%;
+	--shadow-elevation-low:
+		0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.41),
+		0.6px 0.6px 0.9px -1.4px hsl(var(--shadow-color) / 0.38),
+		1.4px 1.5px 2.2px -2.7px hsl(var(--shadow-color) / 0.36);
+	--shadow-elevation-medium:
+		0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.43),
+		1.1px 1.1px 1.7px -0.9px hsl(var(--shadow-color) / 0.41),
+		2.8px 2.9px 4.4px -1.8px hsl(var(--shadow-color) / 0.39),
+		6.9px 7.3px 10.9px -2.7px hsl(var(--shadow-color) / 0.37);
+	--shadow-elevation-high:
+		0.3px 0.4px 0.5px hsl(var(--shadow-color) / 0.4),
+		1.9px 2px 3px -0.4px hsl(var(--shadow-color) / 0.39),
+		3.6px 3.8px 5.7px -0.8px hsl(var(--shadow-color) / 0.38),
+		6.1px 6.4px 9.6px -1.2px hsl(var(--shadow-color) / 0.37),
+		9.9px 10.4px 15.6px -1.6px hsl(var(--shadow-color) / 0.36),
+		15.8px 16.6px 24.9px -2px hsl(var(--shadow-color) / 0.35),
+		24.3px 25.5px 38.3px -2.4px hsl(var(--shadow-color) / 0.34),
+		36px 37.9px 56.8px -2.7px hsl(var(--shadow-color) / 0.34);
+
+
+
+	// 	Font size
+	--fs-teensy: 0.25rem;
+	--fs-tiny: 0.5rem;
+	--fs-small: 0.75rem;
+	--fs-normal: 1rem;
+	--fs-large: 1.5rem;
+	--fs-larger1: 2rem;
+	--fs-larger2: 3rem;
+	--fs-huge: 4rem;
+	--fs-huge1: 6rem;
+	--fs-huge2: 8rem;
+	--fs-gargantuan: 12rem;
+	--fs-gargantuan1: 16rem;
+	--fs-gargantuan2: 24rem;
+	--fs-colossal: 32rem;
+	--fs-colossal1: 40rem;
+	--fs-titanic: 48rem;
+	// • Font weight
+	// • Line height
+	// • Color
+	//==Primary
+	--primary-darkest-color: hsl(240, 58%, 28%);
+	--primary-color-800: hsl(240, 58%, 30%);
+	--primary-color-700: hsl(240, 58%, 40%);
+	--primary-color-600: hsl(240, 60%, 50%);
+	--primary-base-color: hsl(240, 60%, 60%);
+	--primary-color-400: hsl(240, 60%, 68%);
+	--primary-color-300: hsl(240, 65%, 75%);
+	--primary-color-200: hsl(240, 75%, 85%);
+	--primary-lightest-color: hsl(240, 86%, 92%);
+
+
+	--accent-darkest: hsl(221, 98%, 20%);
+	--accent-700: hsl(215, 98%, 30%);
+	--accent-700: hsl(210, 98%, 40%);
+	--accent-600: hsl(205, 98%, 52%);
+	--accent-base: hsl(199, 98%, 63%);
+	--accent-400: hsl(190, 99%, 70%);
+	--accent-300: hsl(185, 100%, 80%);
+	--accent-lightest: hsl(175, 100%, 90%);
+
+	//shadow elevation
+	--shadow-none: none;
+	--shadow-lowest: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+	--shadow-lower: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+	--shadow-medium: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+	--shadow-higher: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+	--shadow-highest: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+
+	//shadow-raised
+	--shadow-raised-top: inset 0 1px 0 hsl(224, 84%, 74%); //TODO: Change this to have var from your color 
+	--shadow-raised-bottom: 0 1px 3px hsla(0, 0%, 0%, .2);
+
+	//shadow well
+	--shadow-inset-bottom: inset 0 -2px 0 rgba(136, 135, 135, 0.15);
+	--shadow-inset-top: inset 0 2px 2px hsla(0, 0%, 0%, 0.1); //same here
+	// • Margin
+	// • Padding
+	// • Width
+	// • Height
+	// • Box shadows
+	// • Border radius
+	// • Border width
+	// • Opacity
+
+
+}
