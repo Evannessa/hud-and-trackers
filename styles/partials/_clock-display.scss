@@ -42,7 +42,24 @@
 
 	.window-content,
 	.clock-container {
+		/* This was made with GlassGenerator.netlify.app */
+
+		// .glass {
+		// 	color: white;
+		// 	backdrop-filter: blur(5px);
+		// 	background-color: rgba(133, 137, 255, 0.075);
+		// 	box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
+		// 	border: 2px rgba(255, 255, 255, 0.4) solid;
+		// 	border-bottom: 2px rgba(40, 40, 40, 0.35) solid;
+		// 	border-right: 2px rgba(40, 40, 40, 0.35) solid;
+
+		// 	&__btn {
+		// 		background-color: transparent;
+		// 	}
+		// }
+
 		.glass {
+
 			background-color: $glass;
 			border-top: 2px solid $glass-rim;
 			border-right: 1.5px solid $glass-rim;
@@ -71,8 +88,8 @@
 		transition: width 0.2s ease;
 
 		@supports((-webkit-backdrop-filter: blur()) or (backdrop-filter: blur())) {
-			-webkit-backdrop-filter: blur(1.25px);
-			backdrop-filter: blur(1.25px);
+			-webkit-backdrop-filter: blur(2px);
+			backdrop-filter: blur(2px);
 		}
 
 		.categoryFilter {
@@ -101,12 +118,20 @@
 				display: flex;
 				border-radius: 0;
 				position: relative;
+				// transition: background-color 150ms;
+
+				&.open {
+					// background-color: saturate(adjust-hue($glass, 40%), 20%);
+					// transition: background-color 150ms;
+				}
 
 				// background-image: url("/modules/hud-and-trackers/images/Aurora-Lights.jpg");
 				// background-size: cover;
+
 				&::before {
 					content: "";
 					// background: linear-gradient(132deg, rgb(253, 112, 136) 0.00%, rgb(255, 211, 165) 100.00%);
+					z-index: 10;
 					// background-image: url("/modules/hud-and-trackers/images/Aurora-Lights.jpg");
 					background-size: cover;
 					position: absolute;
@@ -140,6 +165,11 @@
 				&:last-child::before {
 					border-top-right-radius: 5px;
 					border-bottom-right-radius: 5px;
+
+					>button.open {
+						border-top-right-radius: unset !important;
+						border-bottom-right-radius: unset !important;
+					}
 				}
 
 				&:last-child::before {
@@ -149,6 +179,8 @@
 
 				&__inner {
 					padding: 0.5rem 0rem;
+					margin-left: 0.25rem;
+					// margin-right: 0.25rem;
 					// transform: scale(1, 1);
 					transform: translate(0px, 0px);
 					transition: transform 0.5s ease-out;
@@ -159,6 +191,7 @@
 					grid-template-rows: repeat(4, min-content);
 					min-width: 160px; //todo: maybe don't use pixel values
 					max-height: inherit;
+					// box-shadow: inset 0px 0px 20px 6px rgb(26 27 53 / 41%);
 					transition: max-width 250ms cubic-bezier(0.4, 0.0, 0.2, 1), min-width 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
 
 					&.no-transition {
@@ -197,7 +230,7 @@
 						border-radius: 50%;
 						font-size: 1.5rem;
 						background-color: darken($intellect, 10%);
-						box-shadow: var(--shadow-elevation-low);
+						box-shadow: var(--shadow-elevation-medium);
 						transform: translateY(0px);
 						@import 'tooltip';
 
@@ -206,8 +239,8 @@
 						}
 
 						&:hover {
-							background-color: $intellect;
-							box-shadow: var(--shadow-elevation-medium);
+							background-color: darken($intellect, 5%);
+							box-shadow: var(--shadow-elevation-high);
 							transform: translateY(-5px);
 						}
 					}
@@ -234,12 +267,13 @@
 					display: flex;
 					align-items: center;
 					justify-content: center;
-					color: black;
+					color: white;
 					padding: 0;
 					font-family: 'Fredoka One', cursive;
+					border-radius: inherit;
 
 					&.open {
-						color: darken($intellect, 30%);
+						color: darken($intellect, 0%);
 					}
 
 					.accordionBtn__text {
@@ -258,7 +292,7 @@
 					}
 
 					&:hover {
-						color: darken($intellect, 30%);
+						color: darken($intellect, 10%);
 
 						span {
 							transform: scale(1.15) rotate(270deg);
@@ -281,18 +315,21 @@
 			// padding: 0.25rem;
 			padding: 0.5em 0.5em;
 			border-radius: 5px;
-			// background-color: rgba(255, 255, 255, 0.486);
+			background-color: rgba(255, 255, 255, 0.109);
+			// box-shadow: inset 0px 0px 0px 1px white;
 			// background-color: $glass;
 			margin-bottom: 0.5rem;
 			margin-right: 0.25rem;
-			// box-shadow: var(--shadow-elevation-low);
-			// transition: box-shadow 150ms ease-in;
+			transform: translateY(0px);
+			box-shadow: var(--shadow-elevation-low);
+			transition: all 150ms ease-in;
 
 			&:hover {
 				// outline: 1px solid navy;
 				// outline: 1px solid #4776E6;
-				// box-shadow: var(--shadow-elevation-medium);
+				box-shadow: var(--shadow-elevation-medium);
 				// background-clip: content-box;
+				transform: translateY(-3px);
 				cursor: pointer;
 
 				* {
@@ -418,6 +455,7 @@
 			position: relative;
 			pointer-events: none;
 			z-index: 10;
+			display: none;
 
 			.frameSection {
 				width: 5em;
@@ -439,7 +477,7 @@
 		.clockWrapper {
 			display: flex;
 			flex-direction: row;
-			border-radius: 15px;
+			border-radius: 12px;
 			overflow: hidden;
 			position: relative;
 			// background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 100%);
@@ -479,6 +517,13 @@
 			&[data-break] {
 				position: relative;
 				margin-right: 5px;
+				border-top-right-radius: 8px;
+				border-bottom-right-radius: 8px;
+
+				&+.clockSection {
+					border-top-left-radius: 8px;
+					border-bottom-left-radius: 8px;
+				}
 
 				&:last-child {
 					margin-right: 0;

@@ -966,6 +966,7 @@
 #clock-display .clock-container,
 .app-child .window-content,
 .app-child .clock-container {
+  /* This was made with GlassGenerator.netlify.app */
   border-radius: 0 10px 10px 0;
   overflow-x: visible;
   overflow-y: visible;
@@ -973,9 +974,9 @@
   flex-direction: column;
   justify-content: stretch;
   flex-wrap: wrap;
-  background-color: rgba(135, 130, 163, 0.5);
-  border-top: 1px solid rgba(135, 130, 163, 0.75);
-  border-right: 1px solid rgba(135, 130, 163, 0.75);
+  background-color: rgba(135, 130, 163, 0.527);
+  border-top: 1px solid rgba(178, 174, 202, 0.685);
+  border-right: 1px solid rgba(178, 174, 202, 0.685);
   min-height: 10em;
   position: relative;
   width: -webkit-fit-content;
@@ -988,11 +989,11 @@
 #clock-display .clock-container .glass,
 .app-child .window-content .glass,
 .app-child .clock-container .glass {
-  background-color: rgba(135, 130, 163, 0.5);
-  border-top: 2px solid rgba(135, 130, 163, 0.75);
-  border-right: 1.5px solid rgba(135, 130, 163, 0.75);
-  border-bottom: 1px solid rgba(135, 130, 163, 0.25);
-  border-left: 1px solid rgba(135, 130, 163, 0.25);
+  background-color: rgba(135, 130, 163, 0.527);
+  border-top: 2px solid rgba(178, 174, 202, 0.685);
+  border-right: 1.5px solid rgba(178, 174, 202, 0.685);
+  border-bottom: 1px solid rgba(178, 174, 202, 0.25);
+  border-left: 1px solid rgba(178, 174, 202, 0.25);
   border-radius: 5px;
 }
 #clock-display .window-content .glass__btn,
@@ -1006,8 +1007,8 @@
 #clock-display .clock-container,
 .app-child .window-content,
 .app-child .clock-container {
-    -webkit-backdrop-filter: blur(1.25px);
-    backdrop-filter: blur(1.25px);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
   }
 }
 #clock-display .window-content .categoryFilter,
@@ -1048,6 +1049,7 @@
 .app-child .window-content .clockCategory__wrapper .clockCategory::before,
 .app-child .clock-container .clockCategory__wrapper .clockCategory::before {
   content: "";
+  z-index: 10;
   background-size: cover;
   position: absolute;
   top: 0px;
@@ -1083,11 +1085,22 @@
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }
+#clock-display .window-content .clockCategory__wrapper .clockCategory:last-child > button.open, #clock-display .window-content .clockCategory__wrapper .clockCategory:last-child::before > button.open,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory:last-child > button.open,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory:last-child::before > button.open,
+.app-child .window-content .clockCategory__wrapper .clockCategory:last-child > button.open,
+.app-child .window-content .clockCategory__wrapper .clockCategory:last-child::before > button.open,
+.app-child .clock-container .clockCategory__wrapper .clockCategory:last-child > button.open,
+.app-child .clock-container .clockCategory__wrapper .clockCategory:last-child::before > button.open {
+  border-top-right-radius: unset !important;
+  border-bottom-right-radius: unset !important;
+}
 #clock-display .window-content .clockCategory__wrapper .clockCategory__inner,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__inner,
 .app-child .window-content .clockCategory__wrapper .clockCategory__inner,
 .app-child .clock-container .clockCategory__wrapper .clockCategory__inner {
   padding: 0.5rem 0rem;
+  margin-left: 0.25rem;
   transform: translate(0px, 0px);
   transition: transform 0.5s ease-out;
   position: relative;
@@ -1147,7 +1160,7 @@
   border-radius: 50%;
   font-size: 1.5rem;
   background-color: #7555c6;
-  box-shadow: var(--shadow-elevation-low);
+  box-shadow: var(--shadow-elevation-medium);
   transform: translateY(0px);
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__inner .addClock.actionButton .tooltip,
@@ -1188,8 +1201,8 @@
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover,
 .app-child .window-content .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover,
 .app-child .clock-container .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover {
-  background-color: #947BD3;
-  box-shadow: var(--shadow-elevation-medium);
+  background-color: #8468cd;
+  box-shadow: var(--shadow-elevation-high);
   transform: translateY(-5px);
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__inner.hidden,
@@ -1211,9 +1224,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: black;
+  color: white;
   padding: 0;
   font-family: "Fredoka One", cursive;
+  border-radius: inherit;
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__btn .tooltip,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn .tooltip,
@@ -1247,7 +1261,7 @@
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn.open,
 .app-child .window-content .clockCategory__wrapper .clockCategory__btn.open,
 .app-child .clock-container .clockCategory__wrapper .clockCategory__btn.open {
-  color: #472d88;
+  color: #947bd3;
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__btn .accordionBtn__text,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn .accordionBtn__text,
@@ -1271,7 +1285,7 @@
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn:hover,
 .app-child .window-content .clockCategory__wrapper .clockCategory__btn:hover,
 .app-child .clock-container .clockCategory__wrapper .clockCategory__btn:hover {
-  color: #472d88;
+  color: #7555c6;
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__btn:hover span,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn:hover span,
@@ -1298,13 +1312,19 @@
 .app-child .clock-container form.clockApp {
   padding: 0.5em 0.5em;
   border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.109);
   margin-bottom: 0.5rem;
   margin-right: 0.25rem;
+  transform: translateY(0px);
+  box-shadow: var(--shadow-elevation-low);
+  transition: all 150ms ease-in;
 }
 #clock-display .window-content form.clockApp:hover,
 #clock-display .clock-container form.clockApp:hover,
 .app-child .window-content form.clockApp:hover,
 .app-child .clock-container form.clockApp:hover {
+  box-shadow: var(--shadow-elevation-medium);
+  transform: translateY(-3px);
   cursor: pointer;
 }
 #clock-display .window-content .showClocks,
@@ -1447,6 +1467,7 @@
   position: relative;
   pointer-events: none;
   z-index: 10;
+  display: none;
 }
 #clock-display .window-content .frameWrapper .frameSection,
 #clock-display .clock-container .frameWrapper .frameSection,
@@ -1473,7 +1494,7 @@
 .app-child .clock-container .clockWrapper {
   display: flex;
   flex-direction: row;
-  border-radius: 15px;
+  border-radius: 12px;
   overflow: hidden;
   position: relative;
   background-position: right;
@@ -1511,6 +1532,15 @@
 .app-child .clock-container .clockSection[data-break] {
   position: relative;
   margin-right: 5px;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+#clock-display .window-content .clockSection[data-break] + .clockSection,
+#clock-display .clock-container .clockSection[data-break] + .clockSection,
+.app-child .window-content .clockSection[data-break] + .clockSection,
+.app-child .clock-container .clockSection[data-break] + .clockSection {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
 }
 #clock-display .window-content .clockSection[data-break]:last-child,
 #clock-display .clock-container .clockSection[data-break]:last-child,

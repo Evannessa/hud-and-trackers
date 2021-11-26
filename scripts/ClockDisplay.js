@@ -181,6 +181,7 @@ export class ClockDisplay extends Application {
                 let name = category.data().name;
 
                 el.toggleClass("open");
+                category.toggleClass("open");
                 this.expandButtonClicked(el);
                 this.categoriesShown[name] = !this.categoriesShown[name];
                 await game.user.setFlag(
