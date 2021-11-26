@@ -18,8 +18,12 @@
 	// $glass-rim: rgba(205, 214, 249, 0.63);
 
 	//Glass dark mode
-	$glass: rgba(135, 130, 163, 0.527);
-	$glass-rim: rgba(178, 174, 202, 0.685);
+	// $glass: rgba(135, 130, 163, 0.527);
+	// $glass-rim: rgba(178, 174, 202, 0.685);
+
+	$glass: #202028c4;
+	$glass-faint: #20202829;
+	$glass-rim: rgba(91, 91, 112, 0.568);
 	$black1: var(--palette-app-background, var(--tui-black1));
 	$black1L: var(--palette-app-background-light, var(--tui-black1L));
 	$black2: var(--palette-dialog-background, var(--tui-black2));

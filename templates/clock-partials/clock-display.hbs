@@ -10,7 +10,7 @@
 	
 		{{#each this}}
 			<div class="clockCategory {{@key}} glass {{#if (lookup @root.categoriesShown @key)}}open{{/if}}" data-name="{{@key}}">
-			<button class="clockCategory__btn glass__btn {{#if (lookup @root.categoriesShown @key)}}open{{/if}}" data-action="expand" title="{{lookup @root.tooltipText @key}}"><span class="accordionBtn__text">{{convertToSentence @key}}</span></button>
+			<button class="clockCategory__btn glass__btn {{#if (lookup @root.categoriesShown @key)}}open{{/if}}" data-action="expand" title="{{lookup @root.tooltipText @key}}"><span class="accordionBtn__text">{{convertToSentence @key}}<span class="expandIcon"><i class="fas fa-chevron-down"></i></span></span></button>
 				<div class="clockCategory__inner">
 					{{#each this}}
 					{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}

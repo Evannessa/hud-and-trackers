@@ -67,6 +67,10 @@
 			border-left: 1px solid rgba($glass-rim, 0.25);
 			border-radius: 5px;
 
+			&-faint {
+				background-color: $glass-faint;
+			}
+
 			&__btn {
 				background-color: transparent;
 			}
@@ -79,7 +83,7 @@
 		flex-direction: column;
 		justify-content: stretch;
 		flex-wrap: wrap;
-		background-color: $glass;
+		background-color: $glass-faint;
 		border-top: 1px solid $glass-rim;
 		border-right: 1px solid $glass-rim;
 		min-height: 10em;
@@ -121,6 +125,7 @@
 				// transition: background-color 150ms;
 
 				&.open {
+					// background: linear-gradient(to right, transparent, #4776E6);
 					// background-color: saturate(adjust-hue($glass, 40%), 20%);
 					// transition: background-color 150ms;
 				}
@@ -128,21 +133,6 @@
 				// background-image: url("/modules/hud-and-trackers/images/Aurora-Lights.jpg");
 				// background-size: cover;
 
-				&::before {
-					content: "";
-					// background: linear-gradient(132deg, rgb(253, 112, 136) 0.00%, rgb(255, 211, 165) 100.00%);
-					z-index: 10;
-					// background-image: url("/modules/hud-and-trackers/images/Aurora-Lights.jpg");
-					background-size: cover;
-					position: absolute;
-					top: 0px;
-					right: 0px;
-					bottom: 0px;
-					left: 0px;
-					opacity: 0.5;
-					overflow: hidden;
-					// background-image: url();
-				}
 
 				+.clockCategory {
 					// padding-left: 0.5rem;
@@ -156,10 +146,7 @@
 					border-bottom-left-radius: 5px;
 				}
 
-				&:first-child::before {
-					// background-image: url("/modules/hud-and-trackers/images/Jellyfish In Water.jpg");
-					// background: linear-gradient(132deg, rgb(34, 181, 254) 0.00%, rgb(255, 186, 214) 100.00%);
-				}
+
 
 				&:last-child,
 				&:last-child::before {
@@ -172,10 +159,6 @@
 					}
 				}
 
-				&:last-child::before {
-					// background: linear-gradient(132deg, rgb(255, 206, 236) 0.00%, rgb(151, 150, 240) 100.00%);
-					// background-image: url("/modules/hud-and-trackers/images/Pink Flowers Photograph.jpg");
-				}
 
 				&__inner {
 					padding: 0.5rem 0rem;
@@ -229,9 +212,10 @@
 						height: 3rem;
 						border-radius: 50%;
 						font-size: 1.5rem;
-						background-color: darken($intellect, 10%);
-						box-shadow: var(--shadow-elevation-medium);
 						transform: translateY(0px);
+						background-color: darken($intellect, 10%);
+						box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+						transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 						@import 'tooltip';
 
 						i {
@@ -240,8 +224,8 @@
 
 						&:hover {
 							background-color: darken($intellect, 5%);
-							box-shadow: var(--shadow-elevation-high);
-							transform: translateY(-5px);
+							box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+							transform: translateY(-3px);
 						}
 					}
 
@@ -272,8 +256,19 @@
 					font-family: 'Fredoka One', cursive;
 					border-radius: inherit;
 
+
+
 					&.open {
-						color: darken($intellect, 0%);
+
+						.accordionBtn__text {
+							span {
+								display: inline-block;
+								transform: rotate(180deg);
+							}
+						}
+
+						// background-color: rgba(255, 255, 255, 0.123);
+						// color: darken($intellect, 0%);
 					}
 
 					.accordionBtn__text {
@@ -288,6 +283,11 @@
 						text-transform: uppercase;
 						white-space: nowrap;
 						transition: transform 150ms ease-out;
+
+						span {
+							margin-left: 1rem;
+						}
+
 
 					}
 
@@ -315,27 +315,27 @@
 			// padding: 0.25rem;
 			padding: 0.5em 0.5em;
 			border-radius: 5px;
-			background-color: rgba(255, 255, 255, 0.109);
+			// background-color: rgba(221, 217, 255, 0.109);
+			background-color: #2c2e35db; //dark glass
 			// box-shadow: inset 0px 0px 0px 1px white;
 			// background-color: $glass;
 			margin-bottom: 0.5rem;
 			margin-right: 0.25rem;
 			transform: translateY(0px);
-			box-shadow: var(--shadow-elevation-low);
-			transition: all 150ms ease-in;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+			transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			// box-shadow: var(--shadow-elevation-low);
+			// transition: all 150ms ease-in;
 
 			&:hover {
-				// outline: 1px solid navy;
-				// outline: 1px solid #4776E6;
-				box-shadow: var(--shadow-elevation-medium);
-				// background-clip: content-box;
+				box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 				transform: translateY(-3px);
 				cursor: pointer;
 
-				* {
-
-					// color: #4776E6;
-				}
 			}
 		}
 

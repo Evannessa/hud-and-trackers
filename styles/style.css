@@ -974,9 +974,9 @@
   flex-direction: column;
   justify-content: stretch;
   flex-wrap: wrap;
-  background-color: rgba(135, 130, 163, 0.527);
-  border-top: 1px solid rgba(178, 174, 202, 0.685);
-  border-right: 1px solid rgba(178, 174, 202, 0.685);
+  background-color: #20202829;
+  border-top: 1px solid rgba(91, 91, 112, 0.568);
+  border-right: 1px solid rgba(91, 91, 112, 0.568);
   min-height: 10em;
   position: relative;
   width: -webkit-fit-content;
@@ -989,12 +989,18 @@
 #clock-display .clock-container .glass,
 .app-child .window-content .glass,
 .app-child .clock-container .glass {
-  background-color: rgba(135, 130, 163, 0.527);
-  border-top: 2px solid rgba(178, 174, 202, 0.685);
-  border-right: 1.5px solid rgba(178, 174, 202, 0.685);
-  border-bottom: 1px solid rgba(178, 174, 202, 0.25);
-  border-left: 1px solid rgba(178, 174, 202, 0.25);
+  background-color: #202028c4;
+  border-top: 2px solid rgba(91, 91, 112, 0.568);
+  border-right: 1.5px solid rgba(91, 91, 112, 0.568);
+  border-bottom: 1px solid rgba(91, 91, 112, 0.25);
+  border-left: 1px solid rgba(91, 91, 112, 0.25);
   border-radius: 5px;
+}
+#clock-display .window-content .glass-faint,
+#clock-display .clock-container .glass-faint,
+.app-child .window-content .glass-faint,
+.app-child .clock-container .glass-faint {
+  background-color: #20202829;
 }
 #clock-display .window-content .glass__btn,
 #clock-display .clock-container .glass__btn,
@@ -1043,21 +1049,6 @@
   display: flex;
   border-radius: 0;
   position: relative;
-}
-#clock-display .window-content .clockCategory__wrapper .clockCategory::before,
-#clock-display .clock-container .clockCategory__wrapper .clockCategory::before,
-.app-child .window-content .clockCategory__wrapper .clockCategory::before,
-.app-child .clock-container .clockCategory__wrapper .clockCategory::before {
-  content: "";
-  z-index: 10;
-  background-size: cover;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
-  opacity: 0.5;
-  overflow: hidden;
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory + .clockCategory,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory + .clockCategory,
@@ -1159,9 +1150,10 @@
   height: 3rem;
   border-radius: 50%;
   font-size: 1.5rem;
-  background-color: #7555c6;
-  box-shadow: var(--shadow-elevation-medium);
   transform: translateY(0px);
+  background-color: #7555c6;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__inner .addClock.actionButton .tooltip,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__inner .addClock.actionButton .tooltip,
@@ -1202,8 +1194,8 @@
 .app-child .window-content .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover,
 .app-child .clock-container .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover {
   background-color: #8468cd;
-  box-shadow: var(--shadow-elevation-high);
-  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  transform: translateY(-3px);
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__inner.hidden,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__inner.hidden,
@@ -1257,11 +1249,12 @@
 .app-child .clock-container .clockCategory__wrapper .clockCategory__btn:hover .tooltip {
   transform: scale(1);
 }
-#clock-display .window-content .clockCategory__wrapper .clockCategory__btn.open,
-#clock-display .clock-container .clockCategory__wrapper .clockCategory__btn.open,
-.app-child .window-content .clockCategory__wrapper .clockCategory__btn.open,
-.app-child .clock-container .clockCategory__wrapper .clockCategory__btn.open {
-  color: #947bd3;
+#clock-display .window-content .clockCategory__wrapper .clockCategory__btn.open .accordionBtn__text span,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory__btn.open .accordionBtn__text span,
+.app-child .window-content .clockCategory__wrapper .clockCategory__btn.open .accordionBtn__text span,
+.app-child .clock-container .clockCategory__wrapper .clockCategory__btn.open .accordionBtn__text span {
+  display: inline-block;
+  transform: rotate(180deg);
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__btn .accordionBtn__text,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn .accordionBtn__text,
@@ -1280,6 +1273,12 @@
   text-transform: uppercase;
   white-space: nowrap;
   transition: transform 150ms ease-out;
+}
+#clock-display .window-content .clockCategory__wrapper .clockCategory__btn .accordionBtn__text span,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory__btn .accordionBtn__text span,
+.app-child .window-content .clockCategory__wrapper .clockCategory__btn .accordionBtn__text span,
+.app-child .clock-container .clockCategory__wrapper .clockCategory__btn .accordionBtn__text span {
+  margin-left: 1rem;
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__btn:hover,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn:hover,
@@ -1312,18 +1311,22 @@
 .app-child .clock-container form.clockApp {
   padding: 0.5em 0.5em;
   border-radius: 5px;
-  background-color: rgba(255, 255, 255, 0.109);
+  background-color: #2c2e35db;
   margin-bottom: 0.5rem;
   margin-right: 0.25rem;
   transform: translateY(0px);
-  box-shadow: var(--shadow-elevation-low);
-  transition: all 150ms ease-in;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 #clock-display .window-content form.clockApp:hover,
 #clock-display .clock-container form.clockApp:hover,
 .app-child .window-content form.clockApp:hover,
 .app-child .clock-container form.clockApp:hover {
-  box-shadow: var(--shadow-elevation-medium);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   transform: translateY(-3px);
   cursor: pointer;
 }
