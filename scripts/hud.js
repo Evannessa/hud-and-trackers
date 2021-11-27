@@ -668,8 +668,6 @@ export class Hud extends Application {
                         //this should unpin enabler
                         let element = event.currentTarget;
                         if (element.parentNode.classList.contains("pinnedDiv")) {
-                            //TODO: Finish the statement beneath
-                            console.log("Clicking on pinned");
                             let array = this.pinnedItems[element.dataset.type].map(
                                 (item) => {
                                     if (item.hasOwnProperty("name")) {
@@ -679,10 +677,6 @@ export class Hud extends Application {
                                     }
                                 }
                             );
-                            console.log(
-                                "Our pinned items for" + element.dataset.type + " are ",
-                                array
-                            );
                             array = array.filter((item) => item.id != element.id);
                             this.pinnedItems[element.dataset.type] = array;
                             await this.ourActor.setFlag(
@@ -690,13 +684,8 @@ export class Hud extends Application {
                                 "pinnedItems",
                                 this.pinnedItems
                             );
-                            console.log(
-                                "Our pinned items for" + element.dataset.type + " are ",
-                                array
-                            );
                             this.render();
                         } else {
-                            console.log("Clicking on NOT PINNEd");
                             //this should pin enabler, but only if it's not already in the pinned abilities
                             let array = this.pinnedItems[element.dataset.type].map(
                                 (item) => {
@@ -707,14 +696,9 @@ export class Hud extends Application {
                                     }
                                 }
                             );
-                            console.log(
-                                "Our pinned items for" + element.dataset.type + " are ",
-                                array
-                            );
                             let alreadyPinned = array.find(
                                 (item) => item.id == element.id
                             );
-                            console.log("Already pinned ", alreadyPinned);
                             if (!alreadyPinned) {
                                 let item = this.ourActor.data.items.find(
                                     (i) => i.id === element.id

@@ -432,7 +432,7 @@
   text-align: center;
   padding: 0.5rem;
   cursor: pointer;
-  background-color: #161a1d9c;
+  background-color: var(--palette-dialog-background, var(--tui-black2));
 }
 #helperHud:hover .utility {
   display: flex;
