@@ -762,7 +762,6 @@
   border-radius: 15px;
   overflow: hidden;
   position: relative;
-  background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 100%);
   background-position: right;
 }
 .clockHud .window-content .clockWrapper .innerWrapper {
@@ -1558,10 +1557,10 @@
 .app-child .clock-container .clockWrapper .innerWrapper + .innerWrapper {
   margin: 1em;
 }
-#clock-display .window-content .clockSection,
-#clock-display .clock-container .clockSection,
-.app-child .window-content .clockSection,
-.app-child .clock-container .clockSection {
+#clock-display .window-content .clockWrapper .clockSection,
+#clock-display .clock-container .clockWrapper .clockSection,
+.app-child .window-content .clockWrapper .clockSection,
+.app-child .clock-container .clockWrapper .clockSection {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1572,57 +1571,90 @@
   background-color: transparent;
   box-shadow: rgba(50, 50, 93, 0.25) 0px -20px 19px 0px inset, rgba(0, 0, 0, 0.3) -2px 8px 13px 0px inset;
 }
-#clock-display .window-content .clockSection[data-break],
-#clock-display .clock-container .clockSection[data-break],
-.app-child .window-content .clockSection[data-break],
-.app-child .clock-container .clockSection[data-break] {
+#clock-display .window-content .clockWrapper .clockSection[data-break],
+#clock-display .clock-container .clockWrapper .clockSection[data-break],
+.app-child .window-content .clockWrapper .clockSection[data-break],
+.app-child .clock-container .clockWrapper .clockSection[data-break] {
   position: relative;
   margin-right: 5px;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 }
-#clock-display .window-content .clockSection[data-break] + .clockSection,
-#clock-display .clock-container .clockSection[data-break] + .clockSection,
-.app-child .window-content .clockSection[data-break] + .clockSection,
-.app-child .clock-container .clockSection[data-break] + .clockSection {
+#clock-display .window-content .clockWrapper .clockSection[data-break] + .clockSection,
+#clock-display .clock-container .clockWrapper .clockSection[data-break] + .clockSection,
+.app-child .window-content .clockWrapper .clockSection[data-break] + .clockSection,
+.app-child .clock-container .clockWrapper .clockSection[data-break] + .clockSection {
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
 }
-#clock-display .window-content .clockSection[data-break]:last-child,
-#clock-display .clock-container .clockSection[data-break]:last-child,
-.app-child .window-content .clockSection[data-break]:last-child,
-.app-child .clock-container .clockSection[data-break]:last-child {
+#clock-display .window-content .clockWrapper .clockSection[data-break]:last-child,
+#clock-display .clock-container .clockWrapper .clockSection[data-break]:last-child,
+.app-child .window-content .clockWrapper .clockSection[data-break]:last-child,
+.app-child .clock-container .clockWrapper .clockSection[data-break]:last-child {
   margin-right: 0;
 }
-#clock-display .window-content .clockSection .label,
-#clock-display .clock-container .clockSection .label,
-.app-child .window-content .clockSection .label,
-.app-child .clock-container .clockSection .label {
+#clock-display .window-content .clockWrapper .clockSection .label,
+#clock-display .clock-container .clockWrapper .clockSection .label,
+.app-child .window-content .clockWrapper .clockSection .label,
+.app-child .clock-container .clockWrapper .clockSection .label {
   color: white;
   font-weight: bold;
   z-index: 200;
 }
-#clock-display .window-content .clockSection.filled,
-#clock-display .clock-container .clockSection.filled,
-.app-child .window-content .clockSection.filled,
-.app-child .clock-container .clockSection.filled {
+#clock-display .window-content .clockWrapper .clockSection.filled,
+#clock-display .clock-container .clockWrapper .clockSection.filled,
+.app-child .window-content .clockWrapper .clockSection.filled,
+.app-child .clock-container .clockWrapper .clockSection.filled {
   box-shadow: none;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
-#clock-display .window-content .clockSection.filled .label,
-#clock-display .clock-container .clockSection.filled .label,
-.app-child .window-content .clockSection.filled .label,
-.app-child .clock-container .clockSection.filled .label {
+#clock-display .window-content .clockWrapper .clockSection.filled .label,
+#clock-display .clock-container .clockWrapper .clockSection.filled .label,
+.app-child .window-content .clockWrapper .clockSection.filled .label,
+.app-child .clock-container .clockWrapper .clockSection.filled .label {
   color: black;
 }
-#clock-display .window-content .clockSection.filled:hover,
-#clock-display .clock-container .clockSection.filled:hover,
-.app-child .window-content .clockSection.filled:hover,
-.app-child .clock-container .clockSection.filled:hover {
+#clock-display .window-content .clockWrapper .clockSection.filled:hover,
+#clock-display .clock-container .clockWrapper .clockSection.filled:hover,
+.app-child .window-content .clockWrapper .clockSection.filled:hover,
+.app-child .clock-container .clockWrapper .clockSection.filled:hover {
   background-position: right center;
   /* change the direction of the change here */
   color: #fff;
   text-decoration: none;
+}
+#clock-display .window-content .clockWrapper__circles.clockWrapper .clockSection,
+#clock-display .clock-container .clockWrapper__circles.clockWrapper .clockSection,
+.app-child .window-content .clockWrapper__circles.clockWrapper .clockSection,
+.app-child .clock-container .clockWrapper__circles.clockWrapper .clockSection {
+  border-radius: 50%;
+  position: relative;
+  background-color: transparent;
+}
+#clock-display .window-content .clockWrapper__circles.clockWrapper .clockSection.filled:before,
+#clock-display .clock-container .clockWrapper__circles.clockWrapper .clockSection.filled:before,
+.app-child .window-content .clockWrapper__circles.clockWrapper .clockSection.filled:before,
+.app-child .clock-container .clockWrapper__circles.clockWrapper .clockSection.filled:before {
+  content: "";
+  position: absolute;
+  background-color: white;
+  mix-blend-mode: multiply;
+  border-radius: 50%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+#clock-display .window-content .clockWrapper__circles.clockWrapper .clockSection[data-break], #clock-display .window-content .clockWrapper__circles.clockWrapper .clockSection + .clockSection,
+#clock-display .clock-container .clockWrapper__circles.clockWrapper .clockSection[data-break],
+#clock-display .clock-container .clockWrapper__circles.clockWrapper .clockSection + .clockSection,
+.app-child .window-content .clockWrapper__circles.clockWrapper .clockSection[data-break],
+.app-child .window-content .clockWrapper__circles.clockWrapper .clockSection + .clockSection,
+.app-child .clock-container .clockWrapper__circles.clockWrapper .clockSection[data-break],
+.app-child .clock-container .clockWrapper__circles.clockWrapper .clockSection + .clockSection {
+  border-top-left-radius: 0;
+  border-top-left-radius: 0;
+  border-radius: 50%;
 }
 
 .app-child {
@@ -2260,88 +2292,104 @@
 
 #clockConfig .reddish,
 .clockHud .reddish,
+#clock-display .reddish,
 .gradients .reddish {
   background-image: linear-gradient(to right, #DC2424 0%, #4A569D 100%);
 }
 #clockConfig .reddish.mix,
 .clockHud .reddish.mix,
+#clock-display .reddish.mix,
 .gradients .reddish.mix {
   background-image: none;
   background: #924d85;
 }
 #clockConfig .purple,
 .clockHud .purple,
+#clock-display .purple,
 .gradients .purple {
   background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 100%);
 }
 #clockConfig .purple.mix,
 .clockHud .purple.mix,
+#clock-display .purple.mix,
 .gradients .purple.mix {
   background-image: none;
   background: #6b65e8;
 }
 #clockConfig .bluePink,
 .clockHud .bluePink,
+#clock-display .bluePink,
 .gradients .bluePink {
   background-image: linear-gradient(62deg, #15d5eb 0%, #ff00bf 100%);
 }
 #clockConfig .bluePink.mix,
 .clockHud .bluePink.mix,
+#clock-display .bluePink.mix,
 .gradients .bluePink.mix {
   background-image: none;
   background: #8a6bd5;
 }
 #clockConfig .turquoise,
 .clockHud .turquoise,
+#clock-display .turquoise,
 .gradients .turquoise {
   background-image: linear-gradient(132deg, #a1ffff 0%, #00d8d8 100%);
 }
 #clockConfig .turquoise.mix,
 .clockHud .turquoise.mix,
+#clock-display .turquoise.mix,
 .gradients .turquoise.mix {
   background-image: none;
   background: #51ecec;
 }
 #clockConfig .pinkLemonade,
 .clockHud .pinkLemonade,
+#clock-display .pinkLemonade,
 .gradients .pinkLemonade {
   background-image: linear-gradient(132deg, #fd7088 0%, #ffd3a5 100%);
 }
 #clockConfig .pinkLemonade.mix,
 .clockHud .pinkLemonade.mix,
+#clock-display .pinkLemonade.mix,
 .gradients .pinkLemonade.mix {
   background-image: none;
   background: #fea297;
 }
 #clockConfig .fire,
 .clockHud .fire,
+#clock-display .fire,
 .gradients .fire {
   background-image: linear-gradient(132deg, #faaa00 0%, #ed1313 50%, #d54aff 100%);
 }
 #clockConfig .fire.mix,
 .clockHud .fire.mix,
+#clock-display .fire.mix,
 .gradients .fire.mix {
   background-image: none;
   background: #f45f37;
 }
 #clockConfig .magic,
 .clockHud .magic,
+#clock-display .magic,
 .gradients .magic {
   background-image: linear-gradient(132deg, #00ff9d 0%, #e32baf 100%);
 }
 #clockConfig .magic.mix,
 .clockHud .magic.mix,
+#clock-display .magic.mix,
 .gradients .magic.mix {
   background-image: none;
   background: #7295a6;
 }
 #clockConfig .pastel,
 .clockHud .pastel,
+#clock-display .pastel,
 .gradients .pastel {
   background-image: linear-gradient(132deg, #ffceec 0%, #9796f0 100%);
 }
 #clockConfig .pastel.mix,
 .clockHud .pastel.mix,
+#clock-display .pastel.mix,
 .gradients .pastel.mix {
   background-image: none;
   background: #cbb2ee;

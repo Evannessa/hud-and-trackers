@@ -291,6 +291,17 @@ export class ClockDisplay extends Application {
         $(".clockCategory").each(this.measureAccordionContents);
     }
 
+    applyGradientToEach(clockData, children) {
+        let size = 100 * clockData.sectionCount;
+        let position = 100 * clockData.sectionCount;
+        for (let child of children) {
+            child = $(child);
+            child.css("background-size", `${size}% 100%`);
+            child.css("background-position", `${position}% 0%`);
+            position -= 100;
+        }
+    }
+
     replaceGradientDirection(gradientString) {
         const regex = /(\d+)deg/i;
         return gradientString.replace(regex, "to bottom");
@@ -300,12 +311,21 @@ export class ClockDisplay extends Application {
         let clockWrapper = $(
             `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockWrapper`
         );
+        clockWrapper.addClass("clockWrapper__circles");
         //make the background wrapper's gradient look like the chosen one
         // clockWrapper.css("backgroundImage", clockData.gradient);
-        let newGradient = this.replaceGradientDirection(clockData.gradient);
-        clockWrapper.children(".clockSection.filled").each((index, element) => {
-            $(element).css("backgroundImage", newGradient);
-        });
+        if (clockData.gradient.includes("gradient")) {
+            // let newGradient = this.replaceGradientDirection(clockData.gradient);
+            clockWrapper.children(".clockSection.filled").each((index, element) => {
+                $(element).css(`${clockData.gradient}`);
+            });
+            // clockWrapper.css("backgroundImage", clockData.gradient);
+        } else {
+            clockWrapper.children(".clockSection.filled").each((index, element) => {
+                $(element).addClass(`${clockData.gradient}`);
+            });
+        }
+        this.applyGradientToEach(clockData, clockWrapper.children(".clockSection"));
     }
 
     /**

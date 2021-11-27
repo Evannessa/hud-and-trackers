@@ -269,7 +269,7 @@ export class Clock extends FormApplication {
                 type="radio"
                 id="reddish"
                 name="gradient"
-                value="linear-gradient(to right, #DC2424 0%, #4A569D  100%)"
+                value="reddish"
                 checked
             />
             <label for="reddish">Reddish</label>
@@ -280,7 +280,7 @@ export class Clock extends FormApplication {
                 type="radio"
                 id="purple"
                 name="gradient"
-                value="linear-gradient(to right, #4776E6 0%, #8E54E9  100%)"
+                value="purple"
             />
             <label for="purple">Purple</label>
         </div>
@@ -290,7 +290,7 @@ export class Clock extends FormApplication {
                 type="radio"
                 id="bluePink"
                 name="gradient"
-                value="linear-gradient(62deg, rgb(21, 213, 235) 0.00%, rgb(255, 0, 191) 100.00%)"
+                value="bluePink"
             />
             <label for="bluePink">Blue Pink</label>
         </div>
@@ -299,7 +299,7 @@ export class Clock extends FormApplication {
                 type="radio"
                 id="turquoise"
                 name="gradient"
-                value="linear-gradient(132deg, rgb(161, 255, 255) 0.00%, rgb(0, 216, 216) 100.00%)"
+                value="turquoise"
             />
             <label for="turquoise">Turquoise</label>
         </div>
@@ -308,7 +308,7 @@ export class Clock extends FormApplication {
                 type="radio"
                 id="pinkLemonade"
                 name="gradient"
-                value="linear-gradient(132deg, rgb(253, 112, 136) 0.00%, rgb(255, 211, 165) 100.00%)"
+                value="pinkLemonade"
             />
             <label for="pinkLemonade">Pink Lemonade</label>
         </div>
@@ -317,7 +317,7 @@ export class Clock extends FormApplication {
                 type="radio"
                 id="fire"
                 name="gradient"
-                value="linear-gradient(132deg, rgb(250, 170, 0) 0.00%, rgb(237, 19, 19) 50.00%, rgb(213, 74, 255) 100.00%)"
+                value="fire"
             />
             <label for="fire">Fire</label>
         </div>
@@ -326,7 +326,7 @@ export class Clock extends FormApplication {
                 type="radio"
                 id="magic"
                 name="gradient"
-                value="linear-gradient(132deg, rgb(0, 255, 157) 0.00%, rgb(227, 43, 175) 100.00%)"
+                value="magic"
             />
             <label for="magic">Magic</label>
         </div>
@@ -335,7 +335,7 @@ export class Clock extends FormApplication {
                 type="radio"
                 id="pastel"
                 name="gradient"
-                value="linear-gradient(132deg, rgb(255, 206, 236) 0.00%, rgb(151, 150, 240) 100.00%)"
+                value="pastel"
             />
             <label for="pastel">Pastel</label>
         </div>`,
@@ -428,7 +428,9 @@ export class Clock extends FormApplication {
         let clockWrapper = windowContent.find(".clockWrapper")[0];
 
         //make the background wrapper's gradient look like the chosen one
-        clockWrapper.style.backgroundImage = this.data.gradient;
+        // clockWrapper.style.backgroundImage = this.data.gradient;
+        //add class
+        $(clockWrapper).addClass(this.data.gradient);
 
         //clicking on the clock wrapper will fill or unfill the sections
         clockWrapper.addEventListener("mousedown", (event) => {
