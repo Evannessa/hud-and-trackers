@@ -1353,11 +1353,9 @@
 .app-child .clock-container form.clockApp {
   padding: 0.5em 0.5em;
   border-radius: 5px;
-  background-image: linear-gradient(to bottom right, #2A2A28, #1F1D1F);
   margin-bottom: 0.5rem;
   margin-right: 0.25rem;
   transform: translateY(0px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   display: flex;
   flex-direction: column;
@@ -1369,6 +1367,7 @@
 .app-child .window-content form.clockApp:hover,
 .app-child .clock-container form.clockApp:hover {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  background-color: rgba(107, 110, 133, 0.342);
   transform: translateY(-3px);
   cursor: pointer;
 }
@@ -1539,7 +1538,7 @@
   width: 5em;
   height: 5em;
   background-color: transparent;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px -20px 19px 0px inset, rgba(0, 0, 0, 0.3) -2px 8px 13px 0px inset;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px -20px 19px 0px inset, rgba(0, 0, 0, 0.53) -2px 8px 13px 0px inset;
 }
 #clock-display .window-content .clockWrapper .clockSection[data-break],
 #clock-display .clock-container .clockWrapper .clockSection[data-break],
@@ -1644,7 +1643,7 @@
 .app-child .clock-container .clockWrapper__circles.clockWrapper .clockSection[data-break],
 .app-child .clock-container .clockWrapper__circles.clockWrapper .clockSection + .clockSection {
   border-top-left-radius: 0;
-  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
   border-radius: 50%;
 }
 #clock-display .window-content .clockWrapper__squares.clockWrapper,
@@ -1672,6 +1671,17 @@
   filter: blur(3px);
   z-index: 5;
 }
+#clock-display .window-content .clockWrapper__squares.clockWrapper .clockSection[data-break]:not(:last-child):after,
+#clock-display .clock-container .clockWrapper__squares.clockWrapper .clockSection[data-break]:not(:last-child):after,
+.app-child .window-content .clockWrapper__squares.clockWrapper .clockSection[data-break]:not(:last-child):after,
+.app-child .clock-container .clockWrapper__squares.clockWrapper .clockSection[data-break]:not(:last-child):after {
+  content: "";
+  width: 7px;
+  border-bottom: 1px solid white;
+  position: absolute;
+  top: 50%;
+  left: 100%;
+}
 #clock-display .window-content .clockWrapper__squares.clockWrapper .clockSection[data-break], #clock-display .window-content .clockWrapper__squares.clockWrapper .clockSection + .clockSection,
 #clock-display .clock-container .clockWrapper__squares.clockWrapper .clockSection[data-break],
 #clock-display .clock-container .clockWrapper__squares.clockWrapper .clockSection + .clockSection,
@@ -1679,8 +1689,8 @@
 .app-child .window-content .clockWrapper__squares.clockWrapper .clockSection + .clockSection,
 .app-child .clock-container .clockWrapper__squares.clockWrapper .clockSection[data-break],
 .app-child .clock-container .clockWrapper__squares.clockWrapper .clockSection + .clockSection {
-  border-top-left-radius: 0;
-  border-top-left-radius: 0;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 #clock-display .window-content .clockWrapper__squares.clockWrapper .clockSection + .clockSection,
 #clock-display .clock-container .clockWrapper__squares.clockWrapper .clockSection + .clockSection,
@@ -1693,6 +1703,12 @@
 .app-child .window-content .clockWrapper__squares.clockWrapper .clockSection.filled,
 .app-child .clock-container .clockWrapper__squares.clockWrapper .clockSection.filled {
   border: 1px solid white;
+}
+#clock-display .window-content .clockWrapper__squares.clockWrapper .clockSection:last-child,
+#clock-display .clock-container .clockWrapper__squares.clockWrapper .clockSection:last-child,
+.app-child .window-content .clockWrapper__squares.clockWrapper .clockSection:last-child,
+.app-child .clock-container .clockWrapper__squares.clockWrapper .clockSection:last-child {
+  border-top-left-radius: 0;
 }
 
 .app-child {
