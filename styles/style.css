@@ -433,6 +433,23 @@
   padding: 0.5rem;
   cursor: pointer;
   background-color: var(--palette-dialog-background, var(--tui-black2));
+  transition: background-color 150ms;
+}
+#helperHud .hoverBar.holdOpen {
+  background-color: var(--accent-base);
+  color: black;
+}
+#helperHud .hoverBar.holdOpen:hover {
+  background-color: var(--accent-300);
+  color: black;
+}
+#helperHud .hoverBar.holdOpen + .utility {
+  display: flex;
+  flex-direction: column;
+}
+#helperHud .hoverBar:hover {
+  background-color: var(--palette-dialog-darker, var(--tui-black4));
+  color: var(--accent-300);
 }
 #helperHud:hover .utility {
   display: flex;
@@ -457,19 +474,19 @@
   flex-direction: column;
 }
 #helperHud .utility button {
-  width: -webkit-max-content;
-  width: -moz-max-content;
-  width: max-content;
-  padding: 0.5rem;
-  margin: 0.1rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+  transition: background-color 150ms, color 150ms;
 }
-#helperHud .utility button:nth-child(even) {
-  background-color: #09F;
-  color: black;
-}
-#helperHud .utility button:nth-child(even):hover {
-  background-color: #66c2ff;
+#helperHud .utility button:hover {
+  color: var(--palette-dialog-background, var(--tui-black2));
+  background-color: var(--accent-base);
 }
 
 #combatHud {

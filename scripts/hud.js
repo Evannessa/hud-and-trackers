@@ -313,8 +313,22 @@ export class HelperHud extends Application {
         };
     }
 
+    handleButtonClick(event) {
+        let clickedElement = $(event.currentTarget);
+        let action = clickedElement.data().action;
+        switch (action) {
+            case "toggle":
+                clickedElement.toggleClass("holdOpen");
+                clickedElement.find("i").toggleClass("fa-plus").toggleClass("fa-minus");
+                break;
+            default:
+                break;
+        }
+    }
+
     activateListeners(html) {
         let windowContent = html.closest(".window-content");
+        windowContent.on("click", "[data-action]", this.handleButtonClick.bind(this));
         let openCheatSheet = windowContent.find(".openCheatSheet")[0];
         let openLootSheet = windowContent.find(".openLootSheet")[0];
         let savePos = windowContent.find(".savePos")[0];
