@@ -430,7 +430,14 @@ export class Clock extends FormApplication {
         //make the background wrapper's gradient look like the chosen one
         // clockWrapper.style.backgroundImage = this.data.gradient;
         //add class
-        $(clockWrapper).addClass(this.data.gradient);
+        if (this.data.gradient.includes("gradient")) {
+            //find all the children and change their backgroundImage
+            $(clockWrapper).css("backgroundImage", `${this.data.gradient}`);
+        } else {
+            //find all the children and add a class
+            $(clockWrapper).addClass(this.data.gradient);
+        }
+        // $(clockWrapper).addClass(this.data.gradient);
 
         //clicking on the clock wrapper will fill or unfill the sections
         clockWrapper.addEventListener("mousedown", (event) => {

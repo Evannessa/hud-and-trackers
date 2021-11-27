@@ -311,16 +311,15 @@ export class ClockDisplay extends Application {
         let clockWrapper = $(
             `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockWrapper`
         );
-        clockWrapper.addClass("clockWrapper__circles");
+        clockWrapper.addClass("clockWrapper__squares");
         //make the background wrapper's gradient look like the chosen one
-        // clockWrapper.css("backgroundImage", clockData.gradient);
         if (clockData.gradient.includes("gradient")) {
-            // let newGradient = this.replaceGradientDirection(clockData.gradient);
+            //find all the children and change their backgroundImage
             clockWrapper.children(".clockSection.filled").each((index, element) => {
-                $(element).css(`${clockData.gradient}`);
+                $(element).css("backgroundImage", `${clockData.gradient}`);
             });
-            // clockWrapper.css("backgroundImage", clockData.gradient);
         } else {
+            //find all the children and add a class
             clockWrapper.children(".clockSection.filled").each((index, element) => {
                 $(element).addClass(`${clockData.gradient}`);
             });
