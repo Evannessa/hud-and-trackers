@@ -52,7 +52,7 @@
 		button {
 			white-space: nowrap;
 			padding-inline: 0.75rem;
-			background-color: rgba(66, 78, 87, 0.9);
+			background-color: var(--tui-black2);
 
 			&.pinned {
 				border: 2px dotted rgb(255, 255, 255);
@@ -127,6 +127,8 @@
 		flex-direction: row;
 		flex-wrap: wrap;
 		max-width: 50vw;
+		background-color: rgba(44, 46, 47, 0.678);
+		padding: 0.25rem 0.5rem;
 
 		.break {
 			flex-basis: 100%;
@@ -140,6 +142,7 @@
 			.hud-item {
 				background-color: #09F;
 				color: black;
+				transition: background 100ms;
 
 				&__description {
 					color: white;
@@ -186,11 +189,12 @@
 				}
 			}
 
-			background: #161a1d;
+			background: var(--tui-black3);
 			color: white;
 			padding: 0.5rem 0.5rem;
 			margin: 0.2rem;
 			border-radius: 10px;
+			transition: background 100ms;
 			// width: max-content;
 			// height: max-content;
 

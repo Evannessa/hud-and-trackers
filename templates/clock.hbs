@@ -1,78 +1,71 @@
-<form id="{{ourId}}" class="clockApp" data-id="{{ourId}}" {{#if miniDisplay}}title="click to open clock"{{/if}}>
-    <div class="headerWrapper">
-        <h3 class="clockName" name="clockName" contenteditable="true">{{name}}</h3>
-        {{#if (eq user.id creator)}}
+<form id="{{ourId}}" class="clockApp" data-id="{{ourId}}" {{#if miniDisplay}}title="click to open clock" {{/if}}>
+	<div class="headerWrapper">
+		<h3 class="clockName" name="clockName" contenteditable="true">{{name}}</h3>
+		{{#if miniDisplay}}
+		<div class="userBadge" style="background-color: {{getUserData creator "color"}};"><span class="userBadge__name">{{getFirstTwoLetters (getUserData creator "name")}}</span></div>
+		{{/if}}
+		{{#if (eq user.id creator)}}
 		{{#unless miniDisplay}}
-        <div class="headerButtonWrapper">
-            <button class="share {{#if shared}}active{{/if}}" data-action="share">
-                <span class="tooltip">Share with other users</span>
-                <i class="fas fa-share-square"></i>
-            </button>
-            <button class="clone" data-action="clone">
-                <span class="tooltip">Duplicate this clock?</span>
-                <i class="fas fa-clone"></i>
-            </button>
-            <button class="changeColor" data-action="changeColor">
-                <span class="tooltip">Choose a new color</span>
-                <i class="fas fa-palette"></i>
-            </button>
-            <button class="delete" data-action="delete">
-                <span class="tooltip">Delete this clock</span>
-                <i class="fa fa-trash"></i>
-            </button>
-        </div>
+		<div class="headerButtonWrapper">
+			<button class="share {{#if shared}}active{{/if}}" data-action="share">
+				<span class="tooltip">Share with other users</span>
+				<i class="fas fa-share-square"></i>
+			</button>
+			<button class="clone" data-action="clone">
+				<span class="tooltip">Duplicate this clock?</span>
+				<i class="fas fa-clone"></i>
+			</button>
+			<button class="changeColor" data-action="changeColor">
+				<span class="tooltip">Choose a new color</span>
+				<i class="fas fa-palette"></i>
+			</button>
+			<button class="delete" data-action="delete">
+				<span class="tooltip">Delete this clock</span>
+				<i class="fa fa-trash"></i>
+			</button>
+		</div>
 
 		{{/unless}}
-        {{/if}}
-    </div>
-
-    <div class="contentWrapper" >
-		{{#if showWaypoints}}
-        <div class="waypointWrapper">
-            {{#each waypoints}}
-            <div class="waypoint" id="{{@key}}">
-                <p class="waypointLabel" contenteditable="true">{{this}}</p>
-            </div>
-            {{/each}}
-        </div>
 		{{/if}}
-        <div class="breakLabelWrapper">
-            {{#each breakLabels}}
-            <h3 class="breakLabel" id="{{@key}}" contenteditable="true">{{this}}</h3>
-            {{/each}}
-        </div>
-        <div class="frameWrapper">
-            {{#each breaks}}
-            <div class="frameSection"></div>
-            {{/each}}
-        </div>
-        <div class="clockWrapper">
-            {{#each sections}}
-            <div
-                class="clockSection"
-                id="{{this.id}}"
-                data-color="{{this.color}}"
-                data-label="{{this.label}}"
-            >
-                <p class="label">{{this.label}}</p>
-            </div>
-            {{/each}}
-        </div>
-    </div>
+	</div>
+
+	<div class="contentWrapper">
+
+		{{#if showWaypoints}}
+		<div class="waypointWrapper">
+			{{#each waypoints}}
+			<div class="waypoint" id="{{@key}}">
+				<p class="waypointLabel" contenteditable="true">{{this}}</p>
+			</div>
+			{{/each}}
+		</div>
+		{{/if}}
+		<div class="breakLabelWrapper">
+			{{#each breakLabels}}
+			<h3 class="breakLabel" id="{{@key}}" contenteditable="true">{{this}}</h3>
+			{{/each}}
+		</div>
+		<div class="frameWrapper">
+			{{#each breaks}}
+			<div class="frameSection"></div>
+			{{/each}}
+		</div>
+		<div class="clockWrapper">
+			{{#each sections}}
+			<div class="clockSection" id="{{this.id}}" data-color="{{this.color}}" data-label="{{this.label}}">
+				<p class="label">{{this.label}}</p>
+			</div>
+			{{/each}}
+		</div>
+	</div>
 	{{#unless miniDisplay}}
-    <div class="entityLinkWrapper">
-        {{#each linkedEntities}}
-        <button
-            class="entityLink"
-            id="{{@key}}"
-            data-type="{{entity}}"
-            data-name="{{name}}"
-            data-action="showEntity"
-        >
-            {{name}}
-        </button>
-        {{/each}}
-        <!-- <input type="text" class="entityLinkBox" placeholder="drag linked entity here" /> -->
-    </div>
+	<div class="entityLinkWrapper">
+		{{#each linkedEntities}}
+		<button class="entityLink" id="{{@key}}" data-type="{{entity}}" data-name="{{name}}" data-action="showEntity">
+			{{name}}
+		</button>
+		{{/each}}
+		<!-- <input type="text" class="entityLinkBox" placeholder="drag linked entity here" /> -->
+	</div>
 	{{/unless}}
 </form>

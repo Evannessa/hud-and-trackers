@@ -116,12 +116,30 @@ export function getActorFromToken(ourToken) {
     return game.actors.get(ourToken.data.actorId);
 }
 
+export async function getAllUserActors(user) {
+    let actors = game.actors.contents
+        .filter((actor) => actor.type == "PC")
+        .filter((actor) => actor.data.permission[user.id] == 3);
+    return actors;
+}
+
 export function getSceneTokenFromActor(actor) {
     return canvas.scene.data.tokens.contents.find((token) => token.name == actor.name);
 }
 
 export function getActorFromUser(user) {
     return user.character;
+}
+
+export function getActiveUsers() {
+    return game.users.filter((user) => {
+        user.active === true;
+    });
+}
+
+export function swapToCharacter(character) {
+    game.user.update({ character: character.id });
+    ui.notifications.notify(`Your active character is now ${character.name}`);
 }
 
 export async function createTokenFromTokenData(tokenData) {

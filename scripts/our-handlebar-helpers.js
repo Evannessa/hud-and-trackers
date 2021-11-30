@@ -4,4 +4,12 @@ export default function registerAllHandlebarHelpers() {
         let finalResult = result.charAt(0).toUpperCase() + result.slice(1);
         return finalResult;
     });
+    Handlebars.registerHelper("getFirstTwoLetters", function (strInput) {
+        let firstTwo = strInput.substring(0, 2);
+        return firstTwo;
+    });
+    Handlebars.registerHelper("getUserData", (userId, prop) => {
+        let user = game.users.get(userId);
+        return user.data[prop];
+    });
 }

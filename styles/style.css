@@ -275,7 +275,7 @@
 #tokenHud .button-wrapper button {
   white-space: nowrap;
   padding-inline: 0.75rem;
-  background-color: rgba(66, 78, 87, 0.9);
+  background-color: var(--tui-black2);
 }
 #tokenHud .button-wrapper button.pinned {
   border: 2px dotted white;
@@ -330,6 +330,8 @@
   flex-direction: row;
   flex-wrap: wrap;
   max-width: 50vw;
+  background-color: rgba(44, 46, 47, 0.678);
+  padding: 0.25rem 0.5rem;
 }
 #tokenHud .hud-item-wrapper .break {
   flex-basis: 100%;
@@ -341,6 +343,7 @@
 #tokenHud .hud-item-wrapper .pinnedDiv .hud-item {
   background-color: #09F;
   color: black;
+  transition: background 100ms;
 }
 #tokenHud .hud-item-wrapper .pinnedDiv .hud-item__description {
   color: white;
@@ -359,11 +362,12 @@
   height: -webkit-max-content;
   height: -moz-max-content;
   height: max-content;
-  background: #161a1d;
+  background: var(--tui-black3);
   color: white;
   padding: 0.5rem 0.5rem;
   margin: 0.2rem;
   border-radius: 10px;
+  transition: background 100ms;
 }
 #tokenHud .hud-item-wrapper .hud-item * {
   overflow-y: visible;
@@ -487,6 +491,31 @@
 #helperHud .utility button:hover {
   color: var(--palette-dialog-background, var(--tui-black2));
   background-color: var(--accent-base);
+}
+
+#players .showPCs {
+  display: flex;
+  justify-content: flex-end;
+}
+#players .showPCs img {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transform: scale(1);
+  transition: transform 100ms ease-in;
+}
+#players .showPCs img.currentPC {
+  border: 1px solid whitesmoke;
+  order: 1;
+}
+#players .showPCs img:not(.currentPC) {
+  filter: grayscale(70%);
+  transform: scale(0.75);
+  order: 2;
+}
+#players .showPCs img:hover {
+  transform: scale(1.25);
 }
 
 #combatHud {
@@ -629,6 +658,22 @@
   cursor: pointer;
   background: #09F;
   color: white;
+}
+
+#chat-form .chatTokenImg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.35;
+  margin: 5px;
+  overflow: hidden;
+  transition: background-image 100ms;
+  transition: opacity 100ms;
+}
+#chat-form .chatTokenImg.hide {
+  opacity: 0;
 }
 
 .window-app.sheet.minimized .clock-drawer {
@@ -1448,9 +1493,11 @@
 .app-child .clock-container .headerWrapper {
   display: flex;
   flex: content;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: flex-start;
   margin: 0.15em 0.25em;
+  position: relative;
+  width: 100%;
 }
 #clock-display .window-content .headerWrapper h3,
 #clock-display .clock-container .headerWrapper h3,
@@ -1460,6 +1507,26 @@
   margin: 0;
   font-family: "Fredoka One", cursive;
 }
+.clockCategory.sharedClocks .userBadge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  background-color: var(--primary-base-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.clockCategory.sharedClocks .userBadge span {
+  display: inline-block;
+  text-align: center;
+}
+.clockCategory:not(.sharedClocks) .userBadge {
+  display: none;
+}
+
 #clock-display .window-content .waypointWrapper,
 #clock-display .clock-container .waypointWrapper,
 .app-child .window-content .waypointWrapper,

@@ -1,0 +1,13 @@
+<div class="showPCs">
+  {{#each PCs}}
+    {{#unless @root.isGM}}
+      <img
+        src="{{this.data.img}}"
+        alt="{{this.data.name}}"
+        data-pcID="{{this.id}}"
+		{{#if (eq this.id @root.currentPC)}}class="currentPC"{{/if}}
+		title="{{this.data.name}}"
+      />
+    {{/unless}}
+  {{/each}}
+</div>

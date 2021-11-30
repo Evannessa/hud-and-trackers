@@ -695,7 +695,6 @@ class TrackerApp extends FormApplication {
     }
 
     deleteTracker(event) {
-        console.log("TESTING TRACKER DELETE");
         let trackerElement = event.currentTarget;
 
         //*Note: this method already updates the collection, so no need to call it

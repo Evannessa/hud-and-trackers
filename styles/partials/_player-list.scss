@@ -1,0 +1,32 @@
+#players {
+	.showPCs {
+		display: flex;
+		justify-content: flex-end;
+
+		img {
+			width: 2rem;
+			height: 2rem;
+			border-radius: 50%;
+			cursor: pointer;
+			transform: scale(1);
+			transition: transform 100ms ease-in;
+
+
+
+			&.currentPC {
+				border: 1px solid whitesmoke;
+				order: 1;
+			}
+
+			&:not(.currentPC) {
+				filter: grayscale(70%);
+				transform: scale(0.75);
+				order: 2;
+			}
+
+			&:hover {
+				transform: scale(1.25);
+			}
+		}
+	}
+}

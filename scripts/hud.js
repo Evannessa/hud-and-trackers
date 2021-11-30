@@ -6,6 +6,7 @@ import { ClockConfig } from "./ClockConfig.js";
 import * as PartyOverview from "./party-overview.js";
 import * as HelperFunctions from "./helper-functions.js";
 
+let chatArea;
 let hud;
 let lastTab = "attacks";
 let inCombat = false;
@@ -44,9 +45,63 @@ Hooks.on("init", () => {
     game.abilityHud = {};
     game.helperFunctions = HelperFunctions;
 });
+
 Hooks.on("canvasReady", () => {
     if (!game.helperHud) {
         game.helperHud = new HelperHud().render(true);
+    }
+});
+
+Hooks.on("renderPlayerList", async (playerList, html) => {
+    const loggedInUserListItem = html.find(`[data-user-id="${game.userId}"]`);
+    const tpl = "modules/hud-and-trackers/templates/party-overview/pc-playerlist.hbs";
+    let actors = await HelperFunctions.getAllUserActors(game.user);
+    let data = {
+        isGM: game.user.isGM,
+        PCs: actors,
+        currentPC: game.user.character.id,
+    };
+    const myHtml = await renderTemplate(tpl, data);
+    loggedInUserListItem.append(myHtml);
+
+    //when clicked, get the id of the clicked portrait, and the character
+    //then swap them
+    html.on("click", "img", async (event) => {
+        let element = $(event.currentTarget);
+        let id = element.data().pcid;
+        if (game.user.character.id != id) {
+            console.log(id);
+            console.log("Swapping to " + game.actors.get(id));
+            await HelperFunctions.swapToCharacter(game.actors.get(id));
+        } else {
+            HelperFunctions.selectMyCharacter();
+            //maybe like left click to open sheet, right click to
+        }
+    });
+
+    // html.on('click')
+});
+
+Hooks.on("renderSidebarTab", (app, html) => {
+    if (app.options.id == "chat") {
+        //get the parent of the chat message box
+        let chatForm = html.find("#chat-form");
+
+        //add our token image div into it, and fill it
+        chatForm.append("<div class='chatTokenImg'></div>");
+        let chatArea = html.find(".chatTokenImg")[0];
+
+        //save it as a variable on the game
+        game.chatArea = chatArea;
+        let tokenImg = canvas.tokens.controlled[0]?.actor.img;
+        if (tokenImg) {
+            $(game.chatArea).removeClass("hide");
+
+            $(game.chatArea).css({
+                "background-image": `url(${tokenImg})`,
+                "background-size": "contain",
+            });
+        }
     }
 });
 
@@ -91,6 +146,11 @@ Hooks.on("controlToken", async (token, isControlled) => {
             setTimeout(() => {
                 if (game.canvas.tokens.controlled.length == 0) {
                     hud.close();
+                    //set the chat area's css to none
+                    $(game.chatArea).addClass("hide");
+                    // $(game.chatArea).css({
+                    //     "background-image": "none",
+                    // });
                 }
             }, 250);
             // hud = null;
@@ -108,6 +168,15 @@ Hooks.on("controlToken", async (token, isControlled) => {
                 hud = new Hud(ourToken).render(true);
                 game.abilityHud = hud;
             }
+            //TODO: Add way to swap token image here
+            let tokenImg = game.canvas.tokens.controlled[0].actor.img;
+            // game.chatArea.style.backgroundImage = `url(${tokenImg})`;
+            $(game.chatArea).removeClass("hide");
+            $(game.chatArea).css({
+                "background-image": `url(${tokenImg})`,
+                "background-size": "contain",
+                "background-repeat": "no-repeat",
+            });
         }
     }
 });

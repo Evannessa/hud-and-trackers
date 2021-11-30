@@ -1,25 +1,25 @@
 	<button class="showClocks" data-action="showClocks">Show Clocks</button>
 	{{#with data}}
-	{{!-- <div class="categoryFilter">
-		{{#each this}}
-			<input type="checkbox" id="{{@key}}" data-name="{{@key}}">
-			<label for="{{@key}}"><span class="filter__icon"></span>{{convertToSentence @key}}</label>
-		{{/each}}
-	</div> --}}
 	<div class="clockCategory__wrapper">
-	
+
 		{{#each this}}
-			<div class="clockCategory {{@key}} glass {{#if (lookup @root.categoriesShown @key)}}open{{/if}}" data-name="{{@key}}">
-			<button class="clockCategory__btn glass__btn {{#if (lookup @root.categoriesShown @key)}}open{{/if}}" data-action="expand" title="{{lookup @root.tooltipText @key}}"><span class="accordionBtn__text">{{convertToSentence @key}}<span class="expandIcon"><i class="fas fa-chevron-down"></i></span></span></button>
-				<div class="clockCategory__inner">
-					{{#each this}}
-					{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
-					{{else}}
-					<p class="empty">{{lookup @root.emptyText @key}}</p>
-					{{/each}}
-					<button class="addClock actionButton" data-action="addClock" title="{{lookup @root.addClockTooltipText @key}}"><i class="fas fa-plus"></i></button>
-				</div>
+		<div class="clockCategory {{@key}} glass {{#if (lookup @root.categoriesShown @key)}}open{{/if}}"
+			data-name="{{@key}}">
+			<button class="clockCategory__btn glass__btn {{#if (lookup @root.categoriesShown @key)}}open{{/if}}"
+				data-action="expand" title="{{lookup @root.tooltipText @key}}"><span
+					class="accordionBtn__text">{{convertToSentence @key}}<span class="expandIcon"><i
+							class="fas fa-chevron-down"></i></span></span></button>
+			<div class="clockCategory__inner">
+				{{#each this}}
+				{{log @root "this is our key"}}
+				{{> 'modules/hud-and-trackers/templates/clock.hbs' miniDisplay=true}}
+				{{else}}
+				<p class="empty">{{lookup @root.emptyText @key}}</p>
+				{{/each}}
+				<button class="addClock actionButton" data-action="addClock"
+					title="{{lookup @root.addClockTooltipText @key}}"><i class="fas fa-plus"></i></button>
 			</div>
+		</div>
 		{{/each}}
 	</div>
 	{{/with}}
