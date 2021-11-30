@@ -666,11 +666,19 @@
   height: 100%;
   top: 0;
   left: 0;
-  opacity: 0.35;
-  margin: 5px;
+  opacity: 0.45;
   overflow: hidden;
   transition: background-image 100ms;
   transition: opacity 100ms;
+  padding: 5px;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.5) 25%, black 75%);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.5) 25%, black 75%);
+}
+#chat-form .chatTokenImg img {
+  -o-object-fit: contain;
+     object-fit: contain;
+  max-height: 100%;
 }
 #chat-form .chatTokenImg.hide {
   opacity: 0;
@@ -1515,6 +1523,8 @@
   height: 1.5em;
   border-radius: 50%;
   background-color: var(--primary-base-color);
+  color: black;
+  font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;

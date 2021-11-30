@@ -95,15 +95,29 @@ Hooks.on("renderSidebarTab", (app, html) => {
         game.chatArea = chatArea;
         let tokenImg = canvas.tokens.controlled[0]?.actor.img;
         if (tokenImg) {
-            $(game.chatArea).removeClass("hide");
-
-            $(game.chatArea).css({
-                "background-image": `url(${tokenImg})`,
-                "background-size": "contain",
-            });
+            setTokenImage(tokenImg);
+            // $(game.chatArea).css({
+            //     "background-image": `url(${tokenImg})`,
+            //     "background-size": "contain",
+            // });
         }
     }
 });
+
+function setTokenImage(tokenImg) {
+    console.log("Setting token img");
+    let chatArea = $(game.chatArea);
+    let img = chatArea.find(".tokenImg");
+    chatArea.removeClass("hide");
+    if (img.length == 0) {
+        console.log("adding image to token img chat");
+        img = chatArea.append(`<img class="tokenImg" src=${tokenImg}></img>`);
+    } else {
+        console.log("updating img in chat");
+        img.attr("src", tokenImg);
+    }
+    img.css("object-fit", "contain");
+}
 
 Hooks.on("updateActor", (actor, data, diff, actorId) => {
     let token = game.canvas.tokens.controlled[0];
@@ -171,12 +185,18 @@ Hooks.on("controlToken", async (token, isControlled) => {
             //TODO: Add way to swap token image here
             let tokenImg = game.canvas.tokens.controlled[0].actor.img;
             // game.chatArea.style.backgroundImage = `url(${tokenImg})`;
-            $(game.chatArea).removeClass("hide");
-            $(game.chatArea).css({
-                "background-image": `url(${tokenImg})`,
-                "background-size": "contain",
-                "background-repeat": "no-repeat",
-            });
+            setTokenImage(tokenImg);
+            // $(game.chatArea).removeClass("hide");
+            // if (!$(game.chatArea.find(".tokenImg"))) {
+            //     $(game.chatArea).append(`<img src="${tokenImg}">`);
+            // } else {
+            //     $(game.chatArea).find(".tokenImg").attr("src", tokenImg);
+            // }
+            // $(game.chatArea).css({
+            //     "background-image": `url(${tokenImg})`,
+            //     "background-size": "contain",
+            //     "background-repeat": "no-repeat",
+            // });
         }
     }
 });

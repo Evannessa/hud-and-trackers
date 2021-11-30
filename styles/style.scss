@@ -17,11 +17,20 @@
 		height: 100%;
 		top: 0;
 		left: 0;
-		opacity: 0.35;
-		margin: 5px;
+		opacity: 0.45;
 		overflow: hidden;
 		transition: background-image 100ms;
 		transition: opacity 100ms;
+		padding: 5px;
+		pointer-events: none;
+		-webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.5) 25%, black 75%);
+
+		mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.5) 25%, black 75%);
+
+		img {
+			object-fit: contain;
+			max-height: 100%;
+		}
 
 		&.hide {
 			opacity: 0;
