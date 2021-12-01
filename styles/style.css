@@ -506,7 +506,7 @@
   transition: transform 100ms ease-in;
 }
 #players .showPCs img.currentPC {
-  border: 1px solid whitesmoke;
+  border: 2px solid var(--primary-color-400);
   order: 1;
 }
 #players .showPCs img:not(.currentPC) {

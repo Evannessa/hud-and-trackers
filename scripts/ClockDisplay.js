@@ -27,6 +27,8 @@ export class ClockDisplay extends Application {
             myClocks: false,
             sceneClocks: false,
         };
+
+        //save which clock categories on the display are open
         if (!game.user.getFlag("hud-and-trackers", "displayCategoriesShown")) {
             game.user.setFlag(
                 "hud-and-trackers",
@@ -44,6 +46,10 @@ export class ClockDisplay extends Application {
         };
         this.parent = parent;
         this.initialized = false;
+
+        //this keeps track of if the initial width of the clocks has been set
+        //for the purposes of calculating the width for the accordian
+        //animation
         this.clocksInitialized = {
             sharedClocks: false,
             myClocks: false,
@@ -61,6 +67,11 @@ export class ClockDisplay extends Application {
             title: "Clock Display",
         });
     }
+    /**
+     * this is converting the typical Clock data into one that fits the ClockDisplay
+     * @param object - the clock data we have saved
+     * @param parentObject -
+     * */
     convertTemplateData(object, parentObject) {
         for (let clockId in object) {
             parentObject[clockId] = { ...object[clockId] };
@@ -82,6 +93,7 @@ export class ClockDisplay extends Application {
     async getData() {
         this.clocks = getSharedClocks();
 
+        //this holds onto multiple versions of the clocks
         this.otherClocks = {
             sharedClocks: getSharedClocks(),
             myClocks: getClocksByUser(game.userId),
