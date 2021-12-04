@@ -1,0 +1,47 @@
+:root {
+	/* spacing variable (using em units)*/
+	--space-unit: 1em;
+	--space-teensy: calc(0.25 * var(--space-unit));
+	--space-tiny: calc(0.5 * var(--space-unit));
+	--space-small: calc(0.75 * var(--space-unit));
+	--space-nit-normal: calc(1 * var(--space-unit));
+	--space-large: calc(1.5 * var(--space-unit));
+	--space-larger1: calc(2 * var(--space-unit));
+	--space-larger2: calc(3 * var(--space-unit));
+	--space-huge: calc(4 * var(--space-unit));
+	--space-huge1: calc(6 * var(--space-unit));
+	--space-huge2: calc(8 * var(--space-unit));
+	--space-gargantuan: calc(12 * var(--space-unit));
+	--space-gargantuan1: calc(16 * var(--space-unit));
+	--space-gargantuan2: calc(24 * var(--space-unit));
+	--space-colossal: calc(32 * var(--space-unit));
+	--space-colossal1: calc(40 * var(--space-unit));
+	--space-titanic: calc(48 * var(--space-unit));
+
+
+	//spacing fixed (using rem units) -- not affected by --space-unit or --text-base-size
+	--space-unit-fixed: 1rem;
+	--space-teensy-fixed: calc(0.25 * var(--space-unit));
+	--space-tiny-fixed: calc(0.5 * var(--space-unit));
+	--space-small-fixed: calc(0.75 * var(--space-unit));
+	--space-nit-normal-fixed: calc(1 * var(--space-unit));
+	--space-large-fixed: calc(1.5 * var(--space-unit));
+	--space-larger1-fixed: calc(2 * var(--space-unit));
+	--space-larger2-fixed: calc(3 * var(--space-unit));
+	--space-huge-fixed: calc(4 * var(--space-unit));
+	--space-huge1-fixed: calc(6 * var(--space-unit));
+	--space-huge2-fixed: calc(8 * var(--space-unit));
+	--space-gargantuan-fixed: calc(12 * var(--space-unit));
+	--space-gargantuan1-fixed: calc(16 * var(--space-unit));
+	--space-gargantuan2-fixed: calc(24 * var(--space-unit));
+	--space-colossal-fixed: calc(32 * var(--space-unit));
+	--space-colossal1-fixed: calc(40 * var(--space-unit));
+	--space-titanic-fixed: calc(48 * var(--space-unit));
+
+	--component-padding: var(--space-small);
+}
+
+
+.component {
+	padding-top: var(--component-padding);
+}

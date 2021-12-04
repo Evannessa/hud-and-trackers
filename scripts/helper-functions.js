@@ -132,8 +132,8 @@ export function getActorFromUser(user) {
 }
 
 export function getActiveUsers() {
-    return game.users.filter((user) => {
-        user.active === true;
+    return game.users.contents.filter((user) => {
+        return user.active === true;
     });
 }
 

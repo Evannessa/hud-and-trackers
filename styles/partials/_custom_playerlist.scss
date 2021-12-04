@@ -1,0 +1,65 @@
+#custom_playerlist {
+	width: max-content;
+	height: max-content;
+
+	.window-content {
+		min-height: 20vh;
+		flex-direction: row;
+
+		.current-character {
+			aspect-ratio: 1/1;
+			width: 10rem;
+			height: 10rem;
+			position: relative;
+			background-color: var(--black2);
+			cursor: pointer;
+
+			//for when the character is the current pc, but not selected
+			&:not(.selected) {
+				>img {
+					filter: grayscale(90%);
+				}
+			}
+
+			.selected {
+				filter: grayscale(0);
+			}
+
+
+			.otherCharacters {
+				.secondary-character {
+					cursor: pointer;
+					position: absolute;
+					border-radius: 50%;
+					right: 0;
+					bottom: 0;
+					width: 2rem;
+					height: 2rem;
+					background-color: var(--black4);
+					border: 3px solid cornflowerblue;
+					box-shadow: var(--shadow-lower);
+					transform: scale(1);
+					transition: transform 100ms ease-in;
+
+					&:hover {
+						transform: scale(1.25);
+					}
+				}
+			}
+		}
+
+		.other-users {
+			display: flex;
+			flex-direction: column;
+			border: 3px solid bisque;
+			width: 3rem;
+			height: 10rem;
+
+			.active-user {
+				border-radius: 50%;
+				width: 3rem;
+				height: 3rem;
+			}
+		}
+	}
+}

@@ -51,6 +51,24 @@
   	15.8px 16.6px 24.9px -2px hsl(var(--shadow-color) / 0.35),
   	24.3px 25.5px 38.3px -2.4px hsl(var(--shadow-color) / 0.34),
   	36px 37.9px 56.8px -2.7px hsl(var(--shadow-color) / 0.34);
+  /* spacing */
+  --space-unit: 1rem;
+  --space-unit-teensy: calc(0.25 * var(--space-unit));
+  --space-unit-tiny: calc(0.5 * var(--space-unit));
+  --space-unit-small: calc(0.75 * var(--space-unit));
+  --space-unit-normal: calc(1 * var(--space-unit));
+  --space-unit-large: calc(1.5 * var(--space-unit));
+  --space-unit-larger1: calc(2 * var(--space-unit));
+  --space-unit-larger2: calc(3 * var(--space-unit));
+  --space-unit-huge: calc(4 * var(--space-unit));
+  --space-unit-huge1: calc(6 * var(--space-unit));
+  --space-unit-huge2: calc(8 * var(--space-unit));
+  --space-unit-gargantuan: calc(12 * var(--space-unit));
+  --space-unit-gargantuan1: calc(16 * var(--space-unit));
+  --space-unit-gargantuan2: calc(24 * var(--space-unit));
+  --space-unit-colossal: calc(32 * var(--space-unit));
+  --space-unit-colossal1: calc(40 * var(--space-unit));
+  --space-unit-titanic: calc(48 * var(--space-unit));
   --fs-teensy: 0.25rem;
   --fs-tiny: 0.5rem;
   --fs-small: 0.75rem;
@@ -94,6 +112,81 @@
   --shadow-raised-bottom: 0 1px 3px hsla(0, 0%, 0%, .2);
   --shadow-inset-bottom: inset 0 -2px 0 rgba(136, 135, 135, 0.15);
   --shadow-inset-top: inset 0 2px 2px hsla(0, 0%, 0%, 0.1);
+}
+:root :root {
+  /* spacing variable (using em units)*/
+  --space-unit: 1em;
+  --space-teensy: calc(0.25 * var(--space-unit));
+  --space-tiny: calc(0.5 * var(--space-unit));
+  --space-small: calc(0.75 * var(--space-unit));
+  --space-nit-normal: calc(1 * var(--space-unit));
+  --space-large: calc(1.5 * var(--space-unit));
+  --space-larger1: calc(2 * var(--space-unit));
+  --space-larger2: calc(3 * var(--space-unit));
+  --space-huge: calc(4 * var(--space-unit));
+  --space-huge1: calc(6 * var(--space-unit));
+  --space-huge2: calc(8 * var(--space-unit));
+  --space-gargantuan: calc(12 * var(--space-unit));
+  --space-gargantuan1: calc(16 * var(--space-unit));
+  --space-gargantuan2: calc(24 * var(--space-unit));
+  --space-colossal: calc(32 * var(--space-unit));
+  --space-colossal1: calc(40 * var(--space-unit));
+  --space-titanic: calc(48 * var(--space-unit));
+  --space-unit-fixed: 1rem;
+  --space-teensy-fixed: calc(0.25 * var(--space-unit));
+  --space-tiny-fixed: calc(0.5 * var(--space-unit));
+  --space-small-fixed: calc(0.75 * var(--space-unit));
+  --space-nit-normal-fixed: calc(1 * var(--space-unit));
+  --space-large-fixed: calc(1.5 * var(--space-unit));
+  --space-larger1-fixed: calc(2 * var(--space-unit));
+  --space-larger2-fixed: calc(3 * var(--space-unit));
+  --space-huge-fixed: calc(4 * var(--space-unit));
+  --space-huge1-fixed: calc(6 * var(--space-unit));
+  --space-huge2-fixed: calc(8 * var(--space-unit));
+  --space-gargantuan-fixed: calc(12 * var(--space-unit));
+  --space-gargantuan1-fixed: calc(16 * var(--space-unit));
+  --space-gargantuan2-fixed: calc(24 * var(--space-unit));
+  --space-colossal-fixed: calc(32 * var(--space-unit));
+  --space-colossal1-fixed: calc(40 * var(--space-unit));
+  --space-titanic-fixed: calc(48 * var(--space-unit));
+  --component-padding: var(--space-small);
+}
+:root .component {
+  padding-top: var(--component-padding);
+}
+:root :root {
+  /* base text size values*/
+  --text-base-size: 1em;
+  --text-scale-ratio: 1.2;
+  /* type scale */
+  --text-xs: calc(1em / var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-sm: calc(1em / var(--text-scale-ratio));
+  --text-md: calc(1em * var(--text-scale-ratio));
+  --text-lg: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-xl: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-xxl: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-xxxl: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+  /* line- height */
+  --heading-line-height: 1.2;
+  --body-line-height: 1.4;
+}
+:root :root {
+  --fs-teensy: 0.25rem;
+  --fs-tiny: 0.5rem;
+  --fs-small: 0.75rem;
+  --fs-normal: 1rem;
+  --fs-large: 1.5rem;
+  --fs-larger1: 2rem;
+  --fs-larger2: 3rem;
+  --fs-huge: 4rem;
+  --fs-huge1: 6rem;
+  --fs-huge2: 8rem;
+  --fs-gargantuan: 12rem;
+  --fs-gargantuan1: 16rem;
+  --fs-gargantuan2: 24rem;
+  --fs-colossal: 32rem;
+  --fs-colossal1: 40rem;
+  --fs-titanic: 48rem;
 }
 
 #tracker-app {
@@ -658,6 +751,62 @@
   cursor: pointer;
   background: #09F;
   color: white;
+}
+
+#custom_playerlist {
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  height: -webkit-max-content;
+  height: -moz-max-content;
+  height: max-content;
+}
+#custom_playerlist .window-content {
+  min-height: 20vh;
+  flex-direction: row;
+}
+#custom_playerlist .window-content .current-character {
+  aspect-ratio: 1/1;
+  width: 10rem;
+  height: 10rem;
+  position: relative;
+  background-color: var(--black2);
+  cursor: pointer;
+}
+#custom_playerlist .window-content .current-character:not(.selected) > img {
+  filter: grayscale(90%);
+}
+#custom_playerlist .window-content .current-character .selected {
+  filter: grayscale(0);
+}
+#custom_playerlist .window-content .current-character .otherCharacters .secondary-character {
+  cursor: pointer;
+  position: absolute;
+  border-radius: 50%;
+  right: 0;
+  bottom: 0;
+  width: 2rem;
+  height: 2rem;
+  background-color: var(--black4);
+  border: 3px solid cornflowerblue;
+  box-shadow: var(--shadow-lower);
+  transform: scale(1);
+  transition: transform 100ms ease-in;
+}
+#custom_playerlist .window-content .current-character .otherCharacters .secondary-character:hover {
+  transform: scale(1.25);
+}
+#custom_playerlist .window-content .other-users {
+  display: flex;
+  flex-direction: column;
+  border: 3px solid bisque;
+  width: 3rem;
+  height: 10rem;
+}
+#custom_playerlist .window-content .other-users .active-user {
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
 }
 
 #chat-form .chatTokenImg {
@@ -1876,6 +2025,24 @@
   	15.8px 16.6px 24.9px -2px hsl(var(--shadow-color) / 0.35),
   	24.3px 25.5px 38.3px -2.4px hsl(var(--shadow-color) / 0.34),
   	36px 37.9px 56.8px -2.7px hsl(var(--shadow-color) / 0.34);
+  /* spacing */
+  --space-unit: 1rem;
+  --space-unit-teensy: calc(0.25 * var(--space-unit));
+  --space-unit-tiny: calc(0.5 * var(--space-unit));
+  --space-unit-small: calc(0.75 * var(--space-unit));
+  --space-unit-normal: calc(1 * var(--space-unit));
+  --space-unit-large: calc(1.5 * var(--space-unit));
+  --space-unit-larger1: calc(2 * var(--space-unit));
+  --space-unit-larger2: calc(3 * var(--space-unit));
+  --space-unit-huge: calc(4 * var(--space-unit));
+  --space-unit-huge1: calc(6 * var(--space-unit));
+  --space-unit-huge2: calc(8 * var(--space-unit));
+  --space-unit-gargantuan: calc(12 * var(--space-unit));
+  --space-unit-gargantuan1: calc(16 * var(--space-unit));
+  --space-unit-gargantuan2: calc(24 * var(--space-unit));
+  --space-unit-colossal: calc(32 * var(--space-unit));
+  --space-unit-colossal1: calc(40 * var(--space-unit));
+  --space-unit-titanic: calc(48 * var(--space-unit));
   --fs-teensy: 0.25rem;
   --fs-tiny: 0.5rem;
   --fs-small: 0.75rem;
@@ -1919,6 +2086,81 @@
   --shadow-raised-bottom: 0 1px 3px hsla(0, 0%, 0%, .2);
   --shadow-inset-bottom: inset 0 -2px 0 rgba(136, 135, 135, 0.15);
   --shadow-inset-top: inset 0 2px 2px hsla(0, 0%, 0%, 0.1);
+}
+:root :root {
+  /* spacing variable (using em units)*/
+  --space-unit: 1em;
+  --space-teensy: calc(0.25 * var(--space-unit));
+  --space-tiny: calc(0.5 * var(--space-unit));
+  --space-small: calc(0.75 * var(--space-unit));
+  --space-nit-normal: calc(1 * var(--space-unit));
+  --space-large: calc(1.5 * var(--space-unit));
+  --space-larger1: calc(2 * var(--space-unit));
+  --space-larger2: calc(3 * var(--space-unit));
+  --space-huge: calc(4 * var(--space-unit));
+  --space-huge1: calc(6 * var(--space-unit));
+  --space-huge2: calc(8 * var(--space-unit));
+  --space-gargantuan: calc(12 * var(--space-unit));
+  --space-gargantuan1: calc(16 * var(--space-unit));
+  --space-gargantuan2: calc(24 * var(--space-unit));
+  --space-colossal: calc(32 * var(--space-unit));
+  --space-colossal1: calc(40 * var(--space-unit));
+  --space-titanic: calc(48 * var(--space-unit));
+  --space-unit-fixed: 1rem;
+  --space-teensy-fixed: calc(0.25 * var(--space-unit));
+  --space-tiny-fixed: calc(0.5 * var(--space-unit));
+  --space-small-fixed: calc(0.75 * var(--space-unit));
+  --space-nit-normal-fixed: calc(1 * var(--space-unit));
+  --space-large-fixed: calc(1.5 * var(--space-unit));
+  --space-larger1-fixed: calc(2 * var(--space-unit));
+  --space-larger2-fixed: calc(3 * var(--space-unit));
+  --space-huge-fixed: calc(4 * var(--space-unit));
+  --space-huge1-fixed: calc(6 * var(--space-unit));
+  --space-huge2-fixed: calc(8 * var(--space-unit));
+  --space-gargantuan-fixed: calc(12 * var(--space-unit));
+  --space-gargantuan1-fixed: calc(16 * var(--space-unit));
+  --space-gargantuan2-fixed: calc(24 * var(--space-unit));
+  --space-colossal-fixed: calc(32 * var(--space-unit));
+  --space-colossal1-fixed: calc(40 * var(--space-unit));
+  --space-titanic-fixed: calc(48 * var(--space-unit));
+  --component-padding: var(--space-small);
+}
+:root .component {
+  padding-top: var(--component-padding);
+}
+:root :root {
+  /* base text size values*/
+  --text-base-size: 1em;
+  --text-scale-ratio: 1.2;
+  /* type scale */
+  --text-xs: calc(1em / var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-sm: calc(1em / var(--text-scale-ratio));
+  --text-md: calc(1em * var(--text-scale-ratio));
+  --text-lg: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-xl: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-xxl: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-xxxl: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+  /* line- height */
+  --heading-line-height: 1.2;
+  --body-line-height: 1.4;
+}
+:root :root {
+  --fs-teensy: 0.25rem;
+  --fs-tiny: 0.5rem;
+  --fs-small: 0.75rem;
+  --fs-normal: 1rem;
+  --fs-large: 1.5rem;
+  --fs-larger1: 2rem;
+  --fs-larger2: 3rem;
+  --fs-huge: 4rem;
+  --fs-huge1: 6rem;
+  --fs-huge2: 8rem;
+  --fs-gargantuan: 12rem;
+  --fs-gargantuan1: 16rem;
+  --fs-gargantuan2: 24rem;
+  --fs-colossal: 32rem;
+  --fs-colossal1: 40rem;
+  --fs-titanic: 48rem;
 }
 
 #party-overview {
@@ -2187,6 +2429,24 @@
   	15.8px 16.6px 24.9px -2px hsl(var(--shadow-color) / 0.35),
   	24.3px 25.5px 38.3px -2.4px hsl(var(--shadow-color) / 0.34),
   	36px 37.9px 56.8px -2.7px hsl(var(--shadow-color) / 0.34);
+  /* spacing */
+  --space-unit: 1rem;
+  --space-unit-teensy: calc(0.25 * var(--space-unit));
+  --space-unit-tiny: calc(0.5 * var(--space-unit));
+  --space-unit-small: calc(0.75 * var(--space-unit));
+  --space-unit-normal: calc(1 * var(--space-unit));
+  --space-unit-large: calc(1.5 * var(--space-unit));
+  --space-unit-larger1: calc(2 * var(--space-unit));
+  --space-unit-larger2: calc(3 * var(--space-unit));
+  --space-unit-huge: calc(4 * var(--space-unit));
+  --space-unit-huge1: calc(6 * var(--space-unit));
+  --space-unit-huge2: calc(8 * var(--space-unit));
+  --space-unit-gargantuan: calc(12 * var(--space-unit));
+  --space-unit-gargantuan1: calc(16 * var(--space-unit));
+  --space-unit-gargantuan2: calc(24 * var(--space-unit));
+  --space-unit-colossal: calc(32 * var(--space-unit));
+  --space-unit-colossal1: calc(40 * var(--space-unit));
+  --space-unit-titanic: calc(48 * var(--space-unit));
   --fs-teensy: 0.25rem;
   --fs-tiny: 0.5rem;
   --fs-small: 0.75rem;
@@ -2230,6 +2490,81 @@
   --shadow-raised-bottom: 0 1px 3px hsla(0, 0%, 0%, .2);
   --shadow-inset-bottom: inset 0 -2px 0 rgba(136, 135, 135, 0.15);
   --shadow-inset-top: inset 0 2px 2px hsla(0, 0%, 0%, 0.1);
+}
+:root :root {
+  /* spacing variable (using em units)*/
+  --space-unit: 1em;
+  --space-teensy: calc(0.25 * var(--space-unit));
+  --space-tiny: calc(0.5 * var(--space-unit));
+  --space-small: calc(0.75 * var(--space-unit));
+  --space-nit-normal: calc(1 * var(--space-unit));
+  --space-large: calc(1.5 * var(--space-unit));
+  --space-larger1: calc(2 * var(--space-unit));
+  --space-larger2: calc(3 * var(--space-unit));
+  --space-huge: calc(4 * var(--space-unit));
+  --space-huge1: calc(6 * var(--space-unit));
+  --space-huge2: calc(8 * var(--space-unit));
+  --space-gargantuan: calc(12 * var(--space-unit));
+  --space-gargantuan1: calc(16 * var(--space-unit));
+  --space-gargantuan2: calc(24 * var(--space-unit));
+  --space-colossal: calc(32 * var(--space-unit));
+  --space-colossal1: calc(40 * var(--space-unit));
+  --space-titanic: calc(48 * var(--space-unit));
+  --space-unit-fixed: 1rem;
+  --space-teensy-fixed: calc(0.25 * var(--space-unit));
+  --space-tiny-fixed: calc(0.5 * var(--space-unit));
+  --space-small-fixed: calc(0.75 * var(--space-unit));
+  --space-nit-normal-fixed: calc(1 * var(--space-unit));
+  --space-large-fixed: calc(1.5 * var(--space-unit));
+  --space-larger1-fixed: calc(2 * var(--space-unit));
+  --space-larger2-fixed: calc(3 * var(--space-unit));
+  --space-huge-fixed: calc(4 * var(--space-unit));
+  --space-huge1-fixed: calc(6 * var(--space-unit));
+  --space-huge2-fixed: calc(8 * var(--space-unit));
+  --space-gargantuan-fixed: calc(12 * var(--space-unit));
+  --space-gargantuan1-fixed: calc(16 * var(--space-unit));
+  --space-gargantuan2-fixed: calc(24 * var(--space-unit));
+  --space-colossal-fixed: calc(32 * var(--space-unit));
+  --space-colossal1-fixed: calc(40 * var(--space-unit));
+  --space-titanic-fixed: calc(48 * var(--space-unit));
+  --component-padding: var(--space-small);
+}
+:root .component {
+  padding-top: var(--component-padding);
+}
+:root :root {
+  /* base text size values*/
+  --text-base-size: 1em;
+  --text-scale-ratio: 1.2;
+  /* type scale */
+  --text-xs: calc(1em / var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-sm: calc(1em / var(--text-scale-ratio));
+  --text-md: calc(1em * var(--text-scale-ratio));
+  --text-lg: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-xl: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-xxl: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-xxxl: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+  /* line- height */
+  --heading-line-height: 1.2;
+  --body-line-height: 1.4;
+}
+:root :root {
+  --fs-teensy: 0.25rem;
+  --fs-tiny: 0.5rem;
+  --fs-small: 0.75rem;
+  --fs-normal: 1rem;
+  --fs-large: 1.5rem;
+  --fs-larger1: 2rem;
+  --fs-larger2: 3rem;
+  --fs-huge: 4rem;
+  --fs-huge1: 6rem;
+  --fs-huge2: 8rem;
+  --fs-gargantuan: 12rem;
+  --fs-gargantuan1: 16rem;
+  --fs-gargantuan2: 24rem;
+  --fs-colossal: 32rem;
+  --fs-colossal1: 40rem;
+  --fs-titanic: 48rem;
 }
 
 .flavor-text {

@@ -115,6 +115,28 @@ $shadow: var(--tui-shadow);
 		24.3px 25.5px 38.3px -2.4px hsl(var(--shadow-color) / 0.34),
 		36px 37.9px 56.8px -2.7px hsl(var(--shadow-color) / 0.34);
 
+	@import "spacing";
+	@import "typography";
+	@import "font";
+	/* spacing */
+	--space-unit: 1rem;
+	--space-unit-teensy: calc(0.25 * var(--space-unit));
+	--space-unit-tiny: calc(0.5 * var(--space-unit));
+	--space-unit-small: calc(0.75 * var(--space-unit));
+	--space-unit-normal: calc(1 * var(--space-unit));
+	--space-unit-large: calc(1.5 * var(--space-unit));
+	--space-unit-larger1: calc(2 * var(--space-unit));
+	--space-unit-larger2: calc(3 * var(--space-unit));
+	--space-unit-huge: calc(4 * var(--space-unit));
+	--space-unit-huge1: calc(6 * var(--space-unit));
+	--space-unit-huge2: calc(8 * var(--space-unit));
+	--space-unit-gargantuan: calc(12 * var(--space-unit));
+	--space-unit-gargantuan1: calc(16 * var(--space-unit));
+	--space-unit-gargantuan2: calc(24 * var(--space-unit));
+	--space-unit-colossal: calc(32 * var(--space-unit));
+	--space-unit-colossal1: calc(40 * var(--space-unit));
+	--space-unit-titanic: calc(48 * var(--space-unit));
+
 
 
 	// 	Font size

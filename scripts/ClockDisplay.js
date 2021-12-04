@@ -68,9 +68,11 @@ export class ClockDisplay extends Application {
         });
     }
     /**
-     * this is converting the typical Clock data into one that fits the ClockDisplay
-     * @param object - the clock data we have saved
-     * @param parentObject -
+     * this is taking the clocks in each category or type
+     * and converting it into data that can be used by the templates (.e.g, turning sectionMap object into
+     * an array of the clock's sections)
+     * @param object - all the clock data held within a certain category or type (e.g., sharedClocks, sceneClocks, personalClocks.)
+     * @param parentObject - the category object within our "data" object that we want to fill with the converted clock data
      * */
     convertTemplateData(object, parentObject) {
         for (let clockId in object) {
@@ -80,6 +82,12 @@ export class ClockDisplay extends Application {
         }
     }
 
+    /**
+     * This method goes through all the clocks in the category passed to it, and applies the gradients,
+     * fills the sections, and handles the breaks & waypoints for the associated elements in the DOM
+     * @param {Object} object - a single category/type of clocks (e.g., sharedClocks, sceneClocks, etc.);
+     * @param {string} parentName - the name of the associated parent element in the DOM (probably should be id)
+     */
     applyTemplateDressing(object, parentName) {
         var i = 0;
         for (var clockId in object) {
@@ -93,7 +101,7 @@ export class ClockDisplay extends Application {
     async getData() {
         this.clocks = getSharedClocks();
 
-        //this holds onto multiple versions of the clocks
+        //this keeps track of multiple types of clocks to split them into categories
         this.otherClocks = {
             sharedClocks: getSharedClocks(),
             myClocks: getClocksByUser(game.userId),
@@ -141,6 +149,7 @@ export class ClockDisplay extends Application {
             sceneClocks: "You haven't linked any clocks to this scene",
         };
 
+        //for each type or category of clock we have, convert it
         for (let clockType in this.otherClocks) {
             this.convertTemplateData(this.otherClocks[clockType], data[clockType]);
         }
@@ -188,12 +197,18 @@ export class ClockDisplay extends Application {
                 new ClockConfig(data, false).render(true);
                 break;
             case "expand":
+                //get the category whose button was clicked
                 let category = el.closest(".clockCategory");
-                let container = el.next(".clockCategory__inner");
                 let name = category.data().name;
 
+                //toggle wether the content for this category is toggled
+                //toggle open classes on button and category
+                //(these classes will toggle the styling
+                //on the button and category elements)
                 el.toggleClass("open");
                 category.toggleClass("open");
+
+                //call the expandButtonClicked method
                 this.expandButtonClicked(el);
                 this.categoriesShown[name] = !this.categoriesShown[name];
                 await game.user.setFlag(
@@ -204,6 +219,19 @@ export class ClockDisplay extends Application {
                 break;
         }
     }
+
+    /**
+     * measure the outerWidth of the content in the category (.clockCategory__inner class)
+     * (the content holds the actual `clock' components)
+     * and save its value on a property on the element.
+     * Note!: We're keeping track of if this is the first time the display is rendering or not with
+     * the clocksInitialized object.
+     * If this is called again, for example whenever a clock
+     * is added, updated or deleted, we want to add the no-transition class and set a timeout
+     * so the transition animation isn't played again every time a clock is updated, which would be annoying
+     * @param {*} index - unused
+     * @param {element} element - the clockCategory (holds both the button and the content)
+     */
     async measureAccordionContents(index, element) {
         var contentWidth = $(element).find(".clockCategory__inner").outerWidth();
         let cs = await game.user.getFlag(
@@ -228,16 +256,24 @@ export class ClockDisplay extends Application {
         } else {
             $(element).find(".clockCategory__inner").toggleClass("is-hidden");
         }
-        //turn transition back on
+        //turn transition back on after waiting so the transition
+        //isn't played when a clock is played
         setTimeout(() => {
             if (parent.hasClass("no-transition")) {
                 parent.removeClass("no-transition");
             }
         }, 300);
 
+        //save the width on a property on the element itself
         element.style.setProperty("--expanded", contentWidth + "px");
     }
 
+    /**
+     * Find the content of the clockCategory (clockCategory__inner class)
+     * and toggle the is-visible and is-hidden classes, which will make it
+     * grow or hide
+     * @param {*} element - the button that was clicked
+     */
     async expandButtonClicked(element) {
         var clickedItem = element;
         var content = $(clickedItem).parent().find(".clockCategory__inner");
@@ -268,6 +304,10 @@ export class ClockDisplay extends Application {
         this.render();
     }
 
+    /**
+     * Basically opens the individual app version/detailed version of the clock
+     * @param {event} event - the click event that triggered this
+     */
     openClock(event) {
         // event.preventDefault();
         let el = $(event.currentTarget);
@@ -290,16 +330,15 @@ export class ClockDisplay extends Application {
         for (let clockType in this.categoriesShown) {
             //set the toggle switches values to equal what's stored in "categories shown"
             if (this.categoriesShown[clockType] === false) {
-                // $(
-                //     `.clockCategory[data-name='${clockType}'] .clockCategory__inner`
-                // ).hide();
             }
         }
 
+        //apply the gradients, refill the empty sections, etc.
         for (let clockType in this.otherClocks) {
             this.applyTemplateDressing(this.otherClocks[clockType], clockType);
         }
 
+        //for each category, measure the contents of the clock
         $(".clockCategory").each(this.measureAccordionContents);
     }
 
@@ -319,6 +358,12 @@ export class ClockDisplay extends Application {
         return gradientString.replace(regex, "to bottom");
     }
 
+    /**
+     * apply a gradient to the clock
+     * @param {object} clockData - the data for each particular clock
+     * @param {string} parentName - the name of the clockCategory this clock is under
+     * (the associated element will have a class of the same name)
+     */
     async applyGradient(clockData, parentName) {
         let clockWrapper = $(
             `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockWrapper`

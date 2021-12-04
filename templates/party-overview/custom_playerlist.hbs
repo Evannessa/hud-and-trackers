@@ -1,0 +1,33 @@
+<div class="current-character {{#if controlledCharacter}}{{#if (eq currentPC.id controlledCharacter.id)}}selected{{/if}}{{/if}}">
+  <img
+    src="{{currentPC.img}}"
+    alt="{{currentPC.name}}"
+    data-pcID="{{currentPC.id}}"
+    title="{{currentPC.name}}"
+	{{log "comparing ids" currentPC.id "vs" controlledCharacter.id}}
+  />
+  {{#unless isGM}}
+    <div class="otherCharacters">
+      {{#each otherCharacters}}
+        <img
+          class="secondary-character"
+          src="{{this.img}}"
+          alt="{{this.name}}"
+          data-pcID="{{this.id}}"
+          title="{{this.name}}"
+        />
+      {{/each}}
+    </div>
+  {{/unless}}
+</div>
+<div class="other-users">
+  {{#each activeUsers}}
+    <div
+      class="active-user"
+      data-id={{this.id}}
+      style="background-color: {{this.color}};"
+    >
+      {{this.data.name}}
+    </div>
+  {{/each}}
+</div>
