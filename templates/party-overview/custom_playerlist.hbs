@@ -1,20 +1,19 @@
-<div class="current-character {{#if controlledCharacter}}{{#if (eq currentPC.id controlledCharacter.id)}}selected{{/if}}{{/if}}">
+<div class="current-character {{#if (eq currentPC.id controlledCharacter.id)}}selected{{/if}}">
   <img
     src="{{currentPC.img}}"
     alt="{{currentPC.name}}"
     data-pcID="{{currentPC.id}}"
-    title="{{currentPC.name}}"
-	{{log "comparing ids" currentPC.id "vs" controlledCharacter.id}}
+    title="Current Character: {{currentPC.name}}. {{#unless (eq currentPC.id controlledCharacter.id)}}Token not selected. Click portrait to select token.{{/unless}}"
   />
   {{#unless isGM}}
     <div class="otherCharacters">
       {{#each otherCharacters}}
         <img
-          class="secondary-character"
+          class="secondary-character {{#if (eq this.id @root.controlledCharacter.id)}}selected{{/if}}"
           src="{{this.img}}"
           alt="{{this.name}}"
           data-pcID="{{this.id}}"
-          title="{{this.name}}"
+    		title="Click to make {{this.name}} your current character."
         />
       {{/each}}
     </div>
@@ -27,7 +26,11 @@
       data-id={{this.id}}
       style="background-color: {{this.color}};"
     >
-      {{this.data.name}}
+      <p>{{getFirstTwoLetters this.data.name}}</p>
+	  <div class="user-detail">
+	  	<div class="badge" style="background-color: {{this.color}};"></div>
+		  {{this.data.name}}
+		</div>
     </div>
   {{/each}}
 </div>

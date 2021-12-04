@@ -21,27 +21,30 @@ Hooks.on("renderPlayerList", async (playerList, html) => {
 
 Hooks.on("controlToken", async (token, isControlled) => {
     let ourToken = token;
-    if (!isControlled) {
-        if (game.canvas.tokens.controlled.length == 0) {
-            setTimeout(() => {
-                if (game.canvas.tokens.controlled.length == 0) {
-                    if (game.customPlayerList) {
-                        game.customPlayerList.render();
-                    }
-                }
-            }, 250);
-        }
-    } else if (isControlled) {
-        //is current character controlled
-        console.log(game.customPlayerList);
-        if (game.customPlayerList) {
-            game.customPlayerList.render();
-        }
-        if (game.canvas.tokens.controlled.length == 1) {
-            //hud will only appear for the first token that was controlled
-            // let tokenImg = game.canvas.tokens.controlled[0].actor.img;
-        }
+    if (game.customPlayerList) {
+        game.customPlayerList.render(true);
     }
+    // if (!isControlled) {
+    //     if (game.canvas.tokens.controlled.length == 0) {
+    //         setTimeout(() => {
+    //             if (game.canvas.tokens.controlled.length == 0) {
+    //                 if (game.customPlayerList) {
+    //                     game.customPlayerList.render();
+    //                 }
+    //             }
+    //         }, 250);
+    //     }
+    // } else if (isControlled) {
+    //     //is current character controlled
+    //     console.log(game.customPlayerList);
+    //     if (game.customPlayerList) {
+    //         game.customPlayerList.render();
+    //     }
+    //     if (game.canvas.tokens.controlled.length == 1) {
+    //         //hud will only appear for the first token that was controlled
+    //         // let tokenImg = game.canvas.tokens.controlled[0].actor.img;
+    //     }
+    // }
 });
 export class CustomPlayerlist extends Application {
     constructor(data = {}) {
@@ -63,19 +66,22 @@ export class CustomPlayerlist extends Application {
         let user = game.user;
         let activeUsers = await HelperFunctions.getActiveUsers();
         let currentPC = user.character;
-        let controlledCharacter;
+
+        //if there is a character token that's controlled, get its actor to store in controlled character
+        //making this dummy object for situations in which no controlled token but still want to compare controlled char to something else
+
+        let controlledCharacter = { id: "", name: "null" };
         if (game.canvas.tokens.controlled[0]) {
             controlledCharacter = await HelperFunctions.getActorFromToken(
                 game.canvas.tokens.controlled[0]
             );
         }
-        console.log(
-            "🚀 ~ file: custom_playerlist.js ~ line 67 ~ CustomPlayerlist ~ getData ~ controlledCharacter",
-            controlledCharacter
-        );
+        console.log(controlledCharacter.id);
+        console.log(controlledCharacter.name + " is controlled");
 
+        //get all the users actors (ones they have permission to control basically)
         let otherCharacters = await HelperFunctions.getAllUserActors(user);
-        //only get the secondary characters to store;
+        //only get the secondary characters to store, filter out currentPC;
         otherCharacters = otherCharacters.filter((char) => {
             return char.id !== currentPC.id;
         });
@@ -102,6 +108,7 @@ export class CustomPlayerlist extends Application {
                 HelperFunctions.selectMyCharacter();
                 //maybe like left click to open sheet, right click to
             }
+            this.render();
         });
     }
 
