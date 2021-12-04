@@ -1,3 +1,7 @@
+@function color($color-name) {
+	@return var(--color-#{$color-name});
+}
+
 @mixin ba($ba, $width, $height, $top, $left, $rel:true, $content:null) {
 	@if ($rel==true) {
 		position: relative;

@@ -13,10 +13,57 @@
 @import "partials/custom_playerlist";
 
 //for hiding default elements off screen
-.hide-off-screen {
-	left: -999px !important;
-	bottom: -999px !important;
+.visible {
+	left: 15px;
+	transition: left 100ms ease-in;
 }
+
+.hide-off-screen {
+	transition: left 100ms ease-out;
+	left: -999px !important;
+	// bottom: -999px !important;
+}
+
+.btn {
+	transition: all 100ms ease-in-out;
+
+	&-ghost {
+		background: transparent;
+		color: white;
+		border: 2px solid white;
+
+		&:hover,
+		&:focus,
+		&:active {
+			background: transparent;
+			color: var(--color-accent-base);
+			border-color: var(--color-accent-base);
+		}
+
+		&:active {
+			color: var(--color-primary-base);
+			border-color: var(--color-primary-base);
+		}
+	}
+
+	&-primary {
+		color: $black2;
+		background: linear-gradient(to left, var(--color-primary-base), var(--color-accent-base));
+		background-position: 100% 100%;
+		background-repeat: no-repeat;
+		background-size: 100%;
+		border: none;
+
+		&:active,
+		&:focus,
+		&:hover {
+			background: linear-gradient(to left, var(--color-primary-base), var(--color-accent-base));
+			background-position: 150% 150%;
+			// background: var(--color-accent-base);
+		}
+	}
+}
+
 
 #chat-form {
 	.chatTokenImg {

@@ -85,23 +85,23 @@
   --fs-colossal: 32rem;
   --fs-colossal1: 40rem;
   --fs-titanic: 48rem;
-  --primary-darkest-color: hsl(240, 58%, 28%);
-  --primary-color-800: hsl(240, 58%, 30%);
-  --primary-color-700: hsl(240, 58%, 40%);
-  --primary-color-600: hsl(240, 60%, 50%);
-  --primary-base-color: hsl(240, 60%, 60%);
-  --primary-color-400: hsl(240, 60%, 68%);
-  --primary-color-300: hsl(240, 65%, 75%);
-  --primary-color-200: hsl(240, 75%, 85%);
-  --primary-lightest-color: hsl(240, 86%, 92%);
-  --accent-darkest: hsl(221, 98%, 20%);
-  --accent-700: hsl(215, 98%, 30%);
-  --accent-700: hsl(210, 98%, 40%);
-  --accent-600: hsl(205, 98%, 52%);
-  --accent-base: hsl(199, 98%, 63%);
-  --accent-400: hsl(190, 99%, 70%);
-  --accent-300: hsl(185, 100%, 80%);
-  --accent-lightest: hsl(175, 100%, 90%);
+  --color-primary-darkest: hsl(240, 58%, 28%);
+  --color-primary-800: hsl(240, 58%, 30%);
+  --color-primary-700: hsl(240, 58%, 40%);
+  --color-primary-600: hsl(240, 60%, 50%);
+  --color-primary-base: hsl(240, 60%, 60%);
+  --color-primary-400: hsl(240, 60%, 68%);
+  --color-primary-300: hsl(240, 65%, 75%);
+  --color-primary-200: hsl(240, 75%, 85%);
+  --color-primary-lightest: hsl(240, 86%, 92%);
+  --color-accent-darkest: hsl(221, 98%, 20%);
+  --color-accent-700: hsl(215, 98%, 30%);
+  --color-accent-700: hsl(210, 98%, 40%);
+  --color-accent-600: hsl(205, 98%, 52%);
+  --color-accent-base: hsl(199, 98%, 63%);
+  --color-accent-400: hsl(190, 99%, 70%);
+  --color-accent-300: hsl(185, 100%, 80%);
+  --color-accent-lightest: hsl(175, 100%, 90%);
   --shadow-none: none;
   --shadow-lowest: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   --shadow-lower: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
@@ -761,17 +761,29 @@
   height: -moz-max-content;
   height: max-content;
   background-color: transparent;
+  top: unset !important;
+  bottom: var(--playerlist-bottom) !important;
+  transition: bottom 100ms ease-out;
+}
+#custom_playerlist.slide-up {
+  bottom: calc(var(--playerlist-height) + var(--playerlist-bottom)) !important;
 }
 #custom_playerlist .window-header {
   display: none;
 }
 #custom_playerlist .window-content {
   min-height: 20vh;
+  flex-direction: column;
+  overflow: visible;
+  background-color: transparent;
+}
+#custom_playerlist .window-content .content {
+  display: flex;
   flex-direction: row;
   overflow: visible;
   background-color: transparent;
 }
-#custom_playerlist .window-content .current-character {
+#custom_playerlist .window-content .content .current-character {
   aspect-ratio: 1/1;
   width: 10rem;
   height: 10rem;
@@ -779,10 +791,10 @@
   background-color: var(--black2);
   cursor: pointer;
 }
-#custom_playerlist .window-content .current-character:not(.selected) > img {
+#custom_playerlist .window-content .content .current-character:not(.selected) > img {
   filter: grayscale(90%);
 }
-#custom_playerlist .window-content .current-character:hover:before {
+#custom_playerlist .window-content .content .current-character:hover:before {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -793,12 +805,12 @@
   z-index: 10;
   pointer-events: none;
 }
-#custom_playerlist .window-content .current-character.selected {
+#custom_playerlist .window-content .content .current-character.selected {
   position: relative;
   width: 10rem;
   height: 10rem;
 }
-#custom_playerlist .window-content .current-character.selected:after {
+#custom_playerlist .window-content .content .current-character.selected:after {
   content: "";
   position: absolute;
   width: 100%;
@@ -808,7 +820,7 @@
   box-shadow: inset 1px 1px 0 1px cyan, inset -1px -1px 0 1px cyan;
   z-index: 20;
 }
-#custom_playerlist .window-content .current-character .otherCharacters .secondary-character {
+#custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character {
   cursor: pointer;
   position: absolute;
   border-radius: 50%;
@@ -821,18 +833,19 @@
   box-shadow: var(--shadow-lower);
   transform: scale(1);
   transition: transform 100ms ease-in;
+  z-index: 20;
 }
-#custom_playerlist .window-content .current-character .otherCharacters .secondary-character:hover {
+#custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character:hover {
   transform: scale(1.25);
 }
-#custom_playerlist .window-content .current-character .otherCharacters .secondary-character.selected {
+#custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character.selected {
   top: 0;
   bottom: 100%;
 }
-#custom_playerlist .window-content .current-character .otherCharacters .secondary-character:not(.selected) {
+#custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character:not(.selected) {
   filter: grayscale(90%);
 }
-#custom_playerlist .window-content .other-users {
+#custom_playerlist .window-content .content .other-users {
   display: flex;
   flex-direction: column;
   width: -webkit-fit-content;
@@ -840,7 +853,7 @@
   width: fit-content;
   height: 10rem;
 }
-#custom_playerlist .window-content .other-users .active-user {
+#custom_playerlist .window-content .content .other-users .active-user {
   border-radius: 50%;
   width: 2rem;
   height: 2rem;
@@ -850,7 +863,7 @@
   justify-content: center;
   position: relative;
 }
-#custom_playerlist .window-content .other-users .active-user .user-detail {
+#custom_playerlist .window-content .content .other-users .active-user .user-detail {
   position: absolute;
   top: 0;
   left: 0;
@@ -869,21 +882,59 @@
   transition: transform 100ms;
   padding: 0.25rem 2rem;
 }
-#custom_playerlist .window-content .other-users .active-user .user-detail .badge {
+#custom_playerlist .window-content .content .other-users .active-user .user-detail .badge {
   width: 2rem;
   height: 2rem;
   align-self: flex-start;
 }
-#custom_playerlist .window-content .other-users .active-user:hover {
+#custom_playerlist .window-content .content .other-users .active-user:hover {
   cursor: pointer;
 }
-#custom_playerlist .window-content .other-users .active-user:hover .user-detail {
+#custom_playerlist .window-content .content .other-users .active-user:hover .user-detail {
   transform: scaleX(1);
+}
+#custom_playerlist .window-content .utility-buttons {
+  padding: var(--space-unit-small) 0;
+}
+
+.visible {
+  left: 15px;
+  transition: left 100ms ease-in;
 }
 
 .hide-off-screen {
+  transition: left 100ms ease-out;
   left: -999px !important;
-  bottom: -999px !important;
+}
+
+.btn {
+  transition: all 100ms ease-in-out;
+}
+.btn-ghost {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+.btn-ghost:hover, .btn-ghost:focus, .btn-ghost:active {
+  background: transparent;
+  color: var(--color-accent-base);
+  border-color: var(--color-accent-base);
+}
+.btn-ghost:active {
+  color: var(--color-primary-base);
+  border-color: var(--color-primary-base);
+}
+.btn-primary {
+  color: var(--palette-dialog-background, var(--tui-black2));
+  background: linear-gradient(to left, var(--color-primary-base), var(--color-accent-base));
+  background-position: 100% 100%;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  border: none;
+}
+.btn-primary:active, .btn-primary:focus, .btn-primary:hover {
+  background: linear-gradient(to left, var(--color-primary-base), var(--color-accent-base));
+  background-position: 150% 150%;
 }
 
 #chat-form .chatTokenImg {
@@ -2136,23 +2187,23 @@
   --fs-colossal: 32rem;
   --fs-colossal1: 40rem;
   --fs-titanic: 48rem;
-  --primary-darkest-color: hsl(240, 58%, 28%);
-  --primary-color-800: hsl(240, 58%, 30%);
-  --primary-color-700: hsl(240, 58%, 40%);
-  --primary-color-600: hsl(240, 60%, 50%);
-  --primary-base-color: hsl(240, 60%, 60%);
-  --primary-color-400: hsl(240, 60%, 68%);
-  --primary-color-300: hsl(240, 65%, 75%);
-  --primary-color-200: hsl(240, 75%, 85%);
-  --primary-lightest-color: hsl(240, 86%, 92%);
-  --accent-darkest: hsl(221, 98%, 20%);
-  --accent-700: hsl(215, 98%, 30%);
-  --accent-700: hsl(210, 98%, 40%);
-  --accent-600: hsl(205, 98%, 52%);
-  --accent-base: hsl(199, 98%, 63%);
-  --accent-400: hsl(190, 99%, 70%);
-  --accent-300: hsl(185, 100%, 80%);
-  --accent-lightest: hsl(175, 100%, 90%);
+  --color-primary-darkest: hsl(240, 58%, 28%);
+  --color-primary-800: hsl(240, 58%, 30%);
+  --color-primary-700: hsl(240, 58%, 40%);
+  --color-primary-600: hsl(240, 60%, 50%);
+  --color-primary-base: hsl(240, 60%, 60%);
+  --color-primary-400: hsl(240, 60%, 68%);
+  --color-primary-300: hsl(240, 65%, 75%);
+  --color-primary-200: hsl(240, 75%, 85%);
+  --color-primary-lightest: hsl(240, 86%, 92%);
+  --color-accent-darkest: hsl(221, 98%, 20%);
+  --color-accent-700: hsl(215, 98%, 30%);
+  --color-accent-700: hsl(210, 98%, 40%);
+  --color-accent-600: hsl(205, 98%, 52%);
+  --color-accent-base: hsl(199, 98%, 63%);
+  --color-accent-400: hsl(190, 99%, 70%);
+  --color-accent-300: hsl(185, 100%, 80%);
+  --color-accent-lightest: hsl(175, 100%, 90%);
   --shadow-none: none;
   --shadow-lowest: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   --shadow-lower: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
@@ -2540,23 +2591,23 @@
   --fs-colossal: 32rem;
   --fs-colossal1: 40rem;
   --fs-titanic: 48rem;
-  --primary-darkest-color: hsl(240, 58%, 28%);
-  --primary-color-800: hsl(240, 58%, 30%);
-  --primary-color-700: hsl(240, 58%, 40%);
-  --primary-color-600: hsl(240, 60%, 50%);
-  --primary-base-color: hsl(240, 60%, 60%);
-  --primary-color-400: hsl(240, 60%, 68%);
-  --primary-color-300: hsl(240, 65%, 75%);
-  --primary-color-200: hsl(240, 75%, 85%);
-  --primary-lightest-color: hsl(240, 86%, 92%);
-  --accent-darkest: hsl(221, 98%, 20%);
-  --accent-700: hsl(215, 98%, 30%);
-  --accent-700: hsl(210, 98%, 40%);
-  --accent-600: hsl(205, 98%, 52%);
-  --accent-base: hsl(199, 98%, 63%);
-  --accent-400: hsl(190, 99%, 70%);
-  --accent-300: hsl(185, 100%, 80%);
-  --accent-lightest: hsl(175, 100%, 90%);
+  --color-primary-darkest: hsl(240, 58%, 28%);
+  --color-primary-800: hsl(240, 58%, 30%);
+  --color-primary-700: hsl(240, 58%, 40%);
+  --color-primary-600: hsl(240, 60%, 50%);
+  --color-primary-base: hsl(240, 60%, 60%);
+  --color-primary-400: hsl(240, 60%, 68%);
+  --color-primary-300: hsl(240, 65%, 75%);
+  --color-primary-200: hsl(240, 75%, 85%);
+  --color-primary-lightest: hsl(240, 86%, 92%);
+  --color-accent-darkest: hsl(221, 98%, 20%);
+  --color-accent-700: hsl(215, 98%, 30%);
+  --color-accent-700: hsl(210, 98%, 40%);
+  --color-accent-600: hsl(205, 98%, 52%);
+  --color-accent-base: hsl(199, 98%, 63%);
+  --color-accent-400: hsl(190, 99%, 70%);
+  --color-accent-300: hsl(185, 100%, 80%);
+  --color-accent-lightest: hsl(175, 100%, 90%);
   --shadow-none: none;
   --shadow-lowest: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   --shadow-lower: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);

@@ -3,36 +3,27 @@ import * as HelperFunctions from "./helper-functions.js";
 Hooks.on("ready", () => {
     game.customPlayerList = new CustomPlayerlist().render(true);
 });
-Hooks.on("renderPlayerList", async (playerList, html) => {
+
+/** only toggle the hide class and set the player list stuff once */
+Hooks.once("renderPlayerList", async (playerList, html) => {
     game.defaultPlayerList = playerList;
+    playerList.element.addClass("visible");
     playerList.element.toggleClass("hide-off-screen");
-    const loggedInUserListItem = html.find(`[data-user-id="${game.userId}"]`);
-    const tpl = "modules/hud-and-trackers/templates/party-overview/pc-playerlist.hbs";
-    let actors = await HelperFunctions.getAllUserActors(game.user);
-    let data = {
-        isGM: game.user.isGM,
-        PCs: actors,
-        currentPC: game.user.character.id,
-    };
-    const myHtml = await renderTemplate(tpl, data);
-    loggedInUserListItem.append(myHtml);
+});
 
-    //when clicked, get the id of the clicked portrait, and the character
-    //then swap them
-    html.on("click", "img", async (event) => {
-        let element = $(event.currentTarget);
-        let id = element.data().pcid;
-        if (game.user.character.id != id) {
-            console.log(id);
-            console.log("Swapping to " + game.actors.get(id));
-            await HelperFunctions.swapToCharacter(game.actors.get(id));
-        } else {
-            HelperFunctions.selectMyCharacter();
-            //maybe like left click to open sheet, right click to
-        }
+//each time, prepend the hide button
+Hooks.on("renderPlayerList", async (playerList, html) => {
+    // game.defaultPlayerList = playerList;
+    // playerList.element.toggleClass("hide-off-screen");
+    playerList.element.prepend("<button data-action='hide'>Hide Player List</button>");
+    html.on("click", "[data-action='hide']", (event) => {
+        HelperFunctions.togglePlayerList();
     });
-
-    // html.on('click')
+    document.body.style.setProperty("--playerlist-height", `${html.height()}px`);
+    document.body.style.setProperty(
+        "--playerlist-bottom",
+        playerList.element.css("bottom")
+    );
 });
 
 Hooks.on("controlToken", async (token, isControlled) => {
@@ -114,6 +105,9 @@ export class CustomPlayerlist extends Application {
         switch (action) {
             case "toggle-player-list":
                 HelperFunctions.togglePlayerList();
+                this.element.toggleClass("slide-up");
+            // this.setPosition({"height": $(document).body.style.getProperty("--playerlist-height")});
+            // console.log(this);
         }
     }
 

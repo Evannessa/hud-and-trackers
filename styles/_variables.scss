@@ -160,25 +160,25 @@ $shadow: var(--tui-shadow);
 	// • Line height
 	// • Color
 	//==Primary
-	--primary-darkest-color: hsl(240, 58%, 28%);
-	--primary-color-800: hsl(240, 58%, 30%);
-	--primary-color-700: hsl(240, 58%, 40%);
-	--primary-color-600: hsl(240, 60%, 50%);
-	--primary-base-color: hsl(240, 60%, 60%);
-	--primary-color-400: hsl(240, 60%, 68%);
-	--primary-color-300: hsl(240, 65%, 75%);
-	--primary-color-200: hsl(240, 75%, 85%);
-	--primary-lightest-color: hsl(240, 86%, 92%);
+	--color-primary-darkest: hsl(240, 58%, 28%);
+	--color-primary-800: hsl(240, 58%, 30%);
+	--color-primary-700: hsl(240, 58%, 40%);
+	--color-primary-600: hsl(240, 60%, 50%);
+	--color-primary-base: hsl(240, 60%, 60%);
+	--color-primary-400: hsl(240, 60%, 68%);
+	--color-primary-300: hsl(240, 65%, 75%);
+	--color-primary-200: hsl(240, 75%, 85%);
+	--color-primary-lightest: hsl(240, 86%, 92%);
 
 
-	--accent-darkest: hsl(221, 98%, 20%);
-	--accent-700: hsl(215, 98%, 30%);
-	--accent-700: hsl(210, 98%, 40%);
-	--accent-600: hsl(205, 98%, 52%);
-	--accent-base: hsl(199, 98%, 63%);
-	--accent-400: hsl(190, 99%, 70%);
-	--accent-300: hsl(185, 100%, 80%);
-	--accent-lightest: hsl(175, 100%, 90%);
+	--color-accent-darkest: hsl(221, 98%, 20%);
+	--color-accent-700: hsl(215, 98%, 30%);
+	--color-accent-700: hsl(210, 98%, 40%);
+	--color-accent-600: hsl(205, 98%, 52%);
+	--color-accent-base: hsl(199, 98%, 63%);
+	--color-accent-400: hsl(190, 99%, 70%);
+	--color-accent-300: hsl(185, 100%, 80%);
+	--color-accent-lightest: hsl(175, 100%, 90%);
 
 	//shadow elevation
 	--shadow-none: none;
