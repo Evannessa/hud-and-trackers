@@ -10,6 +10,11 @@ export function selectMyCharacter() {
     }
 }
 
+export function togglePlayerList() {
+    console.log(game.defaultPlayerList);
+    game.defaultPlayerList.element.toggleClass("hide-off-screen");
+}
+
 //convert PC items to another type of item if it's in the wrong category
 export function convertItems(pc, html) {
     let items = pc.data.items; //all items on the pc

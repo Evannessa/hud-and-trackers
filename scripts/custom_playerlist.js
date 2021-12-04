@@ -4,18 +4,34 @@ Hooks.on("ready", () => {
     game.customPlayerList = new CustomPlayerlist().render(true);
 });
 Hooks.on("renderPlayerList", async (playerList, html) => {
-    // const loggedInUserListItem = html.find(`[data-user-id="${game.userId}"]`);
-    // const tpl = "modules/hud-and-trackers/templates/party-overview/pc-playerlist.hbs";
-    // let actors = await HelperFunctions.getAllUserActors(game.user);
-    // let data = {
-    //     isGM: game.user.isGM,
-    //     PCs: actors,
-    //     currentPC: game.user.character.id,
-    // };
-    // const myHtml = await renderTemplate(tpl, data);
-    // loggedInUserListItem.append(myHtml);
-    // //when clicked, get the id of the clicked portrait, and the character
-    // //then swap them
+    game.defaultPlayerList = playerList;
+    playerList.element.toggleClass("hide-off-screen");
+    const loggedInUserListItem = html.find(`[data-user-id="${game.userId}"]`);
+    const tpl = "modules/hud-and-trackers/templates/party-overview/pc-playerlist.hbs";
+    let actors = await HelperFunctions.getAllUserActors(game.user);
+    let data = {
+        isGM: game.user.isGM,
+        PCs: actors,
+        currentPC: game.user.character.id,
+    };
+    const myHtml = await renderTemplate(tpl, data);
+    loggedInUserListItem.append(myHtml);
+
+    //when clicked, get the id of the clicked portrait, and the character
+    //then swap them
+    html.on("click", "img", async (event) => {
+        let element = $(event.currentTarget);
+        let id = element.data().pcid;
+        if (game.user.character.id != id) {
+            console.log(id);
+            console.log("Swapping to " + game.actors.get(id));
+            await HelperFunctions.swapToCharacter(game.actors.get(id));
+        } else {
+            HelperFunctions.selectMyCharacter();
+            //maybe like left click to open sheet, right click to
+        }
+    });
+
     // html.on('click')
 });
 
@@ -69,15 +85,12 @@ export class CustomPlayerlist extends Application {
 
         //if there is a character token that's controlled, get its actor to store in controlled character
         //making this dummy object for situations in which no controlled token but still want to compare controlled char to something else
-
         let controlledCharacter = { id: "", name: "null" };
         if (game.canvas.tokens.controlled[0]) {
             controlledCharacter = await HelperFunctions.getActorFromToken(
                 game.canvas.tokens.controlled[0]
             );
         }
-        console.log(controlledCharacter.id);
-        console.log(controlledCharacter.name + " is controlled");
 
         //get all the users actors (ones they have permission to control basically)
         let otherCharacters = await HelperFunctions.getAllUserActors(user);
@@ -95,6 +108,15 @@ export class CustomPlayerlist extends Application {
         };
     }
 
+    async _handleButtonClick(event) {
+        let el = $(event.currentTarget);
+        let action = el.data().action;
+        switch (action) {
+            case "toggle-player-list":
+                HelperFunctions.togglePlayerList();
+        }
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
         html.on("click", "img", async (event) => {
@@ -110,6 +132,7 @@ export class CustomPlayerlist extends Application {
             }
             this.render();
         });
+        html.on("click", "[data-action]", this._handleButtonClick.bind(this));
     }
 
     async _updateObject(event, formData) {}

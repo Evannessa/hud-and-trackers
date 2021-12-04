@@ -1,0 +1,15 @@
+@mixin ba($ba, $width, $height, $top, $left, $rel:true, $content:null) {
+	@if ($rel==true) {
+		position: relative;
+	}
+
+	&:#{$ba} {
+		position: absolute;
+		width: $width;
+		height: $height;
+		top: $top;
+		left: $left;
+		content: "#{$content}";
+		@content;
+	}
+}

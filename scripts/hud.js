@@ -52,36 +52,6 @@ Hooks.on("canvasReady", () => {
     }
 });
 
-Hooks.on("renderPlayerList", async (playerList, html) => {
-    const loggedInUserListItem = html.find(`[data-user-id="${game.userId}"]`);
-    const tpl = "modules/hud-and-trackers/templates/party-overview/pc-playerlist.hbs";
-    let actors = await HelperFunctions.getAllUserActors(game.user);
-    let data = {
-        isGM: game.user.isGM,
-        PCs: actors,
-        currentPC: game.user.character.id,
-    };
-    const myHtml = await renderTemplate(tpl, data);
-    loggedInUserListItem.append(myHtml);
-
-    //when clicked, get the id of the clicked portrait, and the character
-    //then swap them
-    html.on("click", "img", async (event) => {
-        let element = $(event.currentTarget);
-        let id = element.data().pcid;
-        if (game.user.character.id != id) {
-            console.log(id);
-            console.log("Swapping to " + game.actors.get(id));
-            await HelperFunctions.swapToCharacter(game.actors.get(id));
-        } else {
-            HelperFunctions.selectMyCharacter();
-            //maybe like left click to open sheet, right click to
-        }
-    });
-
-    // html.on('click')
-});
-
 Hooks.on("renderSidebarTab", (app, html) => {
     if (app.options.id == "chat") {
         //get the parent of the chat message box

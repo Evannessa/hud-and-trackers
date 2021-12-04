@@ -1,3 +1,4 @@
+@import 'partials/mixins';
 @import '_variables';
 
 @import "partials/tracker-app";
@@ -10,6 +11,12 @@
 
 @import "partials/combat-hud";
 @import "partials/custom_playerlist";
+
+//for hiding default elements off screen
+.hide-off-screen {
+	left: -999px !important;
+	bottom: -999px !important;
+}
 
 #chat-form {
 	.chatTokenImg {

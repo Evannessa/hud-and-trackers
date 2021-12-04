@@ -28,6 +28,15 @@
 				}
 			}
 
+			&:hover {
+				@include ba(before, 100%, 100%, 0, 0, false) {
+					box-shadow: inset 1px 1px 2px 3px rgba(0, 0, 0, 0.479),
+						inset -1px -1px 2px 3px rgba(0, 0, 0, 0.548);
+					z-index: 10;
+					pointer-events: none;
+				}
+			}
+
 			&.selected {
 				position: relative;
 				width: 10rem;
