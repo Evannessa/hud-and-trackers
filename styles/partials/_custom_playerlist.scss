@@ -22,11 +22,48 @@
 		display: none;
 	}
 
+	background-color: #7070707a;
+	border-top: 1px solid rgba(255, 255, 255, 0.198);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.198);
+	border-radius: 10px;
+
+	@supports (backdrop-filter: blur()) and (-webkit-backdrop-filter: blur()) {
+		backdrop-filter: blur(15px);
+	}
+
+
 	.window-content {
 		min-height: fit-content;
+		min-width: fit-content;
 		flex-direction: column;
 		overflow: visible;
 		background-color: transparent;
+		position: relative;
+
+		.underlay {
+			position: absolute !important;
+			overflow: hidden;
+			min-width: 143px;
+			min-height: 143px;
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			z-index: -1;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+
+			@include ba(after, 100%, 50%, 0, 0, -1) {
+				background: linear-gradient(to bottom, transparent 40%, rgba(255, 255, 255, 0.23));
+				border-bottom: 1px solid rgba(255, 255, 255, 0.308);
+				opacity: 57%;
+			}
+
+		}
+
+
+
+
 		// background-color: scale-color(var(--primary-darkest-color), $alpha: -50%);
 
 		.content {
@@ -50,51 +87,8 @@
 				outline-offset: 0px;
 				transition: outline-offset 200ms, outline 200ms;
 
-				.img-wrapper {
 
-					&__inner {
-						width: 100%;
-						height: 100%;
-						background-size: 100%;
-						background-repeat: no-repeat;
-						position: absolute;
-						top: 4px;
-						left: 4px;
-						right: 4px;
-						bottom: 4px;
-						-webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-						clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-					}
-
-					&__outer {
-
-						background-color: black;
-						filter: blur(10px);
-						width: 100%;
-						height: 100%;
-						position: relative;
-
-						.box {
-							width: 8rem;
-							height: 8rem;
-							background-color: lavender;
-						}
-
-						-webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-						clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-					}
-
-					// @include ba(before, 100%, 100%, 0, 0, 1) {
-					// 	background-color: pink;
-					// 	-webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-					// 	clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-					// }
-				}
-
-
-
-
-
+				//white outline effect when selected
 				@include ba(after, 105%, 105%, 50%, 50%) {
 					-webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
 					clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
@@ -104,6 +98,23 @@
 					transform-origin: top left;
 					transition: transform 300ms ease-out, outline 300ms ease-out, outline-offset 300ms ease-out;
 				}
+
+				//glass edge
+				@include ba(before, 100%, 100%, 50%, 50%) {
+					// background-color: linear-gradient: (to bottom, rgba(255, 255, 255, 0.20) 25%, transparent 50%,);
+
+					border-top: 1px solid;
+					border-bottom: 1px solid;
+					border-left: 1px solid;
+					border-right: 1px solid;
+					border-image: linear-gradient(transparent, rgba(255, 255, 255, 0.329), transparent) 44 repeat stretch;
+					-webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+					clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+					transform: translate(-50%, -50%);
+					// transition: transform 300ms ease-out, outline 300ms ease-out, outline-offset 300ms ease-out;
+				}
+
+
 
 
 
