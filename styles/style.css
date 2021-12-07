@@ -754,15 +754,16 @@
 }
 
 #custom_playerlist {
-  width: -webkit-max-content;
-  width: -moz-max-content;
-  width: max-content;
-  height: -webkit-max-content;
-  height: -moz-max-content;
-  height: max-content;
+  width: -webkit-max-content !important;
+  width: -moz-max-content !important;
+  width: max-content !important;
+  height: -webkit-max-content !important;
+  height: -moz-max-content !important;
+  height: max-content !important;
   background-color: transparent;
   top: unset !important;
   bottom: var(--playerlist-bottom) !important;
+  left: 15px !important;
   transition: bottom 100ms ease-out;
 }
 #custom_playerlist.slide-up {
@@ -772,7 +773,9 @@
   display: none;
 }
 #custom_playerlist .window-content {
-  min-height: 20vh;
+  min-height: -webkit-fit-content;
+  min-height: -moz-fit-content;
+  min-height: fit-content;
   flex-direction: column;
   overflow: visible;
   background-color: transparent;
@@ -782,43 +785,89 @@
   flex-direction: row;
   overflow: visible;
   background-color: transparent;
+  position: relative;
 }
 #custom_playerlist .window-content .content .current-character {
   aspect-ratio: 1/1;
-  width: 10rem;
-  height: 10rem;
+  width: 8rem;
+  height: 8rem;
   position: relative;
   background-color: var(--black2);
   cursor: pointer;
+  outline: 3px double rgba(255, 255, 255, 0);
+  outline-offset: 0px;
+  transition: outline-offset 200ms, outline 200ms;
+  position: relative;
+  position: relative;
+}
+#custom_playerlist .window-content .content .current-character:before {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  content: "";
+  -webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  --grad: transparent 49.5%, black 50%;
+  background: linear-gradient(linear-gradient(to top left, var(--grad)) top left, linear-gradient(to bottom left, var(--grad)) bottom left), transparent;
+  z-index: 2;
+}
+#custom_playerlist .window-content .content .current-character:after {
+  position: absolute;
+  width: 105%;
+  height: 105%;
+  top: 50%;
+  left: 50%;
+  content: "";
+  -webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  outline: 2px double rgba(255, 255, 255, 0);
+  outline-offset: 0;
+  transform: scale(0.85) translate(-50%, -50%);
+  transform-origin: top left;
+  transition: transform 300ms ease-out, outline 300ms ease-out, outline-offset 300ms ease-out;
 }
 #custom_playerlist .window-content .content .current-character:not(.selected) > img {
   filter: grayscale(90%);
 }
-#custom_playerlist .window-content .content .current-character:hover:before {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  content: "";
-  box-shadow: inset 1px 1px 2px 3px rgba(0, 0, 0, 0.479), inset -1px -1px 2px 3px rgba(0, 0, 0, 0.548);
-  z-index: 10;
-  pointer-events: none;
+#custom_playerlist .window-content .content .current-character > img {
+  position: relative;
+  -webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  transition: filter 100ms;
 }
 #custom_playerlist .window-content .content .current-character.selected {
+  outline: 3px double rgba(255, 255, 255, 0.616);
+  outline-offset: -8px;
   position: relative;
-  width: 10rem;
-  height: 10rem;
 }
 #custom_playerlist .window-content .content .current-character.selected:after {
+  position: absolute;
+  width: 105%;
+  height: 105%;
+  top: 50%;
+  left: 50%;
   content: "";
+  transform-origin: top left;
+  transform: scale(1) translate(-50%, -50%);
+  outline: 3px double rgba(255, 255, 255, 0.603);
+  outline-offset: -18px;
+}
+#custom_playerlist .window-content .content .current-character.selected > img {
+  position: relative;
+  box-shadow: inset 0 0 2px 2px var(--shadow-color);
+  position: relative;
+}
+#custom_playerlist .window-content .content .current-character.selected > img:before {
   position: absolute;
   width: 100%;
   height: 100%;
-  left: 0;
   top: 0;
-  box-shadow: inset 1px 1px 0 1px cyan, inset -1px -1px 0 1px cyan;
-  z-index: 20;
+  left: 0;
+  content: "";
+  outline: 2px double white;
+  z-index: 2;
 }
 #custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character {
   cursor: pointer;
@@ -829,34 +878,38 @@
   width: 2rem;
   height: 2rem;
   background-color: var(--black4);
-  border: 2px solid cornflowerblue;
+  border: 2px double cornflowerblue;
   box-shadow: var(--shadow-lower);
   transform: scale(1);
-  transition: transform 100ms ease-in;
-  z-index: 20;
+  transition: transform 100ms ease-in, bottom 100ms ease-in;
+  z-index: 200;
 }
 #custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character:hover {
   transform: scale(1.25);
 }
 #custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character.selected {
-  top: 0;
-  bottom: 100%;
+  bottom: 10%;
 }
 #custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character:not(.selected) {
   filter: grayscale(90%);
 }
 #custom_playerlist .window-content .content .other-users {
+  position: absolute;
+  left: 100%;
   display: flex;
   flex-direction: column;
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
-  height: 10rem;
+  height: 8rem;
+  padding: var(--space-unit-teensy);
+  backdrop-filter: blur(30%);
+  -webkit-backdrop-filter: blur(30%);
 }
 #custom_playerlist .window-content .content .other-users .active-user {
   border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   transform: scale(1);
   display: flex;
   align-items: center;
@@ -864,6 +917,7 @@
   position: relative;
 }
 #custom_playerlist .window-content .content .other-users .active-user .user-detail {
+  display: none;
   position: absolute;
   top: 0;
   left: 0;
@@ -893,13 +947,16 @@
 #custom_playerlist .window-content .content .other-users .active-user:hover .user-detail {
   transform: scaleX(1);
 }
-#custom_playerlist .window-content .utility-buttons {
-  padding: var(--space-unit-small) 0;
+#custom_playerlist .window-content .utility-buttons button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: 8rem;
 }
 
 .visible {
-  left: 15px;
   transition: left 100ms ease-in;
+  left: 15px;
 }
 
 .hide-off-screen {
@@ -909,6 +966,20 @@
 
 .btn {
   transition: all 100ms ease-in-out;
+}
+.btn-round {
+  border-radius: 50%;
+  height: 2rem;
+  width: 2rem;
+}
+.btn-round i {
+  margin: 0;
+}
+.btn-round i:after {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
 }
 .btn-ghost {
   background: transparent;

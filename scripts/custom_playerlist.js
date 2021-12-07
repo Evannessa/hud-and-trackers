@@ -8,51 +8,47 @@ Hooks.on("ready", () => {
 Hooks.once("renderPlayerList", async (playerList, html) => {
     game.defaultPlayerList = playerList;
     playerList.element.addClass("visible");
+    // $(playerList.element).css("left", "-999px");
     playerList.element.toggleClass("hide-off-screen");
 });
 
-//each time, prepend the hide button
 Hooks.on("renderPlayerList", async (playerList, html) => {
-    // game.defaultPlayerList = playerList;
-    // playerList.element.toggleClass("hide-off-screen");
-    playerList.element.prepend("<button data-action='hide'>Hide Player List</button>");
-    html.on("click", "[data-action='hide']", (event) => {
-        HelperFunctions.togglePlayerList();
-    });
+    //re-render our custom list, or just set its bottom css
+
+    //store the height
     document.body.style.setProperty("--playerlist-height", `${html.height()}px`);
     document.body.style.setProperty(
         "--playerlist-bottom",
         playerList.element.css("bottom")
     );
+    game.customPlayerList?.element.css("bottom", playerList.element.css("bottom"));
 });
 
 Hooks.on("controlToken", async (token, isControlled) => {
     let ourToken = token;
-    if (game.customPlayerList) {
-        game.customPlayerList.render(true);
-    }
-    // if (!isControlled) {
-    //     if (game.canvas.tokens.controlled.length == 0) {
-    //         setTimeout(() => {
-    //             if (game.canvas.tokens.controlled.length == 0) {
-    //                 if (game.customPlayerList) {
-    //                     game.customPlayerList.render();
-    //                 }
-    //             }
-    //         }, 250);
-    //     }
-    // } else if (isControlled) {
-    //     //is current character controlled
-    //     console.log(game.customPlayerList);
-    //     if (game.customPlayerList) {
-    //         game.customPlayerList.render();
-    //     }
-    //     if (game.canvas.tokens.controlled.length == 1) {
-    //         //hud will only appear for the first token that was controlled
-    //         // let tokenImg = game.canvas.tokens.controlled[0].actor.img;
-    //     }
+    // let tokenImg = canvas.tokens.controlled[0]?.actor.img;
+    setCustomPlayerListImage(token, isControlled);
+    // if (game.customPlayerList) {
+    //     game.customPlayerList.render(true);
     // }
 });
+function setCustomPlayerListImage(token, isControlled) {
+    let playerList = game.customPlayerList.element;
+    let currentPCArea = playerList.find(".current-character");
+    if (token.actor.id === $(".current-character img").data().pcid && isControlled) {
+        currentPCArea.addClass("selected");
+    } else {
+        currentPCArea.removeClass("selected");
+        //if we selected one of our secondaries, add the selected class to them
+        //or remove it if "isControlled" is false
+        let secondaryCharacterString = `.current-character .otherCharacters .secondary-character[data-pcid="${token.actor.id}"]`;
+        if (isControlled) {
+            $(secondaryCharacterString).addClass("selected");
+        } else {
+            $(secondaryCharacterString).removeClass("selected");
+        }
+    }
+}
 export class CustomPlayerlist extends Application {
     constructor(data = {}) {
         super();
@@ -124,7 +120,7 @@ export class CustomPlayerlist extends Application {
                 HelperFunctions.selectMyCharacter();
                 //maybe like left click to open sheet, right click to
             }
-            this.render();
+            // this.render();
         });
         html.on("click", "[data-action]", this._handleButtonClick.bind(this));
     }

@@ -11,7 +11,6 @@ export function selectMyCharacter() {
 }
 
 export function togglePlayerList() {
-    console.log(game.defaultPlayerList);
     game.defaultPlayerList.element.toggleClass("hide-off-screen");
 }
 

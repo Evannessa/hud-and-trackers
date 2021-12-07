@@ -66,24 +66,17 @@ Hooks.on("renderSidebarTab", (app, html) => {
         let tokenImg = canvas.tokens.controlled[0]?.actor.img;
         if (tokenImg) {
             setTokenImage(tokenImg);
-            // $(game.chatArea).css({
-            //     "background-image": `url(${tokenImg})`,
-            //     "background-size": "contain",
-            // });
         }
     }
 });
 
 function setTokenImage(tokenImg) {
-    console.log("Setting token img");
     let chatArea = $(game.chatArea);
     let img = chatArea.find(".tokenImg");
     chatArea.removeClass("hide");
     if (img.length == 0) {
-        console.log("adding image to token img chat");
         img = chatArea.append(`<img class="tokenImg" src=${tokenImg}></img>`);
     } else {
-        console.log("updating img in chat");
         img.attr("src", tokenImg);
     }
     img.css("object-fit", "contain");

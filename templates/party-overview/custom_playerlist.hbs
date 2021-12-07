@@ -6,6 +6,7 @@
 		data-pcID="{{currentPC.id}}"
 		title="Current Character: {{currentPC.name}}. {{#unless (eq currentPC.id controlledCharacter.id)}}Token not selected. Click portrait to select token.{{/unless}}"
 	  />
+ 
 	  {{#unless isGM}}
 		<div class="otherCharacters">
 		  {{#each otherCharacters}}
@@ -38,5 +39,5 @@
 	</div>
 </div>
 <div class="utility-buttons">
-		<button data-action="toggle-player-list" class="btn-primary">Toggle Player List</button>
+		<button data-action="toggle-player-list" class="btn-primary btn-round"><i class="far fa-user"></i></button>
 </div>

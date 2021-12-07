@@ -14,8 +14,8 @@
 
 //for hiding default elements off screen
 .visible {
-	left: 15px;
 	transition: left 100ms ease-in;
+	left: 15px;
 }
 
 .hide-off-screen {
@@ -26,6 +26,23 @@
 
 .btn {
 	transition: all 100ms ease-in-out;
+
+	&-round {
+		border-radius: 50%;
+		height: 2rem;
+		width: 2rem;
+
+		i {
+			margin: 0;
+
+			&:after {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				vertical-align: middle;
+			}
+		}
+	}
 
 	&-ghost {
 		background: transparent;
