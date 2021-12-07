@@ -102,6 +102,7 @@ export class CustomPlayerlist extends Application {
             case "toggle-player-list":
                 HelperFunctions.togglePlayerList();
                 this.element.toggleClass("slide-up");
+                el.toggleClass("toggled");
             // this.setPosition({"height": $(document).body.style.getProperty("--playerlist-height")});
             // console.log(this);
         }
@@ -115,7 +116,9 @@ export class CustomPlayerlist extends Application {
             let element = $(event.currentTarget);
             let id = element.data().pcid;
             if (game.user.character.id != id) {
+                //TODO: update CSS on click
                 await HelperFunctions.swapToCharacter(game.actors.get(id));
+                this.render();
             } else {
                 HelperFunctions.selectMyCharacter();
                 //maybe like left click to open sheet, right click to

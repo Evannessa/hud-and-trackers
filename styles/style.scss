@@ -42,6 +42,28 @@
 				vertical-align: middle;
 			}
 		}
+
+		&.toggled {
+			height: 2rem;
+			width: 2rem;
+			position: relative;
+
+			@include ba(before, 100%, 100%, 0, 0, 1) {
+				border: 2px solid white;
+				filter: blur(2px);
+				border-radius: 50%;
+			}
+
+			@include ba(after, 100%, 100%, 0, 0, 1) {
+
+				border: 1px solid white;
+				border-radius: 50%;
+			}
+		}
+
+		&:hover,
+		&:active,
+		&:focus {}
 	}
 
 	&-ghost {

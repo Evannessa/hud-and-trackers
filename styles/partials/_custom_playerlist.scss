@@ -4,7 +4,8 @@
 	background-color: transparent;
 	top: unset !important;
 	bottom: var(--playerlist-bottom) !important;
-	left: 15px !important;
+	// left: 15px !important; TODO: put this back in
+	left: 55% !important; //TODO: Take this out
 	transition: bottom 100ms ease-out;
 	$main-width: 8rem;
 	$main-height: 8rem;
@@ -34,6 +35,9 @@
 			overflow: visible;
 			background-color: transparent;
 			position: relative;
+			--clr-border-shadow: rgba(27, 27, 27, 0.938);
+			--clr-border-lighter: rgba(47, 47, 47, 0.938);
+			--blur-value: 3px;
 
 			.current-character {
 				aspect-ratio: 1/1;
@@ -46,15 +50,49 @@
 				outline-offset: 0px;
 				transition: outline-offset 200ms, outline 200ms;
 
-				@include ba(before, 100%, 100%, 0, 0) {
-					-webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-					clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-					--grad: transparent 49.5%, black 50%;
-					background: linear-gradient(linear-gradient(to top left, var(--grad)) top left,
-							linear-gradient(to bottom left, var(--grad)) bottom left),
-						transparent;
-					z-index: 2;
+				.img-wrapper {
+
+					&__inner {
+						width: 100%;
+						height: 100%;
+						background-size: 100%;
+						background-repeat: no-repeat;
+						position: absolute;
+						top: 4px;
+						left: 4px;
+						right: 4px;
+						bottom: 4px;
+						-webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+						clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+					}
+
+					&__outer {
+
+						background-color: black;
+						filter: blur(10px);
+						width: 100%;
+						height: 100%;
+						position: relative;
+
+						.box {
+							width: 8rem;
+							height: 8rem;
+							background-color: lavender;
+						}
+
+						-webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+						clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+					}
+
+					// @include ba(before, 100%, 100%, 0, 0, 1) {
+					// 	background-color: pink;
+					// 	-webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+					// 	clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+					// }
 				}
+
+
+
 
 
 				@include ba(after, 105%, 105%, 50%, 50%) {
@@ -114,6 +152,67 @@
 							outline: 2px double white;
 							z-index: 2;
 						}
+					}
+				}
+
+				.border-holder {
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+					z-index: 10;
+
+					&.horizontal {
+						position: absolute !important;
+						border: none;
+						width: 100%;
+						height: 100%;
+						overflow: hidden;
+
+						&:before,
+						&:after {
+							filter: blur(var(--blur-value));
+						}
+
+						@include ba(before, 80%, 80%, 0, 0, 1) {
+							border-top: 3px solid var(--clr-border-shadow);
+							border-left: 3px solid var(--clr-border-shadow);
+							// transform: translate(-50%, -50%) rotate(-45deg);
+						}
+
+						@include ba(after, 80%, 80%, 0, 0) {
+							border-bottom: 3px solid var(--clr-border-shadow);
+							border-right: 3px solid var(--clr-border-shadow);
+							top: unset;
+							left: 18%;
+							bottom: 0;
+							// transform: translate(-50%, -50%) rotate(-45deg);
+						}
+					}
+
+					&.skewed {
+						position: absolute !important;
+						border: none;
+						width: 100%;
+						height: 100%;
+						overflow: hidden;
+
+						&:before,
+						&:after {
+							filter: blur(var(--blur-value));
+						}
+
+						@include ba(before, 110%, 110%, 52%, 50%, 1) {
+							border-left: 3px solid var(--clr-border-lighter);
+							transform: translate(-50%, -50%) rotate(-45deg);
+						}
+
+						@include ba(after, 112%, 112%, 50%, 50%) {
+							border-right: 3px solid var(--clr-border-lighter);
+							transform: translate(-50%, -50%) rotate(-45deg);
+						}
+
 					}
 				}
 
@@ -225,6 +324,7 @@
 				top: 0;
 				left: 0;
 				max-width: $main-width;
+				z-index: 10;
 			}
 		}
 	}

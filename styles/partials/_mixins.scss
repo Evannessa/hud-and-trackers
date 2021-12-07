@@ -2,7 +2,7 @@
 	@return var(--color-#{$color-name});
 }
 
-@mixin ba($ba, $width, $height, $top, $left, $rel:true, $content:null) {
+@mixin ba($ba, $width, $height, $top, $left, $z-index:inherit, $rel:true, $content:null) {
 	@if ($rel==true) {
 		position: relative;
 	}
@@ -14,6 +14,7 @@
 		top: $top;
 		left: $left;
 		content: "#{$content}";
+		z-index: $z-index;
 		@content;
 	}
 }

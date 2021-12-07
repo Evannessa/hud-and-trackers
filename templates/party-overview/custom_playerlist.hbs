@@ -6,6 +6,11 @@
 		data-pcID="{{currentPC.id}}"
 		title="Current Character: {{currentPC.name}}. {{#unless (eq currentPC.id controlledCharacter.id)}}Token not selected. Click portrait to select token.{{/unless}}"
 	  />
+	  {{!-- <div class="img-wrapper__outer">
+		  <div class="img-wrapper__inner" style="background-image: url({{currentPC.img}});"></div>
+	  </div> --}}
+	  <div class="border-holder horizontal"></div>
+	  <div class="border-holder skewed"></div>
  
 	  {{#unless isGM}}
 		<div class="otherCharacters">
