@@ -86,8 +86,20 @@
 			transition: background-color 150ms, color 150ms;
 
 			&:hover {
-				color: $black2;
-				background-color: var(--accent-base);
+				color: white;
+				background-color: #7070707a;
+				border-top: 1px solid rgba(255, 255, 255, 0.198);
+				border-bottom: 1px solid rgba(255, 255, 255, 0.198);
+				border-radius: 10px;
+
+				@supports (backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px)) {
+					background-color: #70707044;
+					backdrop-filter: blur(2px);
+				}
+
+				@supports not (backdrop-filter: blur(2px)) {
+					background-color: #7070707a;
+				}
 			}
 		}
 

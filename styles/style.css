@@ -112,6 +112,9 @@
   --shadow-raised-bottom: 0 1px 3px hsla(0, 0%, 0%, .2);
   --shadow-inset-bottom: inset 0 -2px 0 rgba(136, 135, 135, 0.15);
   --shadow-inset-top: inset 0 2px 2px hsla(0, 0%, 0%, 0.1);
+  --color-glass-opaque: #7070707a;
+  --color-glass-blur: #70707044;
+  --color-glass-border: rgba(255, 255, 255, 0.198);
 }
 :root :root {
   /* spacing variable (using em units)*/
@@ -582,8 +585,23 @@
   transition: background-color 150ms, color 150ms;
 }
 #helperHud .utility button:hover {
-  color: var(--palette-dialog-background, var(--tui-black2));
-  background-color: var(--accent-base);
+  color: white;
+  background-color: #7070707a;
+  border-top: 1px solid rgba(255, 255, 255, 0.198);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.198);
+  border-radius: 10px;
+}
+@supports ((-webkit-backdrop-filter: blur(2px)) or (backdrop-filter: blur(2px))) or (-webkit-backdrop-filter: blur(2px)) {
+  #helperHud .utility button:hover {
+    background-color: #70707044;
+    -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
+  }
+}
+@supports not ((-webkit-backdrop-filter: blur(2px)) or (backdrop-filter: blur(2px))) {
+  #helperHud .utility button:hover {
+    background-color: #7070707a;
+  }
 }
 
 #players .showPCs {
@@ -763,7 +781,7 @@
   background-color: transparent;
   top: unset !important;
   bottom: var(--playerlist-bottom) !important;
-  left: 55% !important;
+  left: 32px !important;
   transition: bottom 100ms ease-out;
   background-color: #7070707a;
   border-top: 1px solid rgba(255, 255, 255, 0.198);
@@ -776,10 +794,16 @@
 #custom_playerlist .window-header {
   display: none;
 }
-@supports ((-webkit-backdrop-filter: blur()) or (backdrop-filter: blur())) and (-webkit-backdrop-filter: blur()) {
+@supports ((-webkit-backdrop-filter: blur(2px)) or (backdrop-filter: blur(2px))) or (-webkit-backdrop-filter: blur(2px)) {
   #custom_playerlist {
-    -webkit-backdrop-filter: blur(15px);
-            backdrop-filter: blur(15px);
+    background-color: #70707044;
+    -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
+  }
+}
+@supports not ((-webkit-backdrop-filter: blur(2px)) or (backdrop-filter: blur(2px))) {
+  #custom_playerlist {
+    background-color: #7070707a;
   }
 }
 #custom_playerlist .window-content {
@@ -795,6 +819,7 @@
   position: relative;
 }
 #custom_playerlist .window-content .underlay {
+  pointer-events: none;
   position: absolute !important;
   overflow: hidden;
   min-width: 143px;
@@ -858,6 +883,7 @@
   transform: scale(0.85) translate(-50%, -50%);
   transform-origin: top left;
   transition: transform 300ms ease-out, outline 300ms ease-out, outline-offset 300ms ease-out;
+  pointer-events: none;
 }
 #custom_playerlist .window-content .content .current-character:before {
   position: absolute;
@@ -876,6 +902,7 @@
   -webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
   clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
   transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 #custom_playerlist .window-content .content .current-character:not(.selected) > img {
   filter: grayscale(90%);
@@ -903,6 +930,7 @@
   transform: scale(1) translate(-50%, -50%);
   outline: 3px double rgba(255, 255, 255, 0.603);
   outline-offset: -18px;
+  pointer-events: none;
 }
 #custom_playerlist .window-content .content .current-character.selected > img {
   position: relative;
@@ -921,6 +949,7 @@
   z-index: 2;
 }
 #custom_playerlist .window-content .content .current-character .border-holder {
+  pointer-events: none;
   position: absolute;
   top: 0;
   left: 0;
@@ -1083,6 +1112,7 @@
   left: 0;
   max-width: 8rem;
   z-index: 10;
+  box-shadow: 0 0 0 1px #ffffff75, -3px 0 5px 5px rgba(68, 195, 253, 0.66), 3px 0 5px 5px rgba(92, 92, 214, 0.43);
 }
 
 .visible {
@@ -2446,6 +2476,9 @@
   --shadow-raised-bottom: 0 1px 3px hsla(0, 0%, 0%, .2);
   --shadow-inset-bottom: inset 0 -2px 0 rgba(136, 135, 135, 0.15);
   --shadow-inset-top: inset 0 2px 2px hsla(0, 0%, 0%, 0.1);
+  --color-glass-opaque: #7070707a;
+  --color-glass-blur: #70707044;
+  --color-glass-border: rgba(255, 255, 255, 0.198);
 }
 :root :root {
   /* spacing variable (using em units)*/
@@ -2850,6 +2883,9 @@
   --shadow-raised-bottom: 0 1px 3px hsla(0, 0%, 0%, .2);
   --shadow-inset-bottom: inset 0 -2px 0 rgba(136, 135, 135, 0.15);
   --shadow-inset-top: inset 0 2px 2px hsla(0, 0%, 0%, 0.1);
+  --color-glass-opaque: #7070707a;
+  --color-glass-blur: #70707044;
+  --color-glass-border: rgba(255, 255, 255, 0.198);
 }
 :root :root {
   /* spacing variable (using em units)*/

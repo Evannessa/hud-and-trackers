@@ -4,8 +4,7 @@
 	background-color: transparent;
 	top: unset !important;
 	bottom: var(--playerlist-bottom) !important;
-	// left: 15px !important; TODO: put this back in
-	left: 55% !important; //TODO: Take this out
+	left: 32px !important; // TODO: put this back in
 	transition: bottom 100ms ease-out;
 	$main-width: 8rem;
 	$main-height: 8rem;
@@ -22,13 +21,19 @@
 		display: none;
 	}
 
+	// box-shadow: var(--shadow-elevation-high);
 	background-color: #7070707a;
 	border-top: 1px solid rgba(255, 255, 255, 0.198);
 	border-bottom: 1px solid rgba(255, 255, 255, 0.198);
 	border-radius: 10px;
 
-	@supports (backdrop-filter: blur()) and (-webkit-backdrop-filter: blur()) {
-		backdrop-filter: blur(15px);
+	@supports (backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px)) {
+		background-color: #70707044;
+		backdrop-filter: blur(2px);
+	}
+
+	@supports not (backdrop-filter: blur(2px)) {
+		background-color: #7070707a;
 	}
 
 
@@ -41,6 +46,7 @@
 		position: relative;
 
 		.underlay {
+			pointer-events: none;
 			position: absolute !important;
 			overflow: hidden;
 			min-width: 143px;
@@ -97,6 +103,8 @@
 					transform: scale(0.85) translate(-50%, -50%);
 					transform-origin: top left;
 					transition: transform 300ms ease-out, outline 300ms ease-out, outline-offset 300ms ease-out;
+
+					pointer-events: none;
 				}
 
 				//glass edge
@@ -111,6 +119,8 @@
 					-webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
 					clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
 					transform: translate(-50%, -50%);
+
+					pointer-events: none;
 					// transition: transform 300ms ease-out, outline 300ms ease-out, outline-offset 300ms ease-out;
 				}
 
@@ -148,6 +158,8 @@
 						transform: scale(1.0) translate(-50%, -50%);
 						outline: 3px double rgba(255, 255, 255, 0.603);
 						outline-offset: -18px;
+
+						pointer-events: none;
 					}
 
 					// @include ba(before, 105%, 105%, 50%, 50%) {
@@ -167,6 +179,8 @@
 				}
 
 				.border-holder {
+
+					pointer-events: none;
 					position: absolute;
 					top: 0;
 					left: 0;
@@ -336,6 +350,7 @@
 				left: 0;
 				max-width: $main-width;
 				z-index: 10;
+				box-shadow: 0 0 0 1px #ffffff75, -3px 0 5px 5px hsla(198.8, 97.9%, 62.9%, 0.66), 3px 0 5px 5px hsla(240, 59.8%, 60%, 0.43);
 			}
 		}
 	}
