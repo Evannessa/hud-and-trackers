@@ -7,9 +7,13 @@ Hooks.on("ready", () => {
 /** only toggle the hide class and set the player list stuff once */
 Hooks.once("renderPlayerList", async (playerList, html) => {
     game.defaultPlayerList = playerList;
-    playerList.element.addClass("visible");
+    if (!playerList.element.hasClass("visible")) {
+        playerList.element.addClass("visible");
+    }
     // $(playerList.element).css("left", "-999px");
-    playerList.element.toggleClass("hide-off-screen");
+    if (!playerList.element.addClass("hide-off-screen")) {
+        playerList.element.addClass("hide-off-screen");
+    }
 });
 
 Hooks.on("renderPlayerList", async (playerList, html) => {

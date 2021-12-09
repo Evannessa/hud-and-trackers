@@ -851,8 +851,8 @@
   overflow: visible;
   background-color: transparent;
   position: relative;
-  --clr-border-shadow: rgba(27, 27, 27, 0.938);
-  --clr-border-lighter: rgba(47, 47, 47, 0.938);
+  --clr-border-shadow: rgba(20, 20, 20, 0.938);
+  --clr-border-lighter: rgba(39, 39, 39, 0.938);
   --blur-value: 3px;
 }
 #custom_playerlist .window-content .content .current-character {
@@ -867,6 +867,22 @@
   transition: outline-offset 200ms, outline 200ms;
   position: relative;
   position: relative;
+}
+#custom_playerlist .window-content .content .current-character .svg-shadow {
+  position: absolute;
+  width: calc(100%);
+  height: calc(100%);
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+#custom_playerlist .window-content .content .current-character .svg-shadow .svg-shadow__polygon {
+  stroke: black;
+  stroke-width: 2px;
+  fill: none;
+  filter: blur(1px);
+  -webkit-clip-path: url(#shadow-clip);
+          clip-path: url(#shadow-clip);
 }
 #custom_playerlist .window-content .content .current-character:after {
   position: absolute;
@@ -1617,7 +1633,6 @@
 #clock-display .clock-container,
 .app-child .window-content,
 .app-child .clock-container {
-  /* This was made with GlassGenerator.netlify.app */
   border-radius: 0 10px 10px 0;
   overflow-x: visible;
   overflow-y: visible;
@@ -1634,6 +1649,9 @@
   width: -moz-fit-content;
   width: fit-content;
   transition: width 0.2s ease;
+  background-color: #7070707a;
+  border-top: 1px solid rgba(255, 255, 255, 0.198);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.198);
   position: relative;
 }
 #clock-display .window-content .glass,
@@ -1666,6 +1684,16 @@
 .app-child .clock-container {
     -webkit-backdrop-filter: blur(2px);
     backdrop-filter: blur(2px);
+  }
+}
+@supports ((-webkit-backdrop-filter: blur(2px)) or (backdrop-filter: blur(2px))) or (-webkit-backdrop-filter: blur(2px)) {
+  #clock-display .window-content,
+#clock-display .clock-container,
+.app-child .window-content,
+.app-child .clock-container {
+    background-color: #70707044;
+    -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
   }
 }
 #clock-display .window-content .categoryFilter,
