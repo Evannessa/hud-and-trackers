@@ -716,6 +716,9 @@
 #combatHud .combatant-wrapper .combatant-div {
   color: black;
   font-weight: bold;
+  max-width: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   padding: 0.5rem;
   display: flex;
   flex-direction: column;
@@ -924,12 +927,19 @@
 }
 #custom_playerlist .window-content .content .current-character:not(.selected) > img {
   filter: grayscale(90%);
+  transition: filter 450ms;
+}
+#custom_playerlist .window-content .content .current-character:not(.selected) > img:hover {
+  filter: grayscale(0%);
 }
 #custom_playerlist .window-content .content .current-character > img {
   position: relative;
   -webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
   clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-  transition: filter 100ms;
+  transition: filter 250ms;
+}
+#custom_playerlist .window-content .content .current-character > img:hover {
+  filter: grayscale(0%);
 }
 #custom_playerlist .window-content .content .current-character.selected {
   outline: 3px double rgba(255, 255, 255, 0.616);
@@ -1122,7 +1132,8 @@
   opacity: 0;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 100ms, opacity 100ms;
+  transition-delay: 120ms;
+  transition: transform 120ms ease-in, opacity 120ms ease-in;
   padding: 0.25rem 2rem;
   z-index: -1;
   white-space: nowrap;

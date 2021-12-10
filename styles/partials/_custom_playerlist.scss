@@ -153,7 +153,13 @@
 				&:not(.selected) {
 					>img {
 						filter: grayscale(90%);
+						transition: filter 450ms;
+
+						&:hover {
+							filter: grayscale(0%);
+						}
 					}
+
 
 
 				}
@@ -162,9 +168,11 @@
 					position: relative;
 					-webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
 					clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-					transition: filter 100ms;
+					transition: filter 250ms;
 
-					&:hover {}
+					&:hover {
+						filter: grayscale(0%);
+					}
 				}
 
 
@@ -351,7 +359,8 @@
 						opacity: 0;
 						transform: scaleX(0);
 						transform-origin: left;
-						transition: transform 100ms, opacity 100ms;
+						transition-delay: 120ms;
+						transition: transform 120ms ease-in, opacity 120ms ease-in;
 						padding: 0.25rem 2rem;
 						z-index: -1;
 						white-space: nowrap;

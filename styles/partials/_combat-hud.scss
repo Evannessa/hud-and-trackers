@@ -113,6 +113,9 @@
 			color: black;
 			font-weight: bold;
 			// border: 1px solid black;
+			max-width: 70px;
+			overflow: hidden;
+			text-overflow: ellipsis;
 			padding: 0.5rem;
 			display: flex;
 			flex-direction: column;
