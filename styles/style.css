@@ -875,14 +875,16 @@
   top: 0;
   left: 0;
   overflow: hidden;
+  pointer-events: none;
 }
 #custom_playerlist .window-content .content .current-character .svg-shadow .svg-shadow__polygon {
   stroke: black;
-  stroke-width: 2px;
+  stroke-width: 6px;
   fill: none;
-  filter: blur(1px);
+  filter: blur(3.5px);
   -webkit-clip-path: url(#shadow-clip);
           clip-path: url(#shadow-clip);
+  pointer-events: none;
 }
 #custom_playerlist .window-content .content .current-character:after {
   position: absolute;
@@ -892,8 +894,8 @@
   left: 50%;
   content: "";
   z-index: inherit;
-  -webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-  clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  -webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
   outline: 2px double rgba(255, 255, 255, 0);
   outline-offset: 0;
   transform: scale(0.85) translate(-50%, -50%);
@@ -915,8 +917,8 @@
   border-right: 1px solid;
   -o-border-image: linear-gradient(transparent, rgba(255, 255, 255, 0.329), transparent) 44 repeat stretch;
      border-image: linear-gradient(transparent, rgba(255, 255, 255, 0.329), transparent) 44 repeat stretch;
-  -webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-  clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  -webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
@@ -925,8 +927,8 @@
 }
 #custom_playerlist .window-content .content .current-character > img {
   position: relative;
-  -webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
-  clip-path: polygon(0 0, 80% 0%, 100% 20%, 99% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  -webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+  clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
   transition: filter 100ms;
 }
 #custom_playerlist .window-content .content .current-character.selected {
@@ -1091,25 +1093,39 @@
   justify-content: center;
   position: relative;
 }
+#custom_playerlist .window-content .content .other-users .active-user .user-initials {
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  transform: scale(1);
+  display: grid;
+  place-content: center;
+}
 #custom_playerlist .window-content .content .other-users .active-user .user-detail {
   display: none;
   position: absolute;
   top: 0;
   left: 0;
-  width: 5rem;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
   height: inherit;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  border-top-left-radius: 25%;
-  border-bottom-left-radius: 25%;
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
-  background-color: var(--palette-dialog-background, var(--tui-black2));
+  background-color: var(--color-glass-opaque);
+  border-top: 1px solid var(--color-glass-border);
+  border-bottom: 1px solid var(--color-glass-border);
+  opacity: 0;
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 100ms;
+  transition: transform 100ms, opacity 100ms;
   padding: 0.25rem 2rem;
+  z-index: -1;
+  white-space: nowrap;
 }
 #custom_playerlist .window-content .content .other-users .active-user .user-detail .badge {
   width: 2rem;
@@ -1121,6 +1137,7 @@
 }
 #custom_playerlist .window-content .content .other-users .active-user:hover .user-detail {
   transform: scaleX(1);
+  opacity: 1;
 }
 #custom_playerlist .window-content .utility-buttons button {
   position: absolute;
