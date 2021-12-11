@@ -299,23 +299,25 @@
 					right: 0;
 					// right: left;
 					// transition: transform 100ms ease-out;
-					transition: width 100ms ease-out;
+					transition: height 200ms ease-out;
 
 					&:hover {
 						// width: 100%;
+						overflow: visible;
 						height: 100%;
-						// overflow: visible;
-					}
+						transition-delay: 100ms;
 
-					// transition: background 0.2s,
-					// opacity 0.2s,
-					// transform 0.2s;
+						.secondary-character:not(:first-child) {
+							transform: scale(1);
+							transition: transform 100 ease-out;
+							transition-delay: none;
+						}
+
+					}
 
 					.secondary-character {
 						cursor: pointer;
-						//position: absolute;
 						border-radius: 50%;
-						// right: 100%;
 						bottom: 0;
 						width: 2rem;
 						height: 2rem;
@@ -323,9 +325,13 @@
 						border: 2px double var(--color-primary-base);
 						box-shadow: var(--shadow-lower);
 						transition: border-color 120ms;
-						// transform: scale(1);
-						// transition: transform 100ms ease-in, bottom 100ms ease-in;
 						z-index: 200;
+
+						&:not(:first-child) {
+							transform: scale(0);
+							transition: transform 100ms ease-in;
+							transition-delay: 100ms;
+						}
 
 						&:hover {
 							border-color: var(--color-accent-400);

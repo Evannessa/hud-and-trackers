@@ -426,7 +426,6 @@
   flex-direction: row;
   flex-wrap: wrap;
   max-width: 50vw;
-  background-color: rgba(44, 46, 47, 0.678);
   padding: 0.25rem 0.5rem;
 }
 #tokenHud .hud-item-wrapper .break {
@@ -1077,10 +1076,17 @@
   position: absolute;
   bottom: 0;
   right: 0;
-  transition: width 100ms ease-out;
+  transition: height 200ms ease-out;
 }
 #custom_playerlist .window-content .content .current-character .otherCharacters:hover {
+  overflow: visible;
   height: 100%;
+  transition-delay: 100ms;
+}
+#custom_playerlist .window-content .content .current-character .otherCharacters:hover .secondary-character:not(:first-child) {
+  transform: scale(1);
+  transition: transform 100 ease-out;
+  transition-delay: none;
 }
 #custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character {
   cursor: pointer;
@@ -1093,6 +1099,11 @@
   box-shadow: var(--shadow-lower);
   transition: border-color 120ms;
   z-index: 200;
+}
+#custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character:not(:first-child) {
+  transform: scale(0);
+  transition: transform 100ms ease-in;
+  transition-delay: 100ms;
 }
 #custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character:hover {
   border-color: var(--color-accent-400);
