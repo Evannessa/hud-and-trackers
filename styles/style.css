@@ -1070,19 +1070,21 @@
 }
 #custom_playerlist .window-content .content .current-character .otherCharacters {
   display: flex;
+  flex-direction: column-reverse;
   width: 2rem;
+  height: 2rem;
   overflow: hidden;
   position: absolute;
   bottom: 0;
+  right: 0;
   transition: width 100ms ease-out;
 }
 #custom_playerlist .window-content .content .current-character .otherCharacters:hover {
-  width: 100%;
+  height: 100%;
 }
 #custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character {
   cursor: pointer;
   border-radius: 50%;
-  right: 100%;
   bottom: 0;
   width: 2rem;
   height: 2rem;
