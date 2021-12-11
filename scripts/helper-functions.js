@@ -127,6 +127,15 @@ export async function getAllUserActors(user) {
     return actors;
 }
 
+export async function getAllActorsInScene() {
+    let sceneActors = canvas.scene.data.tokens.contents.map((token) => {
+        return token.actor;
+    });
+    let uniqueSceneActors = [...new Set(sceneActors)];
+    console.log(uniqueSceneActors);
+    return uniqueSceneActors;
+}
+
 export function getSceneTokenFromActor(actor) {
     return canvas.scene.data.tokens.contents.find((token) => token.name == actor.name);
 }
@@ -141,8 +150,8 @@ export function getActiveUsers() {
     });
 }
 
-export function swapToCharacter(character) {
-    game.user.update({ character: character.id });
+export async function swapToCharacter(character) {
+    await game.user.update({ character: character.id });
     ui.notifications.notify(`Your active character is now ${character.name}`);
 }
 

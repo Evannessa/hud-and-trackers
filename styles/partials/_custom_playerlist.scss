@@ -76,12 +76,24 @@
 			display: flex;
 			flex-direction: row;
 			overflow: visible;
-			background-color: transparent;
+			// background-color: transparent;
 			position: relative;
 			--clr-border-shadow: rgba(20, 20, 20, 0.938);
 			--clr-border-lighter: rgba(39, 39, 39, 0.938);
 			--blur-value: 3px;
 
+			.background {
+				position: absolute;
+				top: 0;
+				left: 0;
+				background-color: var(--tui-white2);
+				width: 100%;
+				height: 100%;
+				-webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+				clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+				z-index: -1;
+
+			}
 
 
 			.current-character {
@@ -104,6 +116,7 @@
 					left: 0;
 					overflow: hidden;
 					pointer-events: none;
+					mix-blend-mode: multiply;
 
 					.svg-shadow__polygon {
 						stroke: black;
@@ -124,7 +137,6 @@
 					transform: scale(0.85) translate(-50%, -50%);
 					transform-origin: top left;
 					transition: transform 300ms ease-out, outline 300ms ease-out, outline-offset 300ms ease-out;
-
 					pointer-events: none;
 				}
 
@@ -166,13 +178,17 @@
 
 				>img {
 					position: relative;
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
 					-webkit-clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
 					clip-path: polygon(0 0, 80% 0%, 100% 20%, 100% 100%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
 					transition: filter 250ms;
 
-					&:hover {
-						filter: grayscale(0%);
-					}
+
+					// &:hover {
+					// 	filter: grayscale(0%);
+					// }
 				}
 
 
@@ -273,32 +289,52 @@
 
 				//characters this user controls, but not the "current" character
 				.otherCharacters {
+					display: flex;
+					width: 2rem;
+					overflow: hidden;
+					position: absolute;
+					bottom: 0;
+					// right: left;
+					// transition: transform 100ms ease-out;
+					transition: width 100ms ease-out;
+
+					&:hover {
+						width: 100%;
+					}
+
+					// transition: background 0.2s,
+					// opacity 0.2s,
+					// transform 0.2s;
+
 					.secondary-character {
 						cursor: pointer;
-						position: absolute;
+						//position: absolute;
 						border-radius: 50%;
-						right: 0;
+						right: 100%;
 						bottom: 0;
 						width: 2rem;
 						height: 2rem;
 						background-color: var(--black4);
 						border: 2px double cornflowerblue;
 						box-shadow: var(--shadow-lower);
-						transform: scale(1);
-						transition: transform 100ms ease-in, bottom 100ms ease-in;
+						transition: border-color 120ms;
+						// transform: scale(1);
+						// transition: transform 100ms ease-in, bottom 100ms ease-in;
 						z-index: 200;
 
 						&:hover {
-							transform: scale(1.25);
+							border-color: magenta;
+							// transform: scale(1.25);
 						}
 
-						&.selected {
-							bottom: 10%;
-						}
+						// &.selected {
+						// 	bottom: 10%;
+						// 	filter: grayscale(0%);
+						// }
 
-						&:not(.selected) {
-							filter: grayscale(90%);
-						}
+						// &:not(.selected) {
+						// 	filter: grayscale(90%);
+						// }
 					}
 				}
 			}

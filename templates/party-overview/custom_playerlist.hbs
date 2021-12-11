@@ -13,11 +13,13 @@
 		  </clipPath>	
 		  <polygon class="svg-shadow__polygon" points="0 0, 80 0, 100 20, 100 100, 80 100, 20 100, 0 80, 0 20"></polygon>
 	  </svg>		
+	  <div class="background">
+
+	  </div>
 	
 	  {{!-- <div class="border-holder horizontal"></div>
 	  <div class="border-holder skewed"></div> --}}
  
-	  {{#unless isGM}}
 		<div class="otherCharacters">
 		  {{#each otherCharacters}}
 			<img
@@ -29,7 +31,15 @@
 			/>
 		  {{/each}}
 		</div>
-	  {{/unless}}
+	  {{!-- {{#if isGM}}
+	  	<div class="otherCharacters">
+			  <!--unless the controlled character is the GM's current character-->
+			  {{log controlledCharacter.name currentPC.name}}
+			  {{#unless (eq controlledCharacter.id currentPC.id)}}
+			  <img src="{{controlledCharacter.img}}" alt="{{controlledCharacter.name}}" data-pcID="{{controlledCharacter.id}}" class="secondary-character">
+			  {{/unless}}
+		  </div>
+	  {{/if}} --}}
 	</div>
 	<div class="other-users">
 		{{!-- <button data-action="toggle-player-list">PL</button> --}}
@@ -48,7 +58,7 @@
 	  {{/each}}
 	</div>
 </div>
-<div class="utility-buttons">
-		<button data-action="toggle-player-list" class="btn-primary btn-round"><i class="far fa-user"></i></button>
-</div>
+{{!-- <div class="utility-buttons">
+		{{!-- <button data-action="toggle-player-list" class="btn-primary btn-round"><i class="far fa-user"></i></button> --}}
+{{!-- </div> --}} 
 <div class="underlay"></div>

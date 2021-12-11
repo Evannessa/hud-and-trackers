@@ -4,6 +4,18 @@ Hooks.on("ready", () => {
     game.customPlayerList = new CustomPlayerlist().render(true);
 });
 
+//on scene switch
+Hooks.on("canvasReady", async (canvas) => {
+    console.log(canvas);
+    if (game.user.isGM) {
+        if (!game.customPlayerList) {
+            return;
+        }
+        game.customPlayerList.otherCharacters =
+            await HelperFunctions.getAllActorsInScene();
+        game.customPlayerList.render();
+    }
+});
 /** only toggle the hide class and set the player list stuff once */
 Hooks.once("renderPlayerList", async (playerList, html) => {
     game.defaultPlayerList = playerList;
@@ -30,13 +42,22 @@ Hooks.on("renderPlayerList", async (playerList, html) => {
 
 Hooks.on("controlToken", async (token, isControlled) => {
     let ourToken = token;
-    // let tokenImg = canvas.tokens.controlled[0]?.actor.img;
-    setCustomPlayerListImage(token, isControlled);
-    // if (game.customPlayerList) {
-    //     game.customPlayerList.render(true);
+
+    //if we're a player, highlight our selected token even if it's not our current PC
+    //if it is current PC, highlight its portrait too
+    highlightCharacterPortrait(token, isControlled);
+    // if (!game.user.isGM) {
+    //     highlightCharacterPortrait(token, isControlled);
+    // } else {
+    //     showSelectedToken(token, isControlled);
     // }
 });
-function setCustomPlayerListImage(token, isControlled) {
+function showSelectedToken(token, isControlled) {}
+function showTokensInScene(token, isControlled) {}
+function highlightCharacterPortrait(token, isControlled) {
+    if (!game.customPlayerList) {
+        return;
+    }
     let playerList = game.customPlayerList.element;
     let currentPCArea = playerList.find(".current-character");
     if (token.actor.id === $(".current-character img").data().pcid && isControlled) {
@@ -83,12 +104,28 @@ export class CustomPlayerlist extends Application {
             );
         }
 
-        //get all the users actors (ones they have permission to control basically)
-        let otherCharacters = await HelperFunctions.getAllUserActors(user);
-        //only get the secondary characters to store, filter out currentPC;
-        otherCharacters = otherCharacters.filter((char) => {
-            return char.id !== currentPC.id;
-        });
+        let otherCharacters;
+        if (!game.user.isGM) {
+            //get all the users actors (ones they have permission to control basically)
+            otherCharacters = await HelperFunctions.getAllUserActors(user);
+            //only get the secondary characters to store, filter out currentPC;
+            otherCharacters = otherCharacters.filter((char) => {
+                return char.id !== currentPC.id;
+            });
+        } else {
+            //for the GM, have the other characters be the NPCs in the scene
+            otherCharacters = await HelperFunctions.getAllActorsInScene();
+            otherCharacters = otherCharacters
+                .filter((char) => {
+                    //filter out the PCs
+                    return char.type == "NPC" || char.type == "Companion";
+                })
+                .filter((char) => {
+                    //filter out current selected
+                    return char.id !== currentPC.id;
+                });
+        }
+
         return {
             user: game.user,
             currentPC: currentPC,
@@ -129,7 +166,8 @@ export class CustomPlayerlist extends Application {
             }
             // this.render();
         });
-        html.on("click", "[data-action]", this._handleButtonClick.bind(this));
+        //TODO: Put this back in later once you've thought of a good button
+        // html.on("click", "[data-action]", this._handleButtonClick.bind(this));
     }
 
     async _updateObject(event, formData) {}
