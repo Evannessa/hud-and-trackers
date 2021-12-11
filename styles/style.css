@@ -892,7 +892,7 @@
   mix-blend-mode: multiply;
 }
 #custom_playerlist .window-content .content .current-character .svg-shadow .svg-shadow__polygon {
-  stroke: black;
+  stroke: rgba(19, 19, 19, 0.815);
   stroke-width: 6px;
   fill: none;
   filter: blur(3.5px);
@@ -1087,13 +1087,13 @@
   width: 2rem;
   height: 2rem;
   background-color: var(--black4);
-  border: 2px double cornflowerblue;
+  border: 2px double var(--color-primary-base);
   box-shadow: var(--shadow-lower);
   transition: border-color 120ms;
   z-index: 200;
 }
 #custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character:hover {
-  border-color: magenta;
+  border-color: var(--color-accent-400);
 }
 #custom_playerlist .window-content .content .other-users {
   position: absolute;

@@ -17,15 +17,16 @@ Hooks.on("canvasReady", async (canvas) => {
     }
 });
 /** only toggle the hide class and set the player list stuff once */
-Hooks.once("renderPlayerList", async (playerList, html) => {
+Hooks.on("renderPlayerList", async (playerList, html) => {
     game.defaultPlayerList = playerList;
-    if (!playerList.element.hasClass("visible")) {
-        playerList.element.addClass("visible");
-    }
+    // if (!playerList.element.hasClass("visible")) {
+    //     playerList.element.addClass("visible");
+    // }
     // $(playerList.element).css("left", "-999px");
-    if (!playerList.element.addClass("hide-off-screen")) {
-        playerList.element.addClass("hide-off-screen");
-    }
+    playerList.element.addClass("hide-off-screen");
+    // if (!playerList.element.addClass("hide-off-screen")) {
+    //     playerList.element.addClass("hide-off-screen");
+    // }
 });
 
 Hooks.on("renderPlayerList", async (playerList, html) => {

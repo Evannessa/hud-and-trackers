@@ -119,7 +119,7 @@
 					mix-blend-mode: multiply;
 
 					.svg-shadow__polygon {
-						stroke: black;
+						stroke: rgba(19, 19, 19, 0.815);
 						stroke-width: 6px;
 						fill: none;
 						filter: blur(3.5px);
@@ -315,7 +315,7 @@
 						width: 2rem;
 						height: 2rem;
 						background-color: var(--black4);
-						border: 2px double cornflowerblue;
+						border: 2px double var(--color-primary-base);
 						box-shadow: var(--shadow-lower);
 						transition: border-color 120ms;
 						// transform: scale(1);
@@ -323,7 +323,7 @@
 						z-index: 200;
 
 						&:hover {
-							border-color: magenta;
+							border-color: var(--color-accent-400);
 							// transform: scale(1.25);
 						}
 
