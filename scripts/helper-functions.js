@@ -136,6 +136,10 @@ export async function getAllActorsInScene() {
     return uniqueSceneActors;
 }
 
+export function addTokensToScene() {
+    canvas.scene.create;
+}
+
 export function getSceneTokenFromActor(actor) {
     return canvas.scene.data.tokens.contents.find((token) => token.name == actor.name);
 }
@@ -155,12 +159,14 @@ export async function swapToCharacter(character) {
     ui.notifications.notify(`Your active character is now ${character.name}`);
 }
 
-export async function createTokenFromTokenData(tokenData) {
-    const td = duplicate(tokenData);
-    td.x = 100;
-    td.y = 100;
-    await game.scenes.viewed.createEmbbededDocuments("Token", td); // await Token.create(tk);
-    // await Token.create(td);
+export async function createTokenFromTokenData(tokenData, localPosition) {
+    let tokenDataArray = tokenData.map((data) => {
+        let td = duplicate(data);
+        td.x = Math.round(localPosition.x);
+        td.y = Math.round(localPosition.y);
+        return td;
+    });
+    await game.scenes.viewed.createEmbeddedDocuments("Token", tokenDataArray); // await Token.create(tk);
 }
 
 //https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
@@ -188,7 +194,7 @@ export async function createTokenFromActor(ourActor, scene) {
     let tk = duplicate(ourActor.data.token);
     tk.x = 100;
     tk.y = 100;
-    let tokenDoc = await scene.createEmbbededDocuments("Token", tk); // await Token.create(tk);
+    let tokenDoc = await scene.createEmbeddedDocuments("Token", [tk]); // await Token.create(tk);
     let tokenObject = tokenDoc[0]._object;
     return tokenObject;
 }
@@ -239,7 +245,13 @@ export async function callMacro(name) {
     }
 }
 
-export function addPCsToScene() {
+export function requestClick() {
+    let mouse = canvas.app.renderer.plugins.interaction.mouse;
+    let local = mouse.getLocalPosition(canvas.app.stage);
+    addPCsToScene(local);
+}
+
+export function addPCsToScene(localPosition) {
     let tokensInScene = Array.from(game.scenes.viewed.tokens);
     let tokenNamesInScene = tokensInScene.map((element) => {
         return element.name;
@@ -252,9 +264,10 @@ export function addPCsToScene() {
         const notInScene = pcTokens.filter(
             (element) => !tokenNamesInScene.includes(element.name)
         );
-        notInScene.forEach((element) => {
-            createTokenFromTokenData(element);
-        });
+        createTokenFromTokenData(notInScene, localPosition);
+        // notInScene.forEach((element) => {
+        //     createTokenFromTokenData(element, localPosition);
+        // });
     } else {
         ui.notifications.warn("Could not find Main PCs folder");
     }
