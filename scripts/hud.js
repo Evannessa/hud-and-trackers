@@ -365,9 +365,10 @@ export class HelperHud extends Application {
         };
     }
 
-    handleButtonClick(event) {
+    async handleButtonClick(event) {
         let clickedElement = $(event.currentTarget);
         let action = clickedElement.data().action;
+        let actor;
         switch (action) {
             case "toggle":
                 clickedElement.toggleClass("holdOpen");
@@ -381,24 +382,58 @@ export class HelperHud extends Application {
                 game.partyOverview = new PartyOverview.PartyOverview(data).render(true);
                 break;
             case "addPCs":
+                HelperFunctions.addActorsToScene("allPCs");
                 break;
             case "changeDisposition":
+                HelperFunctions.callMacro("Change Disposition");
                 break;
             case "addAttacks":
-                break;
-            case "openPrepBuilder":
+                HelperFunctions.callMacro(
+                    "[Token] Toggle Attacks in Inventory of non-PC Actors"
+                );
                 break;
             case "swapCharacter":
+                await HelperFunctions.callMacro("Swap-Characters");
                 break;
             case "selectCharacter":
+                HelperHud.selectMyCharacter();
+                break;
+            case "openCheatSheet":
+                HelperFunctions.callMacro("Open Cheat Sheet PDF");
                 break;
             case "openCharacterSheet":
+                actor = HelperFunctions.getActorFromUser(game.user);
+                actor.sheet.render(true);
                 break;
             case "openLootSheet":
+                actor = HelperFunctions.getGameActorByName("Party Loot Box");
+                actor.sheet.render(true);
                 break;
             case "addClock":
+                new ClockConfig().render(true);
                 break;
             case "showClocks":
+                new ClockViewer().render(true);
+                break;
+            case "savePos":
+                let combatHudPosition = game.combatHud.app.position;
+                let helperHudPosition = game.helperHud.position;
+                let tokenHudPosition = game.abilityHud.position;
+                game.settings.set(
+                    "hud-and-trackers",
+                    "combatHudPosition",
+                    combatHudPosition
+                );
+                game.settings.set(
+                    "hud-and-trackers",
+                    "tokenHudPosition",
+                    tokenHudPosition
+                );
+                game.settings.set(
+                    "hud-and-trackers",
+                    "helperHudPosition",
+                    helperHudPosition
+                );
                 break;
             default:
                 break;
@@ -408,78 +443,6 @@ export class HelperHud extends Application {
     activateListeners(html) {
         let windowContent = html.closest(".window-content");
         windowContent.on("click", "[data-action]", this.handleButtonClick.bind(this));
-        let openCheatSheet = windowContent.find(".openCheatSheet")[0];
-        let openLootSheet = windowContent.find(".openLootSheet")[0];
-        let savePos = windowContent.find(".savePos")[0];
-        let addClock = windowContent.find(".addClock")[0];
-        let showClock = windowContent.find(".showClocks")[0];
-        let partyOverview = windowContent.find(".partyOverview")[0];
-
-        $(partyOverview).click(async (event) => {
-            let data = await game.user.getFlag("hud-and-trackers", "partyOverviewData");
-            game.partyOverview = new PartyOverview.PartyOverview(data).render(true);
-        });
-
-        $(savePos).click((event) => {
-            let combatHudPosition = game.combatHud.app.position;
-            let helperHudPosition = game.helperHud.position;
-            let tokenHudPosition = game.abilityHud.position;
-            game.settings.set("hud-and-trackers", "combatHudPosition", combatHudPosition);
-            game.settings.set("hud-and-trackers", "tokenHudPosition", tokenHudPosition);
-            game.settings.set("hud-and-trackers", "helperHudPosition", helperHudPosition);
-        });
-
-        //open cheat sheet PDF
-        $(openCheatSheet).click((event) => {
-            HelperFunctions.callMacro("Open Cheat Sheet PDF");
-        });
-
-        //open loot sheet actor
-        openLootSheet.addEventListener("click", (event) => {
-            let actor = HelperFunctions.getGameActorByName("Party Loot Box");
-            actor.sheet.render(true);
-        });
-        //add clock
-        addClock.addEventListener("click", (event) => {
-            new ClockConfig().render(true);
-        });
-        //show clock
-        showClock.addEventListener("click", (event) => {
-            new ClockViewer().render(true);
-        });
-        if (this.isGM) {
-            //utility stuff
-            let changeDisposition = windowContent.find(".changeDisposition")[0];
-            let addAttacks = windowContent.find(".addAttacks")[0];
-            let addPCs = windowContent.find(".addPCs")[0];
-
-            addPCs.addEventListener("click", (event) => {
-                // HelperFunctions.addPCsToScene();
-                HelperFunctions.addActorsToScene("allPCs");
-            });
-            changeDisposition.addEventListener("click", (event) => {
-                HelperFunctions.callMacro("Change Disposition");
-            });
-            addAttacks.addEventListener("click", (event) => {
-                HelperFunctions.callMacro(
-                    "[Token] Toggle Attacks in Inventory of non-PC Actors"
-                );
-            });
-        } else {
-            let selectCharacter = windowContent.find(".selectCharacter")[0];
-            let openCharacterSheet = windowContent.find(".openCharacterSheet")[0];
-            let swapCharacter = windowContent.find(".swapCharacter")[0];
-            selectCharacter.addEventListener("click", (event) => {
-                HelperHud.selectMyCharacter();
-            });
-            swapCharacter.addEventListener("click", async (event) => {
-                await HelperFunctions.callMacro("Swap-Characters");
-            });
-            openCharacterSheet.addEventListener("click", (event) => {
-                let actor = HelperFunctions.getActorFromUser(game.user);
-                actor.sheet.render(true);
-            });
-        }
     }
 
     static selectMyCharacter() {
