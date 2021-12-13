@@ -21,6 +21,7 @@
 .hide-off-screen {
 	transition: left 100ms ease-out;
 	left: -999px !important;
+	opacity: 0;
 	// bottom: -999px !important;
 }
 

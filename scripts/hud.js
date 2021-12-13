@@ -373,6 +373,33 @@ export class HelperHud extends Application {
                 clickedElement.toggleClass("holdOpen");
                 clickedElement.find("i").toggleClass("fa-plus").toggleClass("fa-minus");
                 break;
+            case "openPartyOverview":
+                let data = await game.user.getFlag(
+                    "hud-and-trackers",
+                    "partyOverviewData"
+                );
+                game.partyOverview = new PartyOverview.PartyOverview(data).render(true);
+                break;
+            case "addPCs":
+                break;
+            case "changeDisposition":
+                break;
+            case "addAttacks":
+                break;
+            case "openPrepBuilder":
+                break;
+            case "swapCharacter":
+                break;
+            case "selectCharacter":
+                break;
+            case "openCharacterSheet":
+                break;
+            case "openLootSheet":
+                break;
+            case "addClock":
+                break;
+            case "showClocks":
+                break;
             default:
                 break;
         }

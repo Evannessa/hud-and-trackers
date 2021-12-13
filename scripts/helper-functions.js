@@ -195,7 +195,6 @@ export function uniqBy(a, key) {
  * @returns tokenObject - the actual object of the token
  */
 export async function createTokenFromActor(ourActor, scene) {
-    console.log(scene);
     let tk = duplicate(ourActor.data.token);
     tk.x = 100;
     tk.y = 100;
@@ -327,6 +326,7 @@ export function addActorsToScene(type) {
 }
 // turn cursor to crosshair wait for user to click on canvas (add event listener)
 export function requestClickOnCanvas(callback) {
+    //TODO: Add some way to cancel this like if the user right clicks or clicks elsewhere
     $("html, body").css("cursor", "crosshair");
     canvas.app.stage.addListener("pointerdown", callback);
 }
