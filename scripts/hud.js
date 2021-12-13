@@ -428,7 +428,7 @@ export class HelperHud extends Application {
 
             addPCs.addEventListener("click", (event) => {
                 // HelperFunctions.addPCsToScene();
-                HelperFunctions.requestClick();
+                HelperFunctions.addActorsToScene("allPCs");
             });
             changeDisposition.addEventListener("click", (event) => {
                 HelperFunctions.callMacro("Change Disposition");

@@ -7,6 +7,7 @@ export function selectMyCharacter() {
         tokenDoc.object.control({ releaseOthers: true });
     } else {
         ui.notifications.warn(`${actor.name} does not have a token on this scene`);
+        askIfPlayerWantsToAddToken(actor);
     }
 }
 
@@ -160,6 +161,10 @@ export async function swapToCharacter(character) {
 }
 
 export async function createTokenFromTokenData(tokenData, localPosition) {
+    console.log("Token data", tokenData);
+    if (tokenData.length == 0) {
+        return;
+    }
     let tokenDataArray = tokenData.map((data) => {
         let td = duplicate(data);
         td.x = Math.round(localPosition.x);
@@ -245,13 +250,88 @@ export async function callMacro(name) {
     }
 }
 
-export function requestClick() {
-    let mouse = canvas.app.renderer.plugins.interaction.mouse;
-    let local = mouse.getLocalPosition(canvas.app.stage);
-    addPCsToScene(local);
+function askIfPlayerWantsToAddToken(actor) {
+    let d = new Dialog({
+        title: "Add Token",
+        content: `${actor.name} doesn't have a token in this scene. Would you like to add their token?`,
+        buttons: {
+            yes: {
+                icon: '<i class="fas fa-check"></i>',
+                label: "Add Token",
+                callback: () => {
+                    createClickRequestDialog();
+                    addActorsToScene("onePC");
+                },
+            },
+            cancel: {
+                label: "Cancel",
+            },
+        },
+    }).render(true);
 }
 
-export function addPCsToScene(localPosition) {
+function createClickRequestDialog(name) {
+    let d = new Dialog({
+        title: "Example",
+        content: `Click where you want to place ${name}`,
+        buttons: {
+            ok: {
+                icon: '<i class="fas fa-check"></i>',
+                label: "Ok",
+            },
+            cancel: {
+                label: "Cancel",
+                callback: () => {
+                    cancelClickRequest();
+                },
+            },
+        },
+    }).render(true);
+}
+
+/**
+ * Turn array of actors into token data
+ * @param {array} actors - array of actors
+ * @returns array of token data
+ */
+function actorsToTokenData(actors) {
+    return actors.map((element) => {
+        return element.data.token;
+    });
+}
+
+function cancelClickRequest(callback) {
+    canvas.app.stage.removeListener("pointerdown", callback);
+    $("html, body").css("cursor", "auto");
+}
+
+function dropMultiplePCsAtClick(event) {
+    let local = event.data.getLocalPosition(canvas.app.stage);
+    let notInScene = getPCsNotInScene();
+    createTokenFromTokenData(notInScene, local);
+    cancelClickRequest(dropMultiplePCsAtClick); //TODO: Rename this to something like "Stop listening for clicks"
+}
+function dropSingleAtClick(event) {
+    let local = event.data.getLocalPosition(canvas.app.stage);
+    let actors = actorsToTokenData([getActorFromUser(game.user)]);
+    createTokenFromTokenData(actors, local);
+    cancelClickRequest(dropSingleAtClick);
+}
+
+export function addActorsToScene(type) {
+    if (type == "allPCs") {
+        requestClickOnCanvas(dropMultiplePCsAtClick);
+    } else if (type == "onePC") {
+        requestClickOnCanvas(dropSingleAtClick);
+    }
+}
+// turn cursor to crosshair wait for user to click on canvas (add event listener)
+export function requestClickOnCanvas(callback) {
+    $("html, body").css("cursor", "crosshair");
+    canvas.app.stage.addListener("pointerdown", callback);
+}
+//get PCs who are not in viewed scene
+export function getPCsNotInScene() {
     let tokensInScene = Array.from(game.scenes.viewed.tokens);
     let tokenNamesInScene = tokensInScene.map((element) => {
         return element.name;
@@ -264,11 +344,10 @@ export function addPCsToScene(localPosition) {
         const notInScene = pcTokens.filter(
             (element) => !tokenNamesInScene.includes(element.name)
         );
-        createTokenFromTokenData(notInScene, localPosition);
-        // notInScene.forEach((element) => {
-        //     createTokenFromTokenData(element, localPosition);
-        // });
+        return notInScene;
+        // createTokenFromTokenData(notInScene, localPosition);
     } else {
         ui.notifications.warn("Could not find Main PCs folder");
+        return [];
     }
 }
