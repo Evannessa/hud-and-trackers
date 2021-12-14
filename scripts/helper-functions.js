@@ -165,9 +165,9 @@ export async function createTokenFromTokenData(tokenData, localPosition) {
     if (tokenData.length == 0) {
         return;
     }
-    let tokenDataArray = tokenData.map((data) => {
+    let tokenDataArray = tokenData.map((data, index) => {
         let td = duplicate(data);
-        td.x = Math.round(localPosition.x);
+        td.x = Math.round(localPosition.x) + index * 100;
         td.y = Math.round(localPosition.y);
         return td;
     });

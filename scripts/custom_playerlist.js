@@ -170,10 +170,8 @@ export class CustomPlayerlist extends Application {
         html.on("contextmenu", "img", async (event) => {
             event.preventDefault();
             event.stopPropagation();
-            ui.notifications.warn("Right clicked!");
             let element = $(event.currentTarget);
             let id = element.data().pcid;
-            console.log(game.actors.get(id).sheet);
             game.actors.get(id).sheet.render(true);
         });
         html.on("click", "[data-action]", this._handleButtonClick.bind(this));
