@@ -160,6 +160,9 @@ export async function swapToCharacter(character) {
     ui.notifications.notify(`Your active character is now ${character.name}`);
 }
 
+export async function getType(actor) {
+    return actor.type;
+}
 export async function createTokenFromTokenData(tokenData, localPosition) {
     console.log("Token data", tokenData);
     if (tokenData.length == 0) {

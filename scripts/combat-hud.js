@@ -4,7 +4,14 @@ import { ActivationObject } from "./classes/ActivationObject.js";
 let ourCombat;
 let combatHud;
 let inCombat = false;
-
+let phases = ["fastPlayers", "enemies", "slowPlayers", "npcAllies"];
+let phasesWithInitiative = {
+    fastPlayers: 30,
+    enemies: 20,
+    slowPlayers: 10,
+    npcAllies: 2,
+};
+let phasesWithActors = {};
 let socket;
 
 let slowPlayersStore;
@@ -17,7 +24,6 @@ Hooks.once("socketlib.ready", () => {
 });
 
 Hooks.on("renderCombatHud", (app, html) => {
-    console.log("Combat hud rendered");
     if (!game.combatHud.app) {
         game.combatHud.app = app;
     }
@@ -33,17 +39,14 @@ Hooks.on("init", () => {
 
 Hooks.on("ready", async () => {
     registerSettings();
+
+    //if we have a saved combat, render the combat app with details
+    //from our saved combat
+    //otherwise, render it blank
     let savedCombat = await game.settings.get("hud-and-trackers", "savedCombat");
     if (savedCombat) {
         game.combatHud.app = new CombatHud(savedCombat).render(true);
         registerCombatSockets();
-        // Hooks.call("combatHudStartCombat");
-        // if (!game.user.isGM) {
-        //     socket.register(
-        //         "receiveDataAndUpdate",
-        //         game.combatHud.app.receiveDataAndUpdate
-        //     );
-        // }
     } else {
         game.combatHud.app = new CombatHud().render(true);
     }
@@ -66,36 +69,33 @@ async function createRepresentativeActors() {
             name: "RepTokens",
             type: "Actor",
         }).then((parentFolder) => {
-            Actor.create({
-                name: "FastPlayer",
-                type: "NPC",
-                folder: parentFolder.id,
-            });
-            Actor.create({
-                name: "SlowPlayer",
-                type: "NPC",
-                folder: parentFolder.id,
-            });
-            Actor.create({
-                name: "NPCAllies",
-                type: "NPC",
-                folder: parentFolder.id,
-            });
-            Actor.create({
-                name: "Enemies",
-                type: "NPC",
-                folder: parentFolder.id,
+            phases.forEach((phase) => {
+                Actor.create({
+                    name: [phase],
+                    type: "NPC",
+                    folder: parentFolder.id,
+                });
             });
         });
     }
 }
 
+/**
+ * This method:
+ * 1. controls all tokens,
+ * 2. starts a combat, or fetches one if it already exists,
+ * 3. waits for the initiatives to be rolled
+ * 4. then when the promise is returned, starts the true Foundry base combat
+ * 5. And updates and displays the "fake" combat in the combat hud
+ * @returns nothing if the user is not the GM
+ */
 async function startCombat() {
-    console.log("How many times is this being called?");
     let data;
     if (!game.user.isGM) {
         return;
     }
+
+    //if we have a combat, end it
     if (game.combat) {
         game.combat.endCombat();
     } else {
@@ -162,6 +162,8 @@ async function rollNonCombatInitiative(combat) {
     let enemies = [];
     let npcAllies = [];
     let unfilteredPlayers = {};
+
+    //TODO: At some point, add a way to configure these categories
 
     // this will make sure there are no duplicate tokens w/ the same actor,
     // which CAN be a problem if not players.
@@ -271,19 +273,12 @@ function getCanvasToken(id) {
     return canvas.tokens.get(id);
 }
 
-async function createToken(ourActor) {
-    let tokenDoc = await Token.create(ourActor.data.token);
-    let tokenObject = tokenDoc[0]._object;
-    return tokenObject;
-}
-async function createTokenFromActor(ourActor, scene) {
-    let tk = duplicate(ourActor.data.token);
-    tk.x = 100;
-    tk.y = 100;
-    let tokenDoc = await scene.createEmbeddedDocuments("Token", tk);
-    return tokenDoc;
-}
-
+/**
+ * 1. create the representative actors  & their folder if it doesn't exist
+ * 2. If it does exist, get all the tokens we've stored as being in the combat in each category
+ * 3. filter them out if a category has no tokens in it
+ * @param {combat} combat - the currently running 'official' combat
+ */
 async function createRepTokens(combat) {
     let repTokens = game.folders.getName("RepTokens");
     if (!repTokens) {
@@ -291,28 +286,16 @@ async function createRepTokens(combat) {
             name: "RepTokens",
             type: "Actor",
         }).then((parentFolder) => {
-            Actor.create({
-                name: "FastPlayer",
-                type: "NPC",
-                folder: parentFolder.id,
-            });
-            Actor.create({
-                name: "SlowPlayer",
-                type: "NPC",
-                folder: parentFolder.id,
-            });
-            Actor.create({
-                name: "NPCAllies",
-                type: "NPC",
-                folder: parentFolder.id,
-            });
-            Actor.create({
-                name: "Enemies",
-                type: "NPC",
-                folder: parentFolder.id,
+            phases.forEach((phase) => {
+                Actor.create({
+                    name: [phase],
+                    type: "NPC",
+                    folder: parentFolder.id,
+                });
             });
         });
     }
+
     let representativeTokens = [];
     let tokenData = [];
 
@@ -321,16 +304,14 @@ async function createRepTokens(combat) {
     let fastPlayers = fastPlayersStore;
     let slowPlayers = slowPlayersStore;
 
-    console.log("Stored values", enemies, npcAllies, fastPlayers, slowPlayers);
-
     //create all the tokens representing the different "Sides"
     let scene = game.scenes.viewed;
     let tokenActors = repTokens.content;
     if (slowPlayers.length == 0) {
-        tokenActors = tokenActors.filter((actor) => actor.name != "SlowPlayer");
+        tokenActors = tokenActors.filter((actor) => actor.name != "slowPlayers");
     }
     if (fastPlayers.length == 0) {
-        tokenActors = tokenActors.filter((actor) => actor.name != "FastPlayer");
+        tokenActors = tokenActors.filter((actor) => actor.name != "fastPlayers");
     }
     if (npcAllies.length == 0) {
         tokenActors = tokenActors.filter((actor) => actor.name != "NPCAllies");
@@ -338,29 +319,44 @@ async function createRepTokens(combat) {
     if (enemies.length == 0) {
         tokenActors = tokenActors.filter((actor) => actor.name != "Enemies");
     }
-    console.log(tokenActors);
     tokenData = tokenActors.map((actor) => actor.data.token);
-    console.log(tokenData);
-    scene.createEmbeddedDocuments("Token", tokenData);
-    //create all of the representative combatants
+    //create all of the tokens in the scene, then add them as combatants
+
+    await addRepCombatant(combat, tokenData);
+
+    // scene.createEmbeddedDocuments("Token", tokenData);
+    // //create all of the representative combatants
+    // await combat.createEmbeddedDocuments("Combatant", tokenData);
+}
+
+async function addRepCombatant(combat, tokenData) {
+    game.scenes.viewed.createEmbeddedDocuments("Token", tokenData);
     await combat.createEmbeddedDocuments("Combatant", tokenData);
+}
+async function removeRepCombatant(combat, tokenData) {
+    game.scenes.viewed.deleteEmbeddedDocuments("Token", tokenData);
+    await combat.deleteEmbeddedDocuments("Combatant", tokenData);
 }
 
 async function setRepTokenInitiative(combat) {
+    //set initiative to preset initiative
     for (let combatant of combat.turns) {
-        console.log(combatant);
-        if (combatant.data.name == "FastPlayer") {
-            await combat.setInitiative(combatant.id, 30);
-        }
-        if (combatant.data.name == "Enemies") {
-            await combat.setInitiative(combatant.id, 20);
-        }
-        if (combatant.data.name == "SlowPlayer") {
-            await combat.setInitiative(combatant.id, 10);
-        }
-        if (combatant.data.name == "NPCAllies") {
-            await combat.setInitiative(combatant.id, 3);
-        }
+        await combat.setInitiative(
+            combatant.id,
+            phasesWithInitiative[combatant.data.name]
+        );
+        // if (combatant.data.name == "FastPlayer") {
+        //     await combat.setInitiative(combatant.id, 30);
+        // }
+        // if (combatant.data.name == "Enemies") {
+        //     await combat.setInitiative(combatant.id, 20);
+        // }
+        // if (combatant.data.name == "SlowPlayer") {
+        //     await combat.setInitiative(combatant.id, 10);
+        // }
+        // if (combatant.data.name == "NPCAllies") {
+        //     await combat.setInitiative(combatant.id, 3);
+        // }
     }
 }
 
@@ -386,18 +382,17 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
 
     if (round > 0) {
         game.combatHud.app.data.currentRound = round;
-
-        //TODO: clean this up so that the names are the same
         let name = combat.combatant.name;
-        if (name == "FastPlayer") {
-            game.combatHud.app.data.currentPhase = "fastPlayersTurn";
-        } else if (name == "Enemies") {
-            game.combatHud.app.data.currentPhase = "enemiesTurn";
-        } else if (name == "SlowPlayer") {
-            game.combatHud.app.data.currentPhase = "slowPlayersTurn";
-        } else if (name == "NPCAllies") {
-            game.combatHud.app.data.currentPhase = "npcAlliesTurn";
-        }
+        game.combatHud.app.data.currentPhase = `${name}Turn`;
+        // if (name == "FastPlayer") {
+        //     game.combatHud.app.data.currentPhase = "fastPlayersTurn";
+        // } else if (name == "Enemies") {
+        //     game.combatHud.app.data.currentPhase = "enemiesTurn";
+        // } else if (name == "SlowPlayer") {
+        //     game.combatHud.app.data.currentPhase = "slowPlayersTurn";
+        // } else if (name == "NPCAllies") {
+        //     game.combatHud.app.data.currentPhase = "npcAlliesTurn";
+        // }
     }
 });
 
@@ -749,55 +744,7 @@ export default class CombatHud extends Application {
         return {
             ...this.data,
             ...tokens,
-            // isGM: game.user.isGM,
-            // activationObject: this.activationObject,
-            // combatActive: this.inCombat,
-            // fastPlayers: convertToArrayOfTokens(
-            //     Object.keys(this.returnObjectOrEmpty("fastPlayers"))
-            // ),
-            // slowPlayers: convertToArrayOfTokens(
-            //     Object.keys(this.returnObjectOrEmpty("slowPlayers"))
-            // ),
-            // enemies: convertToArrayOfTokens(
-            //     Object.keys(this.returnObjectOrEmpty("enemies"))
-            // ),
-            // npcAllies: convertToArrayOfTokens(
-            //     Object.keys(this.returnObjectOrEmpty("npcAllies"))
-            // ),
-            // currentPhase: this.currentPhase,
-            // currentRound: this.currentRound,
         };
-        // } else {
-        //     this.data = game.settings.get("hud-and-trackers", "savedCombat");
-        //     this.inCombat = this.data.inCombat;
-        //     if (this.inCombat) {
-        //         this.ourCombat = game.combat;
-        //     }
-        //     this.currentPhase = this.data.currentPhase;
-        //     this.currentRound = this.data.currentRound;
-        //     this.activationObject = new ActivationObject(
-        //         this.data.activationObject.activationMap
-        //     );
-        //     return {
-        //         isGM: game.user.isGM,
-        //         activationObject: this.activationObject,
-        //         combatActive: this.inCombat,
-        //         fastPlayers: convertToArrayOfTokens(
-        //             Object.keys(this.returnObjectOrEmpty("fastPlayers"))
-        //         ),
-        //         slowPlayers: convertToArrayOfTokens(
-        //             Object.keys(this.returnObjectOrEmpty("slowPlayers"))
-        //         ),
-        //         enemies: convertToArrayOfTokens(
-        //             Object.keys(this.returnObjectOrEmpty("enemies"))
-        //         ),
-        //         npcAllies: convertToArrayOfTokens(
-        //             Object.keys(this.returnObjectOrEmpty("npcAllies"))
-        //         ),
-        //         currentPhase: this.currentPhase,
-        //         currentRound: this.currentRound,
-        //     };
-        // }
     }
 
     returnObjectOrEmpty(name) {
@@ -824,10 +771,10 @@ export default class CombatHud extends Application {
         event.preventDefault();
         let clickedElement = $(event.currentTarget);
         let action = clickedElement.data().action;
+        console.log(action, " was clicked");
 
         switch (action) {
             case "endCombat":
-                console.log("Ending combat");
                 await this.data.ourCombat.endCombat();
                 this.unhighlightAll(game.canvas.tokens.placeables);
                 await game.settings.set(
@@ -849,14 +796,41 @@ export default class CombatHud extends Application {
                 await this.data.ourCombat.previousTurn();
                 game.combatHud.app.render(game.combatHud.app.position);
                 break;
+            case "addCombatant":
+                let tokens = game.canvas.tokens.controlled;
+                let newPhases = [];
+                //nothing selected
+                //TODO: maybe gray it out and only show it when token is selected
+                if (tokens.length == 0) {
+                    return;
+                }
+                tokens.forEach((token) => {
+                    console.log("adding token to combat " + token.name);
+                    let newPhase = this.addCombatant(token);
+                    if (!newPhases.includes(newPhase)) {
+                        newPhases.push(newPhase);
+                    }
+                });
+                //if we don't have a token or combatant in the combat representing this,
+                //create one
+                //map the names of the current combatants
+                let combatantNames = this.data.ourCombat.combatants.map((combatant) => {
+                    return combatant.data.name;
+                });
+                for (let phase of newPhases) {
+                    //if our added phases
+                    if (!combatantNames.includes(phase)) {
+                        await addRepCombatant(this.data.ourCombat, phase);
+                    }
+                }
+
+                break;
             default:
                 break;
         }
     }
 
     async activateListeners(html) {
-        console.log("Activating listeners again");
-
         if (game.user.isGM && this.data.combatStarter === game.userId) {
             await game.settings.set("hud-and-trackers", "savedCombat", this.data);
         }
@@ -947,6 +921,58 @@ export default class CombatHud extends Application {
         if (game.user.isGM && this.data.combatStarter === game.userId) {
             this.shareApp();
         }
+    }
+
+    /**
+     * Adds a selected token to the combat. Maybe add other ways later.
+     * @param {Token} token - the selected token we're adding to the combat
+     */
+    async addCombatant(token) {
+        let type = await HelperFunctions.getType(token.actor);
+        let disposition = token.data.disposition;
+        let id = token.actor.id;
+        let phase = "enemies";
+        switch (type) {
+            case "NPC":
+            case "Companion":
+                if (disposition == 0 || disposition == 1) {
+                    phase = "npcAllies";
+                } else {
+                    phase = "enemies";
+                }
+                break;
+            case "PC":
+                phase = "slowPlayers";
+                break;
+        }
+        this.data.activationObject.activationMap[`${phase}`][id] = false;
+        return phase;
+
+        // //if npc or companion
+        // if (type == "NPC" || type == "Companion") {
+        //     //if friendly or neutral disposition
+        //     if (token.data.disposition == 0 || token.data.disposition == 1) {
+        //         this.data.activationObject.activationMap.npcAllies[
+        //             token.actor.id
+        //         ] = false;
+        //         //if hostile disposition
+        //     } else if (token.data.disposition == -1) {
+        //         this.data.activationObject.activationMap.enemies[token.actor.id] = false;
+        //     }
+        // } else if (type == "PC") {
+        //     this.data.activationObject.activationMap.slowPlayers[token.actor.id] = false;
+        // }
+    }
+    removeCombatant(token) {}
+
+    addRepCombatant(phase) {
+        this.data.ourCombat.createCombatant(phase);
+    }
+    isPhaseEmpty(phase) {
+        if (Object.keys(phase).length == 0) {
+            return true;
+        }
+        return false;
     }
 
     tintMarkerOnToken(token, color) {

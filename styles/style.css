@@ -543,16 +543,16 @@
   color: white;
 }
 #helperHud .hoverBar.holdOpen + .utility {
-  display: flex;
-  flex-direction: column;
+  transform: scaleY(1);
+  opacity: 1;
 }
 #helperHud .hoverBar:hover {
   background-color: var(--palette-dialog-darker, var(--tui-black4));
   color: var(--accent-300);
 }
 #helperHud:hover .utility {
-  display: flex;
-  flex-direction: column;
+  transform: scaleY(1);
+  opacity: 1;
 }
 #helperHud:hover .window-header {
   display: block;
@@ -569,8 +569,12 @@
   box-shadow: none;
 }
 #helperHud .utility {
-  display: none;
+  display: flex;
   flex-direction: column;
+  transform: scaleY(0);
+  opacity: 0;
+  transform-origin: top center;
+  transition: transform 100ms ease-out, opacity 200ms ease-out;
 }
 #helperHud .utility button {
   width: 100%;

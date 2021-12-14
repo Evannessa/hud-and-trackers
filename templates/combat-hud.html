@@ -54,7 +54,10 @@
 	<button class="previousTurn" data-action="previousTurn"><<i class="fas fa-arrow-alt-from-left"></i></button>
 	<button class="nextTurn" data-action="nextTurn">><i class="fas fa-arrow-alt-from-right"></i></button>
 </div>
+{{#if isGM}}
 <button class="endCombat" data-action="endCombat"><i class="fas fa-power-off"></i>End Combat</button>
+<button class="addCombatant" data-action="addCombatant"><i class="fas fa-user-plus"></i>Add Combatant</button>
+{{/if}}
 {{else}}
 <div><button class="startCombatButton" data-action="startCombat" {{#unless isGM}}disabled{{/unless}}>Start Combat</button></div>
 {{/if}}
