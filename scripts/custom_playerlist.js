@@ -181,13 +181,3 @@ export class CustomPlayerlist extends Application {
 
     async _updateObject(event, formData) {}
 }
-
-function documentTest(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    ui.notifications.warn("Right clicked!");
-    let element = $(event.currentTarget);
-    let id = element.data().pcid;
-    console.log(game.actors.get(id).sheet);
-    game.actors.get(id).sheet.render(true);
-}
