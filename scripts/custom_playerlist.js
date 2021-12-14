@@ -142,8 +142,8 @@ export class CustomPlayerlist extends Application {
         let action = el.data().action;
         switch (action) {
             case "toggle-player-list":
-                HelperFunctions.togglePlayerList();
-                this.element.toggleClass("slide-up");
+                // HelperFunctions.togglePlayerList();
+                // this.element.toggleClass("slide-up");
                 el.toggleClass("toggled");
             // this.setPosition({"height": $(document).body.style.getProperty("--playerlist-height")});
             // console.log(this);
@@ -167,9 +167,27 @@ export class CustomPlayerlist extends Application {
             }
             // this.render();
         });
-        //TODO: Put this back in later once you've thought of a good button
-        // html.on("click", "[data-action]", this._handleButtonClick.bind(this));
+        html.on("contextmenu", "img", async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            ui.notifications.warn("Right clicked!");
+            let element = $(event.currentTarget);
+            let id = element.data().pcid;
+            console.log(game.actors.get(id).sheet);
+            game.actors.get(id).sheet.render(true);
+        });
+        html.on("click", "[data-action]", this._handleButtonClick.bind(this));
     }
 
     async _updateObject(event, formData) {}
+}
+
+function documentTest(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    ui.notifications.warn("Right clicked!");
+    let element = $(event.currentTarget);
+    let id = element.data().pcid;
+    console.log(game.actors.get(id).sheet);
+    game.actors.get(id).sheet.render(true);
 }

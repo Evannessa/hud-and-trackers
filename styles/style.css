@@ -1189,12 +1189,94 @@
   opacity: 1;
 }
 #custom_playerlist .window-content .utility-buttons button {
-  position: absolute;
-  top: 0;
+  padding: 0;
+  border: none;
+  margin: 0;
+  background: none;
+  color: #212121b7;
+  background-color: #0f0f0f;
+  position: absolute !important;
+  bottom: calc(100% - 10px);
   left: 0;
   max-width: 8rem;
   z-index: 10;
-  box-shadow: 0 0 0 1px #ffffff75, -3px 0 5px 5px rgba(68, 195, 253, 0.66), 3px 0 5px 5px rgba(92, 92, 214, 0.43);
+  background-color: #7070707a;
+  border-top: 1px solid rgba(255, 255, 255, 0.198);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.198);
+  position: relative;
+  position: relative;
+}
+@supports ((-webkit-backdrop-filter: blur(2px)) or (backdrop-filter: blur(2px))) or (-webkit-backdrop-filter: blur(2px)) {
+  #custom_playerlist .window-content .utility-buttons button {
+    background-color: #70707044;
+    -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
+  }
+}
+#custom_playerlist .window-content .utility-buttons button:before {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  top: 50%;
+  left: 50%;
+  content: "";
+  z-index: -1;
+  background-color: var(--neon-blue);
+  filter: blur(8px);
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 100ms linear;
+  transform: translate(-50%, -50%) scale(0);
+}
+#custom_playerlist .window-content .utility-buttons button:after {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  top: 50%;
+  left: 50%;
+  content: "";
+  z-index: -1;
+  border-radius: 50%;
+  background-color: var(--neon-blue);
+  transform: scale(0);
+  transition: transform 100ms linear;
+  transform: translate(-50%, -50%) scale(0);
+}
+#custom_playerlist .window-content .utility-buttons button i {
+  filter: drop-shadow(0 0 0 transparent);
+  transition: color 120ms linear, filter 120ms linear;
+  z-index: 13;
+}
+#custom_playerlist .window-content .utility-buttons button:hover {
+  color: var(--royal-blue-light);
+}
+#custom_playerlist .window-content .utility-buttons button:hover i {
+  filter: drop-shadow(0 0 5px var(--neon-blue));
+}
+#custom_playerlist .window-content .utility-buttons button.toggled {
+  color: white;
+  position: relative;
+  position: relative;
+}
+#custom_playerlist .window-content .utility-buttons button.toggled:before {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  top: 50%;
+  left: 50%;
+  content: "";
+  z-index: -1;
+  transform: translate(-50%, -50%) scale(1);
+}
+#custom_playerlist .window-content .utility-buttons button.toggled:after {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  top: 50%;
+  left: 50%;
+  content: "";
+  z-index: -1;
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .visible {
@@ -1224,36 +1306,6 @@
   justify-content: center;
   align-items: center;
   vertical-align: middle;
-}
-.btn-round.toggled {
-  height: 2rem;
-  width: 2rem;
-  position: relative;
-  position: relative;
-  position: relative;
-}
-.btn-round.toggled:before {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  content: "";
-  z-index: 1;
-  border: 2px solid white;
-  filter: blur(2px);
-  border-radius: 50%;
-}
-.btn-round.toggled:after {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  content: "";
-  z-index: 1;
-  border: 1px solid white;
-  border-radius: 50%;
 }
 .btn-ghost {
   background: transparent;
