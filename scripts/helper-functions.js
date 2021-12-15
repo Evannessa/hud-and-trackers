@@ -160,7 +160,22 @@ export async function swapToCharacter(character) {
     ui.notifications.notify(`Your active character is now ${character.name}`);
 }
 
-export async function checkIfInScene(actor) {}
+/**
+ * Check if scene has a token. If not, suggest adding one
+ * OR look in previous scene for token
+ * @param {*} actor
+ */
+export async function checkIfSceneHasToken(actor) {
+    let token = game.scenes.viewed.data.tokens.contents.find((token) => {
+        return token.actor.id == actor.id;
+    });
+    if (token) {
+        //if we found the token, return it
+        return token;
+    } else {
+        //look in actor's initial scene for token
+    }
+}
 
 export async function getType(actor) {
     return actor.type;

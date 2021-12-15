@@ -11,7 +11,7 @@ let phasesWithInitiative = {
     slowPlayers: 10,
     npcAllies: 2,
 };
-let phasesWithActors = {};
+let phasesWithActorIDs = {};
 let socket;
 
 let slowPlayersStore;
@@ -237,17 +237,32 @@ async function rollNonCombatInitiative(combat) {
             }
         }
     }
+    let tokensByPhase = [fastPlayers, enemies, slowPlayers, npcAllies];
+    let index = 0;
+    for (let tokenGroup of tokensByPhase) {
+        phasesWithActorIDs[phases[index]] = tokenGroup.map((token) => {
+            return token.actor.id;
+        });
+        index++;
+    }
+    console.log("Phases with actors are", phasesWithActorIDs);
+    // slowPlayersStore = slowPlayers.map((token) => {
+    //     return token.actor.id;
+    // });
+    // fastPlayersStore = fastPlayers.map((token) => {
+    //     return token.actor.id;
+    // });
 
-    slowPlayersStore = convertToArrayOfIDs(slowPlayers);
-    fastPlayersStore = convertToArrayOfIDs(fastPlayers);
-    npcAlliesStore = convertToArrayOfIDs(npcAllies);
-    enemiesStore = convertToArrayOfIDs(enemies);
-    let phasesWithActors = {
-        slowPlayers: convertToArrayOfIDs(slowPlayers),
-        fastPlayers: convertToArrayOfIDs(fastPlayers),
-        npcAllies: convertToArrayOfIDs(npcAllies),
-        enemies: convertToArrayOfIDs(enemies),
-    };
+    // // slowPlayersStore = convertToArrayOfIDs(slowPlayers);
+    // // fastPlayersStore = convertToArrayOfIDs(fastPlayers);
+    // // npcAlliesStore = convertToArrayOfIDs(npcAllies);
+    // // enemiesStore = convertToArrayOfIDs(enemies);
+    // let phasesWithActors = {
+    //     slowPlayers: convertToArrayOfIDs(slowPlayers),
+    //     fastPlayers: convertToArrayOfIDs(fastPlayers),
+    //     npcAllies: convertToArrayOfIDs(npcAllies),
+    //     enemies: convertToArrayOfIDs(enemies),
+    // };
 }
 
 /**
@@ -266,13 +281,13 @@ function convertToArrayOfIDs(array) {
  * @returns an array of tokens
  */
 function convertToArrayOfTokens(array) {
-    console.log("Object keys is " + array);
     if (!array) {
         return;
     }
-    return array.map((id) => {
-        return game.canvas.tokens.objects.children.find((token) => token.id == id);
-    });
+    if (HelperFunctions.checkIfSceneHasToken(game.scenes.viewed))
+        return array.map((id) => {
+            return game.canvas.tokens.objects.children.find((token) => token.id == id);
+        });
 }
 
 function getActor(ourToken) {
@@ -319,18 +334,23 @@ async function createRepTokens(combat) {
     let scene = game.scenes.viewed;
     let tokenActors = repTokens.content;
     //but first check if there are characters in that category
-    if (slowPlayers.length == 0) {
-        tokenActors = tokenActors.filter((actor) => actor.name != "slowPlayers");
+    for (let phase in phasesWithActorIDs) {
+        if (phasesWithActorIDs[phase].length == 0) {
+            tokenActors = tokenActors.filter((actor) => actor.name != phase);
+        }
     }
-    if (fastPlayers.length == 0) {
-        tokenActors = tokenActors.filter((actor) => actor.name != "fastPlayers");
-    }
-    if (npcAllies.length == 0) {
-        tokenActors = tokenActors.filter((actor) => actor.name != "npcAllies");
-    }
-    if (enemies.length == 0) {
-        tokenActors = tokenActors.filter((actor) => actor.name != "enemies");
-    }
+    // if (slowPlayers.length == 0) {
+    //     tokenActors = tokenActors.filter((actor) => actor.name != "slowPlayers");
+    // }
+    // if (fastPlayers.length == 0) {
+    //     tokenActors = tokenActors.filter((actor) => actor.name != "fastPlayers");
+    // }
+    // if (npcAllies.length == 0) {
+    //     tokenActors = tokenActors.filter((actor) => actor.name != "npcAllies");
+    // }
+    // if (enemies.length == 0) {
+    //     tokenActors = tokenActors.filter((actor) => actor.name != "enemies");
+    // }
     tokenData = tokenActors.map((actor) => actor.data.token);
     //create all of the tokens in the scene, then add them as combatants
 
@@ -360,7 +380,6 @@ async function setRepTokenInitiative(combat) {
 let refreshed = false;
 
 Hooks.on("updateCombat", async (combat, roundData, diff) => {
-    console.log(combat, roundData, diff);
     if (combat.current.round > combat.previous.round) {
         //if it's a new round
         game.combatHud.app.resetActivations();
@@ -553,8 +572,14 @@ Hooks.once("renderCombatHud", (app, html) => {
     }
 });
 
-function createUniqueCombatant(id, token) {}
-
+function convertToArrayOfActors(array) {
+    if (!array) {
+        return;
+    }
+    return array.map((actorId) => {
+        return game.actors.get(actorId);
+    });
+}
 /**
  * @param Combat!
  */
@@ -567,13 +592,18 @@ export default class CombatHud extends Application {
         this.data.inCombat = true;
         this.data.initialized = true;
 
-        let fastPlayers = convertToArrayOfTokens(fastPlayersStore);
-        let slowPlayers = convertToArrayOfTokens(slowPlayersStore);
-        let enemies = convertToArrayOfTokens(enemiesStore);
-        let npcAllies = convertToArrayOfTokens(npcAlliesStore);
+        let phasesWithActors = {};
+        for (let phase in phasesWithActorIDs) {
+            phasesWithActors[phase] = convertToArrayOfActors(phasesWithActorIDs[phase]);
+        }
+        console.log("Phases with actors", phasesWithActors);
+        // let fastPlayers = convertToArrayOfTokens(fastPlayersStore);
+        // let slowPlayers = convertToArrayOfTokens(slowPlayersStore);
+        // let enemies = convertToArrayOfTokens(enemiesStore);
+        // let npcAllies = convertToArrayOfTokens(npcAlliesStore);
         this.data.currentRound = ourCombat.current.round;
         //if we have no fast players
-        if (fastPlayers.length == 0) {
+        if (phasesWithActors.fastPlayers?.length == 0) {
             //set the first turn to enemies
             this.data.currentPhase = "enemiesTurn";
         } else {
@@ -583,10 +613,10 @@ export default class CombatHud extends Application {
 
         this.data.activationObject = new ActivationObject(
             {},
-            fastPlayers,
-            slowPlayers,
-            enemies,
-            npcAllies
+            phasesWithActors.fastPlayers,
+            phasesWithActors.slowPlayers,
+            phasesWithActors.enemies,
+            phasesWithActors.npcAllies
         );
         game.combatHud.app.render(game.combatHud.app.position);
     }
@@ -729,7 +759,7 @@ export default class CombatHud extends Application {
         let tokenMap = Object.values(this.data.activationObject.activationMap).map(
             (obj) => {
                 console.log(obj);
-                return convertToArrayOfTokens(Object.keys(obj));
+                return convertToArrayOfActors(Object.keys(obj));
             }
         );
         console.log(
@@ -842,13 +872,14 @@ export default class CombatHud extends Application {
                         this.data.ourCombat,
                         tokenData
                     );
-                    console.log("New Combatants?", combatants);
+                    //set their initiative
                     for (let combatant of combatants) {
                         this.data.ourCombat.setInitiative(
                             combatant.id,
                             phasesWithInitiative[combatant.data.name]
                         );
                     }
+                    this.render(true);
                 }
                 break;
             default:
@@ -974,21 +1005,6 @@ export default class CombatHud extends Application {
         }
         this.data.activationObject.activationMap[`${phase}`][id] = false;
         return phase;
-
-        // //if npc or companion
-        // if (type == "NPC" || type == "Companion") {
-        //     //if friendly or neutral disposition
-        //     if (token.data.disposition == 0 || token.data.disposition == 1) {
-        //         this.data.activationObject.activationMap.npcAllies[
-        //             token.actor.id
-        //         ] = false;
-        //         //if hostile disposition
-        //     } else if (token.data.disposition == -1) {
-        //         this.data.activationObject.activationMap.enemies[token.actor.id] = false;
-        //     }
-        // } else if (type == "PC") {
-        //     this.data.activationObject.activationMap.slowPlayers[token.actor.id] = false;
-        // }
     }
     removeCombatant(token) {}
 

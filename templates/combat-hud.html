@@ -16,7 +16,7 @@
 {{#if (eq currentPhase "fastPlayersTurn")}}
 <div class="combatant-wrapper">
     {{#each fastPlayers}}
-    <div class="combatant-div" data-id="{{this.id}}" data-phase="fastPlayers">
+    <div class="combatant-div" data-sceneid="{{this.scene.id}}" data-actorid="{{this.actor.id}}" data-id="{{this.id}}" data-phase="fastPlayers">
         <p>{{this.name}}</p>
         <img src="{{this.data.img}}" />
     </div>
@@ -25,7 +25,7 @@
 {{/if}} {{#if (eq currentPhase "slowPlayersTurn")}}
 <div class="combatant-wrapper">
     {{#each slowPlayers}}
-    <div class="combatant-div" data-id="{{this.id}}" data-phase="slowPlayers">
+    <div class="combatant-div" data-sceneid="{{this.scene.id}}"data-actorid="{{this.actor.id}}" data-id="{{this.id}}" data-phase="slowPlayers">
         <p>{{this.name}}</p>
         <img src="{{this.data.img}}" />
     </div>
@@ -34,7 +34,7 @@
 {{/if}} {{#if (eq currentPhase "enemiesTurn")}}
 <div class="combatant-wrapper">
     {{#each enemies}}
-    <div class="combatant-div" data-id="{{this.id}}" data-phase="enemies">
+    <div class="combatant-div" data-sceneid="{{this.scene.id}}" data-actorid="{{this.actor.id}}" data-id="{{this.id}}" data-phase="enemies">
         <p>{{this.name}}</p>
         <img src="{{this.data.img}}" />
     </div>
@@ -43,7 +43,7 @@
 {{/if}} {{#if (eq currentPhase "npcAlliesTurn")}}
 <div class="combatant-wrapper">
     {{#each npcAllies}}
-    <div class="combatant-div" data-id="{{this.id}}" data-phase="npcAllies">
+    <div class="combatant-div" data-sceneid="{{this.scene.id}}" data-actorid="{{this.actor.id}}" data-id="{{this.id}}" data-phase="npcAllies">
         <p>{{this.name}}</p>
         <img src="{{this.data.img}}" />
     </div>
