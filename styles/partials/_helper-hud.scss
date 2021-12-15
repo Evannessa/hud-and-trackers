@@ -43,6 +43,7 @@
 		.utility {
 			transform: scaleY(1);
 			opacity: 1;
+			height: fit-content;
 			// display: flex;
 			// flex-direction: column;
 		}
@@ -77,9 +78,10 @@
 		display: flex;
 		flex-direction: column;
 		transform: scaleY(0);
+		height: 0;
 		opacity: 0;
 		transform-origin: top center;
-		transition: transform 100ms ease-out, opacity 200ms ease-out;
+		transition: transform 100ms ease-out, opacity 200ms ease-out, height 100ms ease-out;
 
 
 		button {

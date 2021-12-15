@@ -424,10 +424,10 @@ Hooks.on("deleteCombat", async (combat) => {
         //find all tokens on canvas with names of the phase rep tokens
         allTokens.forEach((token) => {
             if (
-                token.name == "Enemies" ||
-                token.name == "FastPlayer" ||
-                token.name == "NPCAllies" ||
-                token.name == "SlowPlayer"
+                token.name == "enemies" ||
+                token.name == "fastPlayers" ||
+                token.name == "npcAllies" ||
+                token.name == "slowPlayers"
             ) {
                 tokensToDelete.push(token.id);
             }
@@ -593,8 +593,11 @@ export default class CombatHud extends Application {
         this.data.initialized = true;
 
         let phasesWithActors = {};
+        this.data.initialTokens = {};
         for (let phase in phasesWithActorIDs) {
             phasesWithActors[phase] = convertToArrayOfActors(phasesWithActorIDs[phase]);
+            //TODO: get initial tokens from actors
+            // this.data.initialTokens = phasesWithActors.map()
         }
         console.log("Phases with actors", phasesWithActors);
         // let fastPlayers = convertToArrayOfTokens(fastPlayersStore);

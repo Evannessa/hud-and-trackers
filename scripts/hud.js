@@ -434,6 +434,7 @@ export class HelperHud extends Application {
                     "helperHudPosition",
                     helperHudPosition
                 );
+                ui.notifications.notify("App positions saved");
                 break;
             default:
                 break;
