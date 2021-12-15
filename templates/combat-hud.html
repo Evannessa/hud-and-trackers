@@ -17,7 +17,9 @@
 	{{#each tokens}}
 		{{#if (eq  @key @root.currentPhase)}}
 		{{#each this}}
-  		<div class="combatant-div" data-initial-scene="{{this.scene.id}}" data-actor-id="{{this.id}}" data-token-id="{{this.id}}" data-phase="{{@root.currentPhase}}">
+
+  		<div class="combatant-div" data-id="{{this.id}}" data-phase="{{@root.currentPhase}}">
+  		<!-- <div class="combatant-div" data-initial-scene="{{this.scene.id}}" data-actor-id="{{this.id}}" data-token-id="{{this.id}}" data-phase="{{@root.currentPhase}}"> -->
         	<p>{{this.name}}</p>
         	<img src="{{this.data.img}}" />
     	</div>

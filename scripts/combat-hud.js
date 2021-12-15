@@ -508,28 +508,28 @@ function removeMarkerOnToken(token) {
     }
 }
 Hooks.on("canvasReady", (canvas) => {
-    if (game.combatHud.app && game.combatHud.initialSceneId) {
-        if (canvas.scene.data._id == game.combatHud.initialSceneId) {
-            console.log("Switching back to original scene");
-            //back on the original scene, start to highlight everything again
-            if (game.combatHud.app.element) {
-                let combatantDivs = game.combatHud.app.element.find(".combatant-div");
-                for (let combatantDiv of combatantDivs) {
-                    if (!combatantDiv.classList.contains("activated")) {
-                        game.combatHud.app.highlightTokenInGroup(
-                            combatantDiv.dataset.id,
-                            false
-                        );
-                    } else {
-                        game.combatHud.app.highlightTokenInGroup(
-                            combatantDiv.dataset.id,
-                            true
-                        );
-                    }
-                }
-            }
-        }
-    }
+    // if (game.combatHud.app && game.combatHud.initialSceneId) {
+    //     if (canvas.scene.data._id == game.combatHud.initialSceneId) {
+    //         console.log("Switching back to original scene");
+    //         //back on the original scene, start to highlight everything again
+    //         if (game.combatHud.app.element) {
+    //             let combatantDivs = game.combatHud.app.element.find(".combatant-div");
+    //             for (let combatantDiv of combatantDivs) {
+    //                 if (!combatantDiv.classList.contains("activated")) {
+    //                     game.combatHud.app.createMarkerOnToken(
+    //                         combatantDiv.dataset.id,
+    //                         false
+    //                     );
+    //                 } else {
+    //                     game.combatHud.app.highlightTokenInGroup(
+    //                         combatantDiv.dataset.id,
+    //                         true
+    //                     );
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 });
 Hooks.on("canvasInit", (canvas) => {
     //we're trying to get the scene where the combat started
@@ -593,17 +593,22 @@ export default class CombatHud extends Application {
         this.data.initialized = true;
 
         let phasesWithActors = {};
-        this.data.initialTokens = {};
+        this.data.initialTokens = new Map();
+        this.data.initialScenes = new Map();
+
+        //convert all the stored IDs into actors
         for (let phase in phasesWithActorIDs) {
             phasesWithActors[phase] = convertToArrayOfActors(phasesWithActorIDs[phase]);
-            //TODO: get initial tokens from actors
-            // this.data.initialTokens = phasesWithActors.map()
         }
-        console.log("Phases with actors", phasesWithActors);
-        // let fastPlayers = convertToArrayOfTokens(fastPlayersStore);
-        // let slowPlayers = convertToArrayOfTokens(slowPlayersStore);
-        // let enemies = convertToArrayOfTokens(enemiesStore);
-        // let npcAllies = convertToArrayOfTokens(npcAlliesStore);
+        const allActorsInCombat = Object.values(phasesWithActors).flat();
+
+        //set initial scene and initial token of each actor
+        for (let actor of allActorsInCombat) {
+            this.setInitialTokenAndScene(actor);
+        }
+        this.data.initialTokens = Object.fromEntries(this.data.initialTokens);
+        this.data.initialScenes = Object.fromEntries(this.data.initialScenes);
+
         this.data.currentRound = ourCombat.current.round;
         //if we have no fast players
         if (phasesWithActors.fastPlayers?.length == 0) {
@@ -653,6 +658,16 @@ export default class CombatHud extends Application {
 
     static ID = "combat-hud";
 
+    setInitialTokenAndScene(actor) {
+        //initial tokens needs to be set to the initial token on this scene
+        this.data.initialTokens.set(
+            actor.id,
+            HelperFunctions.getSceneTokenFromActor(actor).id
+        );
+        //initial scenes needs to be set to the initial scene
+        this.data.initialScenes.set(actor.id, game.scenes.viewed.id);
+    }
+
     initializeDefaultData() {
         return {
             isGM: game.user.isGM,
@@ -679,6 +694,7 @@ export default class CombatHud extends Application {
     }
 
     highlightTokenInGroup(tokenId, hasActed) {
+        // createMarkerOnToken(token)
         let token = game.canvas.tokens.placeables.find((token) => token.id == tokenId);
         if (game.user.isGM && token) {
             createMarkerOnToken(token, hasActed);
@@ -686,7 +702,7 @@ export default class CombatHud extends Application {
     }
 
     setTokenHasActed(elementId, userId, hasActed) {
-        if (!game.combatHud.app.checkIfUserIsTokenOwner(elementId, userId)) {
+        if (!game.combatHud.app.checkIfUserIsActorOwner(elementId, userId)) {
             return;
         }
         //find element in hud, and add class to show it has acted
@@ -894,6 +910,7 @@ export default class CombatHud extends Application {
     async activateListeners(html) {
         if (game.user.isGM && this.data.combatStarter === game.userId) {
             await game.settings.set("hud-and-trackers", "savedCombat", this.data);
+            console.log("Our data is", this.data);
         }
 
         //remove app from "ui.windows" to not let it close with the escape key
@@ -905,27 +922,58 @@ export default class CombatHud extends Application {
 
         windowContent.off("click", "[data-action]");
         windowContent.on("click", "[data-action]", this._onHandleButtonClick.bind(this));
+
         //check if in combat
         if (this.data.inCombat) {
-            //find the in combat button, and allow only the GM to click it
+            //store the initial token and scene ids on the combatant div
+            for (let key in this.data.initialTokens) {
+                let value = this.data.initialTokens[key];
+                console.log("Key and value are", key, value);
+                $(`[data-id=${key}]`).attr("data-initial-token-id", value);
+            }
+            for (let key in this.data.initialScenes) {
+                let value = this.data.initialScenes[key];
+                $(`[data-id=${key}]`).attr("data-initial-scene-id", value);
+            }
+            // this.data.initialTokens.forEach((value, key) => {
+            //     $(`[data-actor-id=${key}]`).attr("data-initial-token-id", value);
+            // });
+            // this.data.initialScenes.forEach((value, key) => {
+            //     $(`[data-actor-id=${key}]`).attr("data-initial-scene-id", value);
+            // });
+
             for (let combatantDiv of combatantDivs) {
-                if (!combatantDiv.classList.contains("activated")) {
-                    this.highlightTokenInGroup(combatantDiv.dataset.id, false);
-                } else {
-                    this.highlightTokenInGroup(combatantDiv.dataset.id, true);
+                //get the token, either on the current scene,
+                //or the initial scene where the token was created
+                let token = HelperFunctions.checkIfSceneHasToken(
+                    combatantDiv.dataset.id,
+                    combatantDiv.dataset.initialTokenId,
+                    combatantDiv.dataset.initialSceneId
+                );
+                console.log("Token is ", token);
+
+                if (token) {
+                    console.log(token);
+                    if (!combatantDiv.classList.contains("activated")) {
+                        // this.highlightTokenInGroup(token.id, false);
+                        createMarkerOnToken(token.object, false);
+                    } else {
+                        createMarkerOnToken(token.object, true);
+                        // this.highlightTokenInGroup(token.id, true);
+                    }
+
+                    $(combatantDiv).mouseenter((event) => {
+                        this.tintMarkerOnToken(token, 0xff5733);
+                    });
+
+                    $(combatantDiv).mouseleave((event) => {
+                        this.tintMarkerOnToken(token, 0xffffff);
+                    });
                 }
-                let token = getCanvasToken(combatantDiv.dataset.id);
-
-                $(combatantDiv).mouseenter((event) => {
-                    this.tintMarkerOnToken(token, 0xff5733);
-                });
-
-                $(combatantDiv).mouseleave((event) => {
-                    this.tintMarkerOnToken(token, 0xffffff);
-                });
 
                 $(combatantDiv).mousedown((event) => {
                     let elementId = event.currentTarget.dataset.id;
+                    let tokenId = event.currentTarget.dataset.tokenId;
                     if (event.which == 3) {
                         //right click
                         if (!game.user.isGM) {
@@ -955,9 +1003,13 @@ export default class CombatHud extends Application {
                         }
                     } else if (event.which == 1) {
                         if (game.user.isGM) {
-                            let token = getCanvasToken(combatantDiv.dataset.id);
+                            let token = HelperFunctions.checkIfSceneHasToken(
+                                combatantDiv.dataset.id,
+                                combatantDiv.dataset.initialTokenId,
+                                combatantDiv.dataset.initialSceneId
+                            );
                             if (token) {
-                                token.control({
+                                token.object.control({
                                     releaseOthers: true,
                                 });
                             }
@@ -971,7 +1023,8 @@ export default class CombatHud extends Application {
                     if (combatantDiv.dataset.id == id) {
                         if (map[id] == true) {
                             $(combatantDiv).addClass("activated");
-                            this.highlightTokenInGroup(token.id, true);
+                            this.createMarkerOnToken(token.object, true);
+                            // this.highlightTokenInGroup(token.id, true);
                         }
                     }
                 }
@@ -1033,9 +1086,8 @@ export default class CombatHud extends Application {
         return windowContent.querySelector(elementSelector);
     }
 
-    checkIfUserIsTokenOwner(tokenId, userId) {
-        let token = getCanvasToken(tokenId);
-        let actor = getActor(token);
+    checkIfUserIsActorOwner(actorId, userId) {
+        let actor = game.actors.get(actorId);
         let permission = actor.data.permission[userId];
         if (permission == 3) {
             return true;

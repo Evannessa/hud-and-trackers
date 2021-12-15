@@ -165,7 +165,8 @@ export async function swapToCharacter(character) {
  * OR look in previous scene for token
  * @param {*} actor
  */
-export async function checkIfSceneHasToken(actor) {
+export function checkIfSceneHasToken(actorId, tokenId, sceneId) {
+    let actor = getEntityById("Actor", actorId);
     let token = game.scenes.viewed.data.tokens.contents.find((token) => {
         return token.actor.id == actor.id;
     });
@@ -174,6 +175,16 @@ export async function checkIfSceneHasToken(actor) {
         return token;
     } else {
         //look in actor's initial scene for token
+        token = game.scenes.get(sceneId).data.tokens.get(tokenId);
+        if (token) {
+            return token;
+        } else {
+            //TODO: Add functionality for adding token, maybe to add all combatants without tokens
+            //ask to create token from actor
+            ui.notifications.warn(
+                `${actor.name} doesn't have a token in this scene. Add one?`
+            );
+        }
     }
 }
 

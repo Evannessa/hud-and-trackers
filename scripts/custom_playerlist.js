@@ -151,6 +151,8 @@ export class CustomPlayerlist extends Application {
     }
 
     activateListeners(html) {
+        //remove app from "ui.windows" to not let it close with the escape key
+        delete ui.windows[this.appId];
         super.activateListeners(html);
         html.on("click", "img", async (event) => {
             event.preventDefault();
