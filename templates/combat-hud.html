@@ -1,7 +1,7 @@
 {{#if inCombat}}
 
 <h1 class="roundNumber">Current Round: {{currentRound}}</h1>
-<h1 class="phaseName {{currentPhase}}">{{convertToSentence currentPhase}}</h1>
+<h1 class="phaseName {{currentPhase}}">{{convertToSentence currentPhase}} Turn</h1>
 <span class="tooltip">
     <ol>
         <li class="instructions">Right click to mark that character has acted.</li>
@@ -13,46 +13,22 @@
         <li class="instructions">Left click to select token.</li>
     </ol>
 </span>
-{{#if (eq currentPhase "fastPlayersTurn")}}
 <div class="combatant-wrapper">
-    {{#each fastPlayers}}
-    <div class="combatant-div" data-sceneid="{{this.scene.id}}" data-actorid="{{this.actor.id}}" data-id="{{this.id}}" data-phase="fastPlayers">
-        <p>{{this.name}}</p>
-        <img src="{{this.data.img}}" />
-    </div>
-    {{/each}}
-</div>
-{{/if}} {{#if (eq currentPhase "slowPlayersTurn")}}
-<div class="combatant-wrapper">
-    {{#each slowPlayers}}
-    <div class="combatant-div" data-sceneid="{{this.scene.id}}"data-actorid="{{this.actor.id}}" data-id="{{this.id}}" data-phase="slowPlayers">
-        <p>{{this.name}}</p>
-        <img src="{{this.data.img}}" />
-    </div>
-    {{/each}}
-</div>
-{{/if}} {{#if (eq currentPhase "enemiesTurn")}}
-<div class="combatant-wrapper">
-    {{#each enemies}}
-    <div class="combatant-div" data-sceneid="{{this.scene.id}}" data-actorid="{{this.actor.id}}" data-id="{{this.id}}" data-phase="enemies">
-        <p>{{this.name}}</p>
-        <img src="{{this.data.img}}" />
-    </div>
-    {{/each}}
-</div>
-{{/if}} {{#if (eq currentPhase "npcAlliesTurn")}}
-<div class="combatant-wrapper">
-    {{#each npcAllies}}
-    <div class="combatant-div" data-sceneid="{{this.scene.id}}" data-actorid="{{this.actor.id}}" data-id="{{this.id}}" data-phase="npcAllies">
-        <p>{{this.name}}</p>
-        <img src="{{this.data.img}}" />
-    </div>
-    {{/each}}
-</div>
-{{/if}}
+	{{#each tokens}}
+		{{#if (eq  @key @root.currentPhase)}}
+		{{#each this}}
+  		<div class="combatant-div" data-initial-scene="{{this.scene.id}}" data-actor-id="{{this.id}}" data-token-id="{{this.id}}" data-phase="{{@root.currentPhase}}">
+        	<p>{{this.name}}</p>
+        	<img src="{{this.data.img}}" />
+    	</div>
+		{{/each}}
+		{{/if}}
+	{{/each}}
+	</div>
+   
 <div class="turnButtonWrapper">
-	<button class="previousTurn" data-action="previousTurn"><<i class="fas fa-arrow-alt-from-left"></i></button>
-	<button class="nextTurn" data-action="nextTurn">><i class="fas fa-arrow-alt-from-right"></i></button>
+	<button class="previousTurn" data-action="previousTurn"><i class="fas fa-arrow-alt-from-left"></i></button>
+	<button class="nextTurn" data-action="nextTurn"><i class="fas fa-arrow-alt-from-right"></i></button>
 </div>
 {{#if isGM}}
 <button class="endCombat" data-action="endCombat"><i class="fas fa-power-off"></i>End Combat</button>

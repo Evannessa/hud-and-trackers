@@ -399,7 +399,7 @@ Hooks.on("updateCombat", async (combat, roundData, diff) => {
     if (round > 0) {
         game.combatHud.app.data.currentRound = round;
         let name = combat.combatant.name;
-        game.combatHud.app.data.currentPhase = `${name}Turn`;
+        game.combatHud.app.data.currentPhase = `${name}`;
         // if (name == "FastPlayer") {
         //     game.combatHud.app.data.currentPhase = "fastPlayersTurn";
         // } else if (name == "Enemies") {
@@ -436,7 +436,7 @@ Hooks.on("deleteCombat", async (combat) => {
         scene.deleteEmbeddedDocuments("Token", tokensToDelete);
     }
     game.combatHud.app.data.inCombat = false;
-    game.combatHud.app.data.currentPhase = "fastPlayersTurn";
+    game.combatHud.app.data.currentPhase = "fastPlayers";
 });
 
 /**
@@ -605,10 +605,10 @@ export default class CombatHud extends Application {
         //if we have no fast players
         if (phasesWithActors.fastPlayers?.length == 0) {
             //set the first turn to enemies
-            this.data.currentPhase = "enemiesTurn";
+            this.data.currentPhase = "enemies";
         } else {
             //otherwise, if we have no enemies, we should always have fast players, as there were no enemies to compare to
-            this.data.currentPhase = "fastPlayersTurn";
+            this.data.currentPhase = "fastPlayers";
         }
 
         this.data.activationObject = new ActivationObject(
@@ -661,7 +661,7 @@ export default class CombatHud extends Application {
             },
             inCombat: false,
             currentRound: 1,
-            currentPhase: "fastPlayersTurn",
+            currentPhase: "fastPlayers",
             initialized: false,
             activationObject: new ActivationObject(),
         };
@@ -777,7 +777,8 @@ export default class CombatHud extends Application {
 
         return {
             ...this.data,
-            ...tokens,
+            tokens: tokens,
+            // ...tokens,
         };
     }
 
