@@ -160,6 +160,8 @@ export async function swapToCharacter(character) {
     ui.notifications.notify(`Your active character is now ${character.name}`);
 }
 
+export async function checkIfInScene(actor) {}
+
 export async function getType(actor) {
     return actor.type;
 }

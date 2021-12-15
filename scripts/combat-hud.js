@@ -61,6 +61,16 @@ const specialCombatStartID = Hooks.on("combatHudStartCombat", () => {
         console.log("THIS HAS BEEN CALLED ON COMBAT START");
     }
 });
+// // As a combatant is created, store original scene ID in a flag
+// Hooks.on("preCreateCombatant", (combatant, data, options, userID) => {
+//     // If combatant's token has MLT flags, it's most likely a clone so do not create a combatant
+//     const token = (data.tokenId, data.actorId);
+//     if (token.data.flags["multilevel-tokens"]) return false;
+
+//     if (combatant.parent.data.scene) return;
+//     const sceneID = token.parent.data._id;
+//     combatant.data.update({ "flags.floating-combat-toolbox.sceneID": sceneID });
+// });
 
 async function createRepresentativeActors() {
     let repTokens = game.folders.getName("RepTokens");
@@ -232,7 +242,7 @@ async function rollNonCombatInitiative(combat) {
     fastPlayersStore = convertToArrayOfIDs(fastPlayers);
     npcAlliesStore = convertToArrayOfIDs(npcAllies);
     enemiesStore = convertToArrayOfIDs(enemies);
-    let activeCategories = {
+    let phasesWithActors = {
         slowPlayers: convertToArrayOfIDs(slowPlayers),
         fastPlayers: convertToArrayOfIDs(fastPlayers),
         npcAllies: convertToArrayOfIDs(npcAllies),
@@ -307,6 +317,7 @@ async function createRepTokens(combat) {
     //create all the tokens representing the different "Sides"
     let scene = game.scenes.viewed;
     let tokenActors = repTokens.content;
+    //but first check if there are characters in that category
     if (slowPlayers.length == 0) {
         tokenActors = tokenActors.filter((actor) => actor.name != "slowPlayers");
     }
@@ -314,10 +325,10 @@ async function createRepTokens(combat) {
         tokenActors = tokenActors.filter((actor) => actor.name != "fastPlayers");
     }
     if (npcAllies.length == 0) {
-        tokenActors = tokenActors.filter((actor) => actor.name != "NPCAllies");
+        tokenActors = tokenActors.filter((actor) => actor.name != "npcAllies");
     }
     if (enemies.length == 0) {
-        tokenActors = tokenActors.filter((actor) => actor.name != "Enemies");
+        tokenActors = tokenActors.filter((actor) => actor.name != "enemies");
     }
     tokenData = tokenActors.map((actor) => actor.data.token);
     //create all of the tokens in the scene, then add them as combatants
@@ -331,7 +342,8 @@ async function createRepTokens(combat) {
 
 async function addRepCombatant(combat, tokenData) {
     game.scenes.viewed.createEmbeddedDocuments("Token", tokenData);
-    await combat.createEmbeddedDocuments("Combatant", tokenData);
+    let combatants = await combat.createEmbeddedDocuments("Combatant", tokenData);
+    return combatants;
 }
 async function removeRepCombatant(combat, tokenData) {
     game.scenes.viewed.deleteEmbeddedDocuments("Token", tokenData);
@@ -345,18 +357,6 @@ async function setRepTokenInitiative(combat) {
             combatant.id,
             phasesWithInitiative[combatant.data.name]
         );
-        // if (combatant.data.name == "FastPlayer") {
-        //     await combat.setInitiative(combatant.id, 30);
-        // }
-        // if (combatant.data.name == "Enemies") {
-        //     await combat.setInitiative(combatant.id, 20);
-        // }
-        // if (combatant.data.name == "SlowPlayer") {
-        //     await combat.setInitiative(combatant.id, 10);
-        // }
-        // if (combatant.data.name == "NPCAllies") {
-        //     await combat.setInitiative(combatant.id, 3);
-        // }
     }
 }
 
@@ -817,13 +817,35 @@ export default class CombatHud extends Application {
                 let combatantNames = this.data.ourCombat.combatants.map((combatant) => {
                     return combatant.data.name;
                 });
+
+                let tokenData = [];
+
                 for (let phase of newPhases) {
-                    //if our added phases
+                    //if our added phases aren't already on the tracker
                     if (!combatantNames.includes(phase)) {
-                        await addRepCombatant(this.data.ourCombat, phase);
+                        //so the combatant wants token data
+                        //so we want to get the representative actor associated with this phase
+                        let actor = game.folders
+                            .getName("RepTokens")
+                            .content.find((actor) => actor.name === phase);
+                        //push it to an array of token data
+                        tokenData.push(actor.data.token);
                     }
                 }
-
+                //add all the token data to the combat
+                if (tokenData.length > 0) {
+                    let combatants = await addRepCombatant(
+                        this.data.ourCombat,
+                        tokenData
+                    );
+                    console.log("New Combatants?", combatants);
+                    for (let combatant of combatants) {
+                        this.data.ourCombat.setInitiative(
+                            combatant.id,
+                            phasesWithInitiative[combatant.data.name]
+                        );
+                    }
+                }
                 break;
             default:
                 break;
@@ -927,8 +949,8 @@ export default class CombatHud extends Application {
      * Adds a selected token to the combat. Maybe add other ways later.
      * @param {Token} token - the selected token we're adding to the combat
      */
-    async addCombatant(token) {
-        let type = await HelperFunctions.getType(token.actor);
+    addCombatant(token) {
+        let type = token.actor.type;
         let disposition = token.data.disposition;
         let id = token.actor.id;
         let phase = "enemies";
