@@ -266,6 +266,7 @@ function convertToArrayOfIDs(array) {
  * @returns an array of tokens
  */
 function convertToArrayOfTokens(array) {
+    console.log("Object keys is " + array);
     if (!array) {
         return;
     }
@@ -334,10 +335,6 @@ async function createRepTokens(combat) {
     //create all of the tokens in the scene, then add them as combatants
 
     await addRepCombatant(combat, tokenData);
-
-    // scene.createEmbeddedDocuments("Token", tokenData);
-    // //create all of the representative combatants
-    // await combat.createEmbeddedDocuments("Combatant", tokenData);
 }
 
 async function addRepCombatant(combat, tokenData) {
@@ -731,8 +728,15 @@ export default class CombatHud extends Application {
         //convert our activationMap ids to tokens
         let tokenMap = Object.values(this.data.activationObject.activationMap).map(
             (obj) => {
+                console.log(obj);
                 return convertToArrayOfTokens(Object.keys(obj));
             }
+        );
+        console.log(
+            "Token MAp!",
+            tokenMap,
+            "vs",
+            this.data.activationObject.activationMap
         );
         let tokens = {
             fastPlayers: tokenMap[0],
@@ -952,7 +956,8 @@ export default class CombatHud extends Application {
     addCombatant(token) {
         let type = token.actor.type;
         let disposition = token.data.disposition;
-        let id = token.actor.id;
+        // let id = token.actor.id; //TODO: Using actor id might be best in the long run anyway
+        let id = token.id;
         let phase = "enemies";
         switch (type) {
             case "NPC":
