@@ -446,6 +446,7 @@ Hooks.on("deleteCombat", async (combat) => {
  * @param {*} hasActed - whether or not the token has acted or not
  */
 function createMarkerOnToken(token, hasActed) {
+    console.log("Trying to create marker on", token);
     if (!token) {
         return;
     }
@@ -469,6 +470,7 @@ function createMarkerOnToken(token, hasActed) {
         texturePath = "modules/hud-and-trackers/images/convergence-target.png";
     }
 
+    console.log("Pixi stuff:", token, token.icon);
     token.marker = token.addChildAt(
         new PIXI.Container(),
         token.getChildIndex(token.icon)
@@ -508,28 +510,24 @@ function removeMarkerOnToken(token) {
     }
 }
 Hooks.on("canvasReady", (canvas) => {
-    // if (game.combatHud.app && game.combatHud.initialSceneId) {
-    //     if (canvas.scene.data._id == game.combatHud.initialSceneId) {
-    //         console.log("Switching back to original scene");
-    //         //back on the original scene, start to highlight everything again
-    //         if (game.combatHud.app.element) {
-    //             let combatantDivs = game.combatHud.app.element.find(".combatant-div");
-    //             for (let combatantDiv of combatantDivs) {
-    //                 if (!combatantDiv.classList.contains("activated")) {
-    //                     game.combatHud.app.createMarkerOnToken(
-    //                         combatantDiv.dataset.id,
-    //                         false
-    //                     );
-    //                 } else {
-    //                     game.combatHud.app.highlightTokenInGroup(
-    //                         combatantDiv.dataset.id,
-    //                         true
-    //                     );
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+    if (game.combatHud.app && game.combatHud.initialSceneId) {
+        //re-render combat hud when switching scenes to account for markers
+        game.combatHud.app.render(true);
+        if (canvas.scene.data._id == game.combatHud.initialSceneId) {
+            console.log("Switching back to original scene");
+            //back on the original scene, start to highlight everything again
+            if (game.combatHud.app.element) {
+                let combatantDivs = game.combatHud.app.element.find(".combatant-div");
+                for (let combatantDiv of combatantDivs) {
+                    if (!combatantDiv.classList.contains("activated")) {
+                        createMarkerOnToken(combatantDiv.dataset.id, false);
+                    } else {
+                        createMarkerOnToken(combatantDiv.dataset.id, true);
+                    }
+                }
+            }
+        }
+    }
 });
 Hooks.on("canvasInit", (canvas) => {
     //we're trying to get the scene where the combat started
@@ -540,6 +538,7 @@ Hooks.on("canvasInit", (canvas) => {
             //if we have the ticker functions
             if (game.combatHud.functions) {
                 for (let tokenId in game.combatHud.functions) {
+                    console.log("Token id is", tokenId);
                     canvas.app.ticker.remove(game.combatHud.functions[tokenId], tokenId);
                 }
             }
@@ -910,7 +909,6 @@ export default class CombatHud extends Application {
     async activateListeners(html) {
         if (game.user.isGM && this.data.combatStarter === game.userId) {
             await game.settings.set("hud-and-trackers", "savedCombat", this.data);
-            console.log("Our data is", this.data);
         }
 
         //remove app from "ui.windows" to not let it close with the escape key
@@ -928,7 +926,6 @@ export default class CombatHud extends Application {
             //store the initial token and scene ids on the combatant div
             for (let key in this.data.initialTokens) {
                 let value = this.data.initialTokens[key];
-                console.log("Key and value are", key, value);
                 $(`[data-id=${key}]`).attr("data-initial-token-id", value);
             }
             for (let key in this.data.initialScenes) {
@@ -950,10 +947,10 @@ export default class CombatHud extends Application {
                     combatantDiv.dataset.initialTokenId,
                     combatantDiv.dataset.initialSceneId
                 );
-                console.log("Token is ", token);
+                console.log("Our token is ", token);
 
                 if (token) {
-                    console.log(token);
+                    //?token document and token object are different
                     if (!combatantDiv.classList.contains("activated")) {
                         // this.highlightTokenInGroup(token.id, false);
                         createMarkerOnToken(token.object, false);
@@ -963,11 +960,11 @@ export default class CombatHud extends Application {
                     }
 
                     $(combatantDiv).mouseenter((event) => {
-                        this.tintMarkerOnToken(token, 0xff5733);
+                        this.tintMarkerOnToken(token.object, 0xff5733);
                     });
 
                     $(combatantDiv).mouseleave((event) => {
-                        this.tintMarkerOnToken(token, 0xffffff);
+                        this.tintMarkerOnToken(token.object, 0xffffff);
                     });
                 }
 
@@ -1023,8 +1020,7 @@ export default class CombatHud extends Application {
                     if (combatantDiv.dataset.id == id) {
                         if (map[id] == true) {
                             $(combatantDiv).addClass("activated");
-                            this.createMarkerOnToken(token.object, true);
-                            // this.highlightTokenInGroup(token.id, true);
+                            createMarkerOnToken(token.object, true);
                         }
                     }
                 }
@@ -1045,7 +1041,7 @@ export default class CombatHud extends Application {
         let type = token.actor.type;
         let disposition = token.data.disposition;
         // let id = token.actor.id; //TODO: Using actor id might be best in the long run anyway
-        let id = token.id;
+        let id = token.actor.id;
         let phase = "enemies";
         switch (type) {
             case "NPC":

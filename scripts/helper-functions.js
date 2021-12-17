@@ -133,7 +133,6 @@ export async function getAllActorsInScene() {
         return token.actor;
     });
     let uniqueSceneActors = [...new Set(sceneActors)];
-    console.log(uniqueSceneActors);
     return uniqueSceneActors;
 }
 
@@ -167,10 +166,12 @@ export async function swapToCharacter(character) {
  */
 export function checkIfSceneHasToken(actorId, tokenId, sceneId) {
     let actor = getEntityById("Actor", actorId);
+    console.log("Is our token here?", game.scenes.viewed.data.tokens.contents);
     let token = game.scenes.viewed.data.tokens.contents.find((token) => {
-        return token.actor.id == actor.id;
+        return token.data.actorId == actorId;
     });
     if (token) {
+        console.log("Found token in new scene");
         //if we found the token, return it
         return token;
     } else {
