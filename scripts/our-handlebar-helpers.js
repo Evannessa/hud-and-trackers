@@ -12,4 +12,5 @@ export default function registerAllHandlebarHelpers() {
         let user = game.users.get(userId);
         return user.data[prop];
     });
+    // Handlebars.registerHelper("areScenesEqual", )
 }

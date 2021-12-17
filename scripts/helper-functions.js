@@ -166,7 +166,7 @@ export async function swapToCharacter(character) {
  */
 export function checkIfSceneHasToken(actorId, tokenId, sceneId) {
     let actor = getEntityById("Actor", actorId);
-    console.log("Is our token here?", game.scenes.viewed.data.tokens.contents);
+    // console.log("Is our token here?", game.scenes.viewed.data.tokens.contents);
     let token = game.scenes.viewed.data.tokens.contents.find((token) => {
         return token.data.actorId == actorId;
     });

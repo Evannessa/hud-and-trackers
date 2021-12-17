@@ -510,40 +510,46 @@ function removeMarkerOnToken(token) {
     }
 }
 Hooks.on("canvasReady", (canvas) => {
+    if (game.combatHud.app) {
+        //re-render combat hud when switching scenes
+        game.combatHud.app.render(true);
+    }
     if (game.combatHud.app && game.combatHud.initialSceneId) {
         //re-render combat hud when switching scenes to account for markers
-        game.combatHud.app.render(true);
-        if (canvas.scene.data._id == game.combatHud.initialSceneId) {
-            console.log("Switching back to original scene");
-            //back on the original scene, start to highlight everything again
-            if (game.combatHud.app.element) {
-                let combatantDivs = game.combatHud.app.element.find(".combatant-div");
-                for (let combatantDiv of combatantDivs) {
-                    if (!combatantDiv.classList.contains("activated")) {
-                        createMarkerOnToken(combatantDiv.dataset.id, false);
-                    } else {
-                        createMarkerOnToken(combatantDiv.dataset.id, true);
-                    }
-                }
-            }
-        }
+        // game.combatHud.app.render(true);
+        //TODO: put back in after markers are fixed
+        // if (canvas.scene.data._id == game.combatHud.initialSceneId) {
+        //     console.log("Switching back to original scene");
+        //     //back on the original scene, start to highlight everything again
+        //     if (game.combatHud.app.element) {
+        //         let combatantDivs = game.combatHud.app.element.find(".combatant-div");
+        //         for (let combatantDiv of combatantDivs) {
+        //             if (!combatantDiv.classList.contains("activated")) {
+        //                 createMarkerOnToken(combatantDiv.dataset.id, false);
+        //             } else {
+        //                 createMarkerOnToken(combatantDiv.dataset.id, true);
+        //             }
+        //         }
+        //     }
+        // }
     }
 });
 Hooks.on("canvasInit", (canvas) => {
     //we're trying to get the scene where the combat started
-    if (game.combatHud.app && game.combatHud.initialSceneId) {
-        //if we've switched scenes from the initial combat scene
-        if (canvas.scene.data._id != game.combatHud.initialSceneId) {
-            console.log("Switching to different scene");
-            //if we have the ticker functions
-            if (game.combatHud.functions) {
-                for (let tokenId in game.combatHud.functions) {
-                    canvas.app.ticker.remove(game.combatHud.functions[tokenId], tokenId);
-                }
-            }
-        }
-        // if we're back on the original scene
-    }
+    //TODO: Put back in after marker is fixed
+    // if (game.combatHud.app && game.combatHud.initialSceneId) {
+    //     //if we've switched scenes from the initial combat scene
+    //     if (canvas.scene.data._id != game.combatHud.initialSceneId) {
+    //         console.log("Switching to different scene");
+    //         //if we have the ticker functions
+    //         if (game.combatHud.functions) {
+    //             for (let tokenId in game.combatHud.functions) {
+    //                 canvas.app.ticker.remove(game.combatHud.functions[tokenId], tokenId);
+    //             }
+    //         }
+    //     }
+    //     // if we're back on the original scene
+    // }
 });
 
 Hooks.on("renderCombatHud", async (app, newHtml) => {
@@ -583,7 +589,6 @@ function convertToArrayOfActors(array) {
  */
 export default class CombatHud extends Application {
     async initOnCombatStart(combat) {
-        console.log("INITIALIZING HUD ON COMBAT START");
         this.data.isGM = game.user.isGM;
         this.data.combatStarter = game.userId;
         this.data.ourCombat = combat;
@@ -741,7 +746,8 @@ export default class CombatHud extends Application {
             await game.combatHud.app.data.ourCombat.nextTurn();
             //TODO: Maybe put this back in
             // game.combatHud.app.resetActivations();
-            game.combatHud.app.unhighlightAll(game.canvas.tokens.placeables);
+            //TODO: put this back in after you've fixed markers
+            // game.combatHud.app.unhighlightAll(game.canvas.tokens.placeables);
             game.combatHud.app.render(game.combatHud.app.position);
         }
     }
@@ -775,10 +781,13 @@ export default class CombatHud extends Application {
         //convert our activationMap ids to tokens
         let tokenMap = Object.values(this.data.activationObject.activationMap).map(
             (obj) => {
-                console.log(obj);
                 return convertToArrayOfActors(Object.keys(obj));
             }
         );
+        let allCombatActors = tokenMap.flat();
+        console.log("Combat actors are", allCombatActors);
+        for (let actor of allCombatActors) {
+        }
 
         let tokens = {
             fastPlayers: tokenMap[0],
@@ -818,7 +827,6 @@ export default class CombatHud extends Application {
         event.preventDefault();
         let clickedElement = $(event.currentTarget);
         let action = clickedElement.data().action;
-        console.log(action, " was clicked");
 
         switch (action) {
             case "endCombat":
@@ -926,12 +934,6 @@ export default class CombatHud extends Application {
                 let value = this.data.initialScenes[key];
                 $(`[data-id=${key}]`).attr("data-initial-scene-id", value);
             }
-            // this.data.initialTokens.forEach((value, key) => {
-            //     $(`[data-actor-id=${key}]`).attr("data-initial-token-id", value);
-            // });
-            // this.data.initialScenes.forEach((value, key) => {
-            //     $(`[data-actor-id=${key}]`).attr("data-initial-scene-id", value);
-            // });
 
             for (let combatantDiv of combatantDivs) {
                 //get the token, either on the current scene,
@@ -999,6 +1001,7 @@ export default class CombatHud extends Application {
                                 combatantDiv.dataset.initialTokenId,
                                 combatantDiv.dataset.initialSceneId
                             );
+                            console.log("Trying to control ", token);
                             if (token) {
                                 token.object.control({
                                     releaseOthers: true,
@@ -1105,10 +1108,7 @@ export default class CombatHud extends Application {
         game.combatHud.app.data.activationObject = new ActivationObject({
             ...data.activationObject.activationMap,
         });
-        // game.combatHud.app.data.currentPhase = data.currentPhase;
-        // game.combatHud.app.data.currentRound = data.currentRound;
-        // game.combatHud.app.data.inCombat = data.inCombat;
-        // game.combatHud.app.data.initialized = data.initialized;
+
         //re-render the app
         game.combatHud.app.render(game.combatHud.app.position);
     }
