@@ -11,6 +11,40 @@
 	// bottom: 10px !important;
 	// left: 810px !important;
 	// top: inherit !important;
+	.addCombatant {
+		position: absolute;
+		top: 2.5rem;
+		right: 2rem;
+		width: 2rem;
+		height: 2rem;
+		background-color: var(--color-primary-base);
+
+
+		&:hover {
+			background-color: var(--color-primary-400);
+		}
+	}
+
+	.combat-controls {
+		display: flex;
+		justify-content: space-evenly;
+		align-items: center;
+
+		.button {
+			width: fit-content;
+			height: fit-content;
+			padding: 0.25rem 0.5rem;
+
+			&:hover {
+				background-color: var(--color-primary-base);
+			}
+		}
+
+		.turnButton {
+			width: 2rem;
+		}
+	}
+
 	.turnButtonWrapper {
 		display: flex;
 		justify-content: space-between;
@@ -40,19 +74,19 @@
 
 
 	.phaseName {
-		&.enemiesTurn {
+		&.enemies {
 			color: rgb(255, 66, 123);
 		}
 
-		&.npcAlliesTurn {
+		&.npcAllies {
 			color: hsla(152, 100%, 50%, 1)
 		}
 
-		&.slowPlayersTurn {
+		&.slowPlayers {
 			color: hsl(197, 100%, 64%);
 		}
 
-		&.fastPlayersTurn {
+		&.fastPlayers {
 			color: hsla(16, 100%, 76%, 1);
 		}
 	}
@@ -86,6 +120,8 @@
 		&:hover {
 			background-color: #161a1dda;
 		}
+
+		button {}
 	}
 
 	.combatant-wrapper {
@@ -100,6 +136,7 @@
 
 
 
+
 		&:before {
 			content: '';
 			display: block;
@@ -110,6 +147,7 @@
 		}
 
 		.combatant-div {
+			position: relative;
 			color: black;
 			font-weight: bold;
 			// border: 1px solid black;
@@ -161,8 +199,45 @@
 				height: 3rem;
 			}
 
+			.not-in-scene {
+				&__indicator {
+					color: white;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					padding: 0;
+					margin: 0;
+					position: absolute;
+					top: 5px;
+					right: 5px;
+					width: 1rem;
+					border-radius: 50%;
+					background-color: transparent;
+					background: none;
+					opacity: 70%;
+
+					i {
+						padding: 0;
+						margin: 0;
+					}
+				}
+
+				&__message {
+					display: none;
+					position: absolute;
+					bottom: 100%;
+					left: 0;
+					background-color: #161a1db7;
+					z-index: 10;
+
+					~.not-in-scene__indicator:hover {
+						display: block;
+					}
+				}
+			}
+
 			&.activated {
-				backdrop-filter: grayscale(0.5);
+				filter: grayscale(0.5);
 				position: relative;
 
 				&::after {
@@ -178,11 +253,28 @@
 				rgba(0, 9, 0, 0.5) -3px -3px 6px 1px inset;
 			}
 
+			@include ba(after, 100%, 100%, 0, 0, 1) {
+				opacity: 0;
+				background-color: white;
+				mix-blend-mode: overlay;
+				transition: opacity 100ms linear;
+			}
 
 			&:hover {
 				cursor: pointer;
-				background: #09F;
+				// background: #09F;
 				color: white;
+				// overflow: visible;
+
+				&:after {
+					opacity: 1;
+					// background: white;
+					// mix-blend-mode: screen;
+				}
+
+				.not-in-scene__message {
+					display: block;
+				}
 			}
 		}
 	}

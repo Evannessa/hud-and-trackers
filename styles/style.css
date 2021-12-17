@@ -648,6 +648,37 @@
   background: transparent;
   position: relative;
 }
+#combatHud .addCombatant {
+  position: absolute;
+  top: 2.5rem;
+  right: 2rem;
+  width: 2rem;
+  height: 2rem;
+  background-color: var(--color-primary-base);
+}
+#combatHud .addCombatant:hover {
+  background-color: var(--color-primary-400);
+}
+#combatHud .combat-controls {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+#combatHud .combat-controls .button {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  padding: 0.25rem 0.5rem;
+}
+#combatHud .combat-controls .button:hover {
+  background-color: var(--color-primary-base);
+}
+#combatHud .combat-controls .turnButton {
+  width: 2rem;
+}
 #combatHud .turnButtonWrapper {
   display: flex;
   justify-content: space-between;
@@ -670,16 +701,16 @@
   transition-property: opacity;
   transition-duration: 0.3s;
 }
-#combatHud .phaseName.enemiesTurn {
+#combatHud .phaseName.enemies {
   color: #ff427b;
 }
-#combatHud .phaseName.npcAlliesTurn {
+#combatHud .phaseName.npcAllies {
   color: #00ff88;
 }
-#combatHud .phaseName.slowPlayersTurn {
+#combatHud .phaseName.slowPlayers {
   color: #47cbff;
 }
-#combatHud .phaseName.fastPlayersTurn {
+#combatHud .phaseName.fastPlayers {
   color: #ffa585;
 }
 #combatHud:hover .tooltip {
@@ -721,6 +752,7 @@
   pointer-events: none;
 }
 #combatHud .combatant-wrapper .combatant-div {
+  position: relative;
   color: black;
   font-weight: bold;
   max-width: 70px;
@@ -736,6 +768,7 @@
   background: linear-gradient(90deg, #ff930f 0%, #fffa5c 100%);
   background: -webkit-linear-gradient(90deg, #ff930f 0%, #fffa5c 100%);
   box-shadow: rgba(50, 50, 93, 0.58) 0px 20px 100px -20px, rgba(0, 0, 0, 0.54) 0px 30px 60px -30px, rgba(33, 60, 95, 0.79) 0px -4px 12px 1px inset;
+  position: relative;
 }
 #combatHud .combatant-wrapper .combatant-div[data-phase=enemies] {
   background: #ff0f7b;
@@ -761,9 +794,39 @@
   width: 3rem;
   height: 3rem;
 }
+#combatHud .combatant-wrapper .combatant-div .not-in-scene__indicator {
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 1rem;
+  border-radius: 50%;
+  background-color: transparent;
+  background: none;
+  opacity: 70%;
+}
+#combatHud .combatant-wrapper .combatant-div .not-in-scene__indicator i {
+  padding: 0;
+  margin: 0;
+}
+#combatHud .combatant-wrapper .combatant-div .not-in-scene__message {
+  display: none;
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background-color: #161a1db7;
+  z-index: 10;
+}
+#combatHud .combatant-wrapper .combatant-div .not-in-scene__message ~ .not-in-scene__indicator:hover {
+  display: block;
+}
 #combatHud .combatant-wrapper .combatant-div.activated {
-  -webkit-backdrop-filter: grayscale(0.5);
-          backdrop-filter: grayscale(0.5);
+  filter: grayscale(0.5);
   position: relative;
   box-shadow: rgba(21, 21, 39, 0.705) 3px 3px 6px 0px inset, rgba(0, 9, 0, 0.5) -3px -3px 6px 1px inset;
 }
@@ -775,10 +838,28 @@
   height: 100%;
   background: rgba(0, 0, 0, 0.25);
 }
+#combatHud .combatant-wrapper .combatant-div:after {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  content: "";
+  z-index: 1;
+  opacity: 0;
+  background-color: white;
+  mix-blend-mode: overlay;
+  transition: opacity 100ms linear;
+}
 #combatHud .combatant-wrapper .combatant-div:hover {
   cursor: pointer;
-  background: #09F;
   color: white;
+}
+#combatHud .combatant-wrapper .combatant-div:hover:after {
+  opacity: 1;
+}
+#combatHud .combatant-wrapper .combatant-div:hover .not-in-scene__message {
+  display: block;
 }
 
 #custom_playerlist {

@@ -13,6 +13,9 @@
         <li class="instructions">Left click to select token.</li>
     </ol>
 </span>
+{{#if isGM}}
+<button class="btn btn-round addCombatant" data-action="addCombatant" title="Add Controlled Tokens As Combatants"><i class="fas fa-user-plus"></i></button>
+{{/if}}
 <div class="combatant-wrapper">
 	{{#each tokens}}
 		{{#if (eq  @key @root.currentPhase)}}
@@ -21,7 +24,8 @@
   		<div class="combatant-div" data-id="{{this.id}}" data-phase="{{@root.currentPhase}}">
   		<!-- <div class="combatant-div" data-initial-scene="{{this.scene.id}}" data-actor-id="{{this.id}}" data-token-id="{{this.id}}" data-phase="{{@root.currentPhase}}"> -->
 			  {{#unless (getAtIndex (lookup @root.inSceneTokens @root.currentPhase) @index)}}
-			  	<p>NOT IN SCENE</p>
+			  	<div class="not-in-scene__indicator" data-action="prompt_user"><i class="fas fa-question-circle"></i></div>
+			  	<p class="not-in-scene__message">{{this.name}} is not in this scene.</p>
 				{{/unless}}
         	<p>{{this.name}}</p>
         	<img src="{{this.data.token.img}}" />
@@ -31,13 +35,17 @@
 	{{/each}}
 	</div>
    
-<div class="turnButtonWrapper">
+<!-- <div class="turnButtonWrapper">
 	<button class="previousTurn" data-action="previousTurn"><i class="fas fa-arrow-alt-from-left"></i></button>
 	<button class="nextTurn" data-action="nextTurn"><i class="fas fa-arrow-alt-from-right"></i></button>
-</div>
+</div> -->
 {{#if isGM}}
-<button class="endCombat" data-action="endCombat"><i class="fas fa-power-off"></i>End Combat</button>
-<button class="addCombatant" data-action="addCombatant"><i class="fas fa-user-plus"></i>Add Combatant</button>
+	<div class="combat-controls">
+		<button class="button turnButton previousTurn" data-action="previousTurn"><i class="fas fa-caret-left"></i></button>
+		<button class="button endCombat" data-action="endCombat"><i class="fas fa-power-off"></i>End Combat</button>
+		<button class="button turnButton nextTurn" data-action="nextTurn"><i class="fas fa-caret-right"></i></button>
+	</div>
+
 {{/if}}
 {{else}}
 <div><button class="startCombatButton" data-action="startCombat" {{#unless isGM}}disabled{{/unless}}>Start Combat</button></div>
