@@ -171,21 +171,22 @@ export function checkIfSceneHasToken(actorId, tokenId, sceneId) {
         return token.data.actorId == actorId;
     });
     if (token) {
-        console.log("Found token in new scene");
+        console.log("Found token new scene");
         //if we found the token, return it
         return token;
     } else {
+        return null;
         //look in actor's initial scene for token
-        token = game.scenes.get(sceneId).data.tokens.get(tokenId);
-        if (token) {
-            return token;
-        } else {
-            //TODO: Add functionality for adding token, maybe to add all combatants without tokens
-            //ask to create token from actor
-            ui.notifications.warn(
-                `${actor.name} doesn't have a token in this scene. Add one?`
-            );
-        }
+        // token = game.scenes.get(sceneId).data.tokens.get(tokenId);
+        // if (token) {
+        //     return token;
+        // } else {
+        //     //TODO: Add functionality for adding token, maybe to add all combatants without tokens
+        //     //ask to create token from actor
+        //     ui.notifications.warn(
+        //         `${actor.name} doesn't have a token in this scene. Add one?`
+        //     );
+        // }
     }
 }
 

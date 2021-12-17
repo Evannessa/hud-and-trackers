@@ -17,9 +17,12 @@
 	{{#each tokens}}
 		{{#if (eq  @key @root.currentPhase)}}
 		{{#each this}}
-
+		<!-- {{log "This working?"(getAtIndex (lookup @root.inSceneTokens @root.currentPhase) @index)}} -->
   		<div class="combatant-div" data-id="{{this.id}}" data-phase="{{@root.currentPhase}}">
   		<!-- <div class="combatant-div" data-initial-scene="{{this.scene.id}}" data-actor-id="{{this.id}}" data-token-id="{{this.id}}" data-phase="{{@root.currentPhase}}"> -->
+			  {{#unless (getAtIndex (lookup @root.inSceneTokens @root.currentPhase) @index)}}
+			  	<p>NOT IN SCENE</p>
+				{{/unless}}
         	<p>{{this.name}}</p>
         	<img src="{{this.data.token.img}}" />
     	</div>

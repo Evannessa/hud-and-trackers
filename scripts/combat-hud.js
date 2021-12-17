@@ -584,6 +584,14 @@ function convertToArrayOfActors(array) {
         return game.actors.get(actorId);
     });
 }
+function checkInScene(array) {
+    if (!array) {
+        return;
+    }
+    return array.map((actorId) => {
+        return HelperFunctions.checkIfSceneHasToken(actorId);
+    });
+}
 /**
  * @param Combat!
  */
@@ -784,10 +792,17 @@ export default class CombatHud extends Application {
                 return convertToArrayOfActors(Object.keys(obj));
             }
         );
-        let allCombatActors = tokenMap.flat();
-        console.log("Combat actors are", allCombatActors);
-        for (let actor of allCombatActors) {
-        }
+        let inSceneMap = Object.values(this.data.activationObject.activationMap).map(
+            (obj) => {
+                return checkInScene(Object.keys(obj));
+            }
+        );
+        console.log("Actors in scene map", inSceneMap);
+        // let allCombatActors = tokenMap.flat();
+        // console.log("Combat actors are", allCombatActors);
+        // for (let actor of allCombatActors) {
+        // 	let token =
+        // }
 
         let tokens = {
             fastPlayers: tokenMap[0],
@@ -795,10 +810,17 @@ export default class CombatHud extends Application {
             enemies: tokenMap[2],
             npcAllies: tokenMap[3],
         };
+        let inSceneTokens = {
+            fastPlayers: inSceneMap[0],
+            slowPlayers: inSceneMap[1],
+            enemies: inSceneMap[2],
+            npcAllies: inSceneMap[3],
+        };
 
         return {
             ...this.data,
             tokens: tokens,
+            inSceneTokens: inSceneTokens,
             // ...tokens,
         };
     }
