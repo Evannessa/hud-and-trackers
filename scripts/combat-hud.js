@@ -538,7 +538,6 @@ Hooks.on("canvasInit", (canvas) => {
             //if we have the ticker functions
             if (game.combatHud.functions) {
                 for (let tokenId in game.combatHud.functions) {
-                    console.log("Token id is", tokenId);
                     canvas.app.ticker.remove(game.combatHud.functions[tokenId], tokenId);
                 }
             }
@@ -780,12 +779,7 @@ export default class CombatHud extends Application {
                 return convertToArrayOfActors(Object.keys(obj));
             }
         );
-        console.log(
-            "Token MAp!",
-            tokenMap,
-            "vs",
-            this.data.activationObject.activationMap
-        );
+
         let tokens = {
             fastPlayers: tokenMap[0],
             slowPlayers: tokenMap[1],
@@ -947,25 +941,25 @@ export default class CombatHud extends Application {
                     combatantDiv.dataset.initialTokenId,
                     combatantDiv.dataset.initialSceneId
                 );
-                console.log("Our token is ", token);
 
                 if (token) {
+                    //TODO: put this back in after you get it working
+                    //TODO: maybe make separate branch
                     //?token document and token object are different
-                    if (!combatantDiv.classList.contains("activated")) {
-                        // this.highlightTokenInGroup(token.id, false);
-                        createMarkerOnToken(token.object, false);
-                    } else {
-                        createMarkerOnToken(token.object, true);
-                        // this.highlightTokenInGroup(token.id, true);
-                    }
-
-                    $(combatantDiv).mouseenter((event) => {
-                        this.tintMarkerOnToken(token.object, 0xff5733);
-                    });
-
-                    $(combatantDiv).mouseleave((event) => {
-                        this.tintMarkerOnToken(token.object, 0xffffff);
-                    });
+                    // if (!combatantDiv.classList.contains("activated")) {
+                    //     // this.highlightTokenInGroup(token.id, false);
+                    //     createMarkerOnToken(token.object, false);
+                    // } else {
+                    //     createMarkerOnToken(token.object, true);
+                    //     // this.highlightTokenInGroup(token.id, true);
+                    // }
+                    //TODO: put this back in
+                    // $(combatantDiv).mouseenter((event) => {
+                    //     this.tintMarkerOnToken(token.object, 0xff5733);
+                    // });
+                    // $(combatantDiv).mouseleave((event) => {
+                    //     this.tintMarkerOnToken(token.object, 0xffffff);
+                    // });
                 }
 
                 $(combatantDiv).mousedown((event) => {
@@ -1020,7 +1014,8 @@ export default class CombatHud extends Application {
                     if (combatantDiv.dataset.id == id) {
                         if (map[id] == true) {
                             $(combatantDiv).addClass("activated");
-                            createMarkerOnToken(token.object, true);
+                            //TODO: take this out until fixed, maybe make branch to test
+                            // createMarkerOnToken(token.object, true);
                         }
                     }
                 }
