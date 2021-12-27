@@ -615,6 +615,7 @@ export default class CombatHud extends Application {
 
         //set initial scene and initial token of each actor
         for (let actor of allActorsInCombat) {
+            console.log(actor);
             this.setInitialTokenAndScene(actor);
         }
         this.data.initialTokens = Object.fromEntries(this.data.initialTokens);

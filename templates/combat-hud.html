@@ -16,6 +16,7 @@
 {{#if isGM}}
 <button class="btn btn-round addCombatant" data-action="addCombatant" title="Add Controlled Tokens As Combatants"><i class="fas fa-user-plus"></i></button>
 {{/if}}
+
 <div class="combatant-wrapper">
 	{{#each tokens}}
 		{{#if (eq  @key @root.currentPhase)}}
@@ -25,7 +26,13 @@
   		<!-- <div class="combatant-div" data-initial-scene="{{this.scene.id}}" data-actor-id="{{this.id}}" data-token-id="{{this.id}}" data-phase="{{@root.currentPhase}}"> -->
 			  {{#unless (getAtIndex (lookup @root.inSceneTokens @root.currentPhase) @index)}}
 			  	<div class="not-in-scene__indicator" data-action="prompt_user"><i class="fas fa-question-circle"></i></div>
-			  	<p class="not-in-scene__message">{{this.name}} is not in this scene.</p>
+			  	<div class="not-in-scene__message">
+					  <p>{{this.name}}'s token is not in this scene.</p>
+					  <div class="btn__wrapper">
+						  <button class="btn-primary addToScene" data-action="addToScene">Add it to scene</button>
+						  <button class="btn-ghost goToPreviousScene" data-action="goToPreviousScene">Go to token's last Scene</button>
+					  </div>
+				</div>
 				{{/unless}}
         	<p>{{this.name}}</p>
         	<img src="{{this.data.token.img}}" />

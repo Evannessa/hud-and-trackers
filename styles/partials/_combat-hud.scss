@@ -130,7 +130,7 @@
 		flex-direction: row;
 		border-radius: 10px;
 		box-shadow: rgb(0 0 0 / 45%) 1px 1px 19px 6px inset;
-		overflow: hidden;
+		overflow: visible;
 		background-color: #2c2e2f;
 		margin: 0.5rem;
 
@@ -160,11 +160,28 @@
 			justify-content: center;
 			align-items: center;
 			text-align: center;
+			overflow: visible;
+
+
+			&:first-child {
+				border-top-left-radius: 10px;
+				border-bottom-left-radius: 10px;
+			}
+
+			&:last-child {
+				border-top-right-radius: 10px;
+				border-bottom-right-radius: 10px;
+			}
+
+			transition: color 100ms linear;
+
 			background: hsla(33, 100%, 53%, 1);
 			background: linear-gradient(90deg, hsla(33, 100%, 53%, 1) 0%, hsla(58, 100%, 68%, 1) 100%);
 			background: -moz-linear-gradient(90deg, hsla(33, 100%, 53%, 1) 0%, hsla(58, 100%, 68%, 1) 100%);
 			background: -webkit-linear-gradient(90deg, hsla(33, 100%, 53%, 1) 0%, hsla(58, 100%, 68%, 1) 100%);
-			box-shadow: rgb(50 50 93 / 58%) 0px 20px 100px -20px, rgb(0 0 0 / 54%) 0px 30px 60px -30px, rgb(33 60 95 / 79%) 0px -4px 12px 1px inset;
+			box-shadow: rgb(50 50 93 / 58%) 0px 20px 100px -20px,
+			rgb(0 0 0 / 54%) 0px 30px 60px -30px,
+			rgb(33 60 95 / 79%) 0px -4px 12px 1px inset;
 
 			&[data-phase="enemies"] {
 				background: hsla(333, 100%, 53%, 1);
@@ -226,13 +243,38 @@
 					display: none;
 					position: absolute;
 					bottom: 100%;
-					left: 0;
-					background-color: #161a1db7;
+					left: 50%;
+					transform: translate(-50%);
+					background-color: #41464be3;
+					border-radius: 5px;
 					z-index: 10;
+					padding: 0.5rem 0.5rem;
+					width: max-content;
+					box-shadow: var(--shadow-elevation-medium);
+					white-space: nowrap;
+					font-weight: normal;
 
-					~.not-in-scene__indicator:hover {
-						display: block;
+					.btn__wrapper {
+						display: flex;
+
+						.addToScene {
+							color: white;
+						}
+
+						.goToPreviousScene {
+							border-color: var(--color-primary-300);
+							color: var(--color-primary-300);
+							background-color: transparent;
+							transition: color 100ms linear, background-color 100ms linear;
+
+							&:hover {
+								border-color: var(--color-primary-300);
+								background-color: var(--color-primary-300);
+								color: white;
+							}
+						}
 					}
+
 				}
 			}
 
@@ -255,21 +297,18 @@
 
 			@include ba(after, 100%, 100%, 0, 0, 1) {
 				opacity: 0;
-				background-color: white;
+				// background-color: rgb(90, 90, 90);
 				mix-blend-mode: overlay;
 				transition: opacity 100ms linear;
+				pointer-events: none;
 			}
 
 			&:hover {
 				cursor: pointer;
-				// background: #09F;
 				color: white;
-				// overflow: visible;
 
 				&:after {
-					opacity: 1;
-					// background: white;
-					// mix-blend-mode: screen;
+					opacity: 0.5;
 				}
 
 				.not-in-scene__message {

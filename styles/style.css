@@ -739,7 +739,7 @@
   flex-direction: row;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.45) 1px 1px 19px 6px inset;
-  overflow: hidden;
+  overflow: visible;
   background-color: #2c2e2f;
   margin: 0.5rem;
 }
@@ -764,11 +764,21 @@
   justify-content: center;
   align-items: center;
   text-align: center;
+  overflow: visible;
+  transition: color 100ms linear;
   background: #ff930f;
   background: linear-gradient(90deg, #ff930f 0%, #fffa5c 100%);
   background: -webkit-linear-gradient(90deg, #ff930f 0%, #fffa5c 100%);
   box-shadow: rgba(50, 50, 93, 0.58) 0px 20px 100px -20px, rgba(0, 0, 0, 0.54) 0px 30px 60px -30px, rgba(33, 60, 95, 0.79) 0px -4px 12px 1px inset;
   position: relative;
+}
+#combatHud .combatant-wrapper .combatant-div:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+#combatHud .combatant-wrapper .combatant-div:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 #combatHud .combatant-wrapper .combatant-div[data-phase=enemies] {
   background: #ff0f7b;
@@ -818,12 +828,35 @@
   display: none;
   position: absolute;
   bottom: 100%;
-  left: 0;
-  background-color: #161a1db7;
+  left: 50%;
+  transform: translate(-50%);
+  background-color: #41464be3;
+  border-radius: 5px;
   z-index: 10;
+  padding: 0.5rem 0.5rem;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  box-shadow: var(--shadow-elevation-medium);
+  white-space: nowrap;
+  font-weight: normal;
 }
-#combatHud .combatant-wrapper .combatant-div .not-in-scene__message ~ .not-in-scene__indicator:hover {
-  display: block;
+#combatHud .combatant-wrapper .combatant-div .not-in-scene__message .btn__wrapper {
+  display: flex;
+}
+#combatHud .combatant-wrapper .combatant-div .not-in-scene__message .btn__wrapper .addToScene {
+  color: white;
+}
+#combatHud .combatant-wrapper .combatant-div .not-in-scene__message .btn__wrapper .goToPreviousScene {
+  border-color: var(--color-primary-300);
+  color: var(--color-primary-300);
+  background-color: transparent;
+  transition: color 100ms linear, background-color 100ms linear;
+}
+#combatHud .combatant-wrapper .combatant-div .not-in-scene__message .btn__wrapper .goToPreviousScene:hover {
+  border-color: var(--color-primary-300);
+  background-color: var(--color-primary-300);
+  color: white;
 }
 #combatHud .combatant-wrapper .combatant-div.activated {
   filter: grayscale(0.5);
@@ -847,16 +880,16 @@
   content: "";
   z-index: 1;
   opacity: 0;
-  background-color: white;
   mix-blend-mode: overlay;
   transition: opacity 100ms linear;
+  pointer-events: none;
 }
 #combatHud .combatant-wrapper .combatant-div:hover {
   cursor: pointer;
   color: white;
 }
 #combatHud .combatant-wrapper .combatant-div:hover:after {
-  opacity: 1;
+  opacity: 0.5;
 }
 #combatHud .combatant-wrapper .combatant-div:hover .not-in-scene__message {
   display: block;

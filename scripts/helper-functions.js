@@ -141,7 +141,9 @@ export function addTokensToScene() {
 }
 
 export function getSceneTokenFromActor(actor) {
-    return canvas.scene.data.tokens.contents.find((token) => token.name == actor.name);
+    return canvas.scene.data.tokens.contents.find(
+        (token) => token.data.actorId == actor.id
+    );
 }
 
 export function getActorFromUser(user) {
