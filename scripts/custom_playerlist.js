@@ -30,15 +30,18 @@ Hooks.on("renderPlayerList", async (playerList, html) => {
 });
 
 Hooks.on("renderPlayerList", async (playerList, html) => {
-    //re-render our custom list, or just set its bottom css
+    // //re-render our custom list, or just set its bottom css
 
-    //store the height
-    document.body.style.setProperty("--playerlist-height", `${html.height()}px`);
-    document.body.style.setProperty(
-        "--playerlist-bottom",
-        playerList.element.css("bottom")
-    );
-    game.customPlayerList?.element.css("bottom", playerList.element.css("bottom"));
+    // //store the height
+    // document.body.style.setProperty("--playerlist-height", `${html.height()}px`);
+    // document.body.style.setProperty(
+    //     "--playerlist-bottom",
+    //     playerList.element.css("bottom")
+    // );
+    // game.customPlayerList?.element.css("bottom", playerList.element.css("bottom"));
+    if (game.customPlayerList) {
+        game.customPlayerList.render();
+    }
 });
 
 Hooks.on("controlToken", async (token, isControlled) => {

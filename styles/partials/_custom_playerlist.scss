@@ -3,7 +3,8 @@
 	height: max-content !important;
 	background-color: transparent;
 	top: unset !important;
-	bottom: var(--playerlist-bottom) !important;
+	// bottom: var(--playerlist-bottom) !important;
+	bottom: 0.5rem;
 	left: 32px !important; // TODO: put this back in
 	transition: bottom 100ms ease-out;
 	$main-width: 8rem;

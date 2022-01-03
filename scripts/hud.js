@@ -63,9 +63,16 @@ Hooks.on("renderSidebarTab", (app, html) => {
 
         //save it as a variable on the game
         game.chatArea = chatArea;
-        let tokenImg = canvas.tokens.controlled[0]?.actor.img;
-        if (tokenImg) {
-            setTokenImage(tokenImg);
+        if (canvas.tokens) {
+            let tokens = canvas.tokens.controlled;
+            let tokenImg;
+            if (tokens.length > 0) {
+                tokenImg = token.actor.img;
+            }
+            // let tokenImg = canvas.tokens.controlled[0]?.actor.img;
+            if (tokenImg) {
+                setTokenImage(tokenImg);
+            }
         }
     }
 });
