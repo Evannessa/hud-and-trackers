@@ -22,12 +22,12 @@
 				color: white;
 			}
 
-			+.utility {
-				// display: flex;
-				// flex-direction: column;
-				transform: scaleY(1);
-				opacity: 1;
-			}
+			// +.utility {
+			// 	// display: flex;
+			// 	// flex-direction: column;
+			// 	transform: scaleY(1);
+			// 	opacity: 1;
+			// }
 		}
 
 		&:hover {
@@ -35,23 +35,44 @@
 			color: var(--accent-300);
 		}
 
+
+
 	}
 
+	.utility {
+		transform: scaleY(0);
+		opacity: 0;
+		height: fit-content;
+		pointer-events: auto;
+		display: flex;
+		flex-direction: column;
+		transform-origin: top center;
+		transition: transform 100ms ease-out, opacity 100ms ease-out;
 
+		>* {
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+	}
 
 	&:hover {
 		.utility {
 			transform: scaleY(1);
 			opacity: 1;
-			height: fit-content;
-			// display: flex;
-			// flex-direction: column;
+			transition: transform 100ms ease-out, opacity 100ms ease-out, height 100ms ease-out;
+
+			>* {
+				position: relative;
+			}
 		}
 
 		.window-header {
 			display: block;
 		}
 	}
+
+
 
 	*,
 	*::before,
@@ -75,14 +96,6 @@
 
 
 	.utility {
-		display: flex;
-		flex-direction: column;
-		transform: scaleY(0);
-		height: 0;
-		opacity: 0;
-		transform-origin: top center;
-		transition: transform 100ms ease-out, opacity 200ms ease-out, height 100ms ease-out;
-
 
 		button {
 			width: 100%;

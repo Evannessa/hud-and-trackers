@@ -542,20 +542,34 @@
   background-color: var(--accent-300);
   color: white;
 }
-#helperHud .hoverBar.holdOpen + .utility {
-  transform: scaleY(1);
-  opacity: 1;
-}
 #helperHud .hoverBar:hover {
   background-color: var(--palette-dialog-darker, var(--tui-black4));
   color: var(--accent-300);
 }
-#helperHud:hover .utility {
-  transform: scaleY(1);
-  opacity: 1;
+#helperHud .utility {
+  transform: scaleY(0);
+  opacity: 0;
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  transform-origin: top center;
+  transition: transform 100ms ease-out, opacity 100ms ease-out;
+}
+#helperHud .utility > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#helperHud:hover .utility {
+  transform: scaleY(1);
+  opacity: 1;
+  transition: transform 100ms ease-out, opacity 100ms ease-out, height 100ms ease-out;
+}
+#helperHud:hover .utility > * {
+  position: relative;
 }
 #helperHud:hover .window-header {
   display: block;
@@ -570,15 +584,6 @@
   background-color: transparent;
   background: none;
   box-shadow: none;
-}
-#helperHud .utility {
-  display: flex;
-  flex-direction: column;
-  transform: scaleY(0);
-  height: 0;
-  opacity: 0;
-  transform-origin: top center;
-  transition: transform 100ms ease-out, opacity 200ms ease-out, height 100ms ease-out;
 }
 #helperHud .utility button {
   width: 100%;
@@ -646,7 +651,7 @@
   height: fit-content !important;
   height: -moz-max-content !important;
   background: transparent;
-  position: relative;
+  position: absolute;
 }
 #combatHud .addCombatant {
   position: absolute;
