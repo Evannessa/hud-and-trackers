@@ -16,15 +16,6 @@ export const ClockHelpers = async function () {
         }
     }
 
-    function openClock(event) {
-        // event.preventDefault();
-        let el = $(event.currentTarget);
-        let id = el.attr("id");
-        if (!isClockRendered()) {
-            renderNewClockFromData(getAllClocks()[id]);
-        }
-    }
-
     function createClock(type, caller) {
         console.log(caller, type);
         switch (type) {
@@ -89,7 +80,7 @@ export const ClockHelpers = async function () {
      */
     async function applyGradient(clockData, parentName) {
         let clockWrapper = $(
-            `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockWrapper`
+            `.clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockWrapper`
         );
         clockWrapper.addClass("clockWrapper__squares");
         //make the background wrapper's gradient look like the chosen one
@@ -113,7 +104,7 @@ export const ClockHelpers = async function () {
     async function refillSections(clockData, parentName) {
         let filled = 0;
         let sectionsArray = $(
-            `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockSection`
+            `.clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockSection`
         ).toArray();
         sectionsArray.forEach((element) => {
             //refilling the sections after refresh
@@ -126,7 +117,7 @@ export const ClockHelpers = async function () {
     }
     async function handleBreaksAndWaypoints(clockData, parentName) {
         //adding breaks if we have any
-        let string = `#clock-display .${parentName} form[data-id='${clockData.ourId}']`;
+        let string = `.clock-display .${parentName} form[data-id='${clockData.ourId}']`;
         //TODO: Replace all these long strings with the above + .clockSection
         let sectionsArray = $(`${string} .clockSection`).toArray();
         let framesArray = $(`${string} .frameSection`).toArray();
@@ -206,57 +197,7 @@ export const ClockHelpers = async function () {
         //     i++;
         // }
     }
-    async function applyGradient(clockData) {
-        let clockWrapper = $(`.app-child form#${clockData.ourId} .clockWrapper`);
-        //make the background wrapper's gradient look like the chosen one
-        clockWrapper.css("backgroundImage", clockData.gradient);
-    }
 
-    async function refillSections(clockData) {
-        let filled = 0;
-        let sectionsArray = $(
-            `.app-child form#${clockData.ourId} .clockSection`
-        ).toArray();
-        sectionsArray.forEach((element) => {
-            //refilling the sections after refresh
-            if (filled < clockData.filledSections) {
-                element.classList.add("filled");
-                filled++;
-                clockData.sectionMap[element.id].filled = true;
-            }
-        });
-    }
-    async function handleBreaksAndWaypoints(clockData) {
-        //adding breaks if we have any
-        let sectionsArray = $(
-            `.app-child form#${clockData.ourId} .clockSection`
-        ).toArray();
-        let framesArray = $(`.app-child form#${clockData.ourId} .frameSection`).toArray();
-        let breakLabels = $(`.app-child form#${clockData.ourId} .breakLabel`).toArray();
-        let waypoints = $(`.app-child form#${clockData.ourId} .waypoint`).toArray();
-        let count = 0;
-        //go through all the sub-sections if there are some
-        if (clockData.breaks.length > 0) {
-            //if breaks is = [2, 1, 2]
-            clockData.breaks.forEach((num) => {
-                count += num; //count = 2, first time around, 3 second time around, 5 3rd time around
-                $(sectionsArray[count - 1]).attr("data-break", true); //(we're subtracting one since array indices start at zero)
-            });
-            let i = 0;
-
-            for (i = 0; i < clockData.breaks.length; i++) {
-                $(framesArray[i]).width((index, currentWidth) => {
-                    return currentWidth * clockData.breaks[i];
-                });
-                $(breakLabels[i]).width((index, currentWidth) => {
-                    return currentWidth * clockData.breaks[i];
-                });
-                $(waypoints[i]).width((index, currentWidth) => {
-                    return currentWidth * clockData.breaks[i];
-                });
-            }
-        }
-    }
     //check if the clock is already rendered
     function isClockRendered(clockId) {
         return game.renderedClocks[clockId];

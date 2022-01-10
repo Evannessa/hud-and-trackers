@@ -720,8 +720,10 @@ async function showClockDrawer(app) {
         data[clockId].sections = Object.values(linkedClocks[clockId].sectionMap);
         data[clockId].user = game.user;
     }
+    console.log("linked clocks are", linkedClocks);
+    console.log("linked clocks data is ", data);
     //TODO: Maybe put in the entity type, like "actor" or "journal entry"
-    let allClocks = { linkedClocks: data };
+    let clocksToDisplay = { linkedClocks: data };
     let categoriesShown = { linkedClocks: true };
     let tooltipText = { linkedClocks: `Clocks that are linked to this ${entity}` };
     let addClockTooltipText = {
@@ -729,13 +731,17 @@ async function showClockDrawer(app) {
     };
     let emptyText = { linkedClocks: `There are no clocks linked to this ${entity}` };
 
-    let allData = clockHelpers.convertData(
-        allClocks,
+    //convert the data to the format the clock display needs
+    let allData = {
+        clocksToDisplay,
         categoriesShown,
         tooltipText,
         addClockTooltipText,
-        emptyText
-    );
+        emptyText,
+    };
+    allData = clockHelpers.convertData(allData);
+
+    console.log("Linked clocks all data", allData);
     var drawerHtml = await renderTemplate(template, allData);
 
     //convert it to a jquery object
@@ -744,12 +750,12 @@ async function showClockDrawer(app) {
     //get the app's element and append this
     app.element.append(drawerHtml);
     let wrapString =
-        "<div class='app-child'><section class='clock-container'></section></div>";
+        "<div class='clock-display app-child'><section class='clock-container'></section></div>";
 
     //if the drawer was expanded, we want it to be expanded when we refresh too
     if (await entity.getFlag("hud-and-trackers", "clockDrawerExpanded")) {
         wrapString =
-            "<div class='app-child expanded'><section class='clock-container'></section></div>";
+            "<div class='clock-display app-child expanded'><section class='clock-container'></section></div>";
     }
     drawerHtml.wrapAll(wrapString);
 
