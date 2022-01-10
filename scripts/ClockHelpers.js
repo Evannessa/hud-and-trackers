@@ -1,5 +1,6 @@
 import { Clock, getAllClocks } from "./clock.js";
 import { ClockConfig } from "./ClockConfig.js";
+
 export const ClockHelpers = async function () {
     function handleButtonClick(event, caller) {
         event.preventDefault();
@@ -144,76 +145,49 @@ export const ClockHelpers = async function () {
         game.renderedClocks[clockData.ourId].updateEntireClock(clockData);
         game.renderedClocks[clockData.ourId].bringToTop();
     }
-
+    /**
+     * this is taking the clocks in each category or type
+     * and converting it into data that can be used by the templates (.e.g, turning sectionMap object into
+     * an array of the clock's sections)
+     * @param object - all the clock data held within a certain category or type (e.g., sharedClocks, sceneClocks, personalClocks.)
+     * @param parentObject - the category object within our "data" object that we want to fill with the converted clock data
+     * */
+    var convertTemplateData = function (object, parentObject) {
+        for (let clockId in object) {
+            parentObject[clockId] = { ...object[clockId] };
+            parentObject[clockId].sections = Object.values(object[clockId].sectionMap);
+            parentObject[clockId].user = game.user;
+        }
+    };
     /**
      * converts clocks in categories to data to be fed to the template
+     * @param allClocks - an object with objects representing the various
+     * clock categories you want to display as children
      */
-    async function convertData() {
-        this.clocks = getSharedClocks();
-
-        //this keeps track of multiple types of clocks to split them into categories
-        this.otherClocks = {
-            sharedClocks: getSharedClocks(),
-            myClocks: getClocksByUser(game.userId),
-            sceneClocks: convertArrayIntoObjectById(
-                getClocksLinkedToEntity(game.scenes.viewed.id)
-            ),
-        };
-
-        this.categoriesShown = await game.user.getFlag(
-            "hud-and-trackers",
-            "displayCategoriesShown"
-        );
-        //if the flag returns null, create it, and set it to these defaults
-        if (!this.categoriesShown) {
-            this.categoriesShown = {
-                sharedClocks: true,
-                myClocks: false,
-                sceneClocks: false,
-            };
-            await game.user.setFlag(
-                "hud-and-trackers",
-                "displayCategoriesShown",
-                this.categoriesShown
-            );
+    var convertData = function (allData) {
+        //copy keys to new object to store converted data
+        let data = {};
+        for (let category in allData.clocksToDisplay) {
+            data[category] = {};
         }
-        let data = {
-            sharedClocks: {},
-            myClocks: {},
-            sceneClocks: {},
-        };
-
-        let tooltipText = {
-            sharedClocks: "Clocks that have been shared with you",
-            myClocks: "Clocks you've personally created",
-            sceneClocks: "Clocks linked to the scene you're viewing",
-        };
-        let addClockTooltipText = {
-            sharedClocks: "Add new clock that'll automatically be shared",
-            myClocks: "Add new personal clock only you can see",
-            sceneClock: "Add new clock linked to the scene you're viewing",
-        };
-        let emptyText = {
-            sharedClocks: "No clocks are being shared by other users.",
-            myClocks: "You haven't created any clocks.",
-            sceneClocks: "You haven't linked any clocks to this scene",
-        };
+        console.log("Converting data, data is ", data);
 
         //for each type or category of clock we have, convert it
-        for (let clockType in this.otherClocks) {
-            this.convertTemplateData(this.otherClocks[clockType], data[clockType]);
+        for (let clockType in allData.clocksToDisplay) {
+            convertTemplateData(allData.clocksToDisplay[clockType], data[clockType]);
         }
 
         return {
             data: data,
-            categoriesShown: this.categoriesShown,
-            tooltipText: tooltipText,
-            addClockTooltipText: addClockTooltipText,
-            emptyText: emptyText,
+            categoriesShown: allData.categoriesShown,
+            tooltipText: allData.tooltipText,
+            addClockTooltipText: allData.addClockTooltipText,
+            emptyText: allData.emptyText,
         };
-    }
+    };
 
     return {
+        convertData: convertData,
         handleButtonClick: handleButtonClick,
         openClock: openClock,
         _activateListeners: _activateListeners,

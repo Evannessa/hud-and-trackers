@@ -4,6 +4,7 @@ import { ClockDisplay } from "./ClockDisplay.js";
 import { ClockHelpers } from "./ClockHelpers.js";
 var clockHelpers;
 ClockHelpers().then((value) => (clockHelpers = value));
+//Because ClockHelpers is an async function, we have to do this to get its value
 import * as HelperFunctions from "./helper-functions.js";
 let socket;
 
@@ -34,11 +35,77 @@ Hooks.once("socketlib.ready", () => {
     socket.register("refreshClockDependentItems", refreshClockDependentItems);
     // socket.register("updateSetting", updateSetting);
 });
+
+/**
+ * This will render the global clock display
+ */
+function renderGlobalClockDisplay() {
+    let clocksToDisplay = {
+        sharedClocks: getSharedClocks(),
+        myClocks: getClocksByUser(game.userId),
+        sceneClocks: HelperFunctions.convertArrayIntoObjectById(
+            getClocksLinkedToEntity(game.scenes.viewed.id)
+        ),
+    };
+
+    //text to display in a tooltip to describe each category when hovered
+    let tooltipText = {
+        sharedClocks: "Clocks that have been shared with you",
+        myClocks: "Clocks you've personally created",
+        sceneClocks: "Clocks linked to the scene you're viewing",
+    };
+    //text to display in a tooltip when you're adding a new clock
+    let addClockTooltipText = {
+        sharedClocks: "Add new clock that'll automatically be shared",
+        myClocks: "Add new personal clock only you can see",
+        sceneClock: "Add new clock linked to the scene you're viewing",
+    };
+    //text to display when there are no clocks in the category
+    let emptyText = {
+        sharedClocks: "No clocks are being shared by other users.",
+        myClocks: "You haven't created any clocks.",
+        sceneClocks: "You haven't linked any clocks to this scene",
+    };
+    //the individual categories in the "accordion" that will be expanded.
+    // For saving which ones the user has expanded
+    let categoriesShown = await game.user.getFlag(
+        "hud-and-trackers",
+        "displayCategoriesShown"
+    );
+
+    //if the flag returns null, create it, and set it to these defaults
+    if (!categoriesShown) {
+        categoriesShown = {
+            sharedClocks: true,
+            myClocks: false,
+            sceneClocks: false,
+        };
+        await game.user.setFlag(
+            "hud-and-trackers",
+            "displayCategoriesShown",
+            categoriesShown
+        );
+    }
+    let allData = {
+        clocksToDisplay: clocksToDisplay,
+        categoriesShown: categoriesShown,
+        tooltipText: tooltipText,
+        addClockTooltipText: addClockTooltipText,
+        emptyText: emptyText,
+    };
+
+    console.log("Convert data is ", clockHelpers.convertData);
+    let finalData = clockHelpers.convertData(allData);
+    game.clockDisplay = new ClockDisplay(finalData, false).render(true);
+}
+
 //attach all the clocks to their linked entities' render hooks
 // start a rendered clock object to keep track of
 // all the rendered clocks
 Hooks.on("ready", async () => {
-    game.clockDisplay = new ClockDisplay(getSharedClocks(), false).render(true);
+    renderGlobalClockDisplay();
+    // game.clockDisplay = new ClockDisplay(getSharedClocks(), false).render(true);
+
     game.renderedClocks = {};
     hookEntities();
 });
@@ -635,6 +702,8 @@ async function showClockDrawer(app) {
         left: app.position.left + app.position.width,
         top: app.position.top,
     });
+    console.log(app.element);
+    app.element.append(app.clockDrawer);
 
     // // get the handlebars template
     // const template =

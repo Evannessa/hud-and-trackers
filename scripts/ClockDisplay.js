@@ -20,15 +20,12 @@ export class ClockDisplay extends Application {
             super(data, { id: "clock-display_app-child" });
             this.options.id = "clock-display_app-child";
         }
-        if (data.hasOwnProperty("categoriesShown")) {
-            this.categoriesShown = data.categoriesShown;
-        } else {
-            this.categoriesShown = {
-                sharedClocks: true,
-                myClocks: false,
-                sceneClocks: false,
-            };
-        }
+
+        this.categoriesShown = {
+            sharedClocks: true,
+            myClocks: false,
+            sceneClocks: false,
+        };
 
         //save which clock categories on the display are open
         if (!game.user.getFlag("hud-and-trackers", "displayCategoriesShown")) {
