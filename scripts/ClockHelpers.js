@@ -145,6 +145,74 @@ export const ClockHelpers = async function () {
         game.renderedClocks[clockData.ourId].bringToTop();
     }
 
+    /**
+     * converts clocks in categories to data to be fed to the template
+     */
+    async function convertData() {
+        this.clocks = getSharedClocks();
+
+        //this keeps track of multiple types of clocks to split them into categories
+        this.otherClocks = {
+            sharedClocks: getSharedClocks(),
+            myClocks: getClocksByUser(game.userId),
+            sceneClocks: convertArrayIntoObjectById(
+                getClocksLinkedToEntity(game.scenes.viewed.id)
+            ),
+        };
+
+        this.categoriesShown = await game.user.getFlag(
+            "hud-and-trackers",
+            "displayCategoriesShown"
+        );
+        //if the flag returns null, create it, and set it to these defaults
+        if (!this.categoriesShown) {
+            this.categoriesShown = {
+                sharedClocks: true,
+                myClocks: false,
+                sceneClocks: false,
+            };
+            await game.user.setFlag(
+                "hud-and-trackers",
+                "displayCategoriesShown",
+                this.categoriesShown
+            );
+        }
+        let data = {
+            sharedClocks: {},
+            myClocks: {},
+            sceneClocks: {},
+        };
+
+        let tooltipText = {
+            sharedClocks: "Clocks that have been shared with you",
+            myClocks: "Clocks you've personally created",
+            sceneClocks: "Clocks linked to the scene you're viewing",
+        };
+        let addClockTooltipText = {
+            sharedClocks: "Add new clock that'll automatically be shared",
+            myClocks: "Add new personal clock only you can see",
+            sceneClock: "Add new clock linked to the scene you're viewing",
+        };
+        let emptyText = {
+            sharedClocks: "No clocks are being shared by other users.",
+            myClocks: "You haven't created any clocks.",
+            sceneClocks: "You haven't linked any clocks to this scene",
+        };
+
+        //for each type or category of clock we have, convert it
+        for (let clockType in this.otherClocks) {
+            this.convertTemplateData(this.otherClocks[clockType], data[clockType]);
+        }
+
+        return {
+            data: data,
+            categoriesShown: this.categoriesShown,
+            tooltipText: tooltipText,
+            addClockTooltipText: addClockTooltipText,
+            emptyText: emptyText,
+        };
+    }
+
     return {
         handleButtonClick: handleButtonClick,
         openClock: openClock,

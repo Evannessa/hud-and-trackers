@@ -1,6 +1,4 @@
 "use strict";
-// import { gsap } from "../../../../scripts/greensock/esm/all.js";
-// gsap.registerPlugin(Flip);
 import {
     Clock,
     getSharedClocks,
@@ -22,11 +20,15 @@ export class ClockDisplay extends Application {
             super(data, { id: "clock-display_app-child" });
             this.options.id = "clock-display_app-child";
         }
-        this.categoriesShown = {
-            sharedClocks: true,
-            myClocks: false,
-            sceneClocks: false,
-        };
+        if (data.hasOwnProperty("categoriesShown")) {
+            this.categoriesShown = data.categoriesShown;
+        } else {
+            this.categoriesShown = {
+                sharedClocks: true,
+                myClocks: false,
+                sceneClocks: false,
+            };
+        }
 
         //save which clock categories on the display are open
         if (!game.user.getFlag("hud-and-trackers", "displayCategoriesShown")) {
@@ -48,7 +50,7 @@ export class ClockDisplay extends Application {
         this.initialized = false;
 
         //this keeps track of if the initial width of the clocks has been set
-        //for the purposes of calculating the width for the accordian
+        //for the purposes of calculating the width for the accordion
         //animation
         this.clocksInitialized = {
             sharedClocks: false,
