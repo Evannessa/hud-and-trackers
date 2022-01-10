@@ -39,7 +39,7 @@ Hooks.once("socketlib.ready", () => {
 /**
  * This will render the global clock display
  */
-function renderGlobalClockDisplay() {
+export async function getGlobalClockDisplayData() {
     let clocksToDisplay = {
         sharedClocks: getSharedClocks(),
         myClocks: getClocksByUser(game.userId),
@@ -94,17 +94,15 @@ function renderGlobalClockDisplay() {
         emptyText: emptyText,
     };
 
-    console.log("Convert data is ", clockHelpers.convertData);
-    let finalData = clockHelpers.convertData(allData);
-    game.clockDisplay = new ClockDisplay(finalData, false).render(true);
+    return clockHelpers.convertData(allData);
 }
 
 //attach all the clocks to their linked entities' render hooks
 // start a rendered clock object to keep track of
 // all the rendered clocks
 Hooks.on("ready", async () => {
-    renderGlobalClockDisplay();
-    // game.clockDisplay = new ClockDisplay(getSharedClocks(), false).render(true);
+    let finalData = getGlobalClockDisplayData();
+    game.clockDisplay = new ClockDisplay(finalData, false).render(true);
 
     game.renderedClocks = {};
     hookEntities();

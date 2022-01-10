@@ -7,6 +7,7 @@ import {
     isClockRendered,
     renderNewClockFromData,
     getClocksByUser,
+    getGlobalClockDisplayData,
 } from "./clock.js";
 import { convertArrayIntoObjectById } from "./helper-functions.js";
 import { ClockConfig } from "./ClockConfig.js";
@@ -20,29 +21,30 @@ export class ClockDisplay extends Application {
             super(data, { id: "clock-display_app-child" });
             this.options.id = "clock-display_app-child";
         }
+        this.data = data;
 
-        this.categoriesShown = {
-            sharedClocks: true,
-            myClocks: false,
-            sceneClocks: false,
-        };
+        // this.categoriesShown = {
+        //     sharedClocks: true,
+        //     myClocks: false,
+        //     sceneClocks: false,
+        // };
 
-        //save which clock categories on the display are open
-        if (!game.user.getFlag("hud-and-trackers", "displayCategoriesShown")) {
-            game.user.setFlag(
-                "hud-and-trackers",
-                "displayCategoriesShown",
-                this.categoriesShown
-            );
-        }
+        // //save which clock categories on the display are open
+        // if (!game.user.getFlag("hud-and-trackers", "displayCategoriesShown")) {
+        //     game.user.setFlag(
+        //         "hud-and-trackers",
+        //         "displayCategoriesShown",
+        //         this.categoriesShown
+        //     );
+        // }
 
-        this.clocks = data;
-        this.otherClocks = {
-            myClocks: getClocksByUser(game.userId),
-            sceneClocks: convertArrayIntoObjectById(
-                getClocksLinkedToEntity(game.scenes.viewed.id)
-            ),
-        };
+        // this.clocks = data;
+        // this.otherClocks = {
+        //     myClocks: getClocksByUser(game.userId),
+        //     sceneClocks: convertArrayIntoObjectById(
+        //         getClocksLinkedToEntity(game.scenes.viewed.id)
+        //     ),
+        // };
         this.parent = parent;
         this.initialized = false;
 
@@ -98,68 +100,73 @@ export class ClockDisplay extends Application {
     }
 
     async getData() {
-        this.clocks = getSharedClocks();
+        // this.clocks = getSharedClocks();
 
-        //this keeps track of multiple types of clocks to split them into categories
-        this.otherClocks = {
-            sharedClocks: getSharedClocks(),
-            myClocks: getClocksByUser(game.userId),
-            sceneClocks: convertArrayIntoObjectById(
-                getClocksLinkedToEntity(game.scenes.viewed.id)
-            ),
-        };
+        // //this keeps track of multiple types of clocks to split them into categories
+        // this.otherClocks = {
+        //     sharedClocks: getSharedClocks(),
+        //     myClocks: getClocksByUser(game.userId),
+        //     sceneClocks: convertArrayIntoObjectById(
+        //         getClocksLinkedToEntity(game.scenes.viewed.id)
+        //     ),
+        // };
 
-        this.categoriesShown = await game.user.getFlag(
-            "hud-and-trackers",
-            "displayCategoriesShown"
-        );
-        //if the flag returns null, create it, and set it to these defaults
-        if (!this.categoriesShown) {
-            this.categoriesShown = {
-                sharedClocks: true,
-                myClocks: false,
-                sceneClocks: false,
-            };
-            await game.user.setFlag(
-                "hud-and-trackers",
-                "displayCategoriesShown",
-                this.categoriesShown
-            );
-        }
-        let data = {
-            sharedClocks: {},
-            myClocks: {},
-            sceneClocks: {},
-        };
+        // this.categoriesShown = await game.user.getFlag(
+        //     "hud-and-trackers",
+        //     "displayCategoriesShown"
+        // );
+        // //if the flag returns null, create it, and set it to these defaults
+        // if (!this.categoriesShown) {
+        //     this.categoriesShown = {
+        //         sharedClocks: true,
+        //         myClocks: false,
+        //         sceneClocks: false,
+        //     };
+        //     await game.user.setFlag(
+        //         "hud-and-trackers",
+        //         "displayCategoriesShown",
+        //         this.categoriesShown
+        //     );
+        // }
+        // let data = {
+        //     sharedClocks: {},
+        //     myClocks: {},
+        //     sceneClocks: {},
+        // };
 
-        let tooltipText = {
-            sharedClocks: "Clocks that have been shared with you",
-            myClocks: "Clocks you've personally created",
-            sceneClocks: "Clocks linked to the scene you're viewing",
-        };
-        let addClockTooltipText = {
-            sharedClocks: "Add new clock that'll automatically be shared",
-            myClocks: "Add new personal clock only you can see",
-            sceneClock: "Add new clock linked to the scene you're viewing",
-        };
-        let emptyText = {
-            sharedClocks: "No clocks are being shared by other users.",
-            myClocks: "You haven't created any clocks.",
-            sceneClocks: "You haven't linked any clocks to this scene",
-        };
+        // let tooltipText = {
+        //     sharedClocks: "Clocks that have been shared with you",
+        //     myClocks: "Clocks you've personally created",
+        //     sceneClocks: "Clocks linked to the scene you're viewing",
+        // };
+        // let addClockTooltipText = {
+        //     sharedClocks: "Add new clock that'll automatically be shared",
+        //     myClocks: "Add new personal clock only you can see",
+        //     sceneClock: "Add new clock linked to the scene you're viewing",
+        // };
+        // let emptyText = {
+        //     sharedClocks: "No clocks are being shared by other users.",
+        //     myClocks: "You haven't created any clocks.",
+        //     sceneClocks: "You haven't linked any clocks to this scene",
+        // };
 
-        //for each type or category of clock we have, convert it
-        for (let clockType in this.otherClocks) {
-            this.convertTemplateData(this.otherClocks[clockType], data[clockType]);
-        }
+        // //for each type or category of clock we have, convert it
+        // for (let clockType in this.otherClocks) {
+        //     this.convertTemplateData(this.otherClocks[clockType], data[clockType]);
+        // }
+        console.log(getGlobalClockDisplayData());
+        let data;
+        await getGlobalClockDisplayData().then((value) => (data = value));
+        console.log(data);
+        return data;
 
-        return {
-            data: data,
-            categoriesShown: this.categoriesShown,
-            tooltipText: tooltipText,
-            addClockTooltipText: addClockTooltipText,
-            emptyText: emptyText,
-        };
+        // return {
+        //     data: data,
+        //     categoriesShown: this.categoriesShown,
+        //     tooltipText: tooltipText,
+        //     addClockTooltipText: addClockTooltipText,
+        //     emptyText: emptyText,
+        // };
     }
 
     /**
@@ -236,7 +243,7 @@ export class ClockDisplay extends Application {
         let cs = await game.user.getFlag(
             "hud-and-trackers",
             "displayCategoriesShown",
-            this.categoriesShown
+            this.data.categoriesShown
         );
         let elementName = $(element).data().name;
         let inner = $(element).find(".clockCategory__inner");
