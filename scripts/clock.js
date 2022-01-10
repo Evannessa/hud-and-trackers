@@ -101,7 +101,10 @@ export async function getGlobalClockDisplayData() {
 // start a rendered clock object to keep track of
 // all the rendered clocks
 Hooks.on("ready", async () => {
-    let finalData = getGlobalClockDisplayData();
+    let finalData;
+    await getGlobalClockDisplayData().then((value) => (finalData = value));
+    console.log("Final Data is ", finalData);
+    // let finalData = getGlobalClockDisplayData();
     game.clockDisplay = new ClockDisplay(finalData, false).render(true);
 
     game.renderedClocks = {};

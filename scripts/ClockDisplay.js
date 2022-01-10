@@ -21,9 +21,10 @@ export class ClockDisplay extends Application {
             super(data, { id: "clock-display_app-child" });
             this.options.id = "clock-display_app-child";
         }
+        console.log("This data is ", data);
         this.data = data;
 
-        // this.categoriesShown = {
+        // this.data.categoriesShown = {
         //     sharedClocks: true,
         //     myClocks: false,
         //     sceneClocks: false,
@@ -34,12 +35,12 @@ export class ClockDisplay extends Application {
         //     game.user.setFlag(
         //         "hud-and-trackers",
         //         "displayCategoriesShown",
-        //         this.categoriesShown
+        //         this.data.categoriesShown
         //     );
         // }
 
         // this.clocks = data;
-        // this.otherClocks = {
+        // this.data.data = {
         //     myClocks: getClocksByUser(game.userId),
         //     sceneClocks: convertArrayIntoObjectById(
         //         getClocksLinkedToEntity(game.scenes.viewed.id)
@@ -103,7 +104,7 @@ export class ClockDisplay extends Application {
         // this.clocks = getSharedClocks();
 
         // //this keeps track of multiple types of clocks to split them into categories
-        // this.otherClocks = {
+        // this.data.data = {
         //     sharedClocks: getSharedClocks(),
         //     myClocks: getClocksByUser(game.userId),
         //     sceneClocks: convertArrayIntoObjectById(
@@ -111,13 +112,13 @@ export class ClockDisplay extends Application {
         //     ),
         // };
 
-        // this.categoriesShown = await game.user.getFlag(
+        // this.data.categoriesShown = await game.user.getFlag(
         //     "hud-and-trackers",
         //     "displayCategoriesShown"
         // );
         // //if the flag returns null, create it, and set it to these defaults
-        // if (!this.categoriesShown) {
-        //     this.categoriesShown = {
+        // if (!this.data.categoriesShown) {
+        //     this.data.categoriesShown = {
         //         sharedClocks: true,
         //         myClocks: false,
         //         sceneClocks: false,
@@ -125,7 +126,7 @@ export class ClockDisplay extends Application {
         //     await game.user.setFlag(
         //         "hud-and-trackers",
         //         "displayCategoriesShown",
-        //         this.categoriesShown
+        //         this.data.categoriesShown
         //     );
         // }
         // let data = {
@@ -151,8 +152,8 @@ export class ClockDisplay extends Application {
         // };
 
         // //for each type or category of clock we have, convert it
-        // for (let clockType in this.otherClocks) {
-        //     this.convertTemplateData(this.otherClocks[clockType], data[clockType]);
+        // for (let clockType in this.data.data) {
+        //     this.convertTemplateData(this.data.data[clockType], data[clockType]);
         // }
         console.log(getGlobalClockDisplayData());
         let data;
@@ -162,7 +163,7 @@ export class ClockDisplay extends Application {
 
         // return {
         //     data: data,
-        //     categoriesShown: this.categoriesShown,
+        //     categoriesShown: this.data.categoriesShown,
         //     tooltipText: tooltipText,
         //     addClockTooltipText: addClockTooltipText,
         //     emptyText: emptyText,
@@ -216,11 +217,11 @@ export class ClockDisplay extends Application {
 
                 //call the expandButtonClicked method
                 this.expandButtonClicked(el);
-                this.categoriesShown[name] = !this.categoriesShown[name];
+                this.data.categoriesShown[name] = !this.data.categoriesShown[name];
                 await game.user.setFlag(
                     "hud-and-trackers",
                     "displayCategoriesShown",
-                    this.categoriesShown
+                    this.data.categoriesShown
                 );
                 break;
         }
@@ -240,6 +241,7 @@ export class ClockDisplay extends Application {
      */
     async measureAccordionContents(index, element) {
         var contentWidth = $(element).find(".clockCategory__inner").outerWidth();
+        console.log("Data is ", this.data);
         let cs = await game.user.getFlag(
             "hud-and-trackers",
             "displayCategoriesShown",
@@ -292,7 +294,7 @@ export class ClockDisplay extends Application {
         event.stopPropagation();
         let el = $(event.currentTarget);
         let name = el.data().name;
-        this.categoriesShown[name] = el.prop("checked");
+        this.data.categoriesShown[name] = el.prop("checked");
         if (el.prop("checked")) {
             //insert a check icon
             el.next("label").children("span").html('<i class="fas fa-check"></i>');
@@ -305,7 +307,7 @@ export class ClockDisplay extends Application {
         await game.user.setFlag(
             "hud-and-trackers",
             "displayCategoriesShown",
-            this.categoriesShown
+            this.data.categoriesShown
         );
         this.render();
     }
@@ -333,19 +335,20 @@ export class ClockDisplay extends Application {
         $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
         $(html).on("click", ".clockApp", this.openClock);
 
-        for (let clockType in this.categoriesShown) {
+        console.log("activate listensers", this.data);
+        for (let clockType in this.data.categoriesShown) {
             //set the toggle switches values to equal what's stored in "categories shown"
-            if (this.categoriesShown[clockType] === false) {
+            if (this.data.categoriesShown[clockType] === false) {
             }
         }
 
         //apply the gradients, refill the empty sections, etc.
-        for (let clockType in this.otherClocks) {
-            this.applyTemplateDressing(this.otherClocks[clockType], clockType);
+        for (let clockType in this.data.data) {
+            this.applyTemplateDressing(this.data.data[clockType], clockType);
         }
 
         //for each category, measure the contents of the clock
-        $(".clockCategory").each(this.measureAccordionContents);
+        $(".clockCategory").each(this.measureAccordionContents.bind(this));
     }
 
     applyGradientToEach(clockData, children) {
