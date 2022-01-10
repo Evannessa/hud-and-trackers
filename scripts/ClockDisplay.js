@@ -101,73 +101,10 @@ export class ClockDisplay extends Application {
     }
 
     async getData() {
-        // this.clocks = getSharedClocks();
-
-        // //this keeps track of multiple types of clocks to split them into categories
-        // this.data.data = {
-        //     sharedClocks: getSharedClocks(),
-        //     myClocks: getClocksByUser(game.userId),
-        //     sceneClocks: convertArrayIntoObjectById(
-        //         getClocksLinkedToEntity(game.scenes.viewed.id)
-        //     ),
-        // };
-
-        // this.data.categoriesShown = await game.user.getFlag(
-        //     "hud-and-trackers",
-        //     "displayCategoriesShown"
-        // );
-        // //if the flag returns null, create it, and set it to these defaults
-        // if (!this.data.categoriesShown) {
-        //     this.data.categoriesShown = {
-        //         sharedClocks: true,
-        //         myClocks: false,
-        //         sceneClocks: false,
-        //     };
-        //     await game.user.setFlag(
-        //         "hud-and-trackers",
-        //         "displayCategoriesShown",
-        //         this.data.categoriesShown
-        //     );
-        // }
-        // let data = {
-        //     sharedClocks: {},
-        //     myClocks: {},
-        //     sceneClocks: {},
-        // };
-
-        // let tooltipText = {
-        //     sharedClocks: "Clocks that have been shared with you",
-        //     myClocks: "Clocks you've personally created",
-        //     sceneClocks: "Clocks linked to the scene you're viewing",
-        // };
-        // let addClockTooltipText = {
-        //     sharedClocks: "Add new clock that'll automatically be shared",
-        //     myClocks: "Add new personal clock only you can see",
-        //     sceneClock: "Add new clock linked to the scene you're viewing",
-        // };
-        // let emptyText = {
-        //     sharedClocks: "No clocks are being shared by other users.",
-        //     myClocks: "You haven't created any clocks.",
-        //     sceneClocks: "You haven't linked any clocks to this scene",
-        // };
-
-        // //for each type or category of clock we have, convert it
-        // for (let clockType in this.data.data) {
-        //     this.convertTemplateData(this.data.data[clockType], data[clockType]);
-        // }
-        console.log(getGlobalClockDisplayData());
         let data;
         await getGlobalClockDisplayData().then((value) => (data = value));
         console.log(data);
         return data;
-
-        // return {
-        //     data: data,
-        //     categoriesShown: this.data.categoriesShown,
-        //     tooltipText: tooltipText,
-        //     addClockTooltipText: addClockTooltipText,
-        //     emptyText: emptyText,
-        // };
     }
 
     /**
@@ -335,7 +272,6 @@ export class ClockDisplay extends Application {
         $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
         $(html).on("click", ".clockApp", this.openClock);
 
-        console.log("activate listensers", this.data);
         for (let clockType in this.data.categoriesShown) {
             //set the toggle switches values to equal what's stored in "categories shown"
             if (this.data.categoriesShown[clockType] === false) {

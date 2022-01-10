@@ -695,57 +695,70 @@ async function showClockDrawer(app) {
     //this is turning the array into an object w/ ids as key and obj literal as value
     linkedClocks = HelperFunctions.convertArrayIntoObjectById(linkedClocks);
 
-    app.clockDrawer = new ClockDisplay(linkedClocks, true);
-    //?needed to await _render instead of .render()
-    await app.clockDrawer._render(true);
-    console.log(app.position);
-    app.clockDrawer.setPosition({
-        left: app.position.left + app.position.width,
-        top: app.position.top,
-    });
-    console.log(app.element);
-    app.element.append(app.clockDrawer);
+    // app.clockDrawer = new ClockDisplay(linkedClocks, true);
+    // //?needed to await _render instead of .render()
+    // await app.clockDrawer._render(true);
+    // console.log(app.position);
+    // app.clockDrawer.setPosition({
+    //     left: app.position.left + app.position.width,
+    //     top: app.position.top,
+    // });
+    // console.log(app.element);
+    // app.element.append(app.clockDrawer);
 
-    // // get the handlebars template
-    // const template =
-    //     "modules/hud-and-trackers/templates/clock-partials/clock-display.hbs";
+    // get the handlebars template
+    const template =
+        "modules/hud-and-trackers/templates/clock-partials/clock-display.hbs";
 
-    // //render the handlebars template
-    // // let data = {
-    // // 	shar
-    // // };
-    // let data = {};
-    // for (let clockId in linkedClocks) {
-    //     data[clockId] = { ...linkedClocks[clockId] };
-    //     data[clockId].sections = Object.values(linkedClocks[clockId].sectionMap);
-    //     data[clockId].user = game.user;
-    // }
-    // var drawerHtml = await renderTemplate(template, data);
-    // // console.log(clockHelpers._activateListeners);
+    //render the handlebars template
+    // let data = {
+    // 	shar
+    // };
+    let data = {};
+    for (let clockId in linkedClocks) {
+        data[clockId] = { ...linkedClocks[clockId] };
+        data[clockId].sections = Object.values(linkedClocks[clockId].sectionMap);
+        data[clockId].user = game.user;
+    }
+    //TODO: Maybe put in the entity type, like "actor" or "journal entry"
+    let allClocks = { linkedClocks: data };
+    let categoriesShown = { linkedClocks: true };
+    let tooltipText = { linkedClocks: `Clocks that are linked to this ${entity}` };
+    let addClockTooltipText = {
+        linkedClocks: `Add a new clock linked to this ${entity}?`,
+    };
+    let emptyText = { linkedClocks: `There are no clocks linked to this ${entity}` };
 
-    // // ClockHelpers.activateListeners(drawerHtml, linkedClocks);
+    let allData = clockHelpers.convertData(
+        allClocks,
+        categoriesShown,
+        tooltipText,
+        addClockTooltipText,
+        emptyText
+    );
+    var drawerHtml = await renderTemplate(template, allData);
 
-    // //convert it to a jquery object
-    // drawerHtml = $(drawerHtml);
+    //convert it to a jquery object
+    drawerHtml = $(drawerHtml);
 
-    // //get the app's element and append this
-    // app.element.append(drawerHtml);
-    // let wrapString =
-    //     "<div class='app-child'><section class='clock-container'></section></div>";
+    //get the app's element and append this
+    app.element.append(drawerHtml);
+    let wrapString =
+        "<div class='app-child'><section class='clock-container'></section></div>";
 
-    // //if the drawer was expanded, we want it to be expanded when we refresh too
-    // if (await entity.getFlag("hud-and-trackers", "clockDrawerExpanded")) {
-    //     wrapString =
-    //         "<div class='app-child expanded'><section class='clock-container'></section></div>";
-    // }
-    // drawerHtml.wrapAll(wrapString);
+    //if the drawer was expanded, we want it to be expanded when we refresh too
+    if (await entity.getFlag("hud-and-trackers", "clockDrawerExpanded")) {
+        wrapString =
+            "<div class='app-child expanded'><section class='clock-container'></section></div>";
+    }
+    drawerHtml.wrapAll(wrapString);
 
-    // //must be put in the dom first
-    // clockHelpers._activateListeners(
-    //     drawerHtml.closest(".app-child"),
-    //     linkedClocks,
-    //     entity
-    // );
+    //must be put in the dom first
+    clockHelpers._activateListeners(
+        drawerHtml.closest(".app-child"),
+        allData.data,
+        entity
+    );
 }
 
 //check if the clock is already rendered
