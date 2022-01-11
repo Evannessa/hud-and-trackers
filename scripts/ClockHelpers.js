@@ -260,6 +260,7 @@ export const ClockHelpers = async function () {
             convertTemplateData(allData.clocksToDisplay[clockType], data[clockType]);
         }
 
+        console.log("Converting data again, data is ", data);
         return {
             data: data,
             categoriesShown: allData.categoriesShown,

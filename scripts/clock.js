@@ -47,6 +47,7 @@ export async function getGlobalClockDisplayData() {
             getClocksLinkedToEntity(game.scenes.viewed.id)
         ),
     };
+    console.log("Clocks to display", clocksToDisplay);
 
     //text to display in a tooltip to describe each category when hovered
     let tooltipText = {
@@ -94,6 +95,7 @@ export async function getGlobalClockDisplayData() {
         emptyText: emptyText,
     };
 
+    console.log("Converted data in clock is", clockHelpers.convertData(allData));
     return clockHelpers.convertData(allData);
 }
 
@@ -965,6 +967,7 @@ async function refreshClockDependentItems(clockId, clockData, isDeletion) {
 }
 
 Hooks.on("clockUpdated", async (clockId, clockData, isDeletion) => {
+    console.log("CLOCK HAS BEEN UPDATED", clockData);
     refreshClockDependentItems(clockId, clockData, isDeletion);
     socket.executeForOthers("refreshClockDependentItems", clockId, clockData, isDeletion);
 });

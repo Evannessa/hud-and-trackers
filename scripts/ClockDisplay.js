@@ -101,10 +101,8 @@ export class ClockDisplay extends Application {
     }
 
     async getData() {
-        let data;
-        await getGlobalClockDisplayData().then((value) => (data = value));
-        console.log(data);
-        return data;
+        await getGlobalClockDisplayData().then((value) => (this.data = value));
+        return this.data;
     }
 
     /**
@@ -264,6 +262,7 @@ export class ClockDisplay extends Application {
     }
 
     activateListeners(html) {
+        console.log("Listeners being activated again");
         //! The "html" will be different depending on if you're using application or form-application
         super.activateListeners(html);
         html = html.closest(".app");
@@ -272,12 +271,6 @@ export class ClockDisplay extends Application {
         $(html).off("change", "input[type='checkbox']");
         $(html).on("click", "[data-action]", this.handleButtonClick.bind(this));
         $(html).on("click", ".clockApp", this.openClock);
-
-        for (let clockType in this.data.categoriesShown) {
-            //set the toggle switches values to equal what's stored in "categories shown"
-            if (this.data.categoriesShown[clockType] === false) {
-            }
-        }
 
         //apply the gradients, refill the empty sections, etc.
         for (let clockType in this.data.data) {
