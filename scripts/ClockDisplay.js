@@ -177,6 +177,7 @@ export class ClockDisplay extends Application {
      * @param {element} element - the clockCategory (holds both the button and the content)
      */
     async measureAccordionContents(index, element) {
+        console.log("Measuring accordion element", element);
         var contentWidth = $(element).find(".clockCategory__inner").outerWidth();
         console.log("Data is ", this.data);
         let cs = await game.user.getFlag(
@@ -284,7 +285,7 @@ export class ClockDisplay extends Application {
         }
 
         //for each category, measure the contents of the clock
-        $(".clockCategory").each(this.measureAccordionContents.bind(this));
+        $("#clock-display .clockCategory").each(this.measureAccordionContents.bind(this));
     }
 
     applyGradientToEach(clockData, children) {

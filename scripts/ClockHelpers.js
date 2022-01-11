@@ -84,6 +84,8 @@ export const ClockHelpers = async function () {
         );
         clockWrapper.addClass("clockWrapper__squares");
         //make the background wrapper's gradient look like the chosen one
+        console.log(clockData);
+        console.log(clockData.gradient);
         if (clockData.gradient.includes("gradient")) {
             //find all the children and change their backgroundImage
             clockWrapper.children(".clockSection.filled").each((index, element) => {
@@ -95,7 +97,7 @@ export const ClockHelpers = async function () {
                 $(element).addClass(`${clockData.gradient}`);
             });
         }
-        this.applyGradientToEach(clockData, clockWrapper.children(".clockSection"));
+        applyGradientToEach(clockData, clockWrapper.children(".clockSection"));
     }
 
     /**
@@ -170,8 +172,9 @@ export const ClockHelpers = async function () {
         html = html.closest(".app");
         $(html).off("click", "[data-action]");
         $(html).off("click", ".clockApp");
-        $(html).off("change", "input[type='checkbox']");
-        $(html).on("click", "[data-action]", handleButtonClick.bind(this));
+        $(html).on("click", "[data-action]", (event) => {
+            handleButtonClick.call(html, event, caller);
+        });
         $(html).on("click", ".clockApp", openClock);
 
         //apply the gradients, refill the empty sections, etc.
