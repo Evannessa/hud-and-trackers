@@ -253,6 +253,9 @@ export class Clock extends FormApplication {
         if (event.altKey) {
             //if alt key is pressed, we're going to unlink the entity
             this.unlinkEntity(ourEntity);
+            //!NOTE -- when updating, because the entity is removed,
+            //! When the linked entities are called to update, the unlinked one
+            //! won't be in the list
             // await unlinkClockFromEntity(ourEntity, this.data.ourId);
             // this.saveAndRenderApp();
             return;
@@ -664,9 +667,10 @@ export class Clock extends FormApplication {
             this.saveAndRenderApp();
         }
     }
-    async unlinkEntity(data) {
-        console.log(data);
-        delete this.data.linkedEntities[data.id];
+    async unlinkEntity(entityData) {
+        delete this.data.linkedEntities[entityData.id];
+        //we have to refresh the entity we're unlinking here too
+        refreshSpecificEntity(entityData);
         this.saveAndRenderApp();
     }
 
@@ -701,25 +705,10 @@ async function showClockDrawer(app) {
     //this is turning the array into an object w/ ids as key and obj literal as value
     linkedClocks = HelperFunctions.convertArrayIntoObjectById(linkedClocks);
 
-    // app.clockDrawer = new ClockDisplay(linkedClocks, true);
-    // //?needed to await _render instead of .render()
-    // await app.clockDrawer._render(true);
-    // console.log(app.position);
-    // app.clockDrawer.setPosition({
-    //     left: app.position.left + app.position.width,
-    //     top: app.position.top,
-    // });
-    // console.log(app.element);
-    // app.element.append(app.clockDrawer);
-
     // get the handlebars template
     const template =
         "modules/hud-and-trackers/templates/clock-partials/clock-display.hbs";
 
-    //render the handlebars template
-    // let data = {
-    // 	shar
-    // };
     let data = {};
     for (let clockId in linkedClocks) {
         data[clockId] = { ...linkedClocks[clockId] };
@@ -940,21 +929,31 @@ async function unlinkClockFromEntity(ourEntity, clockId) {
     Hooks.call("clockUpdated", clockId, clockData, false);
 }
 
+/**
+ * This deals with the special case of refreshing a linked entity after it's unlinked
+ * from the clock
+ * @param entityData - the data of the entity we're trying to refresh
+ */
+async function refreshSpecificEntity(entityData) {
+    let entity;
+    await HelperFunctions.getEntityById(entityData.entity, entityId).then(
+        (value) => (entity = value)
+    );
+    if (entity?.sheet && entity.sheet.rendered) {
+        reRenderLinkedEntity(entity, clockId);
+    }
+}
+
 async function refreshClockDependentItems(clockId, clockData, isDeletion) {
-    console.log("Refreshing!");
     //re-render the sheets of every entity linked to this clock
-    console.log("Refreshing linked entities? ", clockData);
+    //! If the  entity was unlinked, we need to handle it too
     for (let entityId in clockData.linkedEntities) {
         let entityData = clockData.linkedEntities[entityId];
         let entity;
-        console.log("Entity?", entityData.entity, entityId);
         await HelperFunctions.getEntityById(entityData.entity, entityId).then(
             (value) => (entity = value)
         );
-        console.log(entity);
-        //TODO: How to handle if a token sheet instead?
         if (entity?.sheet && entity.sheet.rendered) {
-            console.log("rerendering linked entity");
             reRenderLinkedEntity(entity, clockId);
         }
     }
@@ -977,7 +976,6 @@ async function refreshClockDependentItems(clockId, clockData, isDeletion) {
 }
 
 Hooks.on("clockUpdated", async (clockId, clockData, isDeletion) => {
-    console.log("CLOCK HAS BEEN UPDATED", clockData);
     refreshClockDependentItems(clockId, clockData, isDeletion);
     socket.executeForOthers("refreshClockDependentItems", clockId, clockData, isDeletion);
 });
