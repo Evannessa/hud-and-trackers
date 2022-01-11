@@ -84,8 +84,6 @@ export const ClockHelpers = async function () {
         );
         clockWrapper.addClass("clockWrapper__squares");
         //make the background wrapper's gradient look like the chosen one
-        console.log(clockData);
-        console.log(clockData.gradient);
         if (clockData.gradient.includes("gradient")) {
             //find all the children and change their backgroundImage
             clockWrapper.children(".clockSection.filled").each((index, element) => {
@@ -253,14 +251,12 @@ export const ClockHelpers = async function () {
         for (let category in allData.clocksToDisplay) {
             data[category] = {};
         }
-        console.log("Converting data, data is ", data);
 
         //for each type or category of clock we have, convert it
         for (let clockType in allData.clocksToDisplay) {
             convertTemplateData(allData.clocksToDisplay[clockType], data[clockType]);
         }
 
-        console.log("Converting data again, data is ", data);
         return {
             data: data,
             categoriesShown: allData.categoriesShown,

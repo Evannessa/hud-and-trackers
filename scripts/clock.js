@@ -652,10 +652,12 @@ export class Clock extends FormApplication {
         if (ourEntity) {
             //save the linked entity on our clock
             //save this entity a linked entity on our clock
+            console.log("Our entity itself is", ourEntity);
             let entityData = {
                 name: ourEntity.name,
-                entity: ourEntity.entity,
+                entity: ourEntity.documentName,
             };
+            console.log("Our entity data is", entityData);
             //get our linked entities, and find the id of this entity, and add the linked entities to this data
             this.data.linkedEntities[data.id] = entityData;
 
@@ -743,7 +745,6 @@ async function showClockDrawer(app) {
     };
     allData = clockHelpers.convertData(allData);
 
-    console.log("Linked clocks all data", allData);
     var drawerHtml = await renderTemplate(template, allData);
 
     //convert it to a jquery object
@@ -936,12 +937,15 @@ async function unlinkClockFromEntity(ourEntity, clockId) {
 async function refreshClockDependentItems(clockId, clockData, isDeletion) {
     console.log("Refreshing!");
     //re-render the sheets of every entity linked to this clock
+    console.log("Refreshing linked entities? ", clockData);
     for (let entityId in clockData.linkedEntities) {
         let entityData = clockData.linkedEntities[entityId];
         let entity;
+        console.log("Entity?", entityData.entity, entityId);
         await HelperFunctions.getEntityById(entityData.entity, entityId).then(
             (value) => (entity = value)
         );
+        console.log(entity);
         //TODO: How to handle if a token sheet instead?
         if (entity?.sheet && entity.sheet.rendered) {
             console.log("rerendering linked entity");

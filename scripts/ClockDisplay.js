@@ -21,31 +21,8 @@ export class ClockDisplay extends Application {
             super(data, { id: "clock-display_app-child" });
             this.options.id = "clock-display_app-child";
         }
-        console.log("This data is ", data);
         this.data = data;
 
-        // this.data.categoriesShown = {
-        //     sharedClocks: true,
-        //     myClocks: false,
-        //     sceneClocks: false,
-        // };
-
-        // //save which clock categories on the display are open
-        // if (!game.user.getFlag("hud-and-trackers", "displayCategoriesShown")) {
-        //     game.user.setFlag(
-        //         "hud-and-trackers",
-        //         "displayCategoriesShown",
-        //         this.data.categoriesShown
-        //     );
-        // }
-
-        // this.clocks = data;
-        // this.data.data = {
-        //     myClocks: getClocksByUser(game.userId),
-        //     sceneClocks: convertArrayIntoObjectById(
-        //         getClocksLinkedToEntity(game.scenes.viewed.id)
-        //     ),
-        // };
         this.parent = parent;
         this.initialized = false;
 
@@ -175,9 +152,7 @@ export class ClockDisplay extends Application {
      * @param {element} element - the clockCategory (holds both the button and the content)
      */
     async measureAccordionContents(index, element) {
-        console.log("Measuring accordion element", element);
         var contentWidth = $(element).find(".clockCategory__inner").outerWidth();
-        console.log("Data is ", this.data);
         let cs = await game.user.getFlag(
             "hud-and-trackers",
             "displayCategoriesShown",
@@ -262,7 +237,6 @@ export class ClockDisplay extends Application {
     }
 
     activateListeners(html) {
-        console.log("Listeners being activated again");
         //! The "html" will be different depending on if you're using application or form-application
         super.activateListeners(html);
         html = html.closest(".app");
