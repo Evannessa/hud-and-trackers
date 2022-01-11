@@ -665,6 +665,7 @@ export class Clock extends FormApplication {
         }
     }
     async unlinkEntity(data) {
+        console.log(data);
         delete this.data.linkedEntities[data.id];
         this.saveAndRenderApp();
     }
@@ -693,6 +694,7 @@ function registerHooks(hookName) {
 async function showClockDrawer(app) {
     console.log("Showing CLOCK DRAWER AGAIN");
     let entity = app.object;
+    console.log(entity);
     let element = app.element;
     let linkedClocks = await getClocksLinkedToEntity(entity.id);
 
@@ -729,11 +731,15 @@ async function showClockDrawer(app) {
     //TODO: Maybe put in the entity type, like "actor" or "journal entry"
     let clocksToDisplay = { linkedClocks: data };
     let categoriesShown = { linkedClocks: true };
-    let tooltipText = { linkedClocks: `Clocks that are linked to this ${entity}` };
-    let addClockTooltipText = {
-        linkedClocks: `Add a new clock linked to this ${entity}?`,
+    let tooltipText = {
+        linkedClocks: `Clocks that are linked to this ${entity.documentName}`,
     };
-    let emptyText = { linkedClocks: `There are no clocks linked to this ${entity}` };
+    let addClockTooltipText = {
+        linkedClocks: `Add a new clock linked to this ${entity.documentName}?`,
+    };
+    let emptyText = {
+        linkedClocks: `There are no clocks linked to this ${entity.documentName}`,
+    };
 
     //convert the data to the format the clock display needs
     let allData = {

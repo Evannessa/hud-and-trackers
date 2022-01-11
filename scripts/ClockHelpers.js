@@ -26,7 +26,10 @@ export const ClockHelpers = async function () {
                 let clockConfig = new ClockConfig(
                     {
                         linkedEntities: {
-                            [caller.id]: { name: caller.name, entity: caller.entity },
+                            [caller.id]: {
+                                name: caller.name,
+                                entity: caller.documentName,
+                            },
                         },
                     },
                     false
