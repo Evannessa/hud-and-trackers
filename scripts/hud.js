@@ -64,7 +64,6 @@ Hooks.on("renderSidebarTab", (app, html) => {
             if (tokens.length > 0) {
                 tokenImg = token.actor.img;
             }
-            // let tokenImg = canvas.tokens.controlled[0]?.actor.img;
             if (tokenImg) {
                 setTokenImage(tokenImg);
             }
@@ -72,6 +71,10 @@ Hooks.on("renderSidebarTab", (app, html) => {
     }
 });
 
+/**
+ * This shows an image of your selected token in the chat box
+ * @param {String} tokenImg - the path to the image of the token we want to show in the chat
+ */
 function setTokenImage(tokenImg) {
     let chatArea = $(game.chatArea);
     let img = chatArea.find(".tokenImg");
