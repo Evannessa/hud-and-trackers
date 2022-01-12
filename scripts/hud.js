@@ -6,15 +6,9 @@ import { ClockConfig } from "./ClockConfig.js";
 import * as PartyOverview from "./party-overview.js";
 import * as HelperFunctions from "./helper-functions.js";
 
-let chatArea;
 let hud;
 let lastTab = "attacks";
 let inCombat = false;
-
-let initializationStarted = false;
-let addedRepTokens = false;
-let initializedRepTokens = false;
-let turnReset = false;
 
 Handlebars.registerHelper("firstChar", function (strInputCode) {
     return strInputCode.charAt(0);
@@ -56,6 +50,7 @@ Hooks.on("renderSidebarTab", (app, html) => {
     if (app.options.id == "chat") {
         //get the parent of the chat message box
         let chatForm = html.find("#chat-form");
+        chatForm.css("position", "relative");
 
         //add our token image div into it, and fill it
         chatForm.append("<div class='chatTokenImg'></div>");
@@ -126,7 +121,6 @@ Hooks.on("controlToken", async (token, isControlled) => {
             //** So this will close regardless, as it'll be zero
             //before being set to one
             //as previous control of the tokens is released
-            //if we're controlling zero tokens, close the hud
             setTimeout(() => {
                 if (game.canvas.tokens.controlled.length == 0) {
                     hud.close();
@@ -594,6 +588,7 @@ export class Hud extends Application {
     }
 
     static setActive(element) {
+        console.log("Setting active " + element.classList);
         let siblings = Hud.getSiblings(element);
         siblings.forEach((sibling) => {
             if (sibling.classList.contains("active")) {
@@ -604,13 +599,20 @@ export class Hud extends Application {
     }
 
     static setPinned(element) {
+        this.setActive(element); //make the pinned one active first
+        //to remove active state from its siblings
         let siblings = Hud.getSiblings(element);
+        console.log("Setting pinned " + element.classList);
         siblings.forEach((sibling) => {
             if (sibling.classList.contains("pinned")) {
                 $(sibling).removeClass("pinned");
             }
+            if (sibling.classList.contains("active")) {
+                $(sibling).removeClass("pinned");
+            }
         });
         $(element).addClass("pinned");
+        $(element).addClass("active");
     }
 
     static callMacro(name) {
@@ -694,6 +696,7 @@ export class Hud extends Application {
                     //if not pinned, pin, and re-render
                     let element = event.currentTarget;
                     Hud.setPinned(element);
+                    Hud.setActive(element);
                     this.pinnedTab = type;
                     await this.ourActor.setFlag("hud-and-trackers", "pinnedTab", type);
                     this.render();

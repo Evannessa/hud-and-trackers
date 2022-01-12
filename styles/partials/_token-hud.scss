@@ -53,14 +53,11 @@
 			white-space: nowrap;
 			padding-inline: 0.75rem;
 			background-color: var(--tui-black2);
-			transition: background-color 100ms linear;
+			border-bottom: 2px hidden white;
+			transition: background-color 100ms linear, border-style 100ms linear;
 
 			&:hover {
 				background-color: var(--tui-black4L);
-			}
-
-			&.pinned {
-				border: 2px dotted rgb(255, 255, 255);
 			}
 
 			&.active {
@@ -86,6 +83,11 @@
 					background-color: #8962d8;
 				}
 			}
+
+			&.pinned {
+				border-bottom: 2px solid currentColor;
+			}
+
 
 			// &.damage,
 			// &.effort {
