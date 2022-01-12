@@ -109,10 +109,11 @@ export class ClockDisplay extends Application {
                     let scene = game.scenes.viewed;
                     data = {
                         linkedEntities: {
-                            [scene.id]: { name: scene.name, entity: scene.entity },
+                            [scene.id]: { name: scene.name, entity: scene.documentName },
                         },
                     };
                 }
+
                 new ClockConfig(data, false).render(true);
                 break;
             case "expand":

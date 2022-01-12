@@ -47,7 +47,6 @@ export async function getGlobalClockDisplayData() {
             getClocksLinkedToEntity(game.scenes.viewed.id)
         ),
     };
-    console.log("Clocks to display", clocksToDisplay);
 
     //text to display in a tooltip to describe each category when hovered
     let tooltipText = {
@@ -95,7 +94,6 @@ export async function getGlobalClockDisplayData() {
         emptyText: emptyText,
     };
 
-    console.log("Converted data in clock is", clockHelpers.convertData(allData));
     return clockHelpers.convertData(allData);
 }
 
@@ -105,7 +103,6 @@ export async function getGlobalClockDisplayData() {
 Hooks.on("ready", async () => {
     let finalData;
     await getGlobalClockDisplayData().then((value) => (finalData = value));
-    console.log("Final Data is ", finalData);
     // let finalData = getGlobalClockDisplayData();
     game.clockDisplay = new ClockDisplay(finalData, false).render(true);
 
@@ -166,7 +163,6 @@ export class Clock extends FormApplication {
     updateEntireClock(clockData, dontSave) {
         this.data = clockData;
         if (dontSave) {
-            console.log("should be rendering");
             this.render(true);
         } else {
             this.saveAndRenderApp();
@@ -310,7 +306,6 @@ export class Clock extends FormApplication {
     }
 
     async _handleButtonClick(event) {
-        console.log("Handling click!");
         event.stopPropagation();
 
         let clickedElement = $(event.currentTarget); //this will return the form itself?
@@ -632,7 +627,6 @@ export class Clock extends FormApplication {
     }
     async _onDrop(event) {
         event.preventDefault();
-        console.log("Something dropped");
         let data;
         try {
             data = JSON.parse(event.dataTransfer.getData("text/plain"));
@@ -655,12 +649,10 @@ export class Clock extends FormApplication {
         if (ourEntity) {
             //save the linked entity on our clock
             //save this entity a linked entity on our clock
-            console.log("Our entity itself is", ourEntity);
             let entityData = {
                 name: ourEntity.name,
                 entity: ourEntity.documentName,
             };
-            console.log("Our entity data is", entityData);
             //get our linked entities, and find the id of this entity, and add the linked entities to this data
             this.data.linkedEntities[data.id] = entityData;
 
@@ -668,9 +660,16 @@ export class Clock extends FormApplication {
         }
     }
     async unlinkEntity(entityData) {
+        //delete the entity from linkedEntities, and refresh the entity
         delete this.data.linkedEntities[entityData.id];
-        //we have to refresh the entity we're unlinking here too
-        refreshSpecificEntity(entityData);
+
+        //was accessing "ourId" instead of "id"
+        // refreshSpecificEntity(entityData, this.data.ourId);
+        const keyDeletion = {
+            [`-=${entityData.id}`]: null,
+        };
+        //add the key deletion thing so it'll be deleted properly in the users' saved flags as well
+        this.data.linkedEntities[`-=${entityData.id}`] = null;
         this.saveAndRenderApp();
     }
 
@@ -696,9 +695,7 @@ function registerHooks(hookName) {
  * @param {*} app - the application instance
  */
 async function showClockDrawer(app) {
-    console.log("Showing CLOCK DRAWER AGAIN");
     let entity = app.object;
-    console.log(entity);
     let element = app.element;
     let linkedClocks = await getClocksLinkedToEntity(entity.id);
 
@@ -715,8 +712,6 @@ async function showClockDrawer(app) {
         data[clockId].sections = Object.values(linkedClocks[clockId].sectionMap);
         data[clockId].user = game.user;
     }
-    console.log("linked clocks are", linkedClocks);
-    console.log("linked clocks data is ", data);
     //TODO: Maybe put in the entity type, like "actor" or "journal entry"
     let clocksToDisplay = { linkedClocks: data };
     let categoriesShown = { linkedClocks: true };
@@ -864,6 +859,8 @@ export async function updateClock(clockId, updateData, userId) {
         const relevantClock = getAllClocks()[clockId];
         userId = relevantClock.creator;
     }
+
+    //might be the issue with deleting keys
     const updateInfo = {
         [clockId]: updateData,
     };
@@ -898,6 +895,7 @@ async function reRenderLinkedEntity(ourEntity, clockId) {
         //if the entity sheet is rendered, re-render it
         let clockDrawer = ourEntity.sheet.element.find(".app-child");
         let expanded = clockDrawer.hasClass("expanded");
+        console.log("Clock drawer is,", clockDrawer);
         if (clockDrawer) {
             clockDrawer.remove();
         }
@@ -932,13 +930,10 @@ async function unlinkClockFromEntity(ourEntity, clockId) {
 /**
  * This deals with the special case of refreshing a linked entity after it's unlinked
  * from the clock
- * @param entityData - the data of the entity we're trying to refresh
+ * @param entity - the data of the entity we're trying to refresh
  */
-async function refreshSpecificEntity(entityData) {
-    let entity;
-    await HelperFunctions.getEntityById(entityData.entity, entityId).then(
-        (value) => (entity = value)
-    );
+async function refreshSpecificEntity(entity, clockId) {
+    console.log("Refreshing ", entity.name);
     if (entity?.sheet && entity.sheet.rendered) {
         reRenderLinkedEntity(entity, clockId);
     }
@@ -946,16 +941,31 @@ async function refreshSpecificEntity(entityData) {
 
 async function refreshClockDependentItems(clockId, clockData, isDeletion) {
     //re-render the sheets of every entity linked to this clock
-    //! If the  entity was unlinked, we need to handle it too
+    //get all of the entities linked to this clock
     for (let entityId in clockData.linkedEntities) {
         let entityData = clockData.linkedEntities[entityId];
         let entity;
-        await HelperFunctions.getEntityById(entityData.entity, entityId).then(
-            (value) => (entity = value)
-        );
-        if (entity?.sheet && entity.sheet.rendered) {
-            reRenderLinkedEntity(entity, clockId);
+        // //if we have entity data and it's not null
+        // if (entityData) {
+
+        if (entityData == null) {
+            let trimmedId = entityId.replace("-=", "");
+            //TODO: Have to find some sort of way to determine the Actor here as well
+            await HelperFunctions.getEntityById("Actor", trimmedId).then(
+                (value) => (entity = value)
+            );
+            if (entity?.sheet && entity.sheet.rendered) {
+                reRenderLinkedEntity(entity, clockId);
+            }
+        } else {
+            await HelperFunctions.getEntityById(entityData.entity, entityId).then(
+                (value) => (entity = value)
+            );
+            if (entity?.sheet && entity.sheet.rendered) {
+                reRenderLinkedEntity(entity, clockId);
+            }
         }
+        // }
     }
     //re-render the ClockDisplay
     if (game.clockDisplay) {
