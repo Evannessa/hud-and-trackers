@@ -927,31 +927,35 @@ async function unlinkClockFromEntity(ourEntity, clockId) {
     Hooks.call("clockUpdated", clockId, clockData, false);
 }
 
-/**
- * This deals with the special case of refreshing a linked entity after it's unlinked
- * from the clock
- * @param entity - the data of the entity we're trying to refresh
- */
-async function refreshSpecificEntity(entity, clockId) {
-    console.log("Refreshing ", entity.name);
-    if (entity?.sheet && entity.sheet.rendered) {
-        reRenderLinkedEntity(entity, clockId);
-    }
-}
-
 async function refreshClockDependentItems(clockId, clockData, isDeletion) {
     //re-render the sheets of every entity linked to this clock
     //get all of the entities linked to this clock
     for (let entityId in clockData.linkedEntities) {
         let entityData = clockData.linkedEntities[entityId];
         let entity;
-        // //if we have entity data and it's not null
-        // if (entityData) {
 
+        //If the entity data is null, that mostl ikely means it has
+        //been unlinked from the entity/document. Therefore if we
+        // want to re-render, we try and find a window in the ui w/ the
+        // same id, extract its type from its id, which should be something like
+        // "actor-2j0e0fjidjfoaij" for example
+        // and use that to pass to the reRenderLinkedEntity method
         if (entityData == null) {
             let trimmedId = entityId.replace("-=", "");
-            //TODO: Have to find some sort of way to determine the Actor here as well
-            await HelperFunctions.getEntityById("Actor", trimmedId).then(
+            let entityWindow = Object.values(ui.windows).find((window) =>
+                window.id?.includes(trimmedId)
+            );
+            let entityWindowId = entityWindow.id;
+            let type;
+            console.log("Entity window id", entityWindowId);
+            if (entityWindowId.includes("actor")) {
+                type = "Actor";
+            } else if (entityWindowId.includes("item")) {
+                type = "Item";
+            } else if (entityWindowId.includes("journalentry")) {
+                type = "JournalEntry";
+            }
+            await HelperFunctions.getEntityById(type, trimmedId).then(
                 (value) => (entity = value)
             );
             if (entity?.sheet && entity.sheet.rendered) {
@@ -985,7 +989,11 @@ async function refreshClockDependentItems(clockId, clockData, isDeletion) {
     }
 }
 
+/**
+ * Hook for when the clock is updated
+ */
 Hooks.on("clockUpdated", async (clockId, clockData, isDeletion) => {
+    //refresh any document sheet or clock that's attached to this clock
     refreshClockDependentItems(clockId, clockData, isDeletion);
     socket.executeForOthers("refreshClockDependentItems", clockId, clockData, isDeletion);
 });

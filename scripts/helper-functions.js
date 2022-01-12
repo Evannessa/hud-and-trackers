@@ -76,6 +76,11 @@ export function setInvisibleHeader(html, showIcon) {
 }
 
 /**
+ * Search through all entities
+ */
+export async function getEntityFromAll(entityId) {}
+
+/**
  *
  * @param {string} type - the entity type ("Actor", "Item", "JournalEntry", "Scene"), to determine where to look to call it
  * @param {string} id - the entity's id, which will be the identifier to find the entity in a particular Document collection
