@@ -53,6 +53,11 @@
 			white-space: nowrap;
 			padding-inline: 0.75rem;
 			background-color: var(--tui-black2);
+			transition: background-color 100ms linear;
+
+			&:hover {
+				background-color: var(--tui-black4L);
+			}
 
 			&.pinned {
 				border: 2px dotted rgb(255, 255, 255);
@@ -81,6 +86,11 @@
 					background-color: #8962d8;
 				}
 			}
+
+			// &.damage,
+			// &.effort {
+
+			// }
 		}
 
 
