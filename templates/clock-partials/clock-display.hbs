@@ -1,13 +1,18 @@
-	<button class="showClocks" data-action="showClocks">Show Clocks</button>
+	<button class="showClocks" data-action="showClocks">
+		{{#if data.linkedClocks}}
+		{{log (returnLength data.linkedClocks)}}
+			{{returnLength data.linkedClocks}} Linked Clock(s)
+		{{else}}
+			Show Clocks
+		{{/if}}
+	</button>
 	{{#with data}}
 	<div class="clockCategory__wrapper">
 
 		{{#each this}}
 		<div class="clockCategory {{@key}} glass {{#if (lookup @root.categoriesShown @key)}}open{{/if}}"
 			data-name="{{@key}}">
-			{{#if (eq @key "linkedClocks")}}
-			{{log "Handlebars rendered again" this}}
-			{{/if}}
+		
 			<button class="clockCategory__btn glass__btn {{#if (lookup @root.categoriesShown @key)}}open{{/if}}"
 				data-action="expand" title="{{lookup @root.tooltipText @key}}"><span
 					class="accordionBtn__text">{{convertToSentence @key}}<span class="expandIcon"><i

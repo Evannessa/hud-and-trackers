@@ -15,5 +15,9 @@ export default function registerAllHandlebarHelpers() {
     Handlebars.registerHelper("getAtIndex", (array, index) => {
         return array[index];
     });
+    Handlebars.registerHelper("returnLength", (object) => {
+        console.log(object);
+        return Object.keys(object).length;
+    });
     // Handlebars.registerHelper("areScenesEqual", )
 }

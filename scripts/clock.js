@@ -947,7 +947,6 @@ async function refreshClockDependentItems(clockId, clockData, isDeletion) {
             );
             let entityWindowId = entityWindow.id;
             let type;
-            console.log("Entity window id", entityWindowId);
             if (entityWindowId.includes("actor")) {
                 type = "Actor";
             } else if (entityWindowId.includes("item")) {
