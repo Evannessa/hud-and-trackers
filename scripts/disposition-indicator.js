@@ -5,8 +5,12 @@ Hooks.on("canvasReady", () => {
     }
 });
 Hooks.on("updateToken", (doc, change, options) => {
-    console.log("Disposition is ", change.disposition);
     if (change.disposition && game.user.isGM) {
+        createDispositionMarker(doc);
+    }
+});
+Hooks.on("createToken", (doc, options, userId) => {
+    if (game.user.isGM) {
         createDispositionMarker(doc);
     }
 });

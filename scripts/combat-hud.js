@@ -1030,6 +1030,9 @@ export default class CombatHud extends Application {
                                     releaseOthers: true,
                                 });
                             }
+                            // else{
+
+                            // }
                         }
                     }
                 });

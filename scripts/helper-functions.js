@@ -182,6 +182,7 @@ export function checkIfSceneHasToken(actorId, tokenId, sceneId) {
         //if we found the token, return it
         return token;
     } else {
+        // askIfPlayerWantsToAddToken(actor);
         return null;
         //look in actor's initial scene for token
         // token = game.scenes.get(sceneId).data.tokens.get(tokenId);
@@ -289,6 +290,10 @@ export async function callMacro(name) {
     }
 }
 
+/**
+ * Creates a Dialog asking if the user would like to add a character's token
+ * @param {Object} actor - for if user wants token
+ */
 function askIfPlayerWantsToAddToken(actor) {
     let d = new Dialog({
         title: "Add Token",
