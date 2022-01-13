@@ -1,4 +1,4 @@
 {
     "prettier.enable": false,
-    "cSpell.words": ["blindroll", "playerlist"]
+    "cSpell.words": ["blindroll", "falsey", "playerlist"]
 }
