@@ -5,7 +5,8 @@ Hooks.on("canvasReady", () => {
     }
 });
 Hooks.on("updateToken", (doc, change, options) => {
-    if (change.disposition && game.user.isGM) {
+    //!careful, 0 is a falsey value maybe
+    if ("disposition" in change && game.user.isGM) {
         createDispositionMarker(doc);
     }
 });
@@ -25,22 +26,23 @@ function createDispositionMarker(tokenDoc) {
     let texturePath;
     let color;
     switch (disposition) {
-        case 1:
-            //friendly
-            color = "0x99FFCC";
-            texturePath = "modules/hud-and-trackers/images/hearts.png";
+        case -1:
+            //hostile
+            texturePath = "/modules/hud-and-trackers/images/hades-symbol.png";
+            color = "0xCC0033";
             break;
         case 0:
             //neutral
             color = "0x9999FF";
             texturePath = "/modules/hud-and-trackers/images/person.png";
             break;
-        case -1:
-            //hostile
-            texturePath = "/modules/hud-and-trackers/images/hades-symbol.png";
-            color = "0xCC0033";
+        case 1:
+            //friendly
+            color = "0x99FFCC";
+            texturePath = "modules/hud-and-trackers/images/hearts.png";
+            break;
     }
-    // texturePath = "modules/hud-and-trackers/images/convergence-target.png";
+
     if (token.marker) {
         //destroy the marker PIXI Container stored on the token
         token.marker.destroy();
