@@ -28,7 +28,8 @@
         "./scripts/party-overview.js",
         "./scripts/dice-pool.js",
         "./scripts/custom_playerlist.js",
-        "./scripts/disposition-indicator.js"
+        "./scripts/disposition-indicator.js",
+        "./scripts/action-hud.js"
     ],
     "styles": ["styles/style.css"],
     "dependencies": [],

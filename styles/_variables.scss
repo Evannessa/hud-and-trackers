@@ -1,3 +1,4 @@
+@use 'colors'as *;
 $low: #fe4a49;
 $intellect:#947BD3;
 $speed: #2ab7ca;
@@ -156,37 +157,52 @@ $shadow: var(--tui-shadow);
 	--fs-colossal: 32rem;
 	--fs-colossal1: 40rem;
 	--fs-titanic: 48rem;
+
 	// • Font weight
 	// • Line height
 	// • Color
 	//==Primary
-	--color-primary-darkest: hsl(240, 58%, 28%);
-	--color-primary-800: hsl(240, 58%, 30%);
-	--color-primary-700: hsl(240, 58%, 40%);
-	--color-primary-600: hsl(240, 60%, 50%);
-	--color-primary-base: hsl(240, 60%, 60%);
-	--color-primary-400: hsl(240, 60%, 68%);
-	--color-primary-300: hsl(240, 65%, 75%);
-	--color-primary-200: hsl(240, 75%, 85%);
-	--color-primary-lightest: hsl(240, 86%, 92%);
+	@each $color,
+	$shades in $colors {
+
+		@each $shade,
+		$value in $shades {
+			--color-#{$color}-#{$shade}: #{$value};
+		}
+	}
+
+	// --color-primary-darkest: hsl(240, 58%, 28%);
+	// --color-primary-800: hsl(240, 58%, 30%);
+	// --color-primary-700: hsl(240, 58%, 40%);
+	// --color-primary-600: hsl(240, 60%, 50%);
+	// --color-primary-base: hsl(240, 60%, 60%);
+	// --color-primary-400: hsl(240, 60%, 68%);
+	// --color-primary-300: hsl(240, 65%, 75%);
+	// --color-primary-200: hsl(240, 75%, 85%);
+	// --color-primary-lightest: hsl(240, 86%, 92%);
 
 
-	--color-accent-darkest: hsl(221, 98%, 20%);
-	--color-accent-700: hsl(215, 98%, 30%);
-	--color-accent-700: hsl(210, 98%, 40%);
-	--color-accent-600: hsl(205, 98%, 52%);
-	--color-accent-base: hsl(199, 98%, 63%);
-	--color-accent-400: hsl(190, 99%, 70%);
-	--color-accent-300: hsl(185, 100%, 80%);
-	--color-accent-lightest: hsl(175, 100%, 90%);
+	// --color-accent-darkest: hsl(221, 98%, 20%);
+	// --color-accent-700: hsl(215, 98%, 30%);
+	// --color-accent-700: hsl(210, 98%, 40%);
+	// --color-accent-600: hsl(205, 98%, 52%);
+	// --color-accent-base: hsl(199, 98%, 63%);
+	// --color-accent-400: hsl(190, 99%, 70%);
+	// --color-accent-300: hsl(185, 100%, 80%);
+	// --color-accent-lightest: hsl(175, 100%, 90%);
 
 	//shadow elevation
 	--shadow-none: none;
-	--shadow-lowest: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-	--shadow-lower: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-	--shadow-medium: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-	--shadow-higher: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-	--shadow-highest: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+	--shadow-lowest: 0 1px 3px rgba(0, 0, 0, 0.12),
+	0 1px 2px rgba(0, 0, 0, 0.24);
+	--shadow-lower: 0 3px 6px rgba(0, 0, 0, 0.16),
+	0 3px 6px rgba(0, 0, 0, 0.23);
+	--shadow-medium: 0 10px 20px rgba(0, 0, 0, 0.19),
+	0 6px 6px rgba(0, 0, 0, 0.23);
+	--shadow-higher: 0 14px 28px rgba(0, 0, 0, 0.25),
+	0 10px 10px rgba(0, 0, 0, 0.22);
+	--shadow-highest: 0 19px 38px rgba(0, 0, 0, 0.30),
+	0 15px 12px rgba(0, 0, 0, 0.22);
 
 	//shadow-raised
 	--shadow-raised-top: inset 0 1px 0 hsl(224, 84%, 74%); //TODO: Change this to have var from your color 
