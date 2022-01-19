@@ -860,7 +860,7 @@ export default class CombatHud extends Application {
         event.preventDefault();
         let clickedElement = $(event.currentTarget);
         let action = clickedElement.data().action;
-        let parentId = clickedElement.closest(".combatant-div").data().id;
+        let parentId = clickedElement.closest(".combatant-div")?.data()?.id;
 
         switch (action) {
             case "endCombat":
@@ -904,7 +904,6 @@ export default class CombatHud extends Application {
                     return;
                 }
                 tokens.forEach((token) => {
-                    console.log("adding token to combat " + token.name);
                     let newPhase = this.addCombatant(token);
                     if (!newPhases.includes(newPhase)) {
                         newPhases.push(newPhase);
@@ -946,6 +945,9 @@ export default class CombatHud extends Application {
                     }
                     this.render(true);
                 }
+                break;
+            case "removeCombatant":
+                console.log("Removing combatant");
                 break;
 
             default:
