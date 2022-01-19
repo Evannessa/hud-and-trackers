@@ -374,7 +374,8 @@ function dropSingleAtClick(event) {
 
 function dropSpecificActorAtClick(event, actor) {
     let local = event.data.getLocalPosition(canvas.app.stage);
-    createTokenFromTokenData([actor], local);
+    let actors = actorsToTokenData([actor]);
+    createTokenFromTokenData(actors, local);
     cancelClickRequest(dropSpecificActorAtClick);
 }
 
