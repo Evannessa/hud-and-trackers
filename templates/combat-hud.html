@@ -24,6 +24,7 @@
 		<!-- {{log "This working?"(getAtIndex (lookup @root.inSceneTokens @root.currentPhase) @index)}} -->
   		<div class="combatant-div" data-id="{{this.id}}" data-phase="{{@root.currentPhase}}">
   		<!-- <div class="combatant-div" data-initial-scene="{{this.scene.id}}" data-actor-id="{{this.id}}" data-token-id="{{this.id}}" data-phase="{{@root.currentPhase}}"> -->
+			  <!-- get the tokens in the scene that are in the current phase  -->
 			  {{#unless (getAtIndex (lookup @root.inSceneTokens @root.currentPhase) @index)}}
 			  	<div class="not-in-scene__indicator" data-action="prompt_user"><i class="fas fa-question-circle"></i></div>
 			  	<div class="not-in-scene__message">

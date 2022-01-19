@@ -1,5 +1,5 @@
 Hooks.on("ready", () => {
-    game.actionHud = new ActionHud().render(true);
+    // game.actionHud = new ActionHud().render(true);
 });
 export class ActionHud extends Application {
     constructor() {

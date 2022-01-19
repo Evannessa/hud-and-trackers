@@ -72,6 +72,9 @@ const specialCombatStartID = Hooks.on("combatHudStartCombat", () => {
 //     combatant.data.update({ "flags.floating-combat-toolbox.sceneID": sceneID });
 // });
 
+/**
+ * Create actors to represent the groups in the pseud-combat;
+ */
 async function createRepresentativeActors() {
     let repTokens = game.folders.getName("RepTokens");
     if (!repTokens) {
@@ -850,6 +853,7 @@ export default class CombatHud extends Application {
         event.preventDefault();
         let clickedElement = $(event.currentTarget);
         let action = clickedElement.data().action;
+        let parentId = clickedElement.closest(".combatant-div").data().id;
 
         switch (action) {
             case "endCombat":
@@ -873,6 +877,16 @@ export default class CombatHud extends Application {
             case "previousTurn":
                 await this.data.ourCombat.previousTurn();
                 game.combatHud.app.render(game.combatHud.app.position);
+                break;
+            case "addToScene":
+                //find the actor of the button's parent combatant-div
+                //and ask if the player wants to add their actor to
+                //the scene
+                let actor = HelperFunctions.getGameActorById(parentId);
+                console.log("Adding ", actor.name);
+                HelperFunctions.askIfPlayerWantsToAddToken(actor, false);
+                break;
+            case "goToPreviousScene":
                 break;
             case "addCombatant":
                 let tokens = game.canvas.tokens.controlled;
@@ -926,6 +940,7 @@ export default class CombatHud extends Application {
                     this.render(true);
                 }
                 break;
+
             default:
                 break;
         }
@@ -987,12 +1002,14 @@ export default class CombatHud extends Application {
                     // });
                 }
 
+                //if we click on a combatant in the combat hud
                 $(combatantDiv).mousedown((event) => {
                     let elementId = event.currentTarget.dataset.id;
                     let tokenId = event.currentTarget.dataset.tokenId;
                     if (event.which == 3) {
-                        //right click
+                        //if it's a right click, and we're a player
                         if (!game.user.isGM) {
+                            //set the token as has acted (must be done through socket request)
                             if (!event.altKey) {
                                 socket.executeAsGM(
                                     "requestSetTokenHasActed",
@@ -1002,6 +1019,8 @@ export default class CombatHud extends Application {
                                 );
                                 socket.executeAsGM("requestIfAllHaveActed", elementId);
                             } else {
+                                //if we're holding down alt, we want to undo setting the token
+                                //as has acted
                                 socket.executeAsGM(
                                     "requestSetTokenHasActed",
                                     elementId,
@@ -1009,16 +1028,22 @@ export default class CombatHud extends Application {
                                     false
                                 );
                             }
+                            //if we're the GM
                         } else {
+                            //if we right click, set the token as has acted
                             if (!event.altKey) {
                                 this.setTokenHasActed(elementId, game.user.id, true);
                                 this.checkIfAllHaveActed(elementId);
                             } else {
+                                //if we're holding down alt, we want to undo setting the token
+                                //as has acted
                                 this.setTokenHasActed(elementId, game.user.id, false);
                             }
                         }
                     } else if (event.which == 1) {
+                        //if its a left click
                         if (game.user.isGM) {
+                            //if we're the GM, check if the scene has the token we're looking for
                             let token = HelperFunctions.checkIfSceneHasToken(
                                 combatantDiv.dataset.id,
                                 combatantDiv.dataset.initialTokenId,

@@ -294,7 +294,7 @@ export async function callMacro(name) {
  * Creates a Dialog asking if the user would like to add a character's token
  * @param {Object} actor - for if user wants token
  */
-function askIfPlayerWantsToAddToken(actor) {
+export function askIfPlayerWantsToAddToken(actor, isCurrent = true) {
     let d = new Dialog({
         title: "Add Token",
         content: `${actor.name} doesn't have a token in this scene. Would you like to add their token?`,
@@ -303,8 +303,16 @@ function askIfPlayerWantsToAddToken(actor) {
                 icon: '<i class="fas fa-check"></i>',
                 label: "Add Token",
                 callback: () => {
-                    createClickRequestDialog();
-                    addActorsToScene("onePC");
+                    createClickRequestDialog(actor.name);
+                    //adding user's current actor character?
+                    if (isCurrent) {
+                        addActorsToScene("onePC");
+                    }
+                    //if not, we're adding a specific actor
+                    else {
+                        console.log("Actor?", actor);
+                        addActorsToScene(actor);
+                    }
                 },
             },
             cancel: {
@@ -344,6 +352,8 @@ function actorsToTokenData(actors) {
     });
 }
 
+function scopePreserver(actors) {}
+
 function cancelClickRequest(callback) {
     canvas.app.stage.removeListener("pointerdown", callback);
     $("html, body").css("cursor", "auto");
@@ -362,18 +372,35 @@ function dropSingleAtClick(event) {
     cancelClickRequest(dropSingleAtClick);
 }
 
+function dropSpecificActorAtClick(event, actor) {
+    let local = event.data.getLocalPosition(canvas.app.stage);
+    createTokenFromTokenData([actor], local);
+    cancelClickRequest(dropSpecificActorAtClick);
+}
+
 export function addActorsToScene(type) {
     if (type == "allPCs") {
         requestClickOnCanvas(dropMultiplePCsAtClick);
     } else if (type == "onePC") {
         requestClickOnCanvas(dropSingleAtClick);
+    } else {
+        requestClickOnCanvas(dropSpecificActorAtClick, type);
     }
 }
 // turn cursor to crosshair wait for user to click on canvas (add event listener)
-export function requestClickOnCanvas(callback) {
+export function requestClickOnCanvas(callback, actor) {
     //TODO: Add some way to cancel this like if the user right clicks or clicks elsewhere
     $("html, body").css("cursor", "crosshair");
-    canvas.app.stage.addListener("pointerdown", callback);
+    //for if we have a specific actor who we want to pass
+    console.log("Actor is", actor);
+    if (actor) {
+        canvas.app.stage.addListener("pointerdown", (event) => {
+            callback(event, actor);
+            canvas.app.stage.removeListener("pointerdown", this);
+        });
+    } else {
+        canvas.app.stage.addListener("pointerdown", callback);
+    }
 }
 //get PCs who are not in viewed scene
 export function getPCsNotInScene() {
