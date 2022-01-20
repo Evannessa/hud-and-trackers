@@ -181,8 +181,10 @@ function getTokensWithInitiative(tokens, initiativeToBeat, comparison) {
             token.actor.data.data.settings.initiative.initiativeBonus
             // token.data.data.settings.initiative.initiativeBonus
         );
-        let r = new Roll("1d20").evaluate("async=true").result;
+        let r = new Roll("1d20").evaluate({ async: false }).total;
+        console.log("Roll total is", r);
         initiative += parseInt(r);
+        console.log(token.actor.name + " initiative is " + initiative);
         if (comparison < 0) {
             //if comparison is "-1",
             //return token if its initiative is less than initiativeToBeat
