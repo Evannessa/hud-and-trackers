@@ -157,10 +157,71 @@ function registerCombatSockets() {
     if (game.combatHud.app) {
         socket.register("requestSetTokenHasActed", game.combatHud.app.setTokenHasActed);
         socket.register("requestIfAllHaveActed", game.combatHud.app.checkIfAllHaveActed);
-        console.log("Sockets registered");
     }
 }
 
+function getAllCombatants() {
+    if (game.combatHud.app) {
+        return game.combatHud.app.allActorsInCombat;
+    }
+}
+
+/**
+ * This token filters an array of tokens by their calculated initiative
+ * to match, be below, or above a specific initiative
+ * @param {*} tokens - the array tokens we want to filter
+ * @param {String} type - the "type" that the tokens are (NPC, PC, etc.)
+ * @param {int} comparison - 0 = equal to, -1 = less than, 1 = greater than
+ * @returns a filtered array containing only tokens with the type we specified
+ */
+function getTokensWithInitiative(tokens, initiativeToBeat, comparison) {
+    return tokens.filter((token) => {
+        let initiative = parseInt(
+            token.actor.data.data.settings.initiative.initiativeBonus
+        );
+        let r = new Roll("1d20").evaluate("async=true").result;
+        initiative += parseInt(r);
+        if (comparison < 0) {
+            //if comparison is "-1",
+            //return token if its initiative is less than initiativeToBeat
+            return initiative < initiativeToBeat;
+        } else {
+            //if comparison is 0 or greater
+            //return token if its initiative is greater than
+            //or equal to initiative to beat
+            return initiative >= initiativeToBeat;
+        }
+    });
+}
+/**
+ * This token filters an array of tokens by the type of their actor,
+ * to contain only a specific actor type
+ * @param {*} tokens - the array tokens we want to filter
+ * @param {String} type - the "type" that the tokens are (NPC, PC, etc.)
+ * @returns a filtered array containing only tokens with the type we specified
+ */
+function getTokensOfType(tokens, type) {
+    return tokens.filter((token) => token.actor.type === type);
+}
+function getTokensWithDisposition(tokens, disposition) {
+    //npcs = 0 or 1, enemies = -1
+    return tokens.filter((token) => {
+        return token.data.disposition == disposition;
+    });
+}
+
+/**
+ * Filters out duplicates from tokens
+ * @param {array} tokens - the tokens we want to filter out duplicates from
+ * @returns an array of tokens without duplicates
+ */
+function filterOutDuplicates(tokens) {
+    return Array.from(new Set(tokens.map((token) => token.actor.name))).map(
+        (actorName) => {
+            return tokens.find((token) => token.actor.name == actorName);
+        }
+    );
+}
 /**
  * We're rolling a "Fake" initiative to determine what category
  * the various combatants go into
@@ -948,6 +1009,18 @@ export default class CombatHud extends Application {
                 break;
             case "removeCombatant":
                 console.log("Removing combatant");
+                let tokens = game.canvas.tokens.controlled;
+
+                //TODO: maybe gray it out and only show it when token is selected
+                if (tokens.length == 0) {
+                    return;
+                }
+                tokens.forEach((token) => {
+                    let newPhase = this.addCombatant(token);
+                    if (!newPhases.includes(newPhase)) {
+                        newPhases.push(newPhase);
+                    }
+                });
                 break;
 
             default:
@@ -1098,7 +1171,6 @@ export default class CombatHud extends Application {
     addCombatant(token) {
         let type = token.actor.type;
         let disposition = token.data.disposition;
-        // let id = token.actor.id; //TODO: Using actor id might be best in the long run anyway
         let id = token.actor.id;
         let phase = "enemies";
         switch (type) {
