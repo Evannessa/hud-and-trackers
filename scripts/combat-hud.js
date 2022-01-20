@@ -167,28 +167,44 @@ function getAllCombatants() {
 }
 
 /**
- * This token filters an array of tokens by their calculated initiative
+ * Roll initiative for token and return value
+ * @param {Object} token - the token whose initiative we want to get
+ * @returns int initiative - the rolled initiative + the actor's bonus
+ */
+function getRolledInitiative(token) {
+    let initiativeBonus = parseInt(
+        token.actor.data.data.settings.initiative.initiativeBonus
+    );
+    let initiativeTotal;
+    if (token.actor.type === "PC") {
+        let r = new Roll("1d20").evaluate({ async: false }).total;
+        initiativeTotal = initiativeBonus + r;
+    } else {
+        //npcs are just level + initiativeBonus * 3 usually
+        initiativeTotal = (parseInt(token.actor.data.data.level) + initiativeBonus) * 3;
+    }
+    return initiativeTotal;
+}
+
+/**
+ * This token filters an array of pseudo-combatants by their calculated initiative
  * to match, be below, or above a specific initiative
  * @param {*} tokens - the array tokens we want to filter
  * @param {String} type - the "type" that the tokens are (NPC, PC, etc.)
  * @param {int} comparison - 0 = equal to, -1 = less than, 1 = greater than
  * @returns a filtered array containing only tokens with the type we specified
  */
-function getTokensWithInitiative(tokens, initiativeToBeat, comparison) {
-    return tokens.filter((token) => {
-        let initiative = parseInt(
-            token.actor.data.data.settings.initiative.initiativeBonus
-        );
-        let r = new Roll("1d20").evaluate({ async: false }).total;
+function getCombatantsWithInitiative(combatants, initiativeToBeat, comparison) {
+    return combatants.filter((combatant) => {
         if (comparison < 0) {
             //if comparison is "-1",
             //return token if its initiative is less than initiativeToBeat
-            return initiative < initiativeToBeat;
+            return combatant.initiative < initiativeToBeat;
         } else {
             //if comparison is 0 or greater
             //return token if its initiative is greater than
             //or equal to initiative to beat
-            return initiative >= initiativeToBeat;
+            return combatant.initiative >= initiativeToBeat;
         }
     });
 }
@@ -688,50 +704,9 @@ export default class CombatHud extends Application {
         }
         const allActorsInCombat = Object.values(phasesWithActors).flat();
         // let allCombatants = game.canvas.tokens.controlled;
+        //TODO: turn this to be all controlled or all tokens on map
+        this.data.allCombatants = game.canvas.tokens.controlled;
         this.pullData(this.data.alreadyRendered);
-        // console.log(allCombatants.map((token) => token.actor.type));
-        // // let allCombatants = allActorsInCombat; //TODO: fill this with array of tokens
-        // let npcs = getTokensOfType(allCombatants, "NPC").concat(
-        //     getTokensOfType(allCombatants, "Companion")
-        // );
-        // console.log("NPCs are", npcs);
-        // let enemies = getTokensWithDisposition(npcs, -1);
-        // console.log("Enemies are ", enemies);
-
-        // //map the enemies level * 3, and then use reduce function to find
-        // //the maximum value out of the enemy initiatives;
-        // let initiativeToBeat = enemies
-        //     .map((enemy) => {
-        //         return parseInt(enemy.actor.data.data.level) * 3;
-        //     })
-        //     .reduce(function (p, v) {
-        //         return p > v ? p : v;
-        //     });
-        // console.log("Gotta beat this ", initiativeToBeat);
-
-        // let players = getTokensOfType(allCombatants, "PC");
-        // //TODO: we don't want to reroll the initiative every time we add a new token
-        // //so need to decouple the initiative rolling somehow
-        // let fastPlayers = getTokensWithInitiative(players, initiativeToBeat, 1);
-        // console.log("Fast players are", fastPlayers);
-        // //filter out fast players once they're determined, and use remainder to == slow players
-
-        // let slowPlayers = getTokensWithInitiative(players, initiativeToBeat, -1);
-        // console.log("Slow players are", slowPlayers);
-        // let npcAllies = getTokensWithDisposition(npcs, 1).concat(
-        //     getTokensWithDisposition(npcs, 0)
-        // );
-        // console.log("NPC allies are", npcAllies);
-
-        // let phasesWithActors = {};
-        // this.data.initialTokens = new Map();
-        // this.data.initialScenes = new Map();
-
-        // //convert all the stored IDs into actors
-        // for (let phase in phasesWithActorIDs) {
-        //     phasesWithActors[phase] = convertToArrayOfActors(phasesWithActorIDs[phase]);
-        // }
-        // const allActorsInCombat = Object.values(phasesWithActors).flat();
 
         //set initial scene and initial token of each actor
         for (let actor of allActorsInCombat) {
@@ -782,53 +757,125 @@ export default class CombatHud extends Application {
             this.data.alreadyRendered = false;
         }
     }
+    //replacing the old one
+    _addCombatant(token) {
+        let initiative = getRolledInitiative(token);
+        let newCombatant = {
+            [token.actor.id]: { initiative: initiative, actor: token.actor },
+        };
+        mergeObject(this.data.allCombatants, newCombatant, {
+            insertKeys: true,
+            insertValues: false,
+            overwrite: true,
+        });
+        // this.data.allCombatants.mergeObject(newCombatant);
+    }
+    _removeCombatant(combatant) {
+        let removedCombatant = {
+            [`-=${combatant.actor.id}`]: null,
+        };
+    }
 
     pullData(alreadyRendered) {
         let initiativeToBeat = 1;
-        let allCombatants = game.canvas.tokens.controlled;
-        let npcs = getTokensOfType(allCombatants, "NPC").concat(
-            getTokensOfType(allCombatants, "Companion")
+        let allCombatantTokens;
+
+        //if we're just starting the combat, get the controlled tokens to be the tokens we're using
+        if (!alreadyRendered) {
+            allCombatantTokens = game.canvas.tokens.controlled;
+            for (let token of allCombatantTokens) {
+                this._addCombatant(token);
+            }
+        } else {
+            //otherwise, get all of our stored combatants and get their tokens
+            allCombatantTokens = this.data.allCombatants.map((char) => char.actor.token);
+        }
+        console.log(allCombatantTokens);
+
+        //NPCS, separated into phases by disposition
+        let npcs = getTokensOfType(allCombatantTokens, "NPC").concat(
+            getTokensOfType(allCombatantTokens, "Companion")
         );
         let enemies = getTokensWithDisposition(npcs, -1);
+        let npcAllies = getTokensWithDisposition(npcs, 1).concat(
+            getTokensWithDisposition(npcs, 0)
+        );
+
+        //all of the PC tokens
+        let players = getTokensOfType(allCombatantTokens, "PC");
+
+        //PC tokens need to be separated based on if they go bf or after enemies
 
         //map the enemies level * 3, and then use reduce function to find
         //the maximum value out of the enemy initiatives;
 
         //if it's the first render, set the initiative we're aiming for
+        console.log(
+            "Enemy map working? ",
+            enemies.map((enemy) => this.data.allCombatants[enemy.actor.id].initiative)
+        );
         if (!alreadyRendered) {
             initiativeToBeat = enemies
-                .map((enemy) => {
-                    return parseInt(enemy.actor.data.data.level) * 3;
-                })
+                .map((enemy) => this.data.allCombatants[enemy.actor.id].initiative)
                 .reduce(function (p, v) {
                     return p > v ? p : v;
                 });
             this.data.initiativeToBeat = initiativeToBeat;
         }
-        let players = getTokensOfType(allCombatants, "PC");
+        console.log("Beat this initiative: ", initiativeToBeat);
 
         //TODO: maybe show initiative on hover?
 
-        let fastPlayers = getTokensWithInitiative(players, initiativeToBeat, 1);
-
+        let fastPlayers = getCombatantsWithInitiative(
+            players.map((player) => this.data.allCombatants[player.actor.id]),
+            initiativeToBeat,
+            1
+        );
+        console.log("Fast players are", fastPlayers);
+        let slowPlayers = getCombatantsWithInitiative(
+            players.map((player) => this.data.allCombatants[player.actor.id]),
+            initiativeToBeat,
+            -1
+        );
         //filter out fast players once they're determined, and use remainder to == slow players
-        let slowPlayers = players.filter((item) => !fastPlayers.includes(item));
+        // let slowPlayers = players.filter((item) => !fastPlayers.includes(item));
+
         console.log(
             "Fast players & slow Players: ",
-            fastPlayers.map((pc) => pc.name),
-            slowPlayers.map((pc) => pc.name)
+            fastPlayers.map((combatant) => combatant.actor.name),
+            slowPlayers.map((combatant) => combatant.actor.name)
         );
+
+        npcAllies = npcAllies.map((token) => this.data.allCombatants[token.actor.id]);
+        enemies = enemies.map((token) => this.data.allCombatants[token.actor.id]);
+
+        console.log("enemies & allies: ", enemies, npcAllies);
+
+        let actorsByPhase = {
+            fastPlayers: fastPlayers,
+            enemies: enemies,
+            slowPlayers: slowPlayers,
+            npcAllies: npcAllies,
+        };
+        console.log(actorsByPhase);
         // let slowPlayers = getTokensWithInitiative(players, initiativeToBeat, -1);
-        let npcAllies = getTokensWithDisposition(npcs, 1).concat(
-            getTokensWithDisposition(npcs, 0)
-        );
+
+        //if this is our first time through, gather all of the tokens and roll their initiative
+        // if (!alreadyRendered) {
+        //     allCombatantTokens = [
+        //         ...fastPlayers,
+        //         ...enemies,
+        //         ...slowPlayers,
+        //         ...npcAllies,
+        //     ];
+        //     for (let token of allCombatantTokens) {
+        //         this._addCombatant(token);
+        //     }
+        // }
+        console.log(this.data.allCombatants);
+
         if (!this.data.alreadyRendered) {
             this.data.alreadyRendered = true;
-        }
-    }
-    checkInitiative() {
-        if (this.data.initiativeToBeat) {
-        } else {
         }
     }
 
