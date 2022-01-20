@@ -201,12 +201,14 @@ function getTokensWithInitiative(tokens, initiativeToBeat, comparison) {
  * @returns a filtered array containing only tokens with the type we specified
  */
 function getTokensOfType(tokens, type) {
-    return tokens.filter((token) => token.actor.type === type);
+    //TODO: this needs to fit to the tokens not the actors, but
+    //using actors for quick test that things are working
+    return tokens.filter((token) => token.data.type === type);
 }
 function getTokensWithDisposition(tokens, disposition) {
     //npcs = 0 or 1, enemies = -1
     return tokens.filter((token) => {
-        return token.data.disposition == disposition;
+        return token.data.token.disposition === disposition;
     });
 }
 
@@ -222,6 +224,8 @@ function filterOutDuplicates(tokens) {
         }
     );
 }
+
+function groupCombatantsIntoPhases() {}
 /**
  * We're rolling a "Fake" initiative to determine what category
  * the various combatants go into
@@ -673,7 +677,6 @@ export default class CombatHud extends Application {
         this.data.ourCombat = combat;
         this.data.inCombat = true;
         this.data.initialized = true;
-
         let phasesWithActors = {};
         this.data.initialTokens = new Map();
         this.data.initialScenes = new Map();
@@ -683,6 +686,47 @@ export default class CombatHud extends Application {
             phasesWithActors[phase] = convertToArrayOfActors(phasesWithActorIDs[phase]);
         }
         const allActorsInCombat = Object.values(phasesWithActors).flat();
+        let allCombatants = allActorsInCombat; //TODO: fill this with array of tokens
+        let npcs = getTokensOfType(allCombatants, "NPC").concat(
+            getTokensOfType(allCombatants, "Companion")
+        );
+        console.log("NPCs are", npcs);
+        let enemies = getTokensWithDisposition(npcs, -1);
+        console.log("Enemies are ", enemies);
+
+        //map the enemies level * 3, and then use reduce function to find
+        //the maximum value out of the enemy initiatives;
+        let initiativeToBeat = enemies
+            .map((enemy) => {
+                //(change this back to "enemy.actor.data.data.level")
+                return parseInt(enemy.data.data.level) * 3;
+            })
+            .reduce(function (p, v) {
+                return p > v ? p : v;
+            });
+        console.log("Gotta beat this ", initiativeToBeat);
+        let fastPlayers = getTokensWithInitiative(
+            getTokensOfType(allCombatants, "PC"),
+            initiativeToBeat,
+            1
+        );
+        //filter out fast players once they're determined, and use remainder to == slow players
+
+        let slowPlayers = getTokensOfType(allCombatants, "PC");
+        let npcAllies = getTokensWithDisposition(npcs, 1).concat(
+            getTokensWithDisposition(npcs, 0)
+        );
+        console.log("NPC allies are", npcAllies);
+
+        // let phasesWithActors = {};
+        // this.data.initialTokens = new Map();
+        // this.data.initialScenes = new Map();
+
+        // //convert all the stored IDs into actors
+        // for (let phase in phasesWithActorIDs) {
+        //     phasesWithActors[phase] = convertToArrayOfActors(phasesWithActorIDs[phase]);
+        // }
+        // const allActorsInCombat = Object.values(phasesWithActors).flat();
 
         //set initial scene and initial token of each actor
         for (let actor of allActorsInCombat) {
@@ -1009,7 +1053,7 @@ export default class CombatHud extends Application {
                 break;
             case "removeCombatant":
                 console.log("Removing combatant");
-                let tokens = game.canvas.tokens.controlled;
+                tokens = game.canvas.tokens.controlled;
 
                 //TODO: maybe gray it out and only show it when token is selected
                 if (tokens.length == 0) {
