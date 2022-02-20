@@ -768,12 +768,16 @@ export default class CombatHud extends Application {
             insertValues: false,
             overwrite: true,
         });
-        // this.data.allCombatants.mergeObject(newCombatant);
     }
     _removeCombatant(combatant) {
         let removedCombatant = {
             [`-=${combatant.actor.id}`]: null,
         };
+        mergeObject(this.data.allCombatants, removedCombatant, {
+            insertKeys: true,
+            insertValues: true,
+            overwrite: true,
+        });
     }
 
     pullData(alreadyRendered) {

@@ -1427,6 +1427,72 @@
   transform: translate(-50%, -50%) scale(1);
 }
 
+.journal-tooltip {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  position: absolute;
+  border: 1px solid white;
+  color: white;
+  max-width: 35ch;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  padding: 0rem 1rem;
+  border-radius: 12px;
+  overflow-y: visible;
+  overflow-x: hidden;
+  background-color: #424242;
+}
+.journal-tooltip * {
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+.journal-tooltip h1 {
+  color: #212121 !important;
+}
+.journal-tooltip h1,
+.journal-tooltip p {
+  margin: 0;
+  padding: 0;
+}
+.journal-tooltip span {
+  display: inline-block;
+}
+.journal-tooltip__header {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.466);
+  color: #212121;
+  margin-right: -10%;
+  margin-left: -10%;
+  overflow-x: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.journal-tooltip__body {
+  display: flex;
+  flex: 2;
+  overflow-y: scroll;
+  max-height: 12rem;
+}
+.journal-tooltip__body p {
+  line-height: 1.75 !important;
+}
+.journal-tooltip__footer {
+  flex: 0 1;
+  display: flex;
+  padding: 0rem 2rem;
+  background-color: white;
+  margin-left: -10%;
+  margin-right: -10%;
+}
+
 .visible {
   transition: left 100ms ease-in;
   left: 15px;

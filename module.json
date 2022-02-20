@@ -29,7 +29,8 @@
         "./scripts/dice-pool.js",
         "./scripts/custom_playerlist.js",
         "./scripts/disposition-indicator.js",
-        "./scripts/action-hud.js"
+        "./scripts/action-hud.js",
+        "./scripts/journal-tooltips.js"
     ],
     "styles": ["styles/style.css"],
     "dependencies": [],

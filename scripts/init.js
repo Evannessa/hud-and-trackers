@@ -94,6 +94,7 @@ async function loadHandleBarTemplates() {
         "modules/hud-and-trackers/templates/party-overview/po-items-partial.hbs",
         "modules/hud-and-trackers/templates/party-overview/po-abilities-partial.hbs",
         "modules/hud-and-trackers/templates/clock.hbs",
+        "modules/hud-and-trackers/templates/tooltip/tooltip.hbs",
     ];
     return loadTemplates(templatePaths);
 }
