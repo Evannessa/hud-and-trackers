@@ -1,0 +1,206 @@
+[
+    {
+        "Term": "Armor ",
+        "Definition": "Armor X - Reduce all damage taken by X"
+    },
+    {
+        "Term": "AoE ",
+        "Definition": "AoE - Area of effect, usually has a specific pattern. Only one space in an area of effect is the attack space and requires a roll, the others apply area effects automatically."
+    },
+    {
+        "Term": "Aura ",
+        "Definition": "Aura X - This ability is a continuous, ongoing effect that affects all characters within range   of a character, including that character. Characters are only affected by an aura while inside Auto-hit - This attack doesn’t require an attack roll but automatically hits. Auto-hit attacks cannot critical hit."
+    },
+    {
+        "Term": "Blessing ",
+        "Definition": "Blessing - Certain Mendicant actions give characters a Blessing token. A character can spend an action and a blessing token to cure themselves. All Mendicant jobs also have different ways to use blessings tokens. All blessings are discarded at the end of combat."
+    },
+    {
+        "Term": "Charge ",
+        "Definition": "Charge - When used on a slow turn, this ability becomes more powerful."
+    },
+    {
+        "Term": "Cure ",
+        "Definition": "Cure - A character that’s cured can immediately clear a status, blight, or mark. Then, if that character is bloodied, they gain vigor 1."
+    },
+    {
+        "Term": "Combo ",
+        "Definition": "Combo - Actions with Combo have two versions, a base version and combo version. When you use a base combo action, the next time you use any combo action, it uses its Combo version. When you use a Combo version of any combo action, the next combo action uses its base version."
+    },
+    {
+        "Term": " Cover ",
+        "Definition": " Cover - If a character has cover from a ranged attack, it is resistant to that attack, halving all damage."
+    },
+    {
+        "Term": " [D] ",
+        "Definition": " [D] - Your class’ damage die. Dash - Special movement that ignores engagement."
+    },
+    {
+        "Term": " Elixir ",
+        "Definition": " Elixir - Heal 50% hp outside of combat per elixir drank. Start with 2 by default."
+    },
+    {
+        "Term": " Fray damage ",
+        "Definition": " Fray damage - Fixed damage. Usually added to all attacks on hit or miss."
+    },
+    {
+        "Term": "Immune to",
+        "Definition": "Immune to X - Not affected by X in any way. A character that’s immune to damage or effects doesn’t even count as taking them."
+    },
+    {
+        "Term": " Mark ",
+        "Definition": " Mark - Place your mark on a specific character. You can only place one mark at a time on each enemy or ally and each ability can only place one mark. If you place a new mark on a character with a mark from you, you can choose which to keep or which to discard."
+    },
+    {
+        "Term": " Obstruction ",
+        "Definition": " Obstruction - A character can’t move through something that causes obstruction. By default this means foes and terrain."
+    },
+    {
+        "Term": " Power Die ",
+        "Definition": " Power Die - Some abilities will grant you a power die, and tell you to tick it up or untick it depending on certain conditions. You can use a physical die to represent it, or just a tracker. Each power die is unique to the ability that granted it. Gain power dice at 1 tick, and if a power die ticks to 0, discard it."
+    },
+    {
+        "Term": " Resistance ",
+        "Definition": " Resistance - Take 1/2 damage, rounded up. Sometimes phrased as ‘resistant to X’, in which case take half damage from X."
+    },
+    {
+        "Term": " Shove   ",
+        "Definition": " Shove X - Move a character involuntarily X spaces in a straight line away from you. If they would move into another character’s space, or a piece of terrain, they Collide and stop. Colliding triggers some abilities or traits."
+    },
+    {
+        "Term": " Slay ",
+        "Definition": " Slay - An effect that triggers when this action reduces a character to 0 hp or forces them to surrender. Can only trigger once per ability."
+    },
+    {
+        "Term": " Slow Turn ",
+        "Definition": " Slow Turn - Go after all other characters. If multiple characters take slow turns, it takes the same order as regular turns (ally/enemy/ally) Stance - Ongoing effect. A character can only have one stance active at a time and can drop a stance by taking a new stance or as a free action at the start of their turn. When a stance refreshes, regain its effects."
+    },
+    {
+        "Term": "Summon ",
+        "Definition": "Summon - A character controlled by its Summoner. Abilities that target allied characters cannot target summons unless specifically mentioned. Summons don’t cause engagement, take turns, actions, or movement on their own unless specified. By default, summons are size 1, have defense and VIT equal to their summoner’s and HP equal to 50% of their summoner’s max hp. When reduced to 0 HP, they are removed from the battlefield instead of becoming defeated. They are also removed if their summoner is defeated."
+    },
+    {
+        "Term": "Teleport ",
+        "Definition": "Teleport - Instantly move to a free space within range X. You can teleport even if your speed is 0."
+    },
+    {
+        "Term": "Terrain effect ",
+        "Definition": "Terrain effect - Something that creates or modifies the terrain spaces on the battlefield."
+    },
+    {
+        "Term": "Blights",
+        "Definition": "Blights The Blights are Burning, Electrified, Poisoned, and Frostbite. A character affected by a particular blight takes bonus damage from any ability that would deal that blight again. For example, a burning character would take bonus damage from any ability that inflicts burning. Abilities may gain additional powerful effects against blighted characters."
+    },
+    {
+        "Term": "Blind ",
+        "Definition": "Blind - Can only target adjacent spaces or Characters"
+    },
+    {
+        "Term": "Dazed ",
+        "Definition": "Dazed - +1 curse on attack rolls."
+    },
+    {
+        "Term": "Hatred of  ",
+        "Definition": "Hatred of X- When taking actions against a foe, must include X character as a target for the action to be valid, as long as that character is in line of sight and in range 3 of either you or your target."
+    },
+    {
+        "Term": "Pacified ",
+        "Definition": "Pacified - Max damage dealt reduced to 1. Breaks on taking damage from a foe’s ability or action."
+    },
+    {
+        "Term": "Shattered ",
+        "Definition": "Shattered - Next ability used against this character ignores armor and resistance, then clear this status."
+    },
+    {
+        "Term": "Slow ",
+        "Definition": "Slow - Must take slow turns"
+    },
+    {
+        "Term": "Branded ",
+        "Definition": "Branded - Attackers gain +1 Boon against this Character"
+    },
+    {
+        "Term": "Stunned ",
+        "Definition": "Stunned - Take 1 less action next turn, then clear this status at the end of that turn."
+    },
+    {
+        "Term": "Winded ",
+        "Definition": "Winded - Cannot teleport, dash, or fly. Can only take a standard move."
+    },
+    {
+        "Term": "Vulnerable ",
+        "Definition": "Vulnerable - All damage taken increased by 1 Special states"
+    },
+    {
+        "Term": "Bloodied ",
+        "Definition": "Bloodied - At or under 50% hp"
+    },
+    {
+        "Term": "Incapacitated ",
+        "Definition": "Incapacitated - Speed reduced to 0, can’t take actions, interrupts, movement, or use abilities. Characters that are defeated are incapacitated by default."
+    },
+    {
+        "Term": "Counter ",
+        "Definition": "Counter - Deal 2 damage to your attacker after being attacked, hit or miss."
+    },
+    {
+        "Term": "Defiance ",
+        "Definition": "Defiance - Prevents hit points from being reduced past 1 hp. When this triggers, remove this effect and character becomes immune to all damage for the rest of the current turn. Divine - Damage from this ability ignores all armor, resistance, and bypasses vigor"
+    },
+    {
+        "Term": "Dodge ",
+        "Definition": "Dodge - Immune to all damage from misses, successful saves, and area effects."
+    },
+    {
+        "Term": "Evasion ",
+        "Definition": "Evasion - Roll a d6 when targeted by an attack. On a 4+, the attack automatically misses. Check before the attack roll."
+    },
+    {
+        "Term": "Flying ",
+        "Definition": "Flying - A flying character ignores all terrain and terrain effects other than impassable terrain, and ignores engagement and obstruction."
+    },
+    {
+        "Term": "Intangible ",
+        "Definition": "Intangible - Can be targeted, but immune to all damage and statuses. Doesn’t cause obstruction or engagement."
+    },
+    {
+        "Term": "Phasing ",
+        "Definition": "Phasing - Can ignore obstruction and pass through, but not end your turn in, terrain or characters."
+    },
+    {
+        "Term": "Pierce ",
+        "Definition": "Pierce - Ignores armor."
+    },
+    {
+        "Term": "Regeneration   ",
+        "Definition": "Regeneration X - Gain vigor X at the end of your turn"
+    },
+    {
+        "Term": "Skirmisher ",
+        "Definition": "Skirmisher - Can move diagonally, and dash is full speed"
+    },
+    {
+        "Term": "Stealth ",
+        "Definition": "Stealth - Cannot be directly targeted except from an adjacent space. Breaks on taking or dealing damage from an ability or action."
+    },
+    {
+        "Term": "Sturdy ",
+        "Definition": "Sturdy - Immune to shove, daze, and stun"
+    },
+    {
+        "Term": "True strike ",
+        "Definition": "True strike - Ignores dodge, evasion, and vigilance."
+    },
+    {
+        "Term": "Unstoppable ",
+        "Definition": "Unstoppable - Immune to all statuses and shove"
+    },
+    {
+        "Term": "Vigilance   ",
+        "Definition": "Vigilance X - A special effect with X charges. Vigilance charges stack if a character gains more than one. A character can spend a charge of Vigilance for one of the following: - When an adjacent ally is targeted as part of an ability, shift all damage and effects to you instead of that ally, regardless of range. - Deal piercing fray damage to any foe that breaks adjacency with you for any reason during their turn. Lose all vigilance charges at the start of your turn."
+    },
+    {
+        "Term": "Vigor   ",
+        "Definition": "Vigor X - Gain a shield that goes over your hit points, equal to X times your vitality value. Damage goes to Vigor before Hit Points. Vigor does not stack, and when you gain Vigor you can choose to keep the old value or gain the new value. Lose all vigor at the end of combat."
+    }
+]
