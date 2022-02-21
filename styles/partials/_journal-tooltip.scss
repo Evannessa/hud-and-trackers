@@ -1,16 +1,35 @@
-// .editor-content,
-// #tinymce {
+//  .editor-content,
+//  #tinymce {
+.journalTooltipParagraph {
+	// position: relative;
+	font-weight: bold;
+}
+
+.showTooltip {
+	// position: relative;
+	overflow: visible;
+
+	&:hover {
+		color: pink;
+	}
+}
 
 .journal-tooltip {
+	z-index: 100;
 	box-sizing: border-box;
 	display: inline-flex;
 	flex-direction: column;
 	align-items: stretch;
-	justify-content: center;
+	justify-content: stretch;
 	position: absolute;
+	top: 50%;
+	right: calc(100% - 2rem);
+	transform: translateY(-50%);
 	border: 1px solid white;
 	color: white;
 	max-width: 35ch;
+	width: 35ch;
+	min-height: 12rem;
 	// max-height: 15rem;
 	height: fit-content;
 	padding: 0rem 1rem;
@@ -26,6 +45,7 @@
 
 	h1 {
 		color: #212121 !important;
+		font-size: 2rem;
 	}
 
 	h1,
@@ -41,7 +61,8 @@
 
 	&__header {
 		flex: 1;
-		background-color: rgba(255, 255, 255, 0.466);
+		background-color: rgba(255, 255, 255, 0.192);
+		backdrop-filter: blur(12px);
 		color: #212121;
 		margin-right: -10%;
 		margin-left: -10%;
@@ -51,6 +72,7 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		max-height: 3rem;
 	}
 
 	&__body {
@@ -67,12 +89,20 @@
 
 	&__footer {
 		flex: 0 1;
+		max-height: 3rem;
 		display: flex;
-		padding: 0rem 2rem;
+		padding: 1rem 2rem;
+
+		color: #212121 !important;
 		background-color: white;
 		margin-left: -10%;
 		margin-right: -10%;
+
+		span {
+			font-weight: bold;
+			color: var(--royal-blue-light)
+		}
 	}
 }
 
-// }
+//  }
