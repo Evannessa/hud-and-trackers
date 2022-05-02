@@ -4,9 +4,7 @@ fetch("/modules/hud-and-trackers/data/icon-glossery-data.json")
         return response.json();
     })
     .then((data) => (keywords = data));
-// .then((data) => console.log(data));
-// const data = require("/modules/hud-and-trackers/data/icon-glossery-data.json");
-// const keywords = data;
+
 let journalName = "ICON TEST";
 Hooks.on("canvasReady", () => {
     game.journal.getName(journalName).sheet.render(true);
@@ -15,6 +13,18 @@ Hooks.on("canvasReady", () => {
 Hooks.on("renderJournalSheet", (ourObject, html, data) => {
     //go through all of our keywords, and highlight them, and give
     //event listeners to show tooltips on hover
+
+    //add a button to journal header
+    var btnString = "<button class='addTooltips'>Click Me</button>";
+    var $btnElement = $(btnString);
+    $(html[0])
+        .find(".window-header")
+        .children("a:first-of-type")
+        .first()
+        .before($btnElement);
+    $btnElement.on("click", (event) => {
+        renderJournalTooltipDialogue();
+    });
     for (let keyword of keywords) {
         highlightKeywords(html, keyword);
     }
@@ -24,7 +34,6 @@ async function highlightKeywords(html, keyword) {
     //TODO: Find keywords, highlight them
     let searchTerm = keyword.Term.trim();
     let definition = keyword.Definition.trim();
-    // console.log("Current search Term", searchTerm, "Definition", definition);
     let pattern = `(${searchTerm})`;
     let regexTerm = new RegExp(pattern);
 
@@ -46,9 +55,7 @@ async function highlightKeywords(html, keyword) {
     );
     paragraphs.forEach((p) => $(p).addClass("journalTooltipParagraph"));
     //select them all
-    html[0].querySelectorAll(`.showTooltip.${className}`).forEach((element) => {
-        console.log("This element will render a tooltip", element);
-    });
+
     $(html[0]).on("mouseover", `.showTooltip.${className}`, (event) => {
         renderTooltip(
             searchTerm,
@@ -58,27 +65,14 @@ async function highlightKeywords(html, keyword) {
     });
 
     $(html[0]).on("mouseleave", `.showTooltip.${className}`, (event) => {
-        hideTooltip($(event.currentTarget).closest(".window-app"));
+        console.log(event);
+        console.log(event.key, event.code);
+        if (event.ctrlKey) {
+            console.log("Interacting with card");
+        } else {
+            hideTooltip($(event.currentTarget).closest(".window-app"));
+        }
     });
-    // setTimeout(() => {
-    //     html[0].querySelectorAll(`.showTooltip.${className}`).forEach((element) => {
-    //         return $(element)
-    //             .mouseover((event) => {
-    //                 renderTooltip(
-    //                     searchTerm,
-    //                     definition,
-    //                     // event.currentTarget
-    //                     $(event.currentTarget).closest(".window-app")
-    //                 );
-    //             })
-    //             .mouseleave((event) => {
-    //                 hideTooltip(
-    //                     // event.currentTarget);
-    //                     $(event.currentTarget).closest(".window-app")
-    //                 );
-    //             });
-    //     });
-    // }, 1000);
 }
 
 async function hideTooltip(keywordElement) {
@@ -90,16 +84,32 @@ async function renderTooltip(title, description, keywordElement) {
         title: title,
         description: description,
     };
-    console.log("Rendering", data);
     const tooltipHtml = await renderTemplate(template, { data: data });
     $(keywordElement).append(tooltipHtml);
 }
 
-// let dialog = new Dialog({
-// 	"title": "Convert Dialogue",
-// 	content: `
-// 	<input type="text" name="keyword-list" />`
+function parseKeywordList(stringData) {
+    let keywordArray = stringData.toString().split(",");
+    console.log(keywordArray);
+    //TODO: turn into object, separating the data somehow
+}
 
-// }
-
-// ).render(true)
+function renderJournalTooltipDialogue() {
+    let dialog = new Dialog({
+        title: "Convert Dialogue",
+        content: `
+	<form><input type="text" name="keyword-list" /><form/>`,
+        buttons: {
+            add: {
+                label: "Add Tooltips",
+                callback: (html) => {
+                    let keywordList = html.find("[name='keyword-list']").val();
+                    parseKeywordList(keywordList);
+                },
+            },
+            cancel: {
+                label: "Cancel",
+            },
+        },
+    }).render(true);
+}
