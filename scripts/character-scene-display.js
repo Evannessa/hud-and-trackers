@@ -27,7 +27,7 @@ function characterFactory(data) {
     };
 }
 
-export class CharacterProfileConfig extends Application {
+export class CharacterProfileConfig extends FormApplication {
     constructor(data = {}) {
         super(data);
         this.data = { ...data };
@@ -40,6 +40,18 @@ export class CharacterProfileConfig extends Application {
             linkedDocuments: {},
         };
         return defaultData;
+    }
+
+    async handleSubmit() {
+        let newCharacter = characterFactory(newCharacterData);
+
+        //save data to global settings
+        await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
+            ...this.data.characters,
+            newCharacter,
+        });
+        //re-render the display
+        game.characterSceneDisplay.render(true);
     }
     async _updateObject(event, formData) {
         console.log(event);
@@ -60,34 +72,31 @@ export class CharacterProfileConfig extends Application {
     }
 
     async _handleButtonClick(event) {
+        // console.log(this.element);
         let clickedElement = $(event.target);
-
         let action = clickedElement.data().action;
         let img;
         switch (action) {
+            case "submit":
+                break;
             case "cancel":
                 event.preventDefault();
                 this.close();
-
+                break;
             case "open-picker":
-                console.log("Open picker button being clicked");
-                // event.preventDefault();
-                // if (filepicker)
-                //     return filepicker.render(false, { focus: true });
-                // let filePicker = new FilePicker({ type: "image" });
-                // const { files } = await FilePicker.browse(
-                // "public",
-                // "icons/consumables/potions"
-                // );
-                // console.log(files);
-
+                event.preventDefault();
+                event.stopPropagation();
+                let inputField = clickedElement.prev()[0];
                 let filepicker = new FilePicker({
                     type: "image",
                     current: img,
+                    field: inputField,
                     callback: (path) => {
                         img = path;
+                        console.log(img);
                     },
                 }).render(true);
+                break;
         }
     }
     activateListeners(html) {
