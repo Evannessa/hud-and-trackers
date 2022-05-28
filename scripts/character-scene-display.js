@@ -16,7 +16,9 @@ Hooks.once("init", () => {
  * @param {*} linkedDocuments
  * @returns
  */
-function characterFactory(name, imgPath, description, linkedDocuments) {
+function characterFactory(data) {
+    let { name, imgPath, description, linkedDocuments } = data;
+
     return {
         name,
         imgPath,
@@ -25,7 +27,7 @@ function characterFactory(name, imgPath, description, linkedDocuments) {
     };
 }
 
-export class CharacterProfileConfig extends FormApplication {
+export class CharacterProfileConfig extends Application {
     constructor(data = {}) {
         super(data);
         this.data = { ...data };
@@ -40,13 +42,13 @@ export class CharacterProfileConfig extends FormApplication {
         return defaultData;
     }
     async _updateObject(event, formData) {
+        console.log(event);
         const newCharacterData = {
             ...formData,
-            ourId: id,
         };
 
         //create the clock w/ the new data
-        let newCharacter = characterFactory(...newCharacterData);
+        let newCharacter = characterFactory(newCharacterData);
 
         //save data to global settings
         await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
@@ -57,29 +59,35 @@ export class CharacterProfileConfig extends FormApplication {
         game.characterSceneDisplay.render(true);
     }
 
-    _handleButtonClick(event) {
-        // event.preventDefault(); //keep form from submitting?
-        let clickedElement = $(event.currentTarget);
+    async _handleButtonClick(event) {
+        let clickedElement = $(event.target);
+
         let action = clickedElement.data().action;
-        let filepicker;
         let img;
         switch (action) {
-            case "cancel": {
+            case "cancel":
                 event.preventDefault();
                 this.close();
-            }
-            case "open-picker": {
-                event.preventDefault();
-                if (filepicker)
-                    return filepicker.render(false, { focus: true });
-                filepicker = new FilePicker({
+
+            case "open-picker":
+                console.log("Open picker button being clicked");
+                // event.preventDefault();
+                // if (filepicker)
+                //     return filepicker.render(false, { focus: true });
+                // let filePicker = new FilePicker({ type: "image" });
+                // const { files } = await FilePicker.browse(
+                // "public",
+                // "icons/consumables/potions"
+                // );
+                // console.log(files);
+
+                let filepicker = new FilePicker({
                     type: "image",
                     current: img,
                     callback: (path) => {
                         img = path;
                     },
                 }).render(true);
-            }
         }
     }
     activateListeners(html) {
@@ -91,15 +99,15 @@ export class CharacterProfileConfig extends FormApplication {
     }
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["form"],
+            // classes: ["form"],
             popOut: true,
-            submitOnChange: false,
-            closeOnSubmit: true,
+            // submitOnChange: false,
+            // closeOnSubmit: true,
             template:
                 "modules/hud-and-trackers/templates/character-scene-display/config-partial.hbs",
             id: "character-profile-config",
             title: "Character Profile Config",
-            onSubmit: (e) => e.preventDefault(),
+            // onSubmit: (e) => e.preventDefault(),
         });
     }
 }
