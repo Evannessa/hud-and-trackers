@@ -1,0 +1,30 @@
+.character-scene-display {
+	position: relative;
+}
+
+.actor-list {
+	position: absolute;
+	overflow: scroll;
+	max-height: 45vh;
+
+	.actor-section {
+		&:hover {
+			cursor: pointer;
+			background-color: $jet-3;
+
+		}
+
+		background-color: $eerie-black;
+		max-width: 100%;
+		padding: clamp(0.25rem, 1vw + 0.5rem, 1rem);
+		display: flex;
+		justify-content: flex-start;
+		gap: 1rem;
+		align-items: center;
+		transition: background-color 100ms ease-in-out;
+
+		.actor-icon {
+			max-height: 3rem;
+		}
+	}
+}

@@ -24,7 +24,9 @@ async function setUserRollMode(rollMode) {
 }
 Hooks.on("renderSidebarTab", (app, html) => {
     if (app.options.id == "chat") {
-        let button = $("<button style='margin-bottom: 10px'>Ambient Roll</button>");
+        let button = $(
+            "<button style='margin-bottom: 10px'>Ambient Roll</button>"
+        );
         button.click((event) => {
             game.ambientRollPrompt = new PromptAmbientRoll().render(true);
         });
@@ -180,38 +182,42 @@ export class AmbientDicePool extends FormApplication {
     }
 
     handleBoonBaneButtons(which) {
-        $(`#ambient-dice-pool .${which}Div button[data-number]`).mousedown((event) => {
-            event.preventDefault();
-            let button = event.currentTarget;
-            let changeBy = 1;
-            if (event.which === 3) {
-                //right mouse button subtract instead
-                changeBy = -1;
-            }
-            // this.data.applied[`${which}s`] = button.name;
-            let newNumber = this.data[`${which}s`][button.name];
-            newNumber += changeBy;
+        $(`#ambient-dice-pool .${which}Div button[data-number]`).mousedown(
+            (event) => {
+                event.preventDefault();
+                let button = event.currentTarget;
+                let changeBy = 1;
+                if (event.which === 3) {
+                    //right mouse button subtract instead
+                    changeBy = -1;
+                }
+                // this.data.applied[`${which}s`] = button.name;
+                let newNumber = this.data[`${which}s`][button.name];
+                newNumber += changeBy;
 
-            //make sure it doesn't go less than zero
-            if (newNumber <= 0) {
-                newNumber = 0;
-            }
-            this.data[`${which}s`][button.name] = newNumber;
+                //make sure it doesn't go less than zero
+                if (newNumber <= 0) {
+                    newNumber = 0;
+                }
+                this.data[`${which}s`][button.name] = newNumber;
 
-            //make sure it doesn't go less than zero
-            this.data[`${which}Number`] += changeBy;
-            if (this.data[`${which}Number`] <= 0) {
-                this.data[`${which}Number`] = 0;
-            }
+                //make sure it doesn't go less than zero
+                this.data[`${which}Number`] += changeBy;
+                if (this.data[`${which}Number`] <= 0) {
+                    this.data[`${which}Number`] = 0;
+                }
 
-            button.dataset.number = newNumber.toString();
-            this.render();
-        });
+                button.dataset.number = newNumber.toString();
+                this.render();
+            }
+        );
     }
     handleBoonBaneNumbers(which) {
         for (let b in this.data[`${which}s`]) {
             let number = this.data[`${which}s`][b];
-            let button = $(`#ambient-dice-pool .${which}Div button[name='${b}']`);
+            let button = $(
+                `#ambient-dice-pool .${which}Div button[name='${b}']`
+            );
             button.data("number", number);
             if (number > 0) {
                 button.append(`<div class="displayNumber">${number}</div>`);
@@ -262,7 +268,9 @@ export class AmbientDicePool extends FormApplication {
             }
             if (term.operator) {
                 boonBaneResultString +=
-                    "</span> " + term.operator + " <span class='baneSpan'>Banes: ";
+                    "</span> " +
+                    term.operator +
+                    " <span class='baneSpan'>Banes: ";
             }
         });
         boonBaneResultString += "</span>";

@@ -1,0 +1,17 @@
+<section class="character-scene-display">
+  <div>
+    <button data-action="add-actor">
+      Add Actor
+    </button>
+    <button data-action="add-unlinked">
+      Add Unlinked Character
+    </button>
+  </div>
+  <ol class="character-list">
+    {{#each characters}}
+      <li class="character">
+        {{this.name}}
+      </li>
+    {{/each}}
+  </ol>
+</section>

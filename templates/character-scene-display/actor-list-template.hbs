@@ -1,0 +1,12 @@
+<div class="actor-list">
+  {{#each data.actors}}
+    <div class="actor-section">
+      <img
+        class="actor-icon"
+        src="{{this.data.img}}"
+        alt="{{this.name}} portrait"
+      />
+      {{this.name}}
+    </div>
+  {{/each}}
+</div>

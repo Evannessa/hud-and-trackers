@@ -1,0 +1,62 @@
+<section>
+  <form action="">
+    <!--input for name-->
+    <label for="name">
+      Character Name
+    </label>
+    <input type="text" name="name" id="name" />
+    <!--input for description-->
+    <label for="description">
+      Description
+    </label>
+    <textarea name="description" id="description"></textarea>
+    <div id="drop-area-full">
+      <label for="char-full-body">
+        Add Full-Body Image
+      </label>
+	  <input type="text">
+      {{!-- <input
+        type="file"
+        id="char-full-body"
+        name="char-full-body"
+        accept="image/*"
+      /> --}}
+      <!--Add full body character img-->
+	  {{#if}}
+      <img
+        className="portrait__preview"
+        src="/modules/hud-and-trackers/images/person.png"
+      />
+	  {{#else}}
+      <img
+        className="portrait__preview"
+        src="/modules/hud-and-trackers/images/person.png"
+	  {{/if}}
+    </div>
+    <!--Add portrait img / add some way to clip it with various shapes-->
+    <div id="drop-area-thumb">
+      <label for="char-thumbnail">
+        Add Thumbnail or Token Image
+      </label>
+      {{!-- <input
+        type="file"
+        id="char-thumbnail"
+        name="char-thumbnail"
+        accept="image/*"
+      /> --}}
+      <p>
+        Drop the thumbnail file here
+      </p>
+      <img
+        className="thumbnail__preview"
+        src="/modules/hud-and-trackers/images/person.png"
+      />
+    </div>
+    <button type="submit">
+      Submit
+    </button>
+    <button data-action="cancel">
+      Cancel
+    </button>
+  </form>
+</section>

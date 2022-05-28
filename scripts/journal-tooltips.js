@@ -1,13 +1,13 @@
 let keywords;
-fetch("/modules/hud-and-trackers/data/icon-glossery-data.json")
+fetch("/modules/hud-and-trackers/data/boons-and-banes-data.json")
     .then((response) => {
         return response.json();
     })
     .then((data) => (keywords = data));
 
-let journalName = "ICON TEST";
+let journalName = "journal test";
 Hooks.on("canvasReady", () => {
-    game.journal.getName(journalName).sheet.render(true);
+    // game.journal.getName(journalName).sheet.render(true);
 });
 //maybe add tooltip entity link if there is one
 Hooks.on("renderJournalSheet", (ourObject, html, data) => {

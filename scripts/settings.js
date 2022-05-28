@@ -9,6 +9,13 @@ export default function registerSettings() {
     //     default: {},
     // });
 
+    game.settings.register("hud-and-trackers", "globalDisplayCharacters", {
+        scope: "world",
+        config: false,
+        type: Object,
+        default: {},
+    });
+
     game.settings.register(HelperFunctions.moduleName, "combatHudPosition", {
         scope: "client",
         config: false,
@@ -45,7 +52,8 @@ export default function registerSettings() {
         type: String,
         default: "fastPlayerTurn",
         onChange: (currentPhase) => {
-            if (!game.user.isGM) Hooks.call("combatHudPhaseChanged", currentPhase);
+            if (!game.user.isGM)
+                Hooks.call("combatHudPhaseChanged", currentPhase);
         },
     });
     game.settings.register(CombatHud.ID, "currentRound", {
@@ -54,7 +62,8 @@ export default function registerSettings() {
         type: Number,
         default: 0,
         onChange: (currentRound) => {
-            if (!game.user.isGM) Hooks.call("combatHudRoundChanged", currentRound);
+            if (!game.user.isGM)
+                Hooks.call("combatHudRoundChanged", currentRound);
         },
     });
     game.settings.register(CombatHud.ID, "activationObject", {
@@ -78,7 +87,8 @@ export default function registerSettings() {
         type: Object,
         default: {},
         onChange: (activationMaps) => {
-            if (!game.user.isGM) Hooks.call("combatHudActivationChanged", activationMaps);
+            if (!game.user.isGM)
+                Hooks.call("combatHudActivationChanged", activationMaps);
         },
     });
     game.settings.register(CombatHud.ID, "combatActive", {
@@ -87,7 +97,8 @@ export default function registerSettings() {
         type: Boolean,
         default: false,
         onChange: (combatActive) => {
-            if (!game.user.isGM) Hooks.call("combatActiveChanged", combatActive);
+            if (!game.user.isGM)
+                Hooks.call("combatActiveChanged", combatActive);
         },
     });
 }
