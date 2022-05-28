@@ -2809,18 +2809,59 @@
 
 .character-scene-display {
   position: relative;
+  overflow-y: auto;
+  min-height: 20vh;
+}
+.character-scene-display .button-wrapper {
+  display: flex;
+}
+.character-scene-display .views,
+.character-scene-display .interactions {
+  display: flex;
+}
+.character-scene-display .chip input[type=radio],
+.character-scene-display .chip input[type=checkbox] {
+  display: none;
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+}
+.character-scene-display .chip input[type=radio] ~ label,
+.character-scene-display .chip input[type=checkbox] ~ label {
+  /* background-color: transparent; */
+  border: 1px solid cornflowerblue !important;
+  /* color: cornflowerblue; */
+  padding: 0.5em 1em;
+  text-align: center;
+  border-radius: 9999px;
+  z-index: 10;
+  display: inline-block;
+  vertical-align: middle;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.character-scene-display .chip input[type=radio] ~ label:hover,
+.character-scene-display .chip input[type=checkbox] ~ label:hover {
+  cursor: pointer;
+}
+.character-scene-display .chip input[type=radio]:checked ~ label,
+.character-scene-display .chip input[type=checkbox]:checked ~ label {
+  background-color: cornflowerblue;
+  color: white;
+  font-weight: bold;
 }
 
 #character-profile-config {
   max-width: 30vw;
 }
 
-.actor-list {
-  position: absolute;
-  overflow: scroll;
-  max-height: 45vh;
-}
-.actor-list .actor-section {
+.actor-section {
   background-color: #1d1d23;
   max-width: 100%;
   padding: clamp(0.25rem, 1vw + 0.5rem, 1rem);
@@ -2830,12 +2871,47 @@
   align-items: center;
   transition: background-color 100ms ease-in-out;
 }
-.actor-list .actor-section:hover {
+.actor-section.character {
+  position: relative;
+}
+.actor-section.character .full-profile {
+  background-color: #2c2c36;
+  position: absolute;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  opacity: 0;
+  border-radius: 5px;
+  border: 2px solid double;
+  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
+.actor-section.character .full-profile > img {
+  max-width: 50%;
+  grid-column: 1/2;
+}
+.actor-section.character .full-profile > h3 {
+  grid-column: 2/3;
+  grid-row: 1/2;
+}
+.actor-section.character .full-profile > p {
+  grid-column: 2/3;
+  grid-row: 2/4;
+}
+.actor-section:hover {
   cursor: pointer;
   background-color: #2c2c36;
 }
-.actor-list .actor-section .actor-icon {
+.actor-section:hover .full-profile {
+  opacity: 100;
+}
+.actor-section .actor-icon {
   max-height: 3rem;
+}
+
+.actor-list {
+  position: absolute;
+  overflow: scroll;
+  max-height: 45vh;
 }
 
 /* SCSS HEX */

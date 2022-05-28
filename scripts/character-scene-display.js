@@ -17,11 +17,13 @@ Hooks.once("init", () => {
  * @returns
  */
 function characterFactory(data) {
-    let { name, imgPath, description, linkedDocuments } = data;
+    let { name, char_full_body, thumbnail_img, description, linkedDocuments } =
+        data;
 
     return {
         name,
-        imgPath,
+        char_full_body,
+        thumbnail_img,
         description,
         linkedDocuments,
     };
@@ -35,7 +37,8 @@ export class CharacterProfileConfig extends FormApplication {
     getData() {
         let defaultData = {
             name: "Test Name",
-            imgPath: "testPath",
+            char_full_body: "testPath",
+            thumbnail_img: "testPath",
             description: "This is a test character",
             linkedDocuments: {},
         };
@@ -54,7 +57,7 @@ export class CharacterProfileConfig extends FormApplication {
         game.characterSceneDisplay.render(true);
     }
     async _updateObject(event, formData) {
-        console.log(event);
+        console.log("Form data is", formData);
         const newCharacterData = {
             ...formData,
         };
@@ -153,7 +156,6 @@ export class CharacterSceneDisplay extends Application {
     async _handleButtonClick(event) {
         let el = $(event.currentTarget);
         let action = el.data().action;
-        console.log("Something was clicked?", action);
         switch (action) {
             case "add-actor":
                 let actors = game.actors.contents;
@@ -174,12 +176,6 @@ export class CharacterSceneDisplay extends Application {
                 //add an unlinked character, for data without creating an actor
                 game.characterProfileConfig =
                     new CharacterProfileConfig().render(true);
-            // await game.settings.set(
-            //     "hud-and-trackers",
-            //     "globalDisplayCharacters",
-            //     { ...this.data.characters, newActor }
-            // );
-            // this.render(true);
             //TODO: add tags as well
         }
     }
@@ -192,6 +188,7 @@ export class CharacterSceneDisplay extends Application {
         html.on("click", async (event) => {
             console.log("Actor image clicked", event.currentTarget);
         });
+        // html.on("mouseenter")
         // html.on("contextmenu", "img", async (event) => {});
     }
 
