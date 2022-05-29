@@ -197,10 +197,63 @@
   --fs-titanic: 48rem;
 }
 
+button i {
+  display: grid;
+  place-content: center;
+  margin: 0;
+}
+
+.square {
+  width: 2rem;
+  height: 2rem;
+}
+
 .horizontal-button-wrapper {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.config-wrapper {
+  display: flex;
+  background-color: hsl(240deg, 10%, 22%);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.drawer-visible {
+  right: unset;
+  left: 0px;
+}
+
+.side-drawer {
+  position: absolute;
+  right: 100%;
+  z-index: 200;
+  width: 50%;
+}
+.side-drawer .tab {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  width: 3rem;
+  height: 3rem;
+  background-color: var(--color-accent-base);
+  color: white;
+  z-index: 200;
+}
+
+.justify-self-right {
+  margin-left: auto;
 }
 
 .ghost {
@@ -241,6 +294,14 @@
   color: var(--color-accent-base);
 }
 
+.border-primary {
+  border-color: var(--color-primary-base);
+}
+
+.border-accent {
+  border-color: var(--color-accent-base);
+}
+
 .window-padding {
   padding: clamp(0.5rem, 0.5rem + 1vw, 1rem) clamp(0.5rem, 0.5rem + 1vh, 1rem);
 }
@@ -249,6 +310,12 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.input-and-label-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .file-input-wrapper {
@@ -260,10 +327,16 @@
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  height: 100%;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 .file-input-wrapper input {
   flex: 1 0 auto;
   max-width: 60%;
+  height: 100%;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 #tracker-app {
@@ -2880,9 +2953,21 @@
   position: relative;
   overflow-y: auto;
   min-height: 20vh;
+  /** change this */
+}
+.character-scene-display fieldset {
+  display: flex;
+  justify-content: space-evenly;
+}
+.character-scene-display .character-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 10rem);
+  gap: 1rem;
 }
 .character-scene-display .button-wrapper {
   display: flex;
+  margin-left: auto;
+  gap: 1rem;
 }
 .character-scene-display .views,
 .character-scene-display .interactions {
@@ -2935,15 +3020,22 @@
   max-width: 100%;
   padding: clamp(0.25rem, 1vw + 0.5rem, 1rem);
   display: flex;
-  justify-content: flex-start;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1rem;
   align-items: center;
   transition: background-color 100ms ease-in-out;
 }
 .actor-section.character {
   position: relative;
+  overflow: visible;
 }
 .actor-section.character .full-profile {
+  min-width: 200%;
+  min-height: -webkit-fit-content;
+  min-height: -moz-fit-content;
+  min-height: fit-content;
   padding: clamp(1rem, 1rem + 1vh, 2rem);
   pointer-events: none;
   background-color: #2c2c36;

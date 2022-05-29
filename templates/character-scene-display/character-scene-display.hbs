@@ -1,58 +1,68 @@
 <section class="character-scene-display">
-  <div class="button-wrapper">
-    <button data-action="add-actor">
-      Add Actor
-    </button>
-    <button data-action="add-unlinked">
-      Add Unlinked Character
+  <div class="config-wrapper side-drawer">
+    <fieldset class="views border-accent">
+      <legend>
+        Select how the character profiles will be displayed
+      </legend>
+      <span class="chip">
+        <input type="radio" name="thumbnail_only" id="thumbnail_only" />
+        <label for="thumbnail_only">
+          Thumbnail View
+        </label>
+      </span>
+      <span class="chip">
+        <input type="radio" name="list" id="list" />
+        <label for="list">
+          List View
+        </label>
+      </span>
+      <span class="chip">
+        <input type="radio" name="thumbnail_info" id="thumbnail_info" />
+        <label for="thumbnail_info">
+          Thumbnail w/ Info View
+        </label>
+      </span>
+    </fieldset>
+    <span class="chip">
+      <input type="checkbox" name="display_summary" id="display_summary" />
+      <label for="display_summary">
+        Display Summary of Description
+      </label>
+    </span>
+    <fieldset class="interactions border-accent">
+      <legend>
+        Would you like to show info on hover or click?
+      </legend>
+      <span class="chip">
+        <input type="radio" name="click-or-hover" id="hover" value="hover" />
+        <label for="hover">
+          Hover
+        </label>
+      </span>
+      <span class="chip">
+        <input type="radio" name="click-or-hover" id="click" value="click" />
+        <label for="click">
+          Click
+        </label>
+      </span>
+    </fieldset>
+    <button class="tab" data-action="display-drawer">
+      View
     </button>
   </div>
-  <fieldset class="views">
-    <legend>
-      Select how the character profiles will be displayed
-    </legend>
-    <span class="chip">
-      <input type="radio" name="thumbnail_only" id="thumbnail_only" />
-      <label for="thumbnail_only">
-        Thumbnail View
-      </label>
-    </span>
-    <span class="chip">
-      <input type="radio" name="list" id="list" />
-      <label for="list">
-        List View
-      </label>
-    </span>
-    <span class="chip">
-      <input type="radio" name="thumbnail_info" id="thumbnail_info" />
-      <label for="thumbnail_info">
-        Thumbnail w/ Info View
-      </label>
-    </span>
-  </fieldset>
-  <span class="chip">
-    <input type="checkbox" name="display_summary" id="display_summary" />
-    <label for="display_summary">
-      Display Summary of Description
-    </label>
-  </span>
-  <fieldset class="interactions">
-    <legend>
-      Would you like to show info on hover or click?
-    </legend>
-    <span class="chip">
-      <input type="radio" name="click-or-hover" id="hover" value="hover" />
-      <label for="hover">
-        Hover
-      </label>
-    </span>
-    <span class="chip">
-      <input type="radio" name="click-or-hover" id="click" value="click" />
-      <label for="click">
-        Click
-      </label>
-    </span>
-  </fieldset>
+  <div class="header">
+    <div class="button-wrapper">
+      <button data-action="add-actor">
+        Add Actor
+        <i class="fas fa-user-plus"></i>
+      </button>
+      <button data-action="add-unlinked">
+        Add Unlinked Character
+        <i class="far fa-plus-octagon"></i>
+      </button>
+    </div>
+  </div>
+  {{! character list  }}
   <ul class="character-list">
     {{#each characters}}
       <li class="character actor-section">
@@ -71,6 +81,14 @@
             {{this.description}}
           </p>
         </section>
+        <span class="horizontal-button-wrapper">
+          <button data-action="edit" class="square">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button data-action="delete" class="square">
+            <i class="fas fa-trash"></i>
+          </button>
+        </span>
       </li>
     {{/each}}
   </ul>

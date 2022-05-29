@@ -7,6 +7,17 @@ Hooks.once("init", () => {
         `modules/hud-and-trackers/templates/character-scene-display/actor-list-template.hbs`,
     ]);
 });
+Hooks.on("renderCharacterSceneDisplay", (app, html) => {
+    let windowApp = html.closest(".window-app");
+    $(windowApp).css({
+        height: "-moz-max-content",
+        height: "fit-content",
+        // width: "-moz-max-content",
+        // width: "fit-content",
+        width: "45vw",
+        // minWidth: "45vh",
+    });
+});
 
 /**
  * Create an object representing the data of a character
@@ -34,6 +45,185 @@ function characterFactory(data) {
     };
 }
 
+/**
+ * actor list for actors that already exist in game
+ */
+export class ActorList extends FormApplication {
+    constructor(data = {}) {
+        super(data);
+        this.data = { ...data };
+    }
+    getData() {
+        let defaultData = {
+            name: "Test Name",
+            char_full_body: "icons/svg/mystery-man.svg",
+            thumbnail_image: "icons/svg/mystery-man.svg",
+            description: "This is a test character",
+            linkedDocuments: {},
+        };
+        return defaultData;
+    }
+    async _updateObject(event, formData) {
+        const newCharacterData = {
+            ...formData,
+        };
+
+        //create the clock w/ the new data
+        let newCharacter = characterFactory(newCharacterData);
+
+        //save data to global settings
+        let id = HelperFunctions.idGenerator();
+
+        //get current stored characters
+        let currentCharacters = await game.settings.get(
+            "hud-and-trackers",
+            "globalDisplayCharacters"
+        );
+        //add new character to current stored characters
+        await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
+            ...currentCharacters,
+            [id]: { ...newCharacter },
+            // newCharacter,
+        });
+        //re-render the display
+        game.characterSceneDisplay.render(true);
+    }
+
+    async _handleButtonClick(event) {
+        // console.log(this.element);
+        let clickedElement = $(event.target);
+        let action = clickedElement.data().action;
+        let img;
+        switch (action) {
+            case "submit":
+                break;
+            case "cancel":
+                event.preventDefault();
+                this.close();
+                break;
+            case "open-picker":
+                event.preventDefault();
+                event.stopPropagation();
+                let inputField = clickedElement.prev()[0];
+                let filepicker = new FilePicker({
+                    type: "image",
+                    current: img,
+                    field: inputField,
+                    callback: (path) => {
+                        img = path;
+                        console.log(img);
+                    },
+                }).render(true);
+                break;
+        }
+    }
+    activateListeners(html) {
+        // html.off("click", ["data-action"]);
+        html.on("click", ["data-action"], this._handleButtonClick.bind(this));
+
+        super.activateListeners(html);
+        let windowContent = html.closest(".window-content");
+    }
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            // classes: ["form"],
+            popOut: true,
+            // submitOnChange: false,
+            // closeOnSubmit: true,
+            template:
+                "modules/hud-and-trackers/templates/character-scene-display/config-partial.hbs",
+            id: "character-profile-config",
+            title: "Character Profile Config",
+            // onSubmit: (e) => e.preventDefault(),
+        });
+    }
+}
+
+export class FullProfile extends Application {
+    constructor(data = {}) {
+        super();
+        this.data = data;
+    }
+    template = `<section class="full-profile">
+          <img src="{{this.char_full_body}}" alt="full body portrait" />
+          <h3>
+            {{this.name}}
+          </h3>
+          <p>
+            {{this.description}}
+          </p>
+        </section>`;
+
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            resizeable: true,
+            popOut: true,
+            template: `modules/hud-and-trackers/templates/character-scene-display/character-scene-display.hbs`,
+            id: "character-profile",
+            title: "Character Scene Display",
+        });
+    }
+
+    async getData() {
+        this.data.characters = await game.settings.get(
+            "hud-and-trackers",
+            "globalDisplayCharacters"
+        );
+        return {
+            user: game.user,
+            characters: this.data.characters,
+        };
+    }
+
+    async _handleButtonClick(event) {
+        let el = $(event.currentTarget);
+        let action = el.data().action;
+        switch (action) {
+            case "add-actor":
+                let actors = game.actors.contents;
+
+                const data = {
+                    actors: actors,
+                };
+                //add an actor, show list of actors
+                const myHtml = await renderTemplate(
+                    `modules/hud-and-trackers/templates/character-scene-display/actor-list-template.hbs`,
+                    { data: data }
+                );
+                game.characterSceneDisplay.element[0].insertAdjacentHTML(
+                    "beforeend",
+                    myHtml
+                );
+            case "add-unlinked":
+                //add an unlinked character, for data without creating an actor
+                game.characterProfileConfig =
+                    new CharacterProfileConfig().render(true);
+            case "display-drawer":
+                let drawer = el.closest(".side-drawer");
+                if (!this.data.visible) {
+                    drawer.addClass("visible");
+                    this.data.visible = true;
+                } else {
+                    drawer.removeClass("visible");
+                    this.data.visible = false;
+                }
+        }
+    }
+
+    activateListeners(html) {
+        //remove app from "ui.windows" to not let it close with the escape key
+        delete ui.windows[this.appId];
+        super.activateListeners(html);
+        html.on("click", "[data-action]", this._handleButtonClick.bind(this));
+        html.on("click", async (event) => {
+            console.log("Actor image clicked", event.currentTarget);
+        });
+        // html.on("mouseenter")
+        // html.on("contextmenu", "img", async (event) => {});
+    }
+
+    async _updateObject(event, formData) {}
+}
 export class CharacterProfileConfig extends FormApplication {
     constructor(data = {}) {
         super(data);
@@ -141,6 +331,7 @@ export class CharacterSceneDisplay extends Application {
     constructor(data = {}) {
         super();
         this.data = data;
+        this.data.visible = false;
         // this.data.characters = {};
     }
 
@@ -159,7 +350,6 @@ export class CharacterSceneDisplay extends Application {
             "hud-and-trackers",
             "globalDisplayCharacters"
         );
-        console.log(this.data.characters);
         return {
             user: game.user,
             characters: this.data.characters,
@@ -189,7 +379,15 @@ export class CharacterSceneDisplay extends Application {
                 //add an unlinked character, for data without creating an actor
                 game.characterProfileConfig =
                     new CharacterProfileConfig().render(true);
-            //TODO: add tags as well
+            case "display-drawer":
+                let drawer = el.closest(".side-drawer");
+                if (!this.data.visible) {
+                    drawer.addClass("visible");
+                    this.data.visible = true;
+                } else {
+                    drawer.removeClass("visible");
+                    this.data.visible = false;
+                }
         }
     }
 
