@@ -48,6 +48,8 @@ export class CharacterProfileConfig extends FormApplication {
     async handleSubmit() {
         let newCharacter = characterFactory(newCharacterData);
 
+        console.log(this.data.characters);
+        console.log(newCharacter);
         //save data to global settings
         await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
             ...this.data.characters,
@@ -66,9 +68,16 @@ export class CharacterProfileConfig extends FormApplication {
         let newCharacter = characterFactory(newCharacterData);
 
         //save data to global settings
+        let id = HelperFunctions.idGenerator();
+        // console.log(this.data.characters);
+        let currentCharacters = await game.settings.get(
+            "hud-and-trackers",
+            "globalDisplayCharacters"
+        );
         await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
-            ...this.data.characters,
-            newCharacter,
+            ...currentCharacters,
+            [id]: { ...newCharacter },
+            // newCharacter,
         });
         //re-render the display
         game.characterSceneDisplay.render(true);
@@ -128,7 +137,7 @@ export class CharacterSceneDisplay extends Application {
     constructor(data = {}) {
         super();
         this.data = data;
-        this.data.characters = {};
+        // this.data.characters = {};
     }
 
     static get defaultOptions() {
