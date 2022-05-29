@@ -1,0 +1,101 @@
+.horizontal-button-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+}
+
+//wether filled or ghost
+//what color the background is
+//what color the border is
+//what color the text is
+
+.ghost {
+	background-color: transparent;
+	color: var(--color-primary-base);
+	border: 1px solid white;
+	border-color: var(--color-primary-base);
+
+	&:hover {
+		border-color: var(--color-accent-base);
+		color: var(--color-accent-base);
+	}
+}
+
+.filled {
+	background-color: var(--color-primary-base);
+	border-color: var(--color-primary-base);
+	color: white;
+	transition: border-color 100ms ease-in, background-color 100ms ease-in;
+
+	&:hover {
+		background-color: var(--color-accent-base);
+		border-color: var(--color-accent-base);
+	}
+}
+
+.rounded {
+	border-radius: 8px;
+}
+
+.text-white {
+	color: white;
+}
+
+.text-primary {
+	color: var(--color-primary-base);
+}
+
+.text-accent {
+	color: var(--color-accent-base);
+}
+
+// .base-background {
+// 	background-color: var(--color-primary-base);
+// 	transition: border-color 100ms ease-in;
+
+// 	&:hover {
+// 		background-color: var(--color-accent-base);
+// 		border-color: var(--color-accent-base);
+// 	}
+// }
+
+// .border-rounded {
+// 	border: 1px solid white;
+// 	border-radius: 8px;
+// }
+
+// .base-border {
+// 	border-color: var(--color-primary-base);
+// }
+
+.window-padding {
+	padding: clamp(0.5rem, 0.5rem + 1vw, 1rem) clamp(0.5rem, 0.5rem + 1vh, 1rem);
+}
+
+.window-gap {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.input-and-label-wrapper {}
+
+.file-input-wrapper {
+	display: flex;
+	max-width: 100%;
+
+	button {
+		//grow none, shrink normal scale
+		flex: 1 1 auto;
+		display: flex;
+		align-items: center;
+		justify-content: space-evenly;
+	}
+
+	input {
+		//max, min, ideal
+		//grow normal scale, shrink none
+		flex: 1 0 auto;
+		max-width: 60%;
+	}
+}

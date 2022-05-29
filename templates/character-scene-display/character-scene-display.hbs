@@ -56,7 +56,11 @@
   <ul class="character-list">
     {{#each characters}}
       <li class="character actor-section">
-        <img class="actor-icon" src="{{this.thumbnail_img}}" alt="" />
+        <img
+          class="actor-icon"
+          src="{{this.thumbnail_image}}"
+          alt="characters thumbnail image"
+        />
         {{this.name}}
         <section class="full-profile">
           <img src="{{this.char_full_body}}" alt="full body portrait" />

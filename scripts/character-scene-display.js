@@ -17,13 +17,18 @@ Hooks.once("init", () => {
  * @returns
  */
 function characterFactory(data) {
-    let { name, char_full_body, thumbnail_img, description, linkedDocuments } =
-        data;
+    let {
+        name,
+        char_full_body,
+        thumbnail_image,
+        description,
+        linkedDocuments,
+    } = data;
 
     return {
         name,
         char_full_body,
-        thumbnail_img,
+        thumbnail_image,
         description,
         linkedDocuments,
     };
@@ -37,8 +42,8 @@ export class CharacterProfileConfig extends FormApplication {
     getData() {
         let defaultData = {
             name: "Test Name",
-            char_full_body: "testPath",
-            thumbnail_img: "testPath",
+            char_full_body: "icons/svg/mystery-man.svg",
+            thumbnail_image: "icons/svg/mystery-man.svg",
             description: "This is a test character",
             linkedDocuments: {},
         };
@@ -48,8 +53,6 @@ export class CharacterProfileConfig extends FormApplication {
     async handleSubmit() {
         let newCharacter = characterFactory(newCharacterData);
 
-        console.log(this.data.characters);
-        console.log(newCharacter);
         //save data to global settings
         await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
             ...this.data.characters,
@@ -59,7 +62,6 @@ export class CharacterProfileConfig extends FormApplication {
         game.characterSceneDisplay.render(true);
     }
     async _updateObject(event, formData) {
-        console.log("Form data is", formData);
         const newCharacterData = {
             ...formData,
         };
@@ -69,11 +71,13 @@ export class CharacterProfileConfig extends FormApplication {
 
         //save data to global settings
         let id = HelperFunctions.idGenerator();
-        // console.log(this.data.characters);
+
+        //get current stored characters
         let currentCharacters = await game.settings.get(
             "hud-and-trackers",
             "globalDisplayCharacters"
         );
+        //add new character to current stored characters
         await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
             ...currentCharacters,
             [id]: { ...newCharacter },

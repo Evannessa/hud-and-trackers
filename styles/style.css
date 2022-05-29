@@ -197,6 +197,75 @@
   --fs-titanic: 48rem;
 }
 
+.horizontal-button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.ghost {
+  background-color: transparent;
+  color: var(--color-primary-base);
+  border: 1px solid white;
+  border-color: var(--color-primary-base);
+}
+.ghost:hover {
+  border-color: var(--color-accent-base);
+  color: var(--color-accent-base);
+}
+
+.filled {
+  background-color: var(--color-primary-base);
+  border-color: var(--color-primary-base);
+  color: white;
+  transition: border-color 100ms ease-in, background-color 100ms ease-in;
+}
+.filled:hover {
+  background-color: var(--color-accent-base);
+  border-color: var(--color-accent-base);
+}
+
+.rounded {
+  border-radius: 8px;
+}
+
+.text-white {
+  color: white;
+}
+
+.text-primary {
+  color: var(--color-primary-base);
+}
+
+.text-accent {
+  color: var(--color-accent-base);
+}
+
+.window-padding {
+  padding: clamp(0.5rem, 0.5rem + 1vw, 1rem) clamp(0.5rem, 0.5rem + 1vh, 1rem);
+}
+
+.window-gap {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.file-input-wrapper {
+  display: flex;
+  max-width: 100%;
+}
+.file-input-wrapper button {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.file-input-wrapper input {
+  flex: 1 0 auto;
+  max-width: 60%;
+}
+
 #tracker-app {
   width: 900px;
   height: 40vh;
@@ -2858,7 +2927,7 @@
 }
 
 #character-profile-config {
-  max-width: 30vw;
+  min-width: 40vw;
 }
 
 .actor-section {
@@ -2879,6 +2948,7 @@
   pointer-events: none;
   background-color: #2c2c36;
   position: absolute;
+  z-index: 400;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;

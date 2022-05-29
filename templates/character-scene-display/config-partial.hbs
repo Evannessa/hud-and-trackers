@@ -1,51 +1,60 @@
-<form action="">
-  <section>
-    <!--input for name-->
-    <label for="name">
+<form class="window-padding window-gap" action="">
+  <!--input for name-->
+  <span>
+    <label class="text-primary" for="name">
       Character Name
     </label>
-    <input type="text" name="name" id="name" value="{name}" />
-    <!--input for description-->
-    <label for="description">
+    <input type="text" name="name" id="name" value="{{name}}" />
+  </span>
+  <!--input for description-->
+  <span>
+    <label class="text-primary" for="description">
       Description
     </label>
-    <textarea name="description" id="description"></textarea>
-    <label for="char-full-body">
-      Add Full-Body Image
-    </label>
-    <span>
-      <input
-        type="text"
-        placeholder="path/image.png"
-        value="{{char_full_body}}"
-        name="char_full_body"
-        id="char-full-body"
-      />
-      <button data-action="open-picker">
-        <i class="fas fa-file-import"></i>
-      </button>
-    </span>
-    <!--Add portrait img / add some way to clip it with various shapes-->
-    <label for="thumbnail-img">
-      Add Thumbnail or Token Image
-    </label>
-    <span>
-      <input
-        type="text"
-        placeholder="path/image.png"
-        value="{{thumbnail_image}}"
-        name="thumbnail_img"
-        id="thumbnail-img"
-      />
-      <button data-action="open-picker">
-        <i class="fas fa-file-import"></i>
-      </button>
-    </span>
-    <button type="submit">
+    <textarea name="description" id="description" value="{{description}}">
+      {{description}}
+    </textarea>
+  </span>
+  {{! Full body image input }}
+  <label class="text-primary" for="char-full-body">
+    Add Full-Body Image
+  </label>
+  <span class="file-input-wrapper">
+    <input
+      type="text"
+      placeholder="path/image.png"
+      value="{{char_full_body}}"
+      name="char_full_body"
+      id="char-full-body"
+    />
+    <button class="filled rounded" data-action="open-picker">
+      <i class="fas fa-file-import"></i>
+      Choose A File
+    </button>
+  </span>
+  <!--Add portrait img / add some way to clip it with various shapes-->
+  <label class="text-primary" for="thumbnail-image">
+    Add Thumbnail or Token Image
+  </label>
+  <span class="file-input-wrapper">
+    <input
+      type="text"
+      placeholder="path/image.png"
+      value="{{thumbnail_image}}"
+      name="thumbnail_image"
+      id="thumbnail-image"
+    />
+    <button class="filled rounded" data-action="open-picker">
+      <i class="fas fa-file-import"></i>
+      Choose A File
+    </button>
+  </span>
+  <span class="horizontal-button-wrapper">
+    <button type="submit" class="filled rounded">
       Submit
     </button>
-    <button data-action="cancel">
+    <button data-action="cancel" class="ghost rounded">
       Cancel
     </button>
-  </section>
+  </span>
 </form>
