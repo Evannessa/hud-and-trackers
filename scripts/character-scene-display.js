@@ -299,6 +299,28 @@ export class CharacterSceneDisplay extends Application {
         this.data = data;
         this.data.visible = false;
     }
+    filter() {
+        $("#search").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $(".character-list > li").filter(function () {
+                $(this).toggle(
+                    $(this).text().toLowerCase().indexOf(value) > -1
+                );
+            });
+        });
+    }
+    filterByScene(pcArray, activeOrViewed) {
+        let sceneActors;
+        if (activeOrViewed == "active") {
+            sceneActors = game.scenes.active.tokens.map((token) => token.actor);
+        } else if (activeOrViewed == "viewed") {
+            sceneActors = game.scenes.viewed.tokens.map((token) => token.actor);
+        } else {
+            sceneActors = this.getPCs();
+        }
+        sceneActors = [...new Set(sceneActors)];
+        return this.filterByFolder(sceneActors, "Main PCs");
+    }
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
@@ -405,8 +427,15 @@ export class CharacterSceneDisplay extends Application {
         html.on("click", async (event) => {
             console.log("Actor image clicked", event.currentTarget);
         });
+        this.filter();
         // html.on("mouseenter")
         // html.on("contextmenu", "img", async (event) => {});
+    }
+
+    filterByFolder(pcArray, folderName) {
+        return pcArray.filter((actor) => {
+            return game.folders.getName(folderName).content.includes(actor);
+        });
     }
 
     async _updateObject(event, formData) {}

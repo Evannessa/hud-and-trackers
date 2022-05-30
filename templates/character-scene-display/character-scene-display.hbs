@@ -1,4 +1,35 @@
 <section class="character-scene-display">
+  <div>
+    <input type="text" id="search" placeholder="Search" />
+  </div>
+  <div class="sceneFilterGroup">
+    <input type="radio" name="sceneFilter" id="none" value="none" checked />
+    <label for="none">
+      None
+    </label>
+    <input type="radio" name="sceneFilter" id="active" value="active" />
+    <label for="active">
+      Active
+    </label>
+    <input type="radio" name="sceneFilter" id="viewed" value="viewed" />
+    <label for="global">
+      Global
+    </label>
+  </div>
+  <div class="dataFilterGroup">
+    <input type="radio" name="dataFilter" id="stats" value="stats" checked />
+    <label for="stats">
+      Stats
+    </label>
+    <input type="radio" name="dataFilter" id="skills" value="skills" />
+    <label for="skills">
+      Skills
+    </label>
+    <input type="radio" name="dataFilter" id="actorItems" value="actorItems" />
+    <label for="actorItems">
+      Items
+    </label>
+  </div>
   <div class="config-wrapper side-drawer">
     <fieldset class="views border-accent">
       <legend>
