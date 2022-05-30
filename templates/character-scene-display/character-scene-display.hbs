@@ -66,7 +66,7 @@
   <ul class="character-list">
     {{#each characters}}
       <li
-        class="character actor-section"
+        class="character actor-section rounded hover-shadow"
         data-action="show-profile"
         data-id="{{this.id}}"
       >
@@ -81,7 +81,7 @@
             <i class="fas fa-edit"></i>
           </button>
           <button data-action="delete" class="square">
-            <i class="fas fa-trash"></i>
+            <i class="fas fa-trash text-warning"></i>
           </button>
         </span>
       </li>

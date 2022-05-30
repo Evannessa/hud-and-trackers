@@ -101,7 +101,7 @@
 		}
 
 		>img {
-			// max-width: 50%;
+			border-radius: 10px;
 			grid-column: 1/2;
 			grid-row: 1/4;
 		}
@@ -121,6 +121,7 @@
 }
 
 .actor-section {
+	position: relative;
 	background-color: $eerie-black;
 	max-width: 100%;
 	padding: clamp(0.25rem, 1vw + 0.5rem, 1rem);
@@ -131,6 +132,28 @@
 	gap: 1rem;
 	align-items: center;
 	transition: background-color 100ms ease-in-out;
+
+	.horizontal-button-wrapper {
+		position: absolute;
+		top: 0;
+		right: 0;
+		opacity: 0%;
+		transition: opacity 100ms ease-in-out;
+
+		button {
+			box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+		}
+	}
+
+	&:hover {
+		background-color: $eerie-black-4;
+		cursor: pointer;
+		color: var(--color-accent-base);
+
+		.horizontal-button-wrapper {
+			opacity: 100%;
+		}
+	}
 
 
 	&.character {
@@ -172,20 +195,12 @@
 		}
 	}
 
-	// &:hover {
-	// 	cursor: pointer;
-	// 	background-color: $jet-3;
 
-	// 	.full-profile {
-	// 		opacity: 100;
-	// 		pointer-events: auto;
-	// 	}
-
-	// }
 
 
 	.actor-icon {
-		max-height: 3rem;
+		border-radius: 10px;
+		object-fit: cover;
 	}
 }
 
