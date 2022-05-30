@@ -65,22 +65,17 @@
   {{! character list  }}
   <ul class="character-list">
     {{#each characters}}
-      <li class="character actor-section">
+      <li
+        class="character actor-section"
+        data-action="show-profile"
+        data-id="{{this.id}}"
+      >
         <img
           class="actor-icon"
           src="{{this.thumbnail_image}}"
           alt="characters thumbnail image"
         />
         {{this.name}}
-        <section class="full-profile">
-          <img src="{{this.char_full_body}}" alt="full body portrait" />
-          <h3>
-            {{this.name}}
-          </h3>
-          <p>
-            {{this.description}}
-          </p>
-        </section>
         <span class="horizontal-button-wrapper">
           <button data-action="edit" class="square">
             <i class="fas fa-edit"></i>

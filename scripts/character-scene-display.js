@@ -36,8 +36,11 @@ function characterFactory(data) {
         linkedDocuments,
     } = data;
 
+    let id = HelperFunctions.idGenerator();
+
     return {
         name,
+        id,
         char_full_body,
         thumbnail_image,
         description,
@@ -144,70 +147,30 @@ export class FullProfile extends Application {
         super();
         this.data = data;
     }
-    template = `<section class="full-profile">
-          <img src="{{this.char_full_body}}" alt="full body portrait" />
-          <h3>
-            {{this.name}}
-          </h3>
-          <p>
-            {{this.description}}
-          </p>
-        </section>`;
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             resizeable: true,
             popOut: true,
-            template: `modules/hud-and-trackers/templates/character-scene-display/character-scene-display.hbs`,
-            id: "character-profile",
-            title: "Character Scene Display",
+            template: `modules/hud-and-trackers/templates/character-scene-display/character-profile-full.hbs`,
+            id: "character-full-profile",
+            title: "Character Profile",
         });
     }
 
     async getData() {
-        this.data.characters = await game.settings.get(
-            "hud-and-trackers",
-            "globalDisplayCharacters"
-        );
+        // console.log("Full profile data is", this.data);
         return {
-            user: game.user,
-            characters: this.data.characters,
+            ...this.data,
         };
     }
 
     async _handleButtonClick(event) {
         let el = $(event.currentTarget);
         let action = el.data().action;
-        switch (action) {
-            case "add-actor":
-                let actors = game.actors.contents;
+        // switch (action) {
 
-                const data = {
-                    actors: actors,
-                };
-                //add an actor, show list of actors
-                const myHtml = await renderTemplate(
-                    `modules/hud-and-trackers/templates/character-scene-display/actor-list-template.hbs`,
-                    { data: data }
-                );
-                game.characterSceneDisplay.element[0].insertAdjacentHTML(
-                    "beforeend",
-                    myHtml
-                );
-            case "add-unlinked":
-                //add an unlinked character, for data without creating an actor
-                game.characterProfileConfig =
-                    new CharacterProfileConfig().render(true);
-            case "display-drawer":
-                let drawer = el.closest(".side-drawer");
-                if (!this.data.visible) {
-                    drawer.addClass("visible");
-                    this.data.visible = true;
-                } else {
-                    drawer.removeClass("visible");
-                    this.data.visible = false;
-                }
-        }
+        // }
     }
 
     activateListeners(html) {
@@ -215,28 +178,29 @@ export class FullProfile extends Application {
         delete ui.windows[this.appId];
         super.activateListeners(html);
         html.on("click", "[data-action]", this._handleButtonClick.bind(this));
-        html.on("click", async (event) => {
-            console.log("Actor image clicked", event.currentTarget);
-        });
-        // html.on("mouseenter")
-        // html.on("contextmenu", "img", async (event) => {});
     }
 
     async _updateObject(event, formData) {}
 }
 export class CharacterProfileConfig extends FormApplication {
-    constructor(data = {}) {
+    constructor(data = {}, edit = false) {
         super(data);
+        console.log("Data is", data);
         this.data = { ...data };
+        this.edit = edit;
     }
     getData() {
-        let defaultData = {
-            name: "Test Name",
-            char_full_body: "icons/svg/mystery-man.svg",
-            thumbnail_image: "icons/svg/mystery-man.svg",
-            description: "This is a test character",
-            linkedDocuments: {},
-        };
+        //if character data was passed in, copy its data. Else, use default data
+        let defaultData = { ...this.data };
+        if (!this.edit) {
+            defaultData = {
+                name: "Test Name",
+                char_full_body: "icons/svg/mystery-man.svg",
+                thumbnail_image: "icons/svg/mystery-man.svg",
+                description: "This is a test character",
+                linkedDocuments: {},
+            };
+        }
         return defaultData;
     }
 
@@ -254,13 +218,14 @@ export class CharacterProfileConfig extends FormApplication {
     async _updateObject(event, formData) {
         const newCharacterData = {
             ...formData,
+            id: this.data.id,
         };
 
         //create the clock w/ the new data
-        let newCharacter = characterFactory(newCharacterData);
-
-        //save data to global settings
-        let id = HelperFunctions.idGenerator();
+        let newCharacter = newCharacterData;
+        if (!this.edit) {
+            newCharacter = characterFactory(newCharacterData);
+        }
 
         //get current stored characters
         let currentCharacters = await game.settings.get(
@@ -268,9 +233,10 @@ export class CharacterProfileConfig extends FormApplication {
             "globalDisplayCharacters"
         );
         //add new character to current stored characters
+        //save data to global settings
         await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
             ...currentCharacters,
-            [id]: { ...newCharacter },
+            [newCharacter.id]: { ...newCharacter },
             // newCharacter,
         });
         //re-render the display
@@ -332,7 +298,6 @@ export class CharacterSceneDisplay extends Application {
         super();
         this.data = data;
         this.data.visible = false;
-        // this.data.characters = {};
     }
 
     static get defaultOptions() {
@@ -359,6 +324,7 @@ export class CharacterSceneDisplay extends Application {
     async _handleButtonClick(event) {
         let el = $(event.currentTarget);
         let action = el.data().action;
+        let id = el.data().id;
         switch (action) {
             case "add-actor":
                 let actors = game.actors.contents;
@@ -388,6 +354,46 @@ export class CharacterSceneDisplay extends Application {
                     drawer.removeClass("visible");
                     this.data.visible = false;
                 }
+                break;
+            case "show-profile":
+                //show profile
+                let currentCharacter = this.data.characters[id];
+                console.log(currentCharacter, id);
+                game.fullCharacterProfile = new FullProfile(
+                    currentCharacter
+                ).render(true);
+                break;
+            case "edit":
+                //edit
+                event.stopPropagation();
+                //get id from parent element if we're clicking on a child
+                if (!id) {
+                    id = el.closest("li").data().id;
+                }
+                if (id) {
+                    let currentCharacter = this.data.characters[id];
+                    game.characterProfileConfig = new CharacterProfileConfig(
+                        currentCharacter,
+                        true
+                    ).render(true);
+                } else {
+                    console.log("No id!", id);
+                }
+                break;
+            case "delete":
+                if (!id) {
+                    id = el.closest("li").data().id;
+                }
+                event.stopPropagation();
+                //TODO: DELETE STUFF
+                if (id) {
+                    let currentCharacter = this.data.characters[id];
+                    game.characterProfileConfig = new CharacterProfileConfig(
+                        currentCharacter
+                    ).render(true);
+                }
+                break;
+            //delete
         }
     }
 

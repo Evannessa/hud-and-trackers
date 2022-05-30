@@ -74,6 +74,52 @@
 	min-width: 40vw;
 }
 
+#character-full-profile {
+	background-color: scale-color($eerie-black, $alpha: -35%);
+	border-color: scale-color($eerie-black-3, $alpha: -35%);
+	max-width: 50vw;
+
+	.window-app,
+	.window-content,
+	.full-profile {
+		background-color: transparent;
+	}
+
+	.full-profile {
+		padding: clamp(1rem, 1rem + 1vh, 2rem);
+		z-index: 400;
+		display: grid;
+		grid-template-columns: 40% 1fr;
+		grid-template-rows: 1fr 1fr 1fr;
+		border-radius: 5px;
+		border: 2px solid double;
+
+		h3,
+		p {
+
+			background-color: scale-color($eerie-black-4, $alpha: -35%);
+		}
+
+		>img {
+			// max-width: 50%;
+			grid-column: 1/2;
+			grid-row: 1/4;
+		}
+
+		>h3 {
+			grid-column: 2/3;
+			grid-row: 1/2;
+		}
+
+		>p {
+			grid-column: 2/3;
+			grid-row: 2/4;
+
+		}
+	}
+
+}
+
 .actor-section {
 	background-color: $eerie-black;
 	max-width: 100%;
@@ -126,16 +172,16 @@
 		}
 	}
 
-	&:hover {
-		cursor: pointer;
-		background-color: $jet-3;
+	// &:hover {
+	// 	cursor: pointer;
+	// 	background-color: $jet-3;
 
-		.full-profile {
-			opacity: 100;
-			pointer-events: auto;
-		}
+	// 	.full-profile {
+	// 		opacity: 100;
+	// 		pointer-events: auto;
+	// 	}
 
-	}
+	// }
 
 
 	.actor-icon {

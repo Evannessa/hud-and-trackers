@@ -3015,6 +3015,42 @@ button i {
   min-width: 40vw;
 }
 
+#character-full-profile {
+  background-color: rgba(29, 29, 35, 0.65);
+  border-color: rgba(34, 34, 42, 0.65);
+  max-width: 50vw;
+}
+#character-full-profile .window-app,
+#character-full-profile .window-content,
+#character-full-profile .full-profile {
+  background-color: transparent;
+}
+#character-full-profile .full-profile {
+  padding: clamp(1rem, 1rem + 1vh, 2rem);
+  z-index: 400;
+  display: grid;
+  grid-template-columns: 40% 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  border-radius: 5px;
+  border: 2px solid double;
+}
+#character-full-profile .full-profile h3,
+#character-full-profile .full-profile p {
+  background-color: rgba(42, 42, 49, 0.65);
+}
+#character-full-profile .full-profile > img {
+  grid-column: 1/2;
+  grid-row: 1/4;
+}
+#character-full-profile .full-profile > h3 {
+  grid-column: 2/3;
+  grid-row: 1/2;
+}
+#character-full-profile .full-profile > p {
+  grid-column: 2/3;
+  grid-row: 2/4;
+}
+
 .actor-section {
   background-color: #1d1d23;
   max-width: 100%;
@@ -3061,14 +3097,6 @@ button i {
 .actor-section.character .full-profile > p {
   grid-column: 2/3;
   grid-row: 2/4;
-}
-.actor-section:hover {
-  cursor: pointer;
-  background-color: #2c2c36;
-}
-.actor-section:hover .full-profile {
-  opacity: 100;
-  pointer-events: auto;
 }
 .actor-section .actor-icon {
   max-height: 3rem;
