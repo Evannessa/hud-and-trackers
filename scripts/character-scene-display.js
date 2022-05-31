@@ -64,98 +64,6 @@ function characterFactory(data = {}) {
 /**
  * actor list for actors that already exist in game
  */
-export class ActorList extends FormApplication {
-    constructor(data = {}) {
-        super(data);
-        this.data = { ...data };
-    }
-    getData() {
-        let defaultData = {
-            name: "Test Name",
-            char_full_body: "icons/svg/mystery-man.svg",
-            thumbnail_image: "icons/svg/mystery-man.svg",
-            description: "This is a test character",
-            tags: [],
-            linkedDocuments: {},
-        };
-        return defaultData;
-    }
-    async _updateObject(event, formData) {
-        const newCharacterData = {
-            ...formData,
-        };
-
-        //create the clock w/ the new data
-        let newCharacter = characterFactory(newCharacterData);
-
-        //save data to global settings
-        let id = HelperFunctions.idGenerator();
-
-        //get current stored characters
-        // let currentCharacters = //await game.settings.get(
-        // "hud-and-trackers",
-        // "globalDisplayCharacters"
-        // );
-
-        //add new character to current stored characters
-        await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
-            ...currentCharacters,
-            [id]: { ...newCharacter },
-            // newCharacter,
-        });
-        //re-render the display
-        game.characterSceneDisplay.render(true);
-    }
-
-    async _handleButtonClick(event) {
-        // console.log(this.element);
-        let clickedElement = $(event.target);
-        let action = clickedElement.data().action;
-        let img;
-        switch (action) {
-            case "submit":
-                break;
-            case "cancel":
-                event.preventDefault();
-                this.close();
-                break;
-            case "open-picker":
-                event.preventDefault();
-                event.stopPropagation();
-                let inputField = clickedElement.prev()[0];
-                let filepicker = new FilePicker({
-                    type: "image",
-                    current: img,
-                    field: inputField,
-                    callback: (path) => {
-                        img = path;
-                        console.log(img);
-                    },
-                }).render(true);
-                break;
-        }
-    }
-    activateListeners(html) {
-        // html.off("click", ["data-action"]);
-        html.on("click", ["data-action"], this._handleButtonClick.bind(this));
-
-        super.activateListeners(html);
-        let windowContent = html.closest(".window-content");
-    }
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            // classes: ["form"],
-            popOut: true,
-            // submitOnChange: false,
-            // closeOnSubmit: true,
-            template:
-                "modules/hud-and-trackers/templates/character-scene-display/config-partial.hbs",
-            id: "character-profile-config",
-            title: "Character Profile Config",
-            // onSubmit: (e) => e.preventDefault(),
-        });
-    }
-}
 
 export class FullProfile extends Application {
     constructor(data = {}) {
@@ -163,6 +71,46 @@ export class FullProfile extends Application {
         this.data = data;
     }
 
+    async getData() {
+        return {
+            ...this.data,
+        };
+    }
+
+    async saveTags(event) {
+        let el = $(event.currentTarget);
+        //input text field should be previous element
+        let tagInput = el.prev()[0].querySelector("#tag-input");
+        //get the id of our character
+
+        this.data.tags = [...this.data.tags, tagInput.value]; //set our data to include the new tags
+
+        await updateCharacter(this.data.id, this.data);
+        this.render(true);
+    }
+
+    async _handleButtonClick(event) {
+        let el = $(event.currentTarget);
+        let action = el.data().action;
+        switch (action) {
+            case "save-tags":
+                //input text field should be previous element
+                let tagInput = el.prev()[0].querySelector("#tag-input");
+                //get the id of our character
+
+                this.data.tags = [...this.data.tags, tagInput.value]; //set our data to include the new tags
+
+                await updateCharacter(this.data.id, this.data);
+                this.render(true);
+        }
+    }
+
+    activateListeners(html) {
+        //remove app from "ui.windows" to not let it close with the escape key
+        delete ui.windows[this.appId];
+        super.activateListeners(html);
+        html.on("click", "[data-action]", this._handleButtonClick.bind(this));
+    }
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             resizeable: true,
@@ -173,75 +121,25 @@ export class FullProfile extends Application {
         });
     }
 
-    async getData() {
-        return {
-            ...this.data,
-        };
-    }
-
-    async _handleButtonClick(event) {
-        let el = $(event.currentTarget);
-        let action = el.data().action;
-        switch (action) {
-            case "save-tags":
-                let tagInput = el.prev();
-                console.log(tagInput, tagInput[0].value);
-                //get the id of our character
-                let id = el.closest(".full-profile").data().id;
-                //use it to find the character
-                // let prevTags = await game.settings.get(
-                // "hud-and-trackers",
-                // "globalDisplayCharacters"
-                // )[id].tags;
-                await game.settings.set(
-                    "hud-and-trackers",
-                    "globalDisplayCharacters",
-                    {
-                        [id]: {
-                            ...newCharacter,
-                            tags: [...prevTags, tagInput[0].value],
-                        },
-                        // newCharacter,
-                    }
-                );
-        }
-    }
-
-    activateListeners(html) {
-        //remove app from "ui.windows" to not let it close with the escape key
-        delete ui.windows[this.appId];
-        super.activateListeners(html);
-        html.on("click", "[data-action]", this._handleButtonClick.bind(this));
-    }
-
     async _updateObject(event, formData) {}
 }
 export class CharacterProfileConfig extends FormApplication {
     constructor(data = {}, edit = false) {
+        console.log("Our profile data is", data);
         super(data);
-        console.log("Data is", data);
         this.data = { ...data };
+        if (Object.keys(data).length === 0) {
+            //if it's empty data we're starting with
+            //call characterFactory with no parameters, which will return
+            //default data
+            this.data = characterFactory();
+        }
         this.edit = edit;
     }
     getData() {
         //if character data was passed in, copy its data. Else, use default data
-        let defaultData = { ...this.data };
-
-        //if this isn't an edit, meaning it's a new object, $e default data
-        if (!this.edit) {
-            //call characterFactory with no parameters, which will return
-            //default data
-            defaultData = characterFactory();
-            // defaultData = {
-            //     name: "Test Name",
-            //     char_full_body: "icons/svg/mystery-man.svg",
-            //     thumbnail_image: "icons/svg/mystery-man.svg",
-            //     description: "This is a test character",
-            //     tags: [],
-            //     linkedDocuments: {},
-            // };
-        }
-        return defaultData;
+        // let defaultData = { ...this.data };
+        return { ...this.data };
     }
 
     async _updateObject(event, formData) {
@@ -250,6 +148,7 @@ export class CharacterProfileConfig extends FormApplication {
             tags: this.data.tags,
             id: this.data.id,
         };
+        console.log(characterData);
 
         //if we're creating a new character
         if (!this.edit) {
@@ -401,7 +300,6 @@ export class CharacterSceneDisplay extends Application {
             case "show-profile":
                 //show profile
                 let currentCharacter = this.data.characters[id];
-                console.log(currentCharacter, id);
                 game.fullCharacterProfile = new FullProfile(
                     currentCharacter
                 ).render(true);
@@ -506,9 +404,10 @@ async function getAllCharacters() {
  */
 async function updateCharacter(id, characterUpdateData) {
     let currentCharacters = await getAllCharacters();
+    console.log(characterUpdateData);
     await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
         ...currentCharacters,
-        [id]: { ...characterUpdateData },
+        [id]: { ...characterUpdateData, tags: [...characterUpdateData.tags] },
         // newCharacter,
     });
 }

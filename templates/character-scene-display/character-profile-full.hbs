@@ -10,10 +10,18 @@
     {{description}}
   </p>
   <span class="input-label-wrapper">
-    <label for="tag">
+    <label for="tag-input">
       Add Tag
     </label>
-    <input type="text" id="tag" name="tag" />
+    <span class="tag-input-span slight-rounded">
+      {{#each tags}}
+        <span class="tag-chip filled slight-rounded">
+          {{this}}
+        </span>
+      {{/each}}
+      {{! <textarea type="text" id="tag-input" name="tag-input" /> }}
+      <input type="text" id="tag-input" name="tag-input" />
+    </span>
     <button data-action="save-tags">
       <i class="fas fa-save"></i>
     </button>
