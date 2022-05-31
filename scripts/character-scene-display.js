@@ -27,13 +27,25 @@ Hooks.on("renderCharacterSceneDisplay", (app, html) => {
  * @param {*} linkedDocuments
  * @returns
  */
-function characterFactory(data) {
+function characterFactory(data = {}) {
+    //if data is empty, fill it with default data
+    if (Object.keys(data).length === 0) {
+        data = {
+            name: "Test Name",
+            char_full_body: "icons/svg/mystery-man.svg",
+            thumbnail_image: "icons/svg/mystery-man.svg",
+            description: "This is a test character",
+            tags: [],
+            linkedDocuments: {},
+        };
+    }
     let {
         name,
         char_full_body,
         thumbnail_image,
         description,
         linkedDocuments,
+        tags,
     } = data;
 
     let id = HelperFunctions.idGenerator();
@@ -45,6 +57,7 @@ function characterFactory(data) {
         thumbnail_image,
         description,
         linkedDocuments,
+        tags,
     };
 }
 
@@ -62,6 +75,7 @@ export class ActorList extends FormApplication {
             char_full_body: "icons/svg/mystery-man.svg",
             thumbnail_image: "icons/svg/mystery-man.svg",
             description: "This is a test character",
+            tags: [],
             linkedDocuments: {},
         };
         return defaultData;
@@ -78,10 +92,11 @@ export class ActorList extends FormApplication {
         let id = HelperFunctions.idGenerator();
 
         //get current stored characters
-        let currentCharacters = await game.settings.get(
-            "hud-and-trackers",
-            "globalDisplayCharacters"
-        );
+        // let currentCharacters = //await game.settings.get(
+        // "hud-and-trackers",
+        // "globalDisplayCharacters"
+        // );
+
         //add new character to current stored characters
         await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
             ...currentCharacters,
@@ -159,7 +174,6 @@ export class FullProfile extends Application {
     }
 
     async getData() {
-        // console.log("Full profile data is", this.data);
         return {
             ...this.data,
         };
@@ -168,9 +182,29 @@ export class FullProfile extends Application {
     async _handleButtonClick(event) {
         let el = $(event.currentTarget);
         let action = el.data().action;
-        // switch (action) {
-
-        // }
+        switch (action) {
+            case "save-tags":
+                let tagInput = el.prev();
+                console.log(tagInput, tagInput[0].value);
+                //get the id of our character
+                let id = el.closest(".full-profile").data().id;
+                //use it to find the character
+                // let prevTags = await game.settings.get(
+                // "hud-and-trackers",
+                // "globalDisplayCharacters"
+                // )[id].tags;
+                await game.settings.set(
+                    "hud-and-trackers",
+                    "globalDisplayCharacters",
+                    {
+                        [id]: {
+                            ...newCharacter,
+                            tags: [...prevTags, tagInput[0].value],
+                        },
+                        // newCharacter,
+                    }
+                );
+        }
     }
 
     activateListeners(html) {
@@ -192,53 +226,40 @@ export class CharacterProfileConfig extends FormApplication {
     getData() {
         //if character data was passed in, copy its data. Else, use default data
         let defaultData = { ...this.data };
+
+        //if this isn't an edit, meaning it's a new object, $e default data
         if (!this.edit) {
-            defaultData = {
-                name: "Test Name",
-                char_full_body: "icons/svg/mystery-man.svg",
-                thumbnail_image: "icons/svg/mystery-man.svg",
-                description: "This is a test character",
-                linkedDocuments: {},
-            };
+            //call characterFactory with no parameters, which will return
+            //default data
+            defaultData = characterFactory();
+            // defaultData = {
+            //     name: "Test Name",
+            //     char_full_body: "icons/svg/mystery-man.svg",
+            //     thumbnail_image: "icons/svg/mystery-man.svg",
+            //     description: "This is a test character",
+            //     tags: [],
+            //     linkedDocuments: {},
+            // };
         }
         return defaultData;
     }
 
-    async handleSubmit() {
-        let newCharacter = characterFactory(newCharacterData);
-
-        //save data to global settings
-        await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
-            ...this.data.characters,
-            newCharacter,
-        });
-        //re-render the display
-        game.characterSceneDisplay.render(true);
-    }
     async _updateObject(event, formData) {
-        const newCharacterData = {
+        const characterData = {
             ...formData,
+            tags: this.data.tags,
             id: this.data.id,
         };
 
-        //create the clock w/ the new data
-        let newCharacter = newCharacterData;
+        //if we're creating a new character
         if (!this.edit) {
-            newCharacter = characterFactory(newCharacterData);
+            let newCharacter;
+            newCharacter = characterFactory(characterData);
+            await addNewCharacter(newCharacter);
+        } else {
+            //else if  we're just editing the same character
+            await updateCharacter(characterData.id, characterData);
         }
-
-        //get current stored characters
-        let currentCharacters = await game.settings.get(
-            "hud-and-trackers",
-            "globalDisplayCharacters"
-        );
-        //add new character to current stored characters
-        //save data to global settings
-        await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
-            ...currentCharacters,
-            [newCharacter.id]: { ...newCharacter },
-            // newCharacter,
-        });
         //re-render the display
         game.characterSceneDisplay.render(true);
     }
@@ -424,6 +445,10 @@ export class CharacterSceneDisplay extends Application {
         delete ui.windows[this.appId];
         super.activateListeners(html);
         html.on("click", "[data-action]", this._handleButtonClick.bind(this));
+        // html.on("click", "input", (event) => {
+        //     event.stopPropagation();
+        //     console.log("clicked on input");
+        // });
         html.on("click", async (event) => {
             console.log("Actor image clicked", event.currentTarget);
         });
@@ -439,4 +464,51 @@ export class CharacterSceneDisplay extends Application {
     }
 
     async _updateObject(event, formData) {}
+}
+
+/**
+ * C - Create in Crud
+ * @param {Object} newCharacterData - the data of a character we're going to add
+ */
+async function addNewCharacter(newCharacterData) {
+    //get current characters from
+    let currentCharacters = await getAllCharacters();
+
+    await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
+        ...currentCharacters,
+        [newCharacterData.id]: { ...newCharacterData },
+    });
+}
+
+/**
+ * R - Read - the R in Crud
+ * @param {string} id  - the id of the character we're looking for
+ * @returns object containing the character data
+ */
+async function getCharacter(id) {
+    let allCharacters = await getAllCharacters();
+    let ourCharacter = allCharacters[id];
+    return ourCharacter;
+}
+
+async function getAllCharacters() {
+    let allCharacters = await game.settings.get(
+        "hud-and-trackers",
+        "globalDisplayCharacters"
+    );
+    return allCharacters;
+}
+
+/**
+ * U - Update - the U in CRUD
+ * @param {String} id  - the id of the character to update
+ * @param {Object} characterUpdateData - the data we're using to update the character
+ */
+async function updateCharacter(id, characterUpdateData) {
+    let currentCharacters = await getAllCharacters();
+    await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
+        ...currentCharacters,
+        [id]: { ...characterUpdateData },
+        // newCharacter,
+    });
 }
