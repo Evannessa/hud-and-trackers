@@ -77,12 +77,7 @@ export class FullProfile extends Application {
         };
     }
 
-    async saveTags(event) {
-        let el = $(event.currentTarget);
-        //input text field should be previous element
-        let tagInput = el.prev()[0].querySelector("#tag-input");
-        //get the id of our character
-
+    async saveTags(tagInput) {
         this.data.tags = [...this.data.tags, tagInput.value]; //set our data to include the new tags
 
         await updateCharacter(this.data.id, this.data);
@@ -110,6 +105,13 @@ export class FullProfile extends Application {
         delete ui.windows[this.appId];
         super.activateListeners(html);
         html.on("click", "[data-action]", this._handleButtonClick.bind(this));
+
+        $("#tag-input").keypress(async (e) => {
+            if (e.keyCode == 13) {
+                this.saveTags.bind(this);
+                await this.saveTags(e.currentTarget);
+            }
+        });
     }
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
