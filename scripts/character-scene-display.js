@@ -257,15 +257,41 @@ export class CharacterSceneDisplay extends Application {
         if (typeof filterData === "string") {
             filterData = filterData.split(" ");
         }
-        filterData.forEach((filterItem) => {
-            console.log(filterItem);
-            let final = $(selectorString).filter(
-                $(this).toggle(
-                    $(this).text().toLowerCase().indexOf(filterItem) > -1
-                )
-            );
-            console.log(final);
+        let allElements = $(selectorString);
+        let matchElements = [];
+        let notMatched = [];
+
+        //go through all the elements
+
+        Array.from(allElements).forEach((element) => {
+            let matchFound = false;
+
+            //go through every filter item
+            filterData.every((filterItem) => {
+                if ($(element).text().toLowerCase().indexOf(filterItem) > -1) {
+                    matchFound = true;
+                }
+                if (matchFound) {
+                    //if we find an item, push it to the elements that match, then cancel out of this loop
+                    matchElements.push(element);
+                    return false; //cancel out of the "every" function loop
+                } else {
+                    return true; //keep going
+                }
+            });
+            //if there wasn't a match after checking each filter item
+            if (!matchFound) {
+                notMatched.push(element);
+            }
         });
+        console.log("Our matches are", matchElements);
+
+        $(matchElements).toggle(true);
+        $(notMatched).toggle(false);
+
+        // $(matchElements).toggleClass(".display");
+        // console.log($(matchElements));
+
         // $(selectorString).filter(function () {
         //     //find all elements that match the selector string
         //     $(this).toggle(
