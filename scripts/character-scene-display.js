@@ -223,22 +223,13 @@ export class CharacterSceneDisplay extends Application {
         this.data.currentSearch = "";
         this.data.visible = false;
     }
-    filterBySearch() {
-        $("#search").on("keyup", function () {
-            //save the current search data to our filters
-            game.characterSceneDisplay.data.currentSearch = $(this)
-                .val()
-                .toLowerCase();
-            game.characterSceneDisplay.applyFilters();
-        });
-    }
 
     /**
      *
      * @param {String} filterData - the string we want to filter by
      * @param {string} selectorString - the selector we want to query of objects we want to be filtered
      */
-    filter(filterData, selectorString) {
+    async filter(filterData, selectorString) {
         //!NOTE: ()=>{} is different than function(). ()=>{} binds the 'this'
         // https://stackoverflow.com/questions/45203479/jquery-with-arrow-function
 
@@ -296,18 +287,50 @@ export class CharacterSceneDisplay extends Application {
         sceneActors = [...new Set(sceneActors)];
         return this.filterByFolder(sceneActors, "Main PCs");
     }
-
+    filterBySearch() {
+        $("#search").on("keyup", async function () {
+            //save the current search data to our filters
+            game.characterSceneDisplay.data.currentSearch = $(this)
+                .val()
+                .toLowerCase();
+            await game.characterSceneDisplay.applyFilters();
+        });
+    }
     /**
      * if a tag is clicked, we want to filter all the objects by it
      */
-    filterByTag(tagValue) {
+    async filterByTag(tagValue) {
         //we're going to filter by the tag
-        this.filter(tagValue, ".character-list > li");
+        //// this.filter(tagValue, ".character-list > li");
         //update the current filter tags
         this.data.currentFilterTags = [
             ...this.data.currentFilterTags,
             tagValue,
         ];
+        await this.applyFilters();
+        this.render(true);
+    }
+    async applyFilters() {
+        if (this.data.currentSearch || this.data.currentFilterTags.length > 0) {
+            //if we have a current search or current tags
+            let searchStrings = this.data.currentSearch;
+            let filterData = [
+                ...searchStrings.split(" "),
+                ...this.data.currentFilterTags,
+            ];
+            await this.filter(filterData, ".character-list > li");
+
+            console.log("Finished filtering");
+            // setTimeout(() => {
+            //     console.log("Finished rendering");
+            //     this.render(true);
+            // }, 300);
+            // this.debounce(() => {
+            //     this.render(true);
+            //     console.log("Re-render?");
+            // }, 300);
+            // this.processChange();
+        }
     }
 
     static get defaultOptions() {
@@ -403,7 +426,6 @@ export class CharacterSceneDisplay extends Application {
                 break;
             case "filter-tag":
                 event.stopPropagation();
-                console.log(el.text().toLowerCase().trim());
                 this.filterByTag(el.text().toLowerCase().trim());
                 break;
             case "remove-tag-filter":
@@ -418,26 +440,25 @@ export class CharacterSceneDisplay extends Application {
         html.on("click", "[data-action]", this._handleButtonClick.bind(this));
         //if current search isn't an empty string
 
-        //apply old filters
+        //apply filters active from previous render
         this.applyFilters();
-        // //if we have currently active tags filtering as well
-        // if (this.data.currentFilterTags.length > 0) {
-        //     this.filter(this.data.currentFilterTags, ".character-list > li");
-        // }
+
         //this will filter upon keypresses in the search bar
         this.filterBySearch();
     }
 
-    applyFilters() {
-        if (this.data.currentSearch || this.data.currentFilterTags.length > 0) {
-            //if we have a current search or current tags
-            let searchStrings = this.data.currentSearch;
-            let filterData = [
-                ...searchStrings.split(" "),
-                ...this.data.currentFilterTags,
-            ];
-            this.filter(filterData, ".character-list > li");
-        }
+    debounce(func, timeout = 300) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                func.apply(this, args);
+            }, timeout);
+        };
+    }
+
+    processChange() {
+        this.debounce(() => this.render(true));
     }
 
     filterByFolder(pcArray, folderName) {
