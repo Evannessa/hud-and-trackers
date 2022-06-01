@@ -61,6 +61,22 @@ button i {
 	margin-left: auto;
 }
 
+.flex-column {
+	display: flex;
+	flex-direction: column;
+}
+
+.flex-centered {
+	display: flex;
+	justify-content: center;
+	align-items: centered;
+}
+
+//text
+.text-centered {
+	text-align: center;
+}
+
 //wether filled or ghost
 //what color the background is
 //what color the border is
@@ -90,11 +106,35 @@ button i {
 	}
 }
 
+//for things like removing tags with a click
+.remove-on-click {
+	position: relative;
+
+	&:before {
+		position: absolute;
+		pointer-events: none;
+		;
+		width: 100%;
+		height: 100%;
+		border-radius: inherit;
+		background-color: rgb(255, 92, 63);
+		content: 'Remove?';
+		opacity: 0;
+		transition: opacity 100ms ease-in;
+	}
+
+	&:hover {
+
+		&:before {
+			opacity: 100%;
+		}
+
+	}
+}
+
 .bg-accent {
 	background-color: var(--color-accent-base);
 	border-color: var(--color-primary-base);
-
-
 }
 
 .rounded {
@@ -105,6 +145,8 @@ button i {
 
 	border-radius: 5px;
 }
+
+// #region Colors
 
 .text-white {
 	color: white;
@@ -131,26 +173,11 @@ button i {
 
 }
 
-// .base-background {
-// 	background-color: var(--color-primary-base);
-// 	transition: border-color 100ms ease-in;
+// #endregion
 
-// 	&:hover {
-// 		background-color: var(--color-accent-base);
-// 		border-color: var(--color-accent-base);
-// 	}
-// }
-
-// .border-rounded {
-// 	border: 1px solid white;
-// 	border-radius: 8px;
-// }
-
-// .base-border {
-// 	border-color: var(--color-primary-base);
-// }
 .hover-shadow {
 	&:before {
+		pointer-events: none;
 		position: absolute;
 		width: 100%;
 		height: 100%;

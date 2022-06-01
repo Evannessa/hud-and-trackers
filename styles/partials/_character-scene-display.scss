@@ -1,3 +1,32 @@
+//global components
+.tag-input-span {
+	background-color: $eerie-black-4;
+	display: inline-flex;
+	justify-content: space-evenly;
+	flex-wrap: wrap;
+	height: fit-content;
+	width: 100%;
+	gap: 0.5rem;
+	padding: 0.5rem;
+
+	.tag-chip {
+		display: inline-flex;
+		padding: 0.15rem 0.25rem;
+	}
+
+	#tag-input {
+		background-color: transparent;
+		width: unset;
+		min-width: 40%;
+		flex: 2;
+	}
+
+	button {
+		display: inline-flex;
+		flex: 0;
+	}
+}
+
 .character-scene-display {
 	position: relative;
 	overflow-y: auto;

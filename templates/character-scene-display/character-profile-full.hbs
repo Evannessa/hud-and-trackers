@@ -3,7 +3,7 @@
     <h3 class="rounded window-padding">
       {{name}}
     </h3>
-    <button data-action="edit" class="rounded square">
+    <button data-action="edit" class="rounded square filled">
       <i class="fas fa-edit"></i>
     </button>
   </header>
@@ -17,9 +17,9 @@
     </label>
     <span class="tag-input-span slight-rounded">
       {{#each tags}}
-        <span class="tag-chip filled slight-rounded">
+        <button class="tag-chip filled slight-rounded" data-action="filter-tag">
           {{this}}
-        </span>
+        </button>
       {{/each}}
       {{! <textarea type="text" id="tag-input" name="tag-input" /> }}
       <input type="text" id="tag-input" name="tag-input" />

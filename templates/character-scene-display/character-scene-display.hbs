@@ -1,6 +1,11 @@
 <section class="character-scene-display">
   <div>
-    <input type="text" id="search" placeholder="Search" />
+    <input
+      type="text"
+      id="search"
+      placeholder="Search"
+      value="{{currentSearch}}"
+    />
   </div>
   <div class="sceneFilterGroup">
     <input type="radio" name="sceneFilter" id="none" value="none" checked />
@@ -16,19 +21,15 @@
       Global
     </label>
   </div>
-  <div class="dataFilterGroup">
-    <input type="radio" name="dataFilter" id="stats" value="stats" checked />
-    <label for="stats">
-      Stats
-    </label>
-    <input type="radio" name="dataFilter" id="skills" value="skills" />
-    <label for="skills">
-      Skills
-    </label>
-    <input type="radio" name="dataFilter" id="actorItems" value="actorItems" />
-    <label for="actorItems">
-      Items
-    </label>
+  <div class="currentFilterGroup">
+    {{#each currentFilterTags}}
+      <button
+        class="tag-chip filled slight-rounded remove-on-click"
+        data-action="remove-tag-filter"
+      >
+        {{this}}
+      </button>
+    {{/each}}
   </div>
   <div class="config-wrapper side-drawer">
     <fieldset class="views border-accent">
@@ -98,15 +99,22 @@
     {{#each characters}}
       <li
         class="character actor-section rounded hover-shadow"
-        data-action="show-profile"
         data-id="{{this.id}}"
       >
-        <img
-          class="actor-icon"
-          src="{{this.thumbnail_image}}"
-          alt="characters thumbnail image"
-        />
-        {{this.name}}
+        <div
+          class="content flex-column flex-centered"
+          data-action="show-profile"
+          data-id="{{this.id}}"
+        >
+          <img
+            class="actor-icon"
+            src="{{this.thumbnail_image}}"
+            alt="characters thumbnail image"
+          />
+          <h3 class="text-centered">
+            {{this.name}}
+          </h3>
+        </div>
         <span class="horizontal-button-wrapper">
           <button data-action="edit" class="square">
             <i class="fas fa-edit"></i>
@@ -114,6 +122,16 @@
           <button data-action="delete" class="square">
             <i class="fas fa-trash text-warning"></i>
           </button>
+        </span>
+        <span class="tag-input-span slight-rounded">
+          {{#each this.tags}}
+            <button
+              class="tag-chip filled slight-rounded"
+              data-action="filter-tag"
+            >
+              {{this}}
+            </button>
+          {{/each}}
         </span>
       </li>
     {{/each}}

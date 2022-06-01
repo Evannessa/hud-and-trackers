@@ -219,17 +219,60 @@ export class CharacterSceneDisplay extends Application {
     constructor(data = {}) {
         super();
         this.data = data;
+        this.data.currentFilterTags = [];
+        this.data.currentSearch = "";
         this.data.visible = false;
     }
-    filter() {
+    filterBySearch() {
         $("#search").on("keyup", function () {
+            game.characterSceneDisplay.data.currentSearch = $(this)
+                .val()
+                .toLowerCase();
             var value = $(this).val().toLowerCase();
-            $(".character-list > li").filter(function () {
-                $(this).toggle(
-                    $(this).text().toLowerCase().indexOf(value) > -1
-                );
-            });
+            game.characterSceneDisplay.filter(value, ".character-list > li");
+            // $(".character-list > li").filter(function () {
+            //     $(this).toggle(
+            //         $(this).text().toLowerCase().indexOf(value) > -1
+            //     );
+            // });
         });
+    }
+
+    /**
+     *
+     * @param {String} filterData - the string we want to filter by
+     * @param {string} selectorString - the selector we want to query of objects we want to be filtered
+     */
+    filter(filterData, selectorString) {
+        //!NOTE: ()=>{} is different than function(). ()=>{} binds the 'this'
+        // https://stackoverflow.com/questions/45203479/jquery-with-arrow-function
+
+        if (
+            typeof filterData !== "string" &&
+            Array.isArray(filterData) !== true
+        ) {
+            console.log("Error. Not array or string");
+            return;
+        }
+        if (typeof filterData === "string") {
+            filterData = filterData.split(" ");
+        }
+        filterData.forEach((filterItem) => {
+            console.log(filterItem);
+            let final = $(selectorString).filter(
+                $(this).toggle(
+                    $(this).text().toLowerCase().indexOf(filterItem) > -1
+                )
+            );
+            console.log(final);
+        });
+        // $(selectorString).filter(function () {
+        //     //find all elements that match the selector string
+        //     $(this).toggle(
+        //         // toggle just toggles visibility based on true or false returned by condition
+        //         $(this).text().toLowerCase().indexOf(filterData) > -1
+        //     );
+        // });
     }
     filterByScene(pcArray, activeOrViewed) {
         let sceneActors;
@@ -242,6 +285,19 @@ export class CharacterSceneDisplay extends Application {
         }
         sceneActors = [...new Set(sceneActors)];
         return this.filterByFolder(sceneActors, "Main PCs");
+    }
+
+    /**
+     * if a tag is clicked, we want to filter all the objects by it
+     */
+    filterByTag(tagValue) {
+        //we're going to filter by the tag
+        this.filter(tagValue, ".character-list > li");
+        //update the current filter tags
+        this.data.currentFilterTags = [
+            ...this.data.currentFilterTags,
+            tagValue,
+        ];
     }
 
     static get defaultOptions() {
@@ -260,7 +316,7 @@ export class CharacterSceneDisplay extends Application {
             "globalDisplayCharacters"
         );
         return {
-            user: game.user,
+            ...this.data,
             characters: this.data.characters,
         };
     }
@@ -328,7 +384,6 @@ export class CharacterSceneDisplay extends Application {
                     id = el.closest("li").data().id;
                 }
                 event.stopPropagation();
-                //TODO: DELETE STUFF
                 if (id) {
                     let currentCharacter = this.data.characters[id];
                     game.characterProfileConfig = new CharacterProfileConfig(
@@ -336,7 +391,13 @@ export class CharacterSceneDisplay extends Application {
                     ).render(true);
                 }
                 break;
-            //delete
+            case "filter-tag":
+                event.stopPropagation();
+                console.log(el.text().toLowerCase().trim());
+                this.filterByTag(el.text().toLowerCase().trim());
+                break;
+            case "remove-tag-filter":
+                break;
         }
     }
 
@@ -345,16 +406,16 @@ export class CharacterSceneDisplay extends Application {
         delete ui.windows[this.appId];
         super.activateListeners(html);
         html.on("click", "[data-action]", this._handleButtonClick.bind(this));
-        // html.on("click", "input", (event) => {
-        //     event.stopPropagation();
-        //     console.log("clicked on input");
-        // });
-        html.on("click", async (event) => {
-            console.log("Actor image clicked", event.currentTarget);
-        });
-        this.filter();
-        // html.on("mouseenter")
-        // html.on("contextmenu", "img", async (event) => {});
+        //if current search isn't an empty string
+        if (this.data.currentSearch) {
+            this.filter(this.data.currentSearch, ".character-list > li");
+        }
+        //if we have currently active tags filtering as well
+        if (this.data.currentFilterTags.length > 0) {
+            this.filter(this.data.currentFilterTags, ".character-list > li");
+        }
+        //this will filter upon keypresses in the search bar
+        this.filterBySearch();
     }
 
     filterByFolder(pcArray, folderName) {
