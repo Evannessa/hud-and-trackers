@@ -1,15 +1,17 @@
 <section class="full-profile" data-id="{{id}}">
-  <button data-action="edit" class="rounded square">
-    <i class="fas fa-edit"></i>
-  </button>
+  <header class="slight-rounded">
+    <h3 class="rounded window-padding">
+      {{name}}
+    </h3>
+    <button data-action="edit" class="rounded square">
+      <i class="fas fa-edit"></i>
+    </button>
+  </header>
   <img src="{{char_full_body}}" alt="full body portrait" class="rounded" />
-  <h3 class="rounded window-padding">
-    {{name}}
-  </h3>
   <p class="rounded window-padding">
     {{description}}
   </p>
-  <span class="input-label-wrapper">
+  <span class="input-and-label-wrapper">
     <label for="tag-input">
       Add Tag
     </label>
@@ -22,7 +24,7 @@
       {{! <textarea type="text" id="tag-input" name="tag-input" /> }}
       <input type="text" id="tag-input" name="tag-input" />
     </span>
-    <button data-action="save-tags">
+    <button data-action="save-tags" class="filled">
       <i class="fas fa-save"></i>
     </button>
   </span>

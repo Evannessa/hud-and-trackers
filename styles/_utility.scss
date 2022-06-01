@@ -90,6 +90,13 @@ button i {
 	}
 }
 
+.bg-accent {
+	background-color: var(--color-accent-base);
+	border-color: var(--color-primary-base);
+
+
+}
+
 .rounded {
 	border-radius: 8px;
 }
