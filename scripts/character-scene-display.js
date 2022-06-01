@@ -225,16 +225,11 @@ export class CharacterSceneDisplay extends Application {
     }
     filterBySearch() {
         $("#search").on("keyup", function () {
+            //save the current search data to our filters
             game.characterSceneDisplay.data.currentSearch = $(this)
                 .val()
                 .toLowerCase();
-            var value = $(this).val().toLowerCase();
-            game.characterSceneDisplay.filter(value, ".character-list > li");
-            // $(".character-list > li").filter(function () {
-            //     $(this).toggle(
-            //         $(this).text().toLowerCase().indexOf(value) > -1
-            //     );
-            // });
+            game.characterSceneDisplay.applyFilters();
         });
     }
 
@@ -288,17 +283,6 @@ export class CharacterSceneDisplay extends Application {
 
         $(matchElements).toggle(true);
         $(notMatched).toggle(false);
-
-        // $(matchElements).toggleClass(".display");
-        // console.log($(matchElements));
-
-        // $(selectorString).filter(function () {
-        //     //find all elements that match the selector string
-        //     $(this).toggle(
-        //         // toggle just toggles visibility based on true or false returned by condition
-        //         $(this).text().toLowerCase().indexOf(filterData) > -1
-        //     );
-        // });
     }
     filterByScene(pcArray, activeOrViewed) {
         let sceneActors;
@@ -433,15 +417,27 @@ export class CharacterSceneDisplay extends Application {
         super.activateListeners(html);
         html.on("click", "[data-action]", this._handleButtonClick.bind(this));
         //if current search isn't an empty string
-        if (this.data.currentSearch) {
-            this.filter(this.data.currentSearch, ".character-list > li");
-        }
-        //if we have currently active tags filtering as well
-        if (this.data.currentFilterTags.length > 0) {
-            this.filter(this.data.currentFilterTags, ".character-list > li");
-        }
+
+        //apply old filters
+        this.applyFilters();
+        // //if we have currently active tags filtering as well
+        // if (this.data.currentFilterTags.length > 0) {
+        //     this.filter(this.data.currentFilterTags, ".character-list > li");
+        // }
         //this will filter upon keypresses in the search bar
         this.filterBySearch();
+    }
+
+    applyFilters() {
+        if (this.data.currentSearch || this.data.currentFilterTags.length > 0) {
+            //if we have a current search or current tags
+            let searchStrings = this.data.currentSearch;
+            let filterData = [
+                ...searchStrings.split(" "),
+                ...this.data.currentFilterTags,
+            ];
+            this.filter(filterData, ".character-list > li");
+        }
     }
 
     filterByFolder(pcArray, folderName) {
