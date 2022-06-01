@@ -1,4 +1,11 @@
 //global components
+.tag-chip {
+	display: inline-flex;
+	padding: 0.15rem 0.25rem;
+	width: fit-content;
+
+}
+
 .tag-input-span {
 	background-color: $eerie-black-4;
 	display: inline-flex;
@@ -8,11 +15,6 @@
 	width: 100%;
 	gap: 0.5rem;
 	padding: 0.5rem;
-
-	.tag-chip {
-		display: inline-flex;
-		padding: 0.15rem 0.25rem;
-	}
 
 	#tag-input {
 		background-color: transparent;

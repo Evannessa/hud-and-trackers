@@ -224,6 +224,8 @@ export class CharacterSceneDisplay extends Application {
         this.data.visible = false;
     }
 
+    async showActorList() {}
+
     /**
      *
      * @param {String} filterData - the string we want to filter by
@@ -319,17 +321,6 @@ export class CharacterSceneDisplay extends Application {
                 ...this.data.currentFilterTags,
             ];
             await this.filter(filterData, ".character-list > li");
-
-            console.log("Finished filtering");
-            // setTimeout(() => {
-            //     console.log("Finished rendering");
-            //     this.render(true);
-            // }, 300);
-            // this.debounce(() => {
-            //     this.render(true);
-            //     console.log("Re-render?");
-            // }, 300);
-            // this.processChange();
         }
     }
 
@@ -425,12 +416,25 @@ export class CharacterSceneDisplay extends Application {
                 }
                 break;
             case "filter-tag":
-                event.stopPropagation();
+                // event.stopPropagation();
                 this.filterByTag(el.text().toLowerCase().trim());
                 break;
             case "remove-tag-filter":
+                this.removeTagFilter(el.text().toLowerCase().trim());
                 break;
         }
+    }
+
+    /**
+     *
+     * @param {String} filterTagValue - value of tag we want to remove
+     */
+    removeTagFilter(filterTagValue) {
+        //remove this one from the currentFilterTags
+        this.data.currentFilterTags = this.data.currentFilterTags.filter(
+            (item) => item.toLowerCase().trim() !== filterTagValue
+        );
+        this.render(true);
     }
 
     activateListeners(html) {

@@ -339,6 +339,10 @@ button i {
   border-radius: 5px;
 }
 
+.cap-rounded {
+  border-radius: 999px;
+}
+
 .text-white {
   color: white;
 }
@@ -3025,6 +3029,14 @@ button i {
   display: none;
 }
 
+.tag-chip {
+  display: inline-flex;
+  padding: 0.15rem 0.25rem;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
 .tag-input-span {
   background-color: #2a2a31;
   display: inline-flex;
@@ -3036,10 +3048,6 @@ button i {
   width: 100%;
   gap: 0.5rem;
   padding: 0.5rem;
-}
-.tag-input-span .tag-chip {
-  display: inline-flex;
-  padding: 0.15rem 0.25rem;
 }
 .tag-input-span #tag-input {
   background-color: transparent;
