@@ -21,7 +21,7 @@
       Global
     </label>
   </div>
-  <div class="currentFilterGroup">
+  <div class="currentFilterGroup flex-centered chip-span">
     {{#each currentFilterTags}}
       <button
         class="tag-chip filled slight-rounded remove-on-click"
@@ -123,7 +123,7 @@
             <i class="fas fa-trash text-warning"></i>
           </button>
         </span>
-        <span class="tag-input-span slight-rounded">
+        <span class="chip-span slight-rounded flex-centered">
           {{#each this.tags}}
             <button
               class="tag-chip filled slight-rounded"

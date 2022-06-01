@@ -308,7 +308,7 @@ export class CharacterSceneDisplay extends Application {
             tagValue,
         ];
         await this.applyFilters();
-        this.render(true);
+        this.render(true); //Re-render here to apply new elements rather than just hide already-rendered ones
     }
     async applyFilters() {
         if (this.data.currentSearch || this.data.currentFilterTags.length > 0) {
