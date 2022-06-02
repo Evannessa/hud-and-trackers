@@ -14,6 +14,19 @@
 @import "partials/custom_playerlist";
 @import "partials/journal-tooltip";
 
+.geDiagramContainer {
+	width: 100% !important;
+	height: 100% !important;
+	display: grid;
+	place-content: center;
+}
+
+#html-to-scene {
+	display: grid;
+	place-content: center;
+
+}
+
 //for hiding default elements off screen
 .visible {
 	transition: left 100ms ease-in;

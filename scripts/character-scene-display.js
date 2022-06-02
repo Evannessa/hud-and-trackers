@@ -519,10 +519,31 @@ async function getAllCharacters() {
  */
 async function updateCharacter(id, characterUpdateData) {
     let currentCharacters = await getAllCharacters();
-    console.log(characterUpdateData);
     await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
         ...currentCharacters,
         [id]: { ...characterUpdateData, tags: [...characterUpdateData.tags] },
         // newCharacter,
     });
 }
+
+/**
+ *
+ * @returns all tags saved in the game settings
+ */
+async function getAllTags() {
+    let tags = await game.settings.get("hud-and-trackers", "displayTags");
+    return tags;
+}
+
+/**
+ *
+ * @param {string} tagName - the tag string value to be added
+ */
+async function addNewTag(tagName) {
+    let tags = getAllTags();
+    let savedTags = new Set();
+    savedTags.add(tags);
+    savedTags.add(tagName);
+    await game.settings.set("hud-and-trackers", "displayTags", [...savedTags]);
+}
+async function deleteTags() {}

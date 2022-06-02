@@ -1751,6 +1751,18 @@ button i {
   color: var(--royal-blue-light);
 }
 
+.geDiagramContainer {
+  width: 100% !important;
+  height: 100% !important;
+  display: grid;
+  place-content: center;
+}
+
+#html-to-scene {
+  display: grid;
+  place-content: center;
+}
+
 .visible {
   transition: left 100ms ease-in;
   left: 15px;

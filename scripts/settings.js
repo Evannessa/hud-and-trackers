@@ -9,6 +9,12 @@ export default function registerSettings() {
     //     default: {},
     // });
 
+    game.settings.register("hud-and-trackers", "displayTags", {
+        scope: "world",
+        config: false,
+        type: Array,
+        default: [],
+    });
     game.settings.register("hud-and-trackers", "globalDisplayCharacters", {
         scope: "world",
         config: false,
