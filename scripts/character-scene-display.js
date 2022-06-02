@@ -224,7 +224,12 @@ export class CharacterSceneDisplay extends Application {
         this.data.visible = false;
     }
 
-    async showActorList() {}
+    async showActorList() {
+        new Dialog({
+            title: "Actors",
+            content: ``,
+        }).render(true);
+    }
 
     /**
      *

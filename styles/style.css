@@ -3031,7 +3031,7 @@ button i {
 
 .tag-chip {
   display: inline-flex;
-  padding: 0.15rem 0.25rem;
+  padding: 0.15rem 0.55rem;
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
