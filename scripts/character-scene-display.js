@@ -93,7 +93,11 @@ export class FullProfile extends Application {
                 let tagInput = el.prev()[0].querySelector("#tag-input");
                 //get the id of our character
 
-                this.data.tags = [...this.data.tags, tagInput.value]; //set our data to include the new tags
+                this.data.tags = Array.from(
+                    new Set([...this.data.tags, tagInput.value])
+                ); //set our data to include the new tags
+
+                await addNewTag(tagInput.value);
 
                 await updateCharacter(this.data.id, this.data);
                 this.render(true);
@@ -308,12 +312,10 @@ export class CharacterSceneDisplay extends Application {
      */
     async filterByTag(tagValue) {
         //we're going to filter by the tag
-        //// this.filter(tagValue, ".character-list > li");
         //update the current filter tags
-        this.data.currentFilterTags = [
-            ...this.data.currentFilterTags,
-            tagValue,
-        ];
+        this.data.currentFilterTags = Array.from(
+            new Set([...this.data.currentFilterTags, tagValue])
+        );
         await this.applyFilters();
         this.render(true); //Re-render here to apply new elements rather than just hide already-rendered ones
     }
