@@ -28,4 +28,19 @@
       <i class="fas fa-save"></i>
     </button>
   </span>
+  <span class="linked-documents-list">
+    <ul class="button-list">
+      {{#each linkedDocuments}}
+        <li>
+          <button
+            data-action="render-sheet"
+            data-collection="{{this.collectionName}}"
+            data-id="{{this.documentId}}"
+          >
+            {{this.name}}
+          </button>
+        </li>
+      {{/each}}
+    </ul>
+  </span>
 </section>

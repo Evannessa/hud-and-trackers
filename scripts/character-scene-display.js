@@ -36,7 +36,7 @@ function characterFactory(data = {}) {
             thumbnail_image: "icons/svg/mystery-man.svg",
             description: "This is a test character",
             tags: [],
-            linkedDocuments: {},
+            linkedDocuments: [],
         };
     }
     let {
@@ -48,7 +48,12 @@ function characterFactory(data = {}) {
         tags,
     } = data;
 
-    let id = HelperFunctions.idGenerator();
+    let id;
+    if (!data.id) {
+        id = HelperFunctions.idGenerator();
+    } else {
+        id = data.id;
+    }
 
     return {
         name,
@@ -88,6 +93,16 @@ export class FullProfile extends Application {
         let el = $(event.currentTarget);
         let action = el.data().action;
         switch (action) {
+            case "render-sheet":
+                let collectionName = el.data().collection;
+                let docId = el.data().id;
+                console.log(collectionName, docId);
+                let doc = game[collectionName].get(docId);
+                if (doc.sheet && !doc.sheet.rendered) {
+                    doc.sheet.render(true);
+                }
+
+                break;
             case "save-tags":
                 //input text field should be previous element
                 let tagInput = el.prev()[0].querySelector("#tag-input");
@@ -101,6 +116,7 @@ export class FullProfile extends Application {
 
                 await updateCharacter(this.data.id, this.data);
                 this.render(true);
+                break;
         }
     }
 
@@ -229,9 +245,61 @@ export class CharacterSceneDisplay extends Application {
     }
 
     async showActorList() {
+        let content = `<form>
+  <label for="output-actorKey" style="vertical-align: top; margin-right: 10px;">Table Name:</label>
+<br /><select name="output-actorKey" id="output-actorKey">
+		</form>`;
+
+        const actors = Array.from(game.actors);
+
+        actors.forEach((actor) => {
+            content += `<option value='${actor.id}'>${actor.name}</option>`;
+        });
+        content += `</select>`;
+
+        content += `</div><br/></form>`;
+
         new Dialog({
-            title: "Actors",
-            content: ``,
+            title: `Select Actor to add`,
+            content: content,
+            buttons: {
+                yes: {
+                    icon: "<i class='fas fa-check'></i>",
+                    label: "Add Actor",
+                    callback: async (html) => {
+                        let actorKey = html
+                            .find("select[name='output-actorKey']")
+                            .val();
+                        let actor = game.actors.get(actorKey);
+                        let data = {
+                            name: actor.name,
+                            id: actor.id,
+                            char_full_body: actor.img,
+                            thumbnail_image: actor.thumbnail,
+                            description: "",
+                            linkedDocuments: [
+                                {
+                                    name: actor.name,
+                                    collectionName: actor.collectionName,
+                                    documentId: actor.id,
+                                },
+                            ],
+                            tags: {},
+                        };
+                        let newData = characterFactory(data);
+
+                        //add new character
+                        await addNewCharacter(newData);
+                        //re-render the display
+                        game.characterSceneDisplay.render(true);
+                    },
+                },
+                no: {
+                    icon: "<i class='fas fa-times'></i>",
+                    label: "Cancel",
+                },
+            },
+            default: "yes",
         }).render(true);
     }
 
@@ -358,20 +426,8 @@ export class CharacterSceneDisplay extends Application {
         let id = el.data().id;
         switch (action) {
             case "add-actor":
-                let actors = game.actors.contents;
-
-                const data = {
-                    actors: actors,
-                };
-                //add an actor, show list of actors
-                const myHtml = await renderTemplate(
-                    `modules/hud-and-trackers/templates/character-scene-display/actor-list-template.hbs`,
-                    { data: data }
-                );
-                game.characterSceneDisplay.element[0].insertAdjacentHTML(
-                    "beforeend",
-                    myHtml
-                );
+                this.showActorList();
+                break;
             case "add-unlinked":
                 //add an unlinked character, for data without creating an actor
                 game.characterProfileConfig =

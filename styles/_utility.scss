@@ -15,6 +15,14 @@ button i {
 	justify-content: space-evenly;
 }
 
+.button-list {
+	display: flex;
+
+	li {
+		list-style-type: none;
+	}
+}
+
 
 
 .header {

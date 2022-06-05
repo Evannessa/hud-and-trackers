@@ -214,6 +214,13 @@ button i {
   justify-content: space-evenly;
 }
 
+.button-list {
+  display: flex;
+}
+.button-list li {
+  list-style-type: none;
+}
+
 .header {
   display: flex;
   flex-direction: column;
