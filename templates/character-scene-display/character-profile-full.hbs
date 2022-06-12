@@ -28,6 +28,9 @@
       <i class="fas fa-save"></i>
     </button>
   </span>
+  <button data-action="add-relationship">
+    Add Relationship
+  </button>
   <span class="linked-documents-list">
     <ul class="button-list">
       {{#each linkedDocuments}}
@@ -37,6 +40,16 @@
             data-collection="{{this.collectionName}}"
             data-id="{{this.documentId}}"
           >
+            {{this.name}}
+          </button>
+        </li>
+      {{/each}}
+    </ul>
+    <ul class="button-list">
+      {{#each relationships}}
+        <li>
+          {{this.type}}
+          <button data-action="show-relationship">
             {{this.name}}
           </button>
         </li>

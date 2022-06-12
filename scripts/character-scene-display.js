@@ -36,6 +36,7 @@ function characterFactory(data = {}) {
             thumbnail_image: "icons/svg/mystery-man.svg",
             description: "This is a test character",
             tags: [],
+            relationships: [],
             linkedDocuments: [],
         };
     }
@@ -45,6 +46,7 @@ function characterFactory(data = {}) {
         thumbnail_image,
         description,
         linkedDocuments,
+        relationships,
         tags,
     } = data;
 
@@ -62,6 +64,7 @@ function characterFactory(data = {}) {
         thumbnail_image,
         description,
         linkedDocuments,
+        relationships,
         tags,
     };
 }
@@ -75,11 +78,132 @@ export class FullProfile extends Application {
         super();
         this.data = data;
     }
+    async showCharacterList() {
+        let content = `<form>
+  <label for="output-actorKey" style="vertical-align: top; margin-right: 10px;">Table Name:</label>
+<br /><select name="output-actorKey" id="output-actorKey">
+		</form>`;
 
+        let characters = await game.settings.get(
+            "hud-and-trackers",
+            "globalDisplayCharacters"
+        );
+        characters = Object.values(characters); //Array.from(characters);
+        console.log(characters);
+
+        characters.forEach((character) => {
+            content += `<option value='${character.id}' data-name='${character.name}'>${character.name}</option>`;
+        });
+        content += `</select>`;
+
+        content += `<input list="relationship_types" name="relationship_type" id="relationship_type">
+		<datalist id="relationship_types">
+		<option value="Grandparent">
+		<option value="Grandmother">
+		<option value="Grandfather">
+		<option value="Mother">
+		<option value="Father">
+		<option value="Parent">
+		<option value="Child">
+		<option value="Son">
+		<option value="Daughter">
+		<option value="Child">
+		<option value="Sibling">
+		<option value="Brother">
+		<option value="Sister">
+		<option value="Cousin">
+		<option value="Pibling (NB Aunt/Uncle)">
+		<option value="Uncle">
+		<option value="Aunt">
+		<option value="Nibling">
+		<option value="Niece">
+		<option value="Nephew">
+		<option value="Family Member">
+		<option value="Friend">
+		<option value="Partner">
+		<option value="Lover">
+		<option value="Spouse">
+		<option value="Mentor">
+		<option value="Rival">
+		</datalist>
+		`;
+
+        content += `</div><br/></form>`;
+
+        new Dialog({
+            title: `Select Character to add`,
+            content: content,
+            buttons: {
+                yes: {
+                    icon: "<i class='fas fa-check'></i>",
+                    label: "Add Relationship",
+                    callback: async (html) => {
+                        let actorKey = html
+                            .find("select[name='output-actorKey']")
+                            .val();
+                        let type = html
+                            .find("input[name='relationship_type']")
+                            .val();
+                        //grab the character, so we can store their thumbnail & stuff
+                        let newRelationshipData = {
+                            id: actorKey,
+                            type: type,
+                        };
+                        this.data.relationships = [
+                            ...this.data.relationships,
+                            { id: actorKey, type: type },
+                        ];
+
+                        await updateCharacter(this.data.id, this.data);
+
+                        //re-render the display
+                        game.characterSceneDisplay.render(true);
+                    },
+                },
+                no: {
+                    icon: "<i class='fas fa-times'></i>",
+                    label: "Cancel",
+                },
+            },
+            default: "yes",
+        }).render(true);
+    }
+
+    /**
+     *
+     * @param {String} id - the id of the character
+     * @param {String} type - the type of relationship
+     * @returns  - an object including the character's name and thumbnail image
+     */
+    async convertRelationshipData(id, type) {
+        let character = await getCharacter(id);
+        let returnData;
+        if (character) {
+            returnData = {
+                name: character.name,
+                type: type,
+                img: character.thumbnail_image,
+                id: id,
+            };
+        } else {
+            returnData = {};
+        }
+        return returnData;
+    }
     async getData() {
-        return {
+        let convertedRelationships = [];
+        for (let rel of this.data.relationships) {
+            convertedRelationships.push(
+                await this.convertRelationshipData(rel.id, rel.type)
+            );
+        }
+
+        let convertedData = {
             ...this.data,
+            relationships: convertedRelationships,
         };
+        console.log(convertedData);
+        return convertedData;
     }
 
     async saveTags(tagInput) {
@@ -96,12 +220,15 @@ export class FullProfile extends Application {
             case "render-sheet":
                 let collectionName = el.data().collection;
                 let docId = el.data().id;
-                console.log(collectionName, docId);
                 let doc = game[collectionName].get(docId);
                 if (doc.sheet && !doc.sheet.rendered) {
                     doc.sheet.render(true);
                 }
 
+                break;
+            case "add-relationship":
+                //render a relationship, or open as side-tab
+                this.showCharacterList();
                 break;
             case "save-tags":
                 //input text field should be previous element
@@ -168,9 +295,10 @@ export class CharacterProfileConfig extends FormApplication {
         const characterData = {
             ...formData,
             tags: this.data.tags,
+            relationships: this.data.relationships,
+            linkedDocuments: this.data.linkedDocuments,
             id: this.data.id,
         };
-        console.log(characterData);
 
         //if we're creating a new character
         if (!this.edit) {
@@ -277,6 +405,7 @@ export class CharacterSceneDisplay extends Application {
                             char_full_body: actor.img,
                             thumbnail_image: actor.thumbnail,
                             description: "",
+                            relationships: [],
                             linkedDocuments: [
                                 {
                                     name: actor.name,
@@ -605,3 +734,9 @@ async function addNewTag(tagName) {
     await game.settings.set("hud-and-trackers", "displayTags", [...savedTags]);
 }
 async function deleteTags() {}
+
+async function openCharacterProfile(currentCharacter) {
+    //  let currentCharacter = this.data.characters[id];
+    game.fullCharacterProfile = new FullProfile(currentCharacter).render(true);
+}
+async function openCharacterSideTab() {}

@@ -19,5 +19,8 @@ export default function registerAllHandlebarHelpers() {
         console.log(object);
         return Object.keys(object).length;
     });
+    // Handlebars.registerHelper("getCharacterData", (id) => {
+
+    // });
     // Handlebars.registerHelper("areScenesEqual", )
 }
