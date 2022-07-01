@@ -49,7 +49,7 @@
       {{#each relationships}}
         <li>
           {{this.type}}
-          <button data-action="show-relationship">
+          <button data-action="show-relationship" data-id="{{this.id}}">
             {{this.name}}
           </button>
         </li>

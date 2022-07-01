@@ -1,6 +1,6 @@
-@import 'partials/mixins';
-@import '_variables';
-@import '_utility';
+@import "partials/mixins";
+@import "_variables";
+@import "_utility";
 
 @import "partials/tracker-app";
 
@@ -8,149 +8,162 @@
 @import "partials/helper-hud";
 @import "partials/player-list";
 
-
-
 @import "partials/combat-hud";
 @import "partials/custom_playerlist";
 @import "partials/journal-tooltip";
 
 .geDiagramContainer {
-	width: 100% !important;
-	height: 100% !important;
-	display: grid;
-	place-content: center;
+    width: 100% !important;
+    height: 100% !important;
+    display: grid;
+    place-content: center;
 }
 
 #html-to-scene {
-	display: grid;
-	place-content: center;
-
+    display: grid;
+    place-content: center;
 }
 
 //for hiding default elements off screen
 .visible {
-	transition: left 100ms ease-in;
-	left: 15px;
+    transition: left 100ms ease-in;
+    left: 15px;
 }
 
 .hide-off-screen {
-	transition: left 100ms ease-out;
-	left: -999px !important;
-	opacity: 0;
-	// bottom: -999px !important;
+    transition: left 100ms ease-out;
+    left: -999px !important;
+    opacity: 0;
+    // bottom: -999px !important;
+}
+//This should overtake the above
+
+.bring-on-screen {
+    transition: left 100ms ease-in;
+    left: 15px;
+    opacity: 100%;
+    z-index: 200;
 }
 
 .btn {
-	transition: all 100ms ease-in-out;
+    transition: all 100ms ease-in-out;
 
-	&-round {
-		border-radius: 50%;
-		height: 2rem;
-		width: 2rem;
+    &-round {
+        border-radius: 50%;
+        height: 2rem;
+        width: 2rem;
 
-		i {
-			margin: 0;
+        i {
+            margin: 0;
 
-			&:after {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				vertical-align: middle;
-			}
-		}
+            &:after {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                vertical-align: middle;
+            }
+        }
 
+        &:hover,
+        &:active,
+        &:focus {
+        }
+    }
 
+    &-ghost {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
 
-		&:hover,
-		&:active,
-		&:focus {}
-	}
+        &:hover,
+        &:focus,
+        &:active {
+            background: transparent;
+            color: var(--color-accent-base);
+            border-color: var(--color-accent-base);
+        }
 
-	&-ghost {
-		background: transparent;
-		color: white;
-		border: 2px solid white;
+        &:active {
+            color: var(--color-primary-base);
+            border-color: var(--color-primary-base);
+        }
+    }
 
-		&:hover,
-		&:focus,
-		&:active {
-			background: transparent;
-			color: var(--color-accent-base);
-			border-color: var(--color-accent-base);
-		}
+    &-primary {
+        color: $black2;
+        background: linear-gradient(
+            to left,
+            var(--color-primary-base),
+            var(--color-accent-base)
+        );
+        background-position: 100% 100%;
+        background-repeat: no-repeat;
+        background-size: 100%;
+        border: none;
 
-		&:active {
-			color: var(--color-primary-base);
-			border-color: var(--color-primary-base);
-		}
-	}
-
-	&-primary {
-		color: $black2;
-		background: linear-gradient(to left, var(--color-primary-base), var(--color-accent-base));
-		background-position: 100% 100%;
-		background-repeat: no-repeat;
-		background-size: 100%;
-		border: none;
-
-		&:active,
-		&:focus,
-		&:hover {
-			background: linear-gradient(to left, var(--color-primary-base), var(--color-accent-base));
-			background-position: 150% 150%;
-			// background: var(--color-accent-base);
-		}
-	}
+        &:active,
+        &:focus,
+        &:hover {
+            background: linear-gradient(
+                to left,
+                var(--color-primary-base),
+                var(--color-accent-base)
+            );
+            background-position: 150% 150%;
+            // background: var(--color-accent-base);
+        }
+    }
 }
 
-
 #chat-form {
-	.chatTokenImg {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		left: 0;
-		opacity: 0.45;
-		overflow: hidden;
-		transition: background-image 100ms;
-		transition: opacity 100ms;
-		padding: 5px;
-		pointer-events: none;
-		-webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.5) 25%, black 75%);
+    .chatTokenImg {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.45;
+        overflow: hidden;
+        transition: background-image 100ms;
+        transition: opacity 100ms;
+        padding: 5px;
+        pointer-events: none;
+        -webkit-mask-image: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.5) 25%,
+            black 75%
+        );
 
-		mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.5) 25%, black 75%);
+        mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.5) 25%, black 75%);
 
-		img {
-			object-fit: contain;
-			max-height: 100%;
-		}
+        img {
+            object-fit: contain;
+            max-height: 100%;
+        }
 
-		&.hide {
-			opacity: 0;
-		}
-	}
+        &.hide {
+            opacity: 0;
+        }
+    }
 }
 
 .window-app {
-	&.sheet {
-		&.minimized {
-			.clock-drawer {
-				min-height: max-content;
-				top: 0;
-				padding: 0.1rem;
+    &.sheet {
+        &.minimized {
+            .clock-drawer {
+                min-height: max-content;
+                top: 0;
+                padding: 0.1rem;
 
-				&__header {
-					span {
-						display: none;
-					}
-				}
-			}
-		}
-	}
+                &__header {
+                    span {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
 }
-
-
 
 @import "./partials/hud-hotbar";
 @import "./partials/clock";
@@ -162,83 +175,106 @@
 @import "./partials/party-overview";
 @import "./partials/dice-pool";
 
-
 #clockConfig,
 .clockHud,
 #clock-display,
 .clock-display,
 .app-child,
 .gradients {
-	.reddish {
-		background-image: linear-gradient(to right, #DC2424 0%, #4A569D 100%);
+    .reddish {
+        background-image: linear-gradient(to right, #dc2424 0%, #4a569d 100%);
 
-		&.mix {
-			background-image: none;
-			background: mix(#DC2424, #4776E6, 50%);
-		}
-	}
+        &.mix {
+            background-image: none;
+            background: mix(#dc2424, #4776e6, 50%);
+        }
+    }
 
-	.purple {
-		background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 100%);
+    .purple {
+        background-image: linear-gradient(to right, #4776e6 0%, #8e54e9 100%);
 
-		&.mix {
-			background-image: none;
-			background: mix(#4776E6, #8E54E9, 50%);
-		}
-	}
+        &.mix {
+            background-image: none;
+            background: mix(#4776e6, #8e54e9, 50%);
+        }
+    }
 
-	.bluePink {
-		background-image: linear-gradient(62deg, rgb(21, 213, 235) 0.00%, rgb(255, 0, 191) 100.00%);
+    .bluePink {
+        background-image: linear-gradient(
+            62deg,
+            rgb(21, 213, 235) 0%,
+            rgb(255, 0, 191) 100%
+        );
 
-		&.mix {
-			background-image: none;
-			background: mix(rgb(21, 213, 235), rgb(255, 0, 191), 50%);
-		}
-	}
+        &.mix {
+            background-image: none;
+            background: mix(rgb(21, 213, 235), rgb(255, 0, 191), 50%);
+        }
+    }
 
-	.turquoise {
-		background-image: linear-gradient(132deg, rgb(161, 255, 255) 0.00%, rgb(0, 216, 216) 100.00%);
+    .turquoise {
+        background-image: linear-gradient(
+            132deg,
+            rgb(161, 255, 255) 0%,
+            rgb(0, 216, 216) 100%
+        );
 
-		&.mix {
-			background-image: none;
-			background: mix(rgb(161, 255, 255), rgb(0, 216, 216), 50%);
-		}
-	}
+        &.mix {
+            background-image: none;
+            background: mix(rgb(161, 255, 255), rgb(0, 216, 216), 50%);
+        }
+    }
 
-	.pinkLemonade {
-		background-image: linear-gradient(132deg, rgb(253, 112, 136) 0.00%, rgb(255, 211, 165) 100.00%);
+    .pinkLemonade {
+        background-image: linear-gradient(
+            132deg,
+            rgb(253, 112, 136) 0%,
+            rgb(255, 211, 165) 100%
+        );
 
-		&.mix {
-			background-image: none;
-			background: mix(rgb(253, 112, 136), rgb(255, 211, 165), 50%);
-		}
-	}
+        &.mix {
+            background-image: none;
+            background: mix(rgb(253, 112, 136), rgb(255, 211, 165), 50%);
+        }
+    }
 
-	.fire {
-		background-image: linear-gradient(132deg, rgb(250, 170, 0) 0.00%, rgb(237, 19, 19) 50.00%, rgb(213, 74, 255) 100.00%);
+    .fire {
+        background-image: linear-gradient(
+            132deg,
+            rgb(250, 170, 0) 0%,
+            rgb(237, 19, 19) 50%,
+            rgb(213, 74, 255) 100%
+        );
 
-		&.mix {
-			background-image: none;
-			background: mix(rgb(250, 170, 0), rgb(237, 19, 110), 50%);
-		}
-	}
+        &.mix {
+            background-image: none;
+            background: mix(rgb(250, 170, 0), rgb(237, 19, 110), 50%);
+        }
+    }
 
-	.magic {
-		background-image: linear-gradient(132deg, rgb(0, 255, 157) 0.00%, rgb(227, 43, 175) 100.00%);
+    .magic {
+        background-image: linear-gradient(
+            132deg,
+            rgb(0, 255, 157) 0%,
+            rgb(227, 43, 175) 100%
+        );
 
-		&.mix {
-			background-image: none;
-			background: mix(rgb(0, 255, 157), rgb(227, 43, 175), 50%);
-		}
-	}
+        &.mix {
+            background-image: none;
+            background: mix(rgb(0, 255, 157), rgb(227, 43, 175), 50%);
+        }
+    }
 
+    .pastel {
+        background-image: linear-gradient(
+            132deg,
+            rgb(255, 206, 236) 0%,
+            rgb(151, 150, 240) 100%
+        );
 
-	.pastel {
-		background-image: linear-gradient(132deg, rgb(255, 206, 236) 0.00%, rgb(151, 150, 240) 100.00%);
-
-		&.mix {
-			background-image: none;
-			background: mix(rgb(255, 206, 236), rgb(151, 150, 240), 50%);
-		}
-	}
+        &.mix {
+            background-image: none;
+            background: mix(rgb(255, 206, 236), rgb(151, 150, 240), 50%);
+        }
+    }
 }

@@ -1781,6 +1781,13 @@ button i {
   opacity: 0;
 }
 
+.bring-on-screen {
+  transition: left 100ms ease-in;
+  left: 15px;
+  opacity: 100%;
+  z-index: 200;
+}
+
 .btn {
   transition: all 100ms ease-in-out;
 }
@@ -4130,7 +4137,7 @@ button i {
 .clock-display .reddish,
 .app-child .reddish,
 .gradients .reddish {
-  background-image: linear-gradient(to right, #DC2424 0%, #4A569D 100%);
+  background-image: linear-gradient(to right, #dc2424 0%, #4a569d 100%);
 }
 #clockConfig .reddish.mix,
 .clockHud .reddish.mix,
@@ -4147,7 +4154,7 @@ button i {
 .clock-display .purple,
 .app-child .purple,
 .gradients .purple {
-  background-image: linear-gradient(to right, #4776E6 0%, #8E54E9 100%);
+  background-image: linear-gradient(to right, #4776e6 0%, #8e54e9 100%);
 }
 #clockConfig .purple.mix,
 .clockHud .purple.mix,

@@ -19,14 +19,8 @@ Hooks.on("canvasReady", async (canvas) => {
 /** only toggle the hide class and set the player list stuff once */
 Hooks.on("renderPlayerList", async (playerList, html) => {
     game.defaultPlayerList = playerList;
-    // if (!playerList.element.hasClass("visible")) {
-    //     playerList.element.addClass("visible");
-    // }
-    // $(playerList.element).css("left", "-999px");
+
     playerList.element.addClass("hide-off-screen");
-    // if (!playerList.element.addClass("hide-off-screen")) {
-    //     playerList.element.addClass("hide-off-screen");
-    // }
 });
 
 Hooks.on("renderPlayerList", async (playerList, html) => {
@@ -55,7 +49,10 @@ function highlightCharacterPortrait(token, isControlled) {
     }
     let playerList = game.customPlayerList.element;
     let currentPCArea = playerList.find(".current-character");
-    if (token.actor.id === $(".current-character img").data().pcid && isControlled) {
+    if (
+        token.actor.id === $(".current-character img").data().pcid &&
+        isControlled
+    ) {
         currentPCArea.addClass("selected");
     } else {
         currentPCArea.removeClass("selected");
@@ -136,11 +133,15 @@ export class CustomPlayerlist extends Application {
         let action = el.data().action;
         switch (action) {
             case "toggle-player-list":
-                // HelperFunctions.togglePlayerList();
-                // this.element.toggleClass("slide-up");
-                el.toggleClass("toggled");
-            // this.setPosition({"height": $(document).body.style.getProperty("--playerlist-height")});
-            // console.log(this);
+                if (
+                    game.defaultPlayerList.element.hasClass("bring-on-screen")
+                ) {
+                    game.defaultPlayerList.element.removeClass(
+                        "bring-on-screen"
+                    );
+                } else {
+                    game.defaultPlayerList.element.addClass("bring-on-screen");
+                }
         }
     }
 

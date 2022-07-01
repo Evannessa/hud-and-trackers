@@ -1,6 +1,7 @@
 import * as HelperFunctions from "./helper-functions.js";
+
 Hooks.on("ready", () => {
-    game.characterSceneDisplay = new CharacterSceneDisplay().render(true);
+    // game.characterSceneDisplay = new CharacterSceneDisplay().render(true);
 });
 Hooks.once("init", () => {
     loadTemplates([
@@ -229,6 +230,11 @@ export class FullProfile extends Application {
             case "add-relationship":
                 //render a relationship, or open as side-tab
                 this.showCharacterList();
+                break;
+            case "show-relationship":
+                let id = el.data().id;
+                let character = await getCharacter(id);
+                await openCharacterProfile(character);
                 break;
             case "save-tags":
                 //input text field should be previous element
@@ -740,3 +746,5 @@ async function openCharacterProfile(currentCharacter) {
     game.fullCharacterProfile = new FullProfile(currentCharacter).render(true);
 }
 async function openCharacterSideTab() {}
+
+async function renderDisplayToggleButton() {}

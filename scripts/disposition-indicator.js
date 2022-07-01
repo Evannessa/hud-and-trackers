@@ -1,7 +1,7 @@
 Hooks.on("canvasReady", () => {
     if (game.user.isGM) {
-        let tokenDocs = game.scenes.viewed.getEmbeddedCollection("Token").contents;
-        tokenDocs.forEach((tokenDoc) => createDispositionMarker(tokenDoc));
+        // let tokenDocs = game.scenes.viewed.getEmbeddedCollection("Token").contents;
+        // tokenDocs.forEach((tokenDoc) => createDispositionMarker(tokenDoc));
     }
 });
 Hooks.on("updateToken", (doc, change, options) => {

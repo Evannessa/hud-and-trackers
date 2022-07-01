@@ -143,8 +143,8 @@ export class AmbientDicePool extends FormApplication {
     initializeData() {
         setUserRollMode("roll");
         return {
-            boonNumber: 0,
-            baneNumber: 0,
+            boonNumber: 1,
+            baneNumber: 1,
             appliedBoons: [],
             appliedBanes: [],
             boons: {
@@ -191,20 +191,22 @@ export class AmbientDicePool extends FormApplication {
                     //right mouse button subtract instead
                     changeBy = -1;
                 }
-                // this.data.applied[`${which}s`] = button.name;
+                //add the new number that's going to show for the boon and bane number
                 let newNumber = this.data[`${which}s`][button.name];
                 newNumber += changeBy;
 
-                //make sure it doesn't go less than zero
+                //make sure it doesn't go less than 0
                 if (newNumber <= 0) {
                     newNumber = 0;
                 }
+
+                //add the new number that's going to show above the boon and bane category
                 this.data[`${which}s`][button.name] = newNumber;
 
                 //make sure it doesn't go less than zero
                 this.data[`${which}Number`] += changeBy;
-                if (this.data[`${which}Number`] <= 0) {
-                    this.data[`${which}Number`] = 0;
+                if (this.data[`${which}Number`] <= 1) {
+                    this.data[`${which}Number`] = 1;
                 }
 
                 button.dataset.number = newNumber.toString();
@@ -253,6 +255,9 @@ export class AmbientDicePool extends FormApplication {
 
         let rollValue = $("#ambient-dice-pool .rollValue").val();
         let ambientRoll = await new Roll(rollValue).evaluate({ async: true });
+
+        // console.log(ambientRoll);
+        // console.log(ambientRoll.dice.map((dice) => dice.results));
 
         //add strings for the individual rolls for the boons and banes
         let boonBaneResultString = "<span class='boonSpan'> Boons: ";

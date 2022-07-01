@@ -1,0 +1,305 @@
+{
+    "sheets": [
+        {
+            "name": "NPCs",
+            "description": "Copper Grove's NPCs",
+            "displayColumn": "id",
+            "guid": "9bf80abb-3ef0-4b84-abbb-2695132ee9ea",
+            "columns": [
+                {
+                    "typeStr": "text",
+                    "guid": "b7466dce-3f15-432a-9d81-7761a585c85e",
+                    "name": "name",
+                    "description": "character name",
+                    "defaultValue": "Test Name",
+                    "iconName": "newText",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text"
+                    }
+                },
+                {
+                    "typeStr": "image",
+                    "guid": "f0d8ffc4-3ada-4d8b-8d17-6f3c48347b4e",
+                    "name": "char_full_body",
+                    "description": "full body image of character",
+                    "defaultValue": "icons/svg/mystery-man.svg",
+                    "iconName": "newImage",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text"
+                    }
+                },
+                {
+                    "typeStr": "image",
+                    "guid": "0b069e76-7591-4ca9-bcae-b493491c495d",
+                    "name": "thumbnail_image",
+                    "description": "thumbnail or token image of character",
+                    "defaultValue": "icons/svg/mystery-man.svg",
+                    "iconName": "newImage",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text"
+                    }
+                },
+                {
+                    "typeStr": "longtext",
+                    "guid": "c42e8592-c7de-493d-a8ad-0ef217a494ce",
+                    "name": "description",
+                    "description": "Description of the character in question",
+                    "defaultValue": "This is a test character",
+                    "iconName": "newLongText",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "longtext"
+                    }
+                },
+                {
+                    "typeStr": "list",
+                    "guid": "16340413-e0a6-4538-89fb-8313b40cc499",
+                    "name": "tags",
+                    "description": "Tags that group them together",
+                    "sheet": "b08d0147-3d2c-4daa-b81d-3132a208e23c",
+                    "defaultValue": [],
+                    "iconName": "newList",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text"
+                    }
+                },
+                {
+                    "typeStr": "list",
+                    "guid": "9740f43b-962d-404e-82fb-26a70f37b683",
+                    "name": "relationships",
+                    "description": "Relationships",
+                    "sheet": "a7204999-b529-41a9-998d-131d72f5383a",
+                    "defaultValue": [],
+                    "iconName": "newList",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text"
+                    }
+                }
+            ],
+            "lines": [
+                {
+                    "guid": "b5100728-5cf7-418f-9a12-2e839f2213c7",
+                    "id": "0",
+                    "name": "Elvorix Zanad",
+                    "char_full_body": "icons/svg/mystery-man.svg",
+                    "thumbnail_image": "icons/svg/mystery-man.svg",
+                    "description": "This is a test character",
+                    "tags": [],
+                    "relationships": [
+                        {
+                            "guid": "a7dd3787-b0ae-4eff-919d-1c47425316f3",
+                            "relationship": {
+                                "guid": "f21bd65b-0edc-4ac3-a25f-3975afac0612",
+                                "name": "",
+                                "type": "Friend",
+                                "refID": "b1d1acf2-0718-44f5-b2a0-f30e17bf7083"
+                            },
+                            "id": "0"
+                        }
+                    ]
+                },
+                {
+                    "guid": "b1d1acf2-0718-44f5-b2a0-f30e17bf7083",
+                    "id": "1",
+                    "name": "Selvori Zanad",
+                    "char_full_body": "icons/svg/mystery-man.svg",
+                    "thumbnail_image": "icons/svg/mystery-man.svg",
+                    "description": "This is a test character",
+                    "tags": [],
+                    "relationships": []
+                }
+            ],
+            "hidden": false,
+            "isProps": false,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "displayColumn": "columnSelect@name",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "tags",
+            "description": "list@9bf80abb-3ef0-4b84-abbb-2695132ee9ea",
+            "displayColumn": "id",
+            "guid": "b08d0147-3d2c-4daa-b81d-3132a208e23c",
+            "columns": [],
+            "lines": [],
+            "hidden": true,
+            "isProps": false,
+            "parentSheetGUID": "9bf80abb-3ef0-4b84-abbb-2695132ee9ea",
+            "columnGUID": "16340413-e0a6-4538-89fb-8313b40cc499"
+        },
+        {
+            "name": "relationships",
+            "description": "relationships between characters",
+            "displayColumn": "id",
+            "guid": "fda53d22-ad05-46bb-b515-5f23324b7aba",
+            "columns": [
+                {
+                    "typeStr": "lineReference",
+                    "guid": "bba0c34e-6e40-4268-b89c-6bc01d5ce5f0",
+                    "name": "linked npc",
+                    "description": "the NPC we're linking this relationship to",
+                    "sheet": "9bf80abb-3ef0-4b84-abbb-2695132ee9ea",
+                    "defaultValue": "b5100728-5cf7-418f-9a12-2e839f2213c7",
+                    "iconName": "newLineLink",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "sheet": "sheetSelect",
+                        "defaultValue": "lineSelect@sheet"
+                    }
+                },
+                {
+                    "typeStr": "enum",
+                    "guid": "d6cc9901-3ee2-4df7-9872-a6351babdadf",
+                    "name": "type",
+                    "description": "The type of relationship",
+                    "options": "Grandparent, Grandmother, Grandfather, Mother, Father, Parent, Child, Son, Daughter, Sibling, Brother, Sister, Cousin, Pibling (NB Aunt/Uncle), Uncle, Aunt, Nibling, Niece, Nephew, Family Member, Friend, Partner, Lover, Spouse, Mentor, Rival",
+                    "defaultValue": "Family Member",
+                    "iconName": "newEnum",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text",
+                        "options": "text"
+                    }
+                }
+            ],
+            "lines": [
+                {
+                    "guid": "8b3da969-6933-4ca9-8634-0edb9af05ab3",
+                    "id": "0",
+                    "linked npc": "b5100728-5cf7-418f-9a12-2e839f2213c7",
+                    "type": "Family Member"
+                }
+            ],
+            "hidden": false,
+            "isProps": false,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "displayColumn": "columnSelect@name",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "relationships",
+            "description": "props@9bf80abb-3ef0-4b84-abbb-2695132ee9ea",
+            "displayColumn": "id",
+            "guid": "a5abdb26-9509-420b-aa78-18d0f7789311",
+            "columns": [],
+            "lines": [],
+            "hidden": true,
+            "isProps": true,
+            "parentSheetGUID": "9bf80abb-3ef0-4b84-abbb-2695132ee9ea",
+            "columnGUID": "26a64093-3a74-4d3c-ba7e-d6cefbdd92c0"
+        },
+        {
+            "name": "relationships",
+            "description": "list@9bf80abb-3ef0-4b84-abbb-2695132ee9ea",
+            "displayColumn": "id",
+            "guid": "a7204999-b529-41a9-998d-131d72f5383a",
+            "columns": [
+                {
+                    "typeStr": "props",
+                    "guid": "3a49deeb-5573-410a-99be-ba2b4ca1d88a",
+                    "name": "relationship",
+                    "description": "a relationship in the list of relationships",
+                    "sheet": "c89d1182-9626-4665-9118-2e63b1430532",
+                    "defaultValue": {},
+                    "iconName": "newProps",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text"
+                    }
+                }
+            ],
+            "lines": [],
+            "hidden": true,
+            "isProps": false,
+            "parentSheetGUID": "9bf80abb-3ef0-4b84-abbb-2695132ee9ea",
+            "columnGUID": "9740f43b-962d-404e-82fb-26a70f37b683"
+        },
+        {
+            "name": "relationship",
+            "description": "props@a7204999-b529-41a9-998d-131d72f5383a",
+            "displayColumn": "id",
+            "guid": "c89d1182-9626-4665-9118-2e63b1430532",
+            "columns": [
+                {
+                    "typeStr": "text",
+                    "guid": "99775c8e-3f8a-42b7-82ad-bb38b6e72c64",
+                    "name": "name",
+                    "description": "name of NPC",
+                    "defaultValue": "",
+                    "iconName": "newText",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text"
+                    }
+                },
+                {
+                    "typeStr": "enum",
+                    "guid": "051a7eb5-1c06-4b61-8008-bf2038870f8e",
+                    "name": "type",
+                    "description": "Type of relationship",
+                    "options": "Grandparent, Grandmother, Grandfather, Mother, Father, Parent, Child, Son, Daughter, Sibling, Brother, Sister, Cousin, Pibling (NB Aunt/Uncle), Uncle, Aunt, Nibling, Niece, Nephew, Family Member, Friend, Partner, Lover, Spouse, Mentor, Rival",
+                    "defaultValue": "Friend",
+                    "iconName": "newEnum",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text",
+                        "options": "text"
+                    }
+                },
+                {
+                    "typeStr": "lineReference",
+                    "guid": "ed7787de-6cdf-499f-a804-89716f826642",
+                    "name": "refID",
+                    "description": "the reference to the character's id",
+                    "sheet": "9bf80abb-3ef0-4b84-abbb-2695132ee9ea",
+                    "defaultValue": "b5100728-5cf7-418f-9a12-2e839f2213c7",
+                    "iconName": "newLineLink",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "sheet": "sheetSelect",
+                        "defaultValue": "lineSelect@sheet"
+                    }
+                }
+            ],
+            "lines": [],
+            "hidden": true,
+            "isProps": true,
+            "parentSheetGUID": "a7204999-b529-41a9-998d-131d72f5383a",
+            "columnGUID": "3a49deeb-5573-410a-99be-ba2b4ca1d88a"
+        }
+    ]
+}

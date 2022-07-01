@@ -31,7 +31,8 @@
         "./scripts/disposition-indicator.js",
         "./scripts/action-hud.js",
         "./scripts/journal-tooltips.js",
-        "./scripts/character-scene-display.js"
+        "./scripts/character-scene-display.js",
+        "./scripts/copy-html-to-journal.js"
     ],
     "styles": ["styles/style.css"],
     "dependencies": [],
