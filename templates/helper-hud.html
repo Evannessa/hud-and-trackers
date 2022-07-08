@@ -1,38 +1,12 @@
 <div class="hoverBar" data-action="toggle">
-    <p>Show Utility Buttons <i class="fas fa-plus"></i></p>
+    <img alt="" class="hud-icon" src="/modules/hud-and-trackers/images/Button Badges/TradingIcons_42_t.webp" srcset="">
+    <!-- <p>Show Utility Buttons <i class="fas fa-plus"></i></p> -->
 </div>
 <div class="utility">
-    <button class="openCheatSheet" data-action="openCheatSheet">
-        <i class="far fa-question-circle"></i> Open Cheat Sheet
+    <button class="showTownMap" data-action="showTownMap">
+        <img alt="" class="hud-icon" src="/modules/hud-and-trackers/images/Button Badges/pirates_04_t.webp" srcset="">
     </button>
-    {{#if isGM}}
-    <button class="partyOverview" data-action="openPartyOverview"><i class="fas fa-search"></i> Party Overview</button>
-    <button class="addPCs" data-action="addPCs"><i class="fas fa-user"></i> Add PCs to Scene</button>
-    <button class="changeDisposition" data-action="changeDisposition">
-        <i class="far fa-angry"></i> Change Disposition
-    </button>
-    <button class="addAttacks" data-action="addAttacks"><i class="fas fa-utensils"></i> Add NPC Attacks</button>
-    <button class="prep" data-action="openPrepBuilder"><i class="fas fa-hammer"></i> Open Prep Builder</button>
-
-    {{else}}
-    <button class="swapCharacter" data-action="swapCharacter">
-        <i class="fas fa-exchange-alt"></i> Swap Character
-    </button>
-    <button class="selectCharacter" data-action="selectCharacter">
-        <i class="fas fa-user"></i> Select Character Token
-    </button>
-    <button class="openCharacterSheet" data-action="openCharacterSheet">
-        <i class="fas fa-external-link-alt"></i> Open Character Sheet
-    </button>
-    {{/if}}
-    <button class="openLootSheet" data-action="openLootSheet"><i class="far fa-gem"></i> Open Party Lootbox</button>
-    <button
-        class="savePos"
-		data-action="savePos"
-        data-text="Move the huds to where you'd like, and save current positions "
-    >
-        <i class="fas fa-save"></i>Save App Positions</button>
-        <!-- <button class="addClock" data-action="addClock"><i class="fas fa-clock"></i> Create Clock</button>
-        <button class="showClocks" data-action="showClocks"><i class="fas fa-clock"></i> View Clocks</button> -->
+    <button class="showWiki" data-action="showWiki">
+        <img alt="" class="hud-icon" src="/modules/hud-and-trackers/images/Button Badges/wiki.webp" srcset="">
     </button>
 </div>

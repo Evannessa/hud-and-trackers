@@ -765,24 +765,32 @@ button i {
   background: none;
   box-shadow: none;
 }
+#helperHud img {
+  width: 5rem;
+  filter: drop-shadow(2px 4px 6px black);
+}
 #helperHud .hoverBar {
   font-size: 1.2rem;
   text-align: center;
   padding: 0.5rem;
   cursor: pointer;
-  background-color: var(--palette-dialog-background, var(--tui-black2));
   transition: background-color 150ms;
 }
 #helperHud .hoverBar.holdOpen {
-  background-color: var(--accent-base);
   color: rgb(255, 255, 255);
 }
 #helperHud .hoverBar.holdOpen:hover {
-  background-color: var(--accent-300);
   color: white;
 }
+#helperHud .hoverBar.holdOpen + .utility {
+  transform: scaleY(1);
+  opacity: 1;
+  transition: transform 100ms ease-out, opacity 100ms ease-out, height 100ms ease-out;
+}
+#helperHud .hoverBar.holdOpen + .utility > * {
+  position: relative;
+}
 #helperHud .hoverBar:hover {
-  background-color: var(--palette-dialog-darker, var(--tui-black4));
   color: var(--accent-300);
 }
 #helperHud .utility {
@@ -801,6 +809,9 @@ button i {
   position: absolute;
   top: 0;
   left: 0;
+  background-color: transparent;
+  box-shadow: none;
+  border: none;
 }
 #helperHud:hover .utility {
   transform: scaleY(1);
@@ -809,9 +820,6 @@ button i {
 }
 #helperHud:hover .utility > * {
   position: relative;
-}
-#helperHud:hover .window-header {
-  display: block;
 }
 #helperHud *,
 #helperHud *::before,
@@ -823,17 +831,19 @@ button i {
   background-color: transparent;
   background: none;
   box-shadow: none;
+  overflow: visible;
 }
 #helperHud .utility button {
   width: 100%;
   text-align: left;
   padding: 0.5rem 0.75rem;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
   justify-content: space-between;
-  transition: background-color 150ms, color 150ms;
+  border-radius: 10px;
+  border-color: transparent;
+  transition: background-color 150ms ease-in, color 150ms ease-in, box-shadow 150ms ease-in, border 150ms ease-in, border-color 150ms ease-in;
 }
 #helperHud .utility button:hover {
   color: white;
@@ -841,6 +851,7 @@ button i {
   border-top: 1px solid rgba(255, 255, 255, 0.198);
   border-bottom: 1px solid rgba(255, 255, 255, 0.198);
   border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
 @supports ((-webkit-backdrop-filter: blur(2px)) or (backdrop-filter: blur(2px))) or (-webkit-backdrop-filter: blur(2px)) {
   #helperHud .utility button:hover {

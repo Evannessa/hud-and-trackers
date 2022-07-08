@@ -8,12 +8,12 @@ Hooks.on("updateToken", (doc, change, options) => {
     //!careful, 0 is a falsey value maybe
     // check that the "disposition" property exists in "change"
     if ("disposition" in change && game.user.isGM) {
-        createDispositionMarker(doc);
+        // createDispositionMarker(doc);
     }
 });
 Hooks.on("createToken", (doc, options, userId) => {
     if (game.user.isGM) {
-        createDispositionMarker(doc);
+        // createDispositionMarker(doc);
     }
 });
 

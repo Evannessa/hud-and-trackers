@@ -1,130 +1,143 @@
 #helperHud {
+    // top: 500px !important;
+    // left: 10px !important;
+    width: max-content !important;
+    height: max-content !important;
+    img {
+        width: 5rem;
+        filter: drop-shadow(2px 4px 6px black);
+    }
 
-	// top: 500px !important;
-	// left: 10px !important;
-	width: max-content !important;
-	height: max-content !important;
+    .hoverBar {
+        font-size: 1.2rem;
+        text-align: center;
+        padding: 0.5rem;
+        cursor: pointer;
+        // background-color: $black2;
+        transition: background-color 150ms;
 
-	.hoverBar {
-		font-size: 1.2rem;
-		text-align: center;
-		padding: 0.5rem;
-		cursor: pointer;
-		background-color: $black2;
-		transition: background-color 150ms;
+        &.holdOpen {
+            // background-color: var(--accent-base);
+            color: rgb(255, 255, 255);
 
-		&.holdOpen {
-			background-color: var(--accent-base);
-			color: rgb(255, 255, 255);
+            &:hover {
+                // background-color: var(--accent-300);
+                color: white;
+            }
 
-			&:hover {
-				background-color: var(--accent-300);
-				color: white;
-			}
+            + .utility {
+                // display: flex;
+                // flex-direction: column;
+                transform: scaleY(1);
+                opacity: 1;
+                transition: transform 100ms ease-out, opacity 100ms ease-out,
+                    height 100ms ease-out;
 
-			// +.utility {
-			// 	// display: flex;
-			// 	// flex-direction: column;
-			// 	transform: scaleY(1);
-			// 	opacity: 1;
-			// }
-		}
+                > * {
+                    position: relative;
+                }
+            }
+        }
 
-		&:hover {
-			background-color: $black4;
-			color: var(--accent-300);
-		}
+        &:hover {
+            // background-color: $black4;
+            color: var(--accent-300);
+        }
+    }
 
+    .utility {
+        transform: scaleY(0);
+        opacity: 0;
+        height: fit-content;
+        pointer-events: auto;
+        display: flex;
+        flex-direction: column;
+        transform-origin: top center;
+        transition: transform 100ms ease-out, opacity 100ms ease-out;
 
+        > * {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: transparent;
+            box-shadow: none;
+            border: none;
+        }
+    }
 
-	}
+    &:hover {
+        .utility {
+            transform: scaleY(1);
+            opacity: 1;
+            transition: transform 100ms ease-out, opacity 100ms ease-out,
+                height 100ms ease-out;
 
-	.utility {
-		transform: scaleY(0);
-		opacity: 0;
-		height: fit-content;
-		pointer-events: auto;
-		display: flex;
-		flex-direction: column;
-		transform-origin: top center;
-		transition: transform 100ms ease-out, opacity 100ms ease-out;
+            > * {
+                position: relative;
+            }
+        }
 
-		>* {
-			position: absolute;
-			top: 0;
-			left: 0;
-		}
-	}
+        .window-header {
+            // display: block;
+        }
+    }
 
-	&:hover {
-		.utility {
-			transform: scaleY(1);
-			opacity: 1;
-			transition: transform 100ms ease-out, opacity 100ms ease-out, height 100ms ease-out;
+    *,
+    *::before,
+    *::after {
+        padding: 0;
+        margin: 0;
+    }
 
-			>* {
-				position: relative;
-			}
-		}
+    background-color: transparent;
+    background: none;
+    box-shadow: none;
 
-		.window-header {
-			display: block;
-		}
-	}
+    .window-content {
+        background-color: transparent;
+        background: none;
+        box-shadow: none;
+        overflow: visible;
+    }
 
+    .utility {
+        button {
+            width: 100%;
+            text-align: left;
+            padding: 0.5rem 0.75rem;
 
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 10px;
+            border-color: transparent;
+            transition: background-color 150ms ease-in, color 150ms ease-in,
+                box-shadow 150ms ease-in, border 150ms ease-in,
+                border-color 150ms ease-in;
 
-	*,
-	*::before,
-	*::after {
-		padding: 0;
-		margin: 0;
-	}
+            &:hover {
+                color: white;
+                background-color: #7070707a;
+                border-top: 1px solid rgba(255, 255, 255, 0.198);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.198);
+                border-radius: 10px;
+                box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+                    rgba(0, 0, 0, 0.12) 0px -12px 30px,
+                    rgba(0, 0, 0, 0.12) 0px 4px 6px,
+                    rgba(0, 0, 0, 0.17) 0px 12px 13px,
+                    rgba(0, 0, 0, 0.09) 0px -3px 5px;
 
-	background-color: transparent;
-	background: none;
-	box-shadow: none;
+                @supports (backdrop-filter: blur(2px)) or
+                    (-webkit-backdrop-filter: blur(2px)) {
+                    background-color: #70707044;
+                    backdrop-filter: blur(2px);
+                }
 
-	.window-content {
-		background-color: transparent;
-		background: none;
-		box-shadow: none;
-
-
-	}
-
-
-
-	.utility {
-
-		button {
-			width: 100%;
-			text-align: left;
-			padding: 0.5rem 0.75rem;
-			box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-			display: flex;
-			flex-direction: row-reverse;
-			align-items: center;
-			justify-content: space-between;
-			transition: background-color 150ms, color 150ms;
-
-			&:hover {
-				color: white;
-				background-color: #7070707a;
-				border-top: 1px solid rgba(255, 255, 255, 0.198);
-				border-bottom: 1px solid rgba(255, 255, 255, 0.198);
-				border-radius: 10px;
-
-				@supports (backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px)) {
-					background-color: #70707044;
-					backdrop-filter: blur(2px);
-				}
-
-				@supports not (backdrop-filter: blur(2px)) {
-					background-color: #7070707a;
-				}
-			}
-		}
-
-	}
+                @supports not (backdrop-filter: blur(2px)) {
+                    background-color: #7070707a;
+                }
+            }
+        }
+    }
 }
