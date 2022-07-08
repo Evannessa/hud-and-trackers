@@ -770,11 +770,10 @@ button i {
   filter: drop-shadow(2px 4px 6px black);
 }
 #helperHud .hoverBar {
-  font-size: 1.2rem;
   text-align: center;
-  padding: 0.5rem;
   cursor: pointer;
   transition: background-color 150ms;
+  padding: 0.5rem 0.75rem;
 }
 #helperHud .hoverBar.holdOpen {
   color: rgb(255, 255, 255);
@@ -837,6 +836,8 @@ button i {
   width: 100%;
   text-align: left;
   padding: 0.5rem 0.75rem;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
