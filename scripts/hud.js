@@ -1,10 +1,12 @@
 "use strict";
 
 import * as ClockApp from "./clock.js";
+import registerSettings from "./settings.js";
 import { ClockViewer } from "./ClockViewer.js";
 import { ClockConfig } from "./ClockConfig.js";
 import * as PartyOverview from "./party-overview.js";
 import * as HelperFunctions from "./helper-functions.js";
+import { HudButtonConfig, getDocumentsFromFolder, getImage } from "./helper-hud.js";
 
 let hud;
 let lastTab = "attacks";
@@ -38,12 +40,7 @@ Handlebars.registerHelper("clean", function (strInputCode) {
 Hooks.on("init", () => {
     game.abilityHud = {};
     game.helperFunctions = HelperFunctions;
-});
-
-Hooks.on("canvasReady", () => {
-    if (!game.helperHud) {
-        game.helperHud = new HelperHud().render(true);
-    }
+    registerSettings();
 });
 
 Hooks.on("renderSidebarTab", (app, html) => {
@@ -210,10 +207,8 @@ function itemRollMacro(
     // Check for AiO dialog
     let skipDialog = true;
     if (
-        (game.settings.get("cyphersystem", "itemMacrosUseAllInOne") &&
-            !event.altKey) ||
-        (!game.settings.get("cyphersystem", "itemMacrosUseAllInOne") &&
-            event.altKey)
+        (game.settings.get("cyphersystem", "itemMacrosUseAllInOne") && !event.altKey) ||
+        (!game.settings.get("cyphersystem", "itemMacrosUseAllInOne") && event.altKey)
     ) {
         skipDialog = false;
     }
@@ -281,20 +276,13 @@ function itemRollMacro(
             stepModifier = additionalSteps < 0 ? "hindered" : "eased";
         }
     }
-    if (!teen)
-        teen =
-            actor.data.data.settings.gameMode.currentSheet == "Teen"
-                ? true
-                : false;
+    if (!teen) teen = actor.data.data.settings.gameMode.currentSheet == "Teen" ? true : false;
 
     // Create item type
     let itemType = "";
     if (item.type == "ability" && item.data.data.spell) {
         itemType = game.i18n.localize("CYPHERSYSTEM.Spell") + ": ";
-    } else if (
-        (item.type == "ability" || item.type == "teen Ability") &&
-        !item.data.data.spell
-    ) {
+    } else if ((item.type == "ability" || item.type == "teen Ability") && !item.data.data.spell) {
         itemType = game.i18n.localize("ITEM.TypeAbility") + ": ";
     } else if (item.type == "attack" || item.type == "teen Attack") {
         itemType = game.i18n.localize("ITEM.TypeAttack") + ": ";
@@ -324,15 +312,15 @@ function itemRollMacro(
     // Parse data to All-in-One Dialog
 }
 
-Hooks.once("renderHelperHud", (app, html) => {
-    let position = game.settings.get("hud-and-trackers", "helperHudPosition");
-    if (Object.keys(position).length > 0) {
-        app.setPosition({ top: position.top, left: position.left });
-    }
-});
-Hooks.on("renderHelperHud", (app, html) => {
-    HelperFunctions.setInvisibleHeader(html, true);
-});
+// Hooks.once("renderHelperHud", (app, html) => {
+//     let position = game.settings.get("hud-and-trackers", "helperHudPosition");
+//     if (Object.keys(position).length > 0) {
+//         app.setPosition({ top: position.top, left: position.left });
+//     }
+// });
+// Hooks.on("renderHelperHud", (app, html) => {
+//     HelperFunctions.setInvisibleHeader(html, true);
+// });
 
 Hooks.once("renderHud", (app, html) => {
     let position = game.settings.get("hud-and-trackers", "tokenHudPosition");
@@ -344,135 +332,6 @@ Hooks.once("renderHud", (app, html) => {
 Hooks.on("renderHud", (app, html) => {
     HelperFunctions.setInvisibleHeader(html, true);
 });
-
-export class HelperHud extends Application {
-    constructor() {
-        super();
-        this.isGM = game.user.isGM;
-    }
-    /** @override */
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            popOut: true,
-            submitOnChange: false,
-            closeOnSubmit: false,
-            minimizable: false,
-            resizable: false,
-            top: 500,
-            left: 10,
-            background: "none",
-            template: "modules/hud-and-trackers/templates/helper-hud.html",
-            id: "helperHud",
-            title: "helperHud",
-            onSubmit: (e) => e.preventDefault(),
-        });
-    }
-
-    getData() {
-        return {
-            isGM: this.isGM,
-        };
-    }
-
-    async handleButtonClick(event) {
-        let clickedElement = $(event.currentTarget);
-        let action = clickedElement.data().action;
-        let actor;
-        switch (action) {
-            case "toggle":
-                clickedElement.toggleClass("holdOpen");
-                // clickedElement.find("i").toggleClass("fa-plus").toggleClass("fa-minus");
-                break;
-            case "openPartyOverview":
-                let data = await game.user.getFlag(
-                    "hud-and-trackers",
-                    "partyOverviewData"
-                );
-                game.partyOverview = new PartyOverview.PartyOverview(
-                    data
-                ).render(true);
-                break;
-            case "addPCs":
-                HelperFunctions.addActorsToScene("allPCs");
-                break;
-            case "changeDisposition":
-                HelperFunctions.callMacro("Change Disposition");
-                break;
-            case "addAttacks":
-                HelperFunctions.callMacro(
-                    "[Token] Toggle Attacks in Inventory of non-PC Actors"
-                );
-                break;
-            case "swapCharacter":
-                await HelperFunctions.callMacro("Swap-Characters");
-                break;
-            case "selectCharacter":
-                HelperHud.selectMyCharacter();
-                break;
-            case "openCheatSheet":
-                HelperFunctions.callMacro("Open Cheat Sheet PDF");
-                break;
-            case "openCharacterSheet":
-                actor = HelperFunctions.getActorFromUser(game.user);
-                actor.sheet.render(true);
-                break;
-            case "openLootSheet":
-                actor = HelperFunctions.getGameActorByName("Party Loot Box");
-                actor.sheet.render(true);
-                break;
-            case "addClock":
-                new ClockConfig().render(true);
-                break;
-            case "showClocks":
-                new ClockViewer().render(true);
-                break;
-            case "savePos":
-                let combatHudPosition = game.combatHud.app.position;
-                let helperHudPosition = game.helperHud.position;
-                let tokenHudPosition = game.abilityHud.position;
-                game.settings.set(
-                    "hud-and-trackers",
-                    "combatHudPosition",
-                    combatHudPosition
-                );
-                game.settings.set(
-                    "hud-and-trackers",
-                    "tokenHudPosition",
-                    tokenHudPosition
-                );
-                game.settings.set(
-                    "hud-and-trackers",
-                    "helperHudPosition",
-                    helperHudPosition
-                );
-                ui.notifications.notify("App positions saved");
-                break;
-            default:
-                break;
-        }
-    }
-
-    activateListeners(html) {
-        let windowContent = html.closest(".window-content");
-        windowContent.on(
-            "click",
-            "[data-action]",
-            this.handleButtonClick.bind(this)
-        );
-    }
-
-    static selectMyCharacter() {
-        let actor = HelperFunctions.getActorFromUser(game.user);
-        let tokenDoc = HelperFunctions.getSceneTokenFromActor(actor);
-        if (tokenDoc) {
-            tokenDoc.object.control({ releaseOthers: true });
-        } else {
-            ui.notifications.warn(
-                `${actor.name} does not have a token on this scene`
-            );
-        }
-    }
-}
 
 export class Hud extends Application {
     updateData(object) {
@@ -497,10 +356,7 @@ export class Hud extends Application {
         if (!this.ourActor.getFlag("hud-and-trackers", "pinnedTab")) {
             this.pinnedTab = "none";
         } else {
-            this.pinnedTab = this.ourActor.getFlag(
-                "hud-and-trackers",
-                "pinnedTab"
-            );
+            this.pinnedTab = this.ourActor.getFlag("hud-and-trackers", "pinnedTab");
         }
         //pinned items will be an object that holds an array of each pinned type
         if (!this.ourActor.getFlag("hud-and-trackers", "pinnedItems")) {
@@ -511,30 +367,16 @@ export class Hud extends Application {
                 cypher: [],
                 artifact: [],
             };
-            this.ourActor.setFlag(
-                "hud-and-trackers",
-                "pinnedItems",
-                this.pinnedItems
-            );
+            this.ourActor.setFlag("hud-and-trackers", "pinnedItems", this.pinnedItems);
         } else {
-            this.pinnedItems = this.ourActor.getFlag(
-                "hud-and-trackers",
-                "pinnedItems"
-            );
+            this.pinnedItems = this.ourActor.getFlag("hud-and-trackers", "pinnedItems");
         }
 
         if (!this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities")) {
             this.pinnedAbilities = [];
-            this.ourActor.setFlag(
-                "hud-and-trackers",
-                "pinnedAbilities",
-                this.pinnedAbilities
-            );
+            this.ourActor.setFlag("hud-and-trackers", "pinnedAbilities", this.pinnedAbilities);
         } else {
-            this.pinnedAbilities = this.ourActor.getFlag(
-                "hud-and-trackers",
-                "pinnedAbilities"
-            );
+            this.pinnedAbilities = this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities");
         }
         this.combatActive = inCombat;
     }
@@ -566,10 +408,7 @@ export class Hud extends Application {
     }
 
     async getData() {
-        this.pinnedItems = this.ourActor.getFlag(
-            "hud-and-trackers",
-            "pinnedItems"
-        );
+        this.pinnedItems = this.ourActor.getFlag("hud-and-trackers", "pinnedItems");
         for (let key in this.pinnedItems) {
             let array = this.pinnedItems[key];
             array = array.map((pin) => {
@@ -710,11 +549,7 @@ export class Hud extends Application {
                 let element = event.currentTarget;
                 Hud.setActive(element);
                 this.showTab = type;
-                await this.ourActor.setFlag(
-                    "hud-and-trackers",
-                    "showTab",
-                    type
-                );
+                await this.ourActor.setFlag("hud-and-trackers", "showTab", type);
                 lastTab = type;
                 this.render();
             });
@@ -723,11 +558,7 @@ export class Hud extends Application {
                 if (this.pinnedTab == type) {
                     //if already pinned, unpin, and re-render
                     this.pinnedTab = "none";
-                    await this.ourActor.setFlag(
-                        "hud-and-trackers",
-                        "pinnedTab",
-                        "none"
-                    );
+                    await this.ourActor.setFlag("hud-and-trackers", "pinnedTab", "none");
                     this.render();
                 } else {
                     //if not pinned, pin, and re-render
@@ -735,11 +566,7 @@ export class Hud extends Application {
                     Hud.setPinned(element);
                     Hud.setActive(element);
                     this.pinnedTab = type;
-                    await this.ourActor.setFlag(
-                        "hud-and-trackers",
-                        "pinnedTab",
-                        type
-                    );
+                    await this.ourActor.setFlag("hud-and-trackers", "pinnedTab", type);
                     this.render();
                 }
             });
@@ -754,9 +581,7 @@ export class Hud extends Application {
                 if (actor.data.type == "PC") {
                     hudItem.addEventListener("click", (event) => {
                         event.preventDefault();
-                        let item = actor.data.items.find(
-                            (i) => i.id === event.currentTarget.id
-                        );
+                        let item = actor.data.items.find((i) => i.id === event.currentTarget.id);
                         if (event.altKey) {
                             item.sheet.render(true);
                         } else {
@@ -766,9 +591,7 @@ export class Hud extends Application {
                 } else if (actor.data.type == "NPC") {
                     hudItem.addEventListener("click", (event) => {
                         event.preventDefault();
-                        let item = actor.data.items.find(
-                            (i) => i.id === event.currentTarget.id
-                        );
+                        let item = actor.data.items.find((i) => i.id === event.currentTarget.id);
                         item.sheet.render(true);
                     });
                 }
@@ -776,54 +599,34 @@ export class Hud extends Application {
                     if (event.which == 3) {
                         //this should unpin enabler
                         let element = event.currentTarget;
-                        if (
-                            element.parentNode.classList.contains("pinnedDiv")
-                        ) {
-                            let array = this.pinnedItems[
-                                element.dataset.type
-                            ].map((item) => {
+                        if (element.parentNode.classList.contains("pinnedDiv")) {
+                            let array = this.pinnedItems[element.dataset.type].map((item) => {
                                 if (item.hasOwnProperty("name")) {
                                     return new Item(item);
                                 } else {
                                     return new Item(item.data);
                                 }
                             });
-                            array = array.filter(
-                                (item) => item.id != element.id
-                            );
+                            array = array.filter((item) => item.id != element.id);
                             this.pinnedItems[element.dataset.type] = array;
-                            await this.ourActor.setFlag(
-                                "hud-and-trackers",
-                                "pinnedItems",
-                                this.pinnedItems
-                            );
+                            await this.ourActor.setFlag("hud-and-trackers", "pinnedItems", this.pinnedItems);
                             this.render();
                         } else {
                             //this should pin enabler, but only if it's not already in the pinned abilities
-                            let array = this.pinnedItems[
-                                element.dataset.type
-                            ].map((item) => {
+                            let array = this.pinnedItems[element.dataset.type].map((item) => {
                                 if (item.hasOwnProperty("name")) {
                                     return new Item(item);
                                 } else {
                                     return new Item(item.data);
                                 }
                             });
-                            let alreadyPinned = array.find(
-                                (item) => item.id == element.id
-                            );
+                            let alreadyPinned = array.find((item) => item.id == element.id);
                             if (!alreadyPinned) {
-                                let item = this.ourActor.data.items.find(
-                                    (i) => i.id === element.id
-                                );
+                                let item = this.ourActor.data.items.find((i) => i.id === element.id);
                                 array.push(item);
                                 this.pinnedItems[element.dataset.type] = array;
                                 // this.pinnedAbilities.push(item);
-                                await this.ourActor.setFlag(
-                                    "hud-and-trackers",
-                                    "pinnedItems",
-                                    this.pinnedItems
-                                );
+                                await this.ourActor.setFlag("hud-and-trackers", "pinnedItems", this.pinnedItems);
                                 this.render();
                             }
                         }
@@ -834,23 +637,7 @@ export class Hud extends Application {
     }
 
     rollAllInOne(foundItem, actor) {
-        itemRollMacro(
-            actor,
-            foundItem.id,
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            false
-        );
+        itemRollMacro(actor, foundItem.id, "", "", "", "", "", "", "", "", "", "", "", "", false);
     }
 
     async getActor(ourToken) {

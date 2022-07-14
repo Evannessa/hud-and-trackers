@@ -1,0 +1,89 @@
+<form class="window-padding window-gap" action="">
+  <!--input for name-->
+  <span class="input-and-label-wrapper">
+    <label class="text-primary" for="name">
+      Button Name
+    </label>
+    <input type="text" name="name" id="name" value="{{name}}" />
+  </span>
+  <!--input for description-->
+  <select name="button-type" id="button-type">
+    <option value="">
+      --Please select a button type--
+    </option>
+    {{selectOptions
+      buttonTypeSelect.choices
+      selected=buttonTypeSelect.value
+      localize=false
+    }}
+  </select>
+  {{#with folderSelect}}
+    {{#unless (eq value "")}}
+      <label for="document-list">
+        Select a
+        {{buttonTypeSelect.value}}
+        Folder
+      </label>
+      <select name="folder-list" id="folder-list">
+        <option value="">
+          --Please select a folder--
+        </option>
+        {{selectOptions choices selected=value localize=false}}
+      </select>
+    {{/unless}}
+  {{/with}}
+  {{#unless (eq folderSelect.value "")}}
+    <span class="input-and-label-wrapper">
+      <label for="single-or-multiple" class="text-primary">
+        Generate buttons for all
+        {{buttonTypeSelect.value}}
+        s in this folder, rather than just one
+      </label>
+      <input
+        type="checkbox"
+        id="single-or-multiple"
+        name="single-or-multiple"
+      />
+    </span>
+  {{/unless}}
+  {{#with documentSelect}}
+    {{#unless (eq value "")}}
+      <label for="document-list">
+        Select a
+        {{buttonTypeSelect.value}}
+      </label>
+      <select name="document-list" id="document-list">
+        <option value="">
+          --Please select a document--
+        </option>
+        {{selectOptions choices selected=value localize=false}}
+      </select>
+    {{/unless}}
+  {{/with}}
+  <span class="input-and-label-wrapper">
+    <label class="text-primary" for="buttonImg">
+      Add Button Image
+    </label>
+    <span class="file-input-wrapper">
+      <input
+        type="text"
+        placeholder="path/image.png"
+        value="{{buttonImg}}"
+        name="button-img"
+        id="button-img"
+      />
+      <button class="filled" data-action="open-picker">
+        <i class="fas fa-file-import"></i>
+        Choose A File
+      </button>
+    </span>
+  </span>
+  <span class="horizontal-button-wrapper">
+    <button type="submit" class="filled">
+      Submit
+    </button>
+    <button data-action="cancel" class="ghost">
+      Cancel
+    </button>
+  </span>
+</form>
