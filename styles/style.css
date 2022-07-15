@@ -754,6 +754,97 @@ button i {
   display: block;
 }
 
+#hud-button-config {
+  height: -webkit-fit-content !important;
+  height: -moz-fit-content !important;
+  height: fit-content !important;
+}
+#hud-button-config .inner-content {
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  gap: 0.75rem;
+}
+#hud-button-config .instructions span {
+  color: var(--color-accent-base);
+}
+#hud-button-config form {
+  gap: 1rem;
+}
+#hud-button-config .form-group {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  align-items: center;
+}
+#hud-button-config .form-group.checkbox-or-radio-wrapper {
+  margin-left: 2rem;
+  gap: 1.5rem;
+}
+#hud-button-config .form-group.checkbox-or-radio-wrapper input {
+  flex: unset;
+  flex-grow: 0;
+}
+#hud-button-config .form-group.checkbox-or-radio-wrapper label {
+  flex-grow: 1;
+}
+#hud-button-config .form-group.reversed {
+  flex-direction: row;
+}
+#hud-button-config .form-group select,
+#hud-button-config .form-group input {
+  flex: 2;
+}
+#hud-button-config .form-group select:disabled,
+#hud-button-config .form-group input:disabled {
+  opacity: 50%;
+}
+#hud-button-config .form-group select:disabled:hover,
+#hud-button-config .form-group input:disabled:hover {
+  cursor: not-allowed;
+}
+#hud-button-config .form-group select:disabled ~ label,
+#hud-button-config .form-group input:disabled ~ label {
+  opacity: 50%;
+}
+#hud-button-config .chip input[type=radio],
+#hud-button-config .chip input[type=checkbox] {
+  display: none;
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+}
+#hud-button-config .chip input[type=radio] ~ label,
+#hud-button-config .chip input[type=checkbox] ~ label {
+  /* background-color: transparent; */
+  border: 1px solid cornflowerblue !important;
+  /* color: cornflowerblue; */
+  padding: 0.5em 1em;
+  text-align: center;
+  border-radius: 9999px;
+  z-index: 10;
+  display: inline-block;
+  vertical-align: middle;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+#hud-button-config .chip input[type=radio] ~ label:hover,
+#hud-button-config .chip input[type=checkbox] ~ label:hover {
+  cursor: pointer;
+}
+#hud-button-config .chip input[type=radio]:checked ~ label,
+#hud-button-config .chip input[type=checkbox]:checked ~ label {
+  background-color: cornflowerblue;
+  color: white;
+  font-weight: bold;
+}
+
 #helperHud {
   width: -webkit-max-content !important;
   width: -moz-max-content !important;
@@ -765,8 +856,11 @@ button i {
   background: none;
   box-shadow: none;
 }
+#helperHud button {
+  aspect-ratio: 1/1;
+}
 #helperHud img {
-  width: 5rem;
+  max-width: 3rem;
   filter: drop-shadow(2px 4px 6px black);
   transition: filter 150ms ease-in;
 }
@@ -781,6 +875,12 @@ button i {
 }
 #helperHud .holdOpen:hover img {
   filter: brightness(1);
+}
+#helperHud .holdOpen + .utility {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 #helperHud .holdOpen + .utility,
 #helperHud .holdOpen + .nested-buttons {
@@ -861,9 +961,11 @@ button i {
 }
 #helperHud .utility button {
   overflow: hidden;
+  aspect-ratio: 1/1;
   width: 100%;
+  max-width: 3rem;
+  height: auto;
   text-align: left;
-  padding: 0.5rem 0.75rem;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
   display: flex;

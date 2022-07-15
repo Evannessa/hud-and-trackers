@@ -1,72 +1,38 @@
 <div class="hoverBar" data-action="toggle">
-  <img
-    alt=""
-    class="hud-icon"
-    src="/modules/hud-and-trackers/images/Button Badges/TradingIcons_42_t.webp"
-    srcset=""
-  />
-  <!-- <p>Show Utility Buttons <i class="fas fa-plus"></i></p> -->
+    <img alt="" class="hud-icon" src="/modules/hud-and-trackers/images/Button Badges/TradingIcons_42_t.webp" srcset=""/>
+    <!-- <p>Show Utility Buttons <i class="fas fa-plus"></i></p> -->
 </div>
 <div class="utility">
-  <button class="showTownMap" data-action="showTownMap">
-    <img
-      alt=""
-      class="hud-icon"
-      src="/modules/hud-and-trackers/images/Button Badges/pirates_04_t.webp"
-      srcset=""
-    />
-  </button>
-  <button class="showWiki" data-action="showWiki">
-    <img
-      alt=""
-      class="hud-icon"
-      src="/modules/hud-and-trackers/images/Button Badges/wiki.webp"
-      srcset=""
-    />
-  </button>
-  <div class="button-group">
-    <button class="showLocations" data-action="toggle">
-      <img
-        alt=""
-        class="hud-icon"
-        src="/modules/hud-and-trackers/images/Button Badges/homestead-1.webp"
-        srcset=""
-      />
+    <button class="showTownMap" data-action="showTownMap">
+        <img alt="" class="hud-icon" src="/modules/hud-and-trackers/images/Button Badges/pirates_04_t.webp" srcset=""/>
     </button>
-    <div class="nested-buttons" data-action="toggle">
-      {{#each this.townLocations as |location|}}
-        <button
-          class="navigate"
-          data-action="navigate"
-          data-scene-id="{{location.id}}"
-          data-img="{{location.img}}"
-          style="background-image: url({{location.img}})"
-        >
-          {{location.name}}
+    <button class="showWiki" data-action="showWiki">
+        <img alt="" class="hud-icon" src="/modules/hud-and-trackers/images/Button Badges/wiki.webp" srcset=""/>
+    </button>
+    <div class="button-group">
+        <button class="showLocations" data-action="toggle">
+            <img alt="" class="hud-icon" src="/modules/hud-and-trackers/images/Button Badges/homestead-1.webp" srcset=""/>
         </button>
-      {{/each}}
+        <div class="nested-buttons" data-action="toggle">
+            {{#each this.townLocations as |location|}}
+                <button class="navigate" data-action="navigate" data-scene-id="{{location.id}}" data-img="{{location.img}}" style="background-image: url({{location.img}})">
+                    {{location.name}}
+                </button>
+            {{/each}}
+        </div>
     </div>
-  </div>
-  <div class="button-group">
-    <button class="showNPCs" data-action="showNPCs">
-      <img
-        src="/modules/hud-and-trackers/images/Button Badges/family.webp"
-        alt=""
-        srcset=""
-      />
+    <div class="button-group">
+        <button class="showNPCs" data-action="showNPCs">
+            <img alt="" src="/modules/hud-and-trackers/images/Button Badges/family.webp" srcset=""/>
+        </button>
+        <div class="nested-buttons"></div>
+    </div>
+    <button class="add-button" data-action="addNewButton">
+        <i class="fas fa-plus"></i>
     </button>
-    <div class="nested-buttons"></div>
-  </div>
-  <button class="add-button" data-action="addNewButton">
-    Add New Button
-  </button>
-  {{#each customButtons as |button|}}
-    <button
-      class="{{button.button-type}}"
-      data-action="{{button.button-type}}"
-      title="{{button.name}}"
-    >
-      <img src="{{button.img}}" alt="{{button.name}}" />
-    </button>
-  {{/each}}
+    {{#each customButtons as |button|}}
+        <button class="custom-button" data-action="{{button.action}}" title="{{button.name}}" data-type="{{button.type}}" data-document-id="{{button.documentId}}">
+            <img src="{{button.img}}" alt="{{button.name}}"/>
+        </button>
+    {{/each}}
 </div>

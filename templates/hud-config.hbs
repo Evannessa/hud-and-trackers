@@ -1,85 +1,102 @@
-<form class="window-padding window-gap" action="">
+<form class="flexcol editable" action="">
+	<header class="sheet-header flexrow">
+		<img class="flex0" src="icons/svg/dice-target.svg" data-edit="img" title="New Button" height="64" width="64">
+		<h1><input name="name" type="text" id="name" value="{{name}}" placeholder=" Name"></h1>
+	</header>
   <!--input for name-->
-  <span class="input-and-label-wrapper">
-    <label class="text-primary" for="name">
-      Button Name
-    </label>
-    <input type="text" name="name" id="name" value="{{name}}" />
-  </span>
-  <!--input for description-->
-  <select name="button-type" id="button-type">
-    <option value="">
-      --Please select a button type--
-    </option>
-    {{selectOptions
-      buttonTypeSelect.choices
-      selected=buttonTypeSelect.value
-      localize=false
-    }}
-  </select>
-  {{#with folderSelect}}
-    {{#unless (eq value "")}}
-      <label for="document-list">
-        Select a
-        {{buttonTypeSelect.value}}
-        Folder
-      </label>
-      <select name="folder-list" id="folder-list">
-        <option value="">
-          --Please select a folder--
-        </option>
-        {{selectOptions choices selected=value localize=false}}
-      </select>
-    {{/unless}}
-  {{/with}}
-  {{#unless (eq folderSelect.value "")}}
-    <span class="input-and-label-wrapper">
-      <label for="single-or-multiple" class="text-primary">
-        Generate buttons for all
-        {{buttonTypeSelect.value}}
-        s in this folder, rather than just one
-      </label>
-      <input
-        type="checkbox"
-        id="single-or-multiple"
-        name="single-or-multiple"
-      />
-    </span>
-  {{/unless}}
-  {{#with documentSelect}}
-    {{#unless (eq value "")}}
-      <label for="document-list">
-        Select a
-        {{buttonTypeSelect.value}}
-      </label>
-      <select name="document-list" id="document-list">
-        <option value="">
-          --Please select a document--
-        </option>
-        {{selectOptions choices selected=value localize=false}}
-      </select>
-    {{/unless}}
-  {{/with}}
-  <span class="input-and-label-wrapper">
-    <label class="text-primary" for="buttonImg">
-      Add Button Image
-    </label>
-    <span class="file-input-wrapper">
-      <input
-        type="text"
-        placeholder="path/image.png"
-        value="{{buttonImg}}"
-        name="button-img"
-        id="button-img"
-      />
-      <button class="filled" data-action="open-picker">
-        <i class="fas fa-file-import"></i>
-        Choose A File
-      </button>
-    </span>
-  </span>
+	<p><input class="instructions notes" disabled value="{{{sentence}}}"/></p>
+	
+	<div class="form-group">
+		<select name="type" id="type">
+		  <option value="">
+			--Please select a type--
+		  </option>
+		  {{selectOptions
+			typeSelect.choices
+			selected=typeSelect.value
+			localize=false
+		  }}
+		</select>
+		<label for="type"> Select a Document Type</label>
+	</div>
+  <div class="form-group" id="action-group">
+			<select name="action" id="action" {{#if (eq typeSelect.value "")}}disabled{{/if}}>
+				<option value="">
+					--Please select an action type--
+				</option>
+			{{selectOptions
+				actionSelect.choices
+				selected=actionSelect.value
+				localize=false
+		}}
+			</select>
+	<label for="action"> Select an Action Type</label>
+	  </div>
+	<div class="form-group" id="folder-select">
+		{{#with folderSelect}}
+			<select name="folderId" id="folderId" {{#if (eq @root.typeSelect.value "")}}
+				disabled
+			{{/if}}>
+			  <option value="">
+				--Please select a folder--
+			  </option>
+			  {{selectOptions choices selected=value localize=false}}
+			</select>
+			<label for="folderId">
+			  Select a
+			  {{@root.typeSelect.value}}
+			  Folder
+			</label>
+		{{/with}}
+	</div>
+	  <div class="form-group reversed checkbox-or-radio-wrapper">
+		<input
+		class="flex0"
+		  type="checkbox"
+		  id="isButtonList"
+		  name="isButtonList"
+			{{#if isButtonList}}checked{{/if}}
+			{{#unless folderSelect.value}}disabled{{/unless}}
+		/>
+		<label for="single-or-multiple" class="text-primary">
+		  Generate buttons for all
+		  {{#if typeSelect.value}}
+		  	{{concat typeSelect.value "s"}}
+		  {{else}}
+		  	documents
+		  {{/if}}
+		  in the selected folder, instead of choosing one
+		</label>
+	  </div>
+	<div class="form-group">
+		{{#with documentSelect}}
+			 
+			  <select name="documentId" id="documentId" {{#if @root.isButtonList}}
+				disabled
+			  {{else if (eq @root.folderSelect.value "")}}
+				disabled
+				{{else if (eq @root.typeSelect.value "")}}
+				disabled
+				{{/if}}>
+				<option value="">
+				  --Please select a document--
+				</option>
+				{{selectOptions choices selected=value localize=false}}
+			  </select>
+ <label for="documentId">
+				Select a
+				{{#if @root.typeSelect.value}}
+				{{@root.typeSelect.value}}
+				{{else}}
+				document
+				{{/if}}
+			  </label>
+		{{/with}}
+	</div>
   <span class="horizontal-button-wrapper">
-    <button type="submit" class="filled">
+    <button type="submit" class="filled" {{#unless canSubmit}}
+		disabled	
+	{{/unless}}>
       Submit
     </button>
     <button data-action="cancel" class="ghost">

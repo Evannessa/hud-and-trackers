@@ -1,10 +1,105 @@
+#hud-button-config {
+    height: fit-content !important;
+    .inner-content {
+        display: flex;
+        flex-direction: column;
+        overflow: scroll;
+        gap: 0.75rem;
+    }
+    .instructions {
+        span {
+            color: var(--color-accent-base);
+        }
+    }
+    form {
+        gap: 1rem;
+    }
+    .form-group {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end; //remember, because of row-reverse, flex-end and flex-start are also reversed
+        align-items: center;
+        &.checkbox-or-radio-wrapper {
+            margin-left: 2rem;
+            gap: 1.5rem;
+            input {
+                flex: unset;
+                flex-grow: 0;
+            }
+            label {
+                flex-grow: 1;
+            }
+        }
+        &.reversed {
+            flex-direction: row;
+        }
+        select,
+        input {
+            flex: 2;
+            &:disabled {
+                opacity: 50%;
+                &:hover {
+                    cursor: not-allowed;
+                }
+                & ~ label {
+                    opacity: 50%;
+                }
+            }
+        }
+    }
+
+    .chip {
+        input[type="radio"],
+        input[type="checkbox"] {
+            display: none;
+            position: absolute;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            width: 1px;
+            margin: -1px;
+            padding: 0;
+            border: 0;
+
+            & ~ label {
+                /* background-color: transparent; */
+                border: 1px solid cornflowerblue !important;
+                /* color: cornflowerblue; */
+                padding: 0.5em 1em;
+                text-align: center;
+                border-radius: 9999px;
+                z-index: 10;
+                display: inline-block;
+                vertical-align: middle;
+                display: flex;
+                align-items: center;
+                gap: 0.45rem;
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+
+            &:checked ~ label {
+                background-color: cornflowerblue;
+                color: white;
+                font-weight: bold;
+            }
+        }
+    }
+}
 #helperHud {
     // top: 500px !important;
     // left: 10px !important;
+
     width: max-content !important;
     height: max-content !important;
+    button {
+        aspect-ratio: 1/1;
+    }
     img {
-        width: 5rem;
+        // width: 3rem;
+        max-width: 3rem;
         filter: drop-shadow(2px 4px 6px black);
         transition: filter 150ms ease-in;
     }
@@ -23,11 +118,15 @@
 
             color: white;
         }
+        + .utility {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
         + .utility,
         + .nested-buttons {
-            // display: flex;
-            // flex-direction: column;
             transform: scaleY(1);
             opacity: 1;
             transition: transform 100ms ease-out, opacity 100ms ease-out, height 100ms ease-out;
@@ -96,23 +195,6 @@
         }
     }
 
-    &:hover {
-        // .utility {
-        //     transform: scaleY(1);
-        //     opacity: 1;
-        //     transition: transform 100ms ease-out, opacity 100ms ease-out,
-        //         height 100ms ease-out;
-
-        //     > * {
-        //         position: relative;
-        //     }
-        // }
-
-        .window-header {
-            // display: block;
-        }
-    }
-
     *,
     *::before,
     *::after {
@@ -134,9 +216,12 @@
     .utility {
         button {
             overflow: hidden;
+            aspect-ratio: 1/1;
             width: 100%;
+            max-width: 3rem;
+            height: auto;
             text-align: left;
-            padding: 0.5rem 0.75rem;
+            // padding: 0.5rem 0.75rem;
             border-top: 1px solid transparent;
             border-bottom: 1px solid transparent;
             display: flex;

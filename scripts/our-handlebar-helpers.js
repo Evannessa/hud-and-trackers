@@ -16,7 +16,6 @@ export default function registerAllHandlebarHelpers() {
         return array[index];
     });
     Handlebars.registerHelper("returnLength", (object) => {
-        console.log(object);
         return Object.keys(object).length;
     });
     // Handlebars.registerHelper("getCharacterData", (id) => {
