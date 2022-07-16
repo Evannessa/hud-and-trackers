@@ -16,10 +16,15 @@ Hooks.on("renderHelperHud", (app, html) => {
     HelperFunctions.setInvisibleHeader(html, true);
 });
 export class HudButtonConfig extends FormApplication {
-    constructor(data = {}, edit = false) {
+    constructor(data = {}, edit = false, isNested = false, groupId = "") {
         super(data);
         this.data = { ...data };
         this.data.isButtonList = false;
+        this.data.isNested = isNested;
+        this.data.groupId = groupId;
+        if (isNested) {
+            console.log(this.data);
+        }
 
         this.edit = edit;
     }
@@ -74,14 +79,18 @@ export class HudButtonConfig extends FormApplication {
         if (isMap) {
             valuesToCheck = valuesToCheck.reduce((obj, item) => {
                 let key = Object.keys(item)[0];
-                console.log(key);
                 return Object.assign(obj, { [key]: item[key] });
             }, {});
         }
         return valuesToCheck;
     }
     isEveryFieldFilled(ourData) {
-        return this.getFieldValuesArray(ourData).every((value) => value !== "");
+        let copiedData = { ...ourData };
+        if (ourData.isButtonList === true) {
+            //if we're a button list, we don't want to worry about the value of the documentSelect field
+            delete copiedData.documentSelect;
+        }
+        return this.getFieldValuesArray(copiedData).every((value) => value !== "");
     }
     getData() {
         let ourData = {
@@ -95,12 +104,13 @@ export class HudButtonConfig extends FormApplication {
                 value: this.data.action || "",
             },
             isButtonList: this.data.isButtonList,
+            isNested: this.data.isNested,
             typeSelect: {
                 choices: {
                     macro: "Macro",
                     scene: "Scene",
                     actor: "Actor",
-                    showUrl: "Show URL",
+                    // showUrl: "Show URL",
                 },
                 value: this.data.type || "",
             },
@@ -148,12 +158,17 @@ export class HudButtonConfig extends FormApplication {
     async _updateObject(event, formData) {
         const buttonData = {
             ...formData,
+            isNested: this.data.isNested,
+            groupId: this.data.groupId,
         };
 
         //if we're creating a new button
-        if (!this.edit) {
-            let newButton = buttonData;
+        let newButton = buttonData;
+        if (!this.edit && !this.data.isNested) {
             await addNewButton(newButton);
+        } else if (!this.edit && this.data.isNested) {
+            //we're creating a nested button in a group that already exists
+            await addNestedButton(newButton);
         } else {
             //else if  we're just editing the same button
             await updateButton(buttonData.id, buttonData);
@@ -200,6 +215,9 @@ export class HudButtonConfig extends FormApplication {
         });
     }
 
+    getMultiple(select) {
+        let allSelectedValues = [...select.options].filter((option) => option.selected).map((option) => option.value);
+    }
     resetData() {
         // this.data. =
     }
@@ -279,13 +297,19 @@ export class HelperHud extends Application {
         let clickedElement = $(event.currentTarget);
         let action = clickedElement.data().action;
         let docId = clickedElement.data().documentId;
-        if (clickedElement.hasClass("custom-button") && !docId) {
+        console.log(clickedElement);
+        let groupId = $(clickedElement[0]?.parentElement).data().groupId;
+        if (clickedElement.hasClass("custom-button") && action !== "toggle" && !docId) {
             ui.notifications.warn("This button is broken. Perhaps its connected document was deleted. Try editing it.");
             return;
         }
         switch (action) {
             case "addNewButton":
-                game.hudButtonConfig = new HudButtonConfig().render(true);
+                if (clickedElement.data().nested) {
+                    game.hudButtonConfig = new HudButtonConfig({}, false, true, groupId).render(true);
+                } else {
+                    game.hudButtonConfig = new HudButtonConfig().render(true);
+                }
                 break;
             case "showTownMap":
                 game.scenes.getName("Town Map").view();
@@ -300,6 +324,7 @@ export class HelperHud extends Application {
                 if (game.user.isGM) {
                     game.scenes.get(docId).activate();
                 }
+                break;
             case "execute":
                 game.macros.get(docId).execute();
                 break;
@@ -391,27 +416,67 @@ async function addNewButton(newButtonData) {
     //get current buttons from
     let currentButtons = await getAllButtons();
     let processedData = await processButtonData(newButtonData);
-    console.log(processedData);
     await game.settings.set("hud-and-trackers", "hudButtons", [...currentButtons, { ...processedData }]);
 }
 
+async function addNestedButton(newButtonData) {
+    let currentButtons = await getAllButtons();
+    let parentButton = currentButtons.find((button) => button.groupId == newButtonData.groupId);
+    let nestedButtonData = await processButtonData(newButtonData);
+    parentButton.nestedButtons = [...parentButton.nestedButtons, nestedButtonData];
+    //map and replace the parentButton with the button
+    let updatedButtons = currentButtons.map((button) => {
+        return button.groupId === newButtonData.groupId ? parentButton : button;
+    });
+    await game.settings.set("hud-and-trackers", "hudButtons", updatedButtons);
+}
+
 async function processButtonData(data) {
+    let groupId = data.groupId;
+    if (data.isButtonList) {
+        groupId = HelperFunctions.generateId();
+    }
     let processedData = {
         name: data.name,
         documentId: data.documentId,
         type: data.type,
-        action: data.action,
+        action: data.isButtonList ? "toggle" : data.action, //if it's a list, the first button will just toggle to display the other buttons
         description: data.instructions,
+        nested: data.isNested,
+        isButtonList: data.isButtonList,
+        groupId: groupId,
+        ...(data.isButtonList
+            ? { nestedButtons: generateNestedButtonsFromFolder(data.folderId, data, groupId), groupId: groupId }
+            : {}), //if we have a folder id, generate from it the list of buttons
     };
-    let documentId = data.documentId;
-    let type = data.type;
 
     //replace the image with the macro or scene image if one wasn't selected
-    if (data.img == "icons/svg/dice-target.svg") {
+    if (data.img == "icons/svg/dice-target.svg" && !data.isButtonList) {
+        let documentId = data.documentId;
+        let type = data.type;
         processedData.img = await getImage(documentId, type);
+    } else if (data.img == "icons/svg/dice-target.svg" && data.isButtonList) {
+        processedData.img = "icons/svg/dice-target.svg";
     }
     return processedData;
 }
+
+function generateNestedButtonsFromFolder(folderId, data) {
+    let nestedFolders = game.folders.get(folderId).contents.map((doc) => {
+        let type = doc.documentName?.toLowerCase();
+        return {
+            documentId: doc.data._id,
+            name: doc.data.name,
+            type: type,
+            img: type == "scene" || type == "macro" ? doc.thumbnail : doc.img,
+            action: data.action,
+            nested: true,
+            description: data.instructions,
+        };
+    });
+    return nestedFolders;
+}
+
 /**
  * R - Read - the R in Crud
  * @param {string} id  - the id of the button we're looking for
@@ -431,16 +496,6 @@ async function getAllButtons() {
 function getFoldersByType(type) {
     return game.folders.contents.filter((folder) => folder.type === type);
 }
-export async function getDocumentsFromFolder(folderName, type) {
-    return game.folders.getName(folderName).content.map((doc) => {
-        return {
-            id: doc.data._id,
-            name: doc.data.name,
-            img: type == "scene" || type == "macro" ? doc.thumbnail : doc.img,
-        };
-    });
-}
-
 /**
  *
  * @param {String} docId -- the id of the document

@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap");
 /* SCSS HEX */
 :root {
@@ -765,8 +766,10 @@ button i {
   overflow: scroll;
   gap: 0.75rem;
 }
-#hud-button-config .instructions span {
-  color: var(--color-accent-base);
+#hud-button-config .instructions {
+  width: 100%;
+  background-color: transparent;
+  background: none;
 }
 #hud-button-config form {
   gap: 1rem;
@@ -859,6 +862,22 @@ button i {
 #helperHud button {
   aspect-ratio: 1/1;
 }
+#helperHud button.add-button {
+  border: 3px ​solid rgba(255, 255, 255, 0.25) !important;
+}
+#helperHud button.hoverBar {
+  background: none;
+  background-color: transparent;
+  transform: scale(1.25);
+}
+#helperHud button.custom-button img {
+  max-width: 4rem;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1/1;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
 #helperHud img {
   max-width: 3rem;
   filter: drop-shadow(2px 4px 6px black);
@@ -942,6 +961,14 @@ button i {
   flex-direction: row;
   transform-origin: right center;
 }
+#helperHud .nested-buttons button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -o-object-fit: cover;
+     object-fit: cover;
+  min-width: 2rem;
+}
 #helperHud .nested-buttons .navigate {
   aspect-ratio: 1/1;
   text-align: center;
@@ -971,7 +998,7 @@ button i {
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   border-radius: 50%;
   border-color: transparent;
   transition: background-color 150ms ease-in, color 150ms ease-in, box-shadow 150ms ease-in, border 150ms ease-in, border-color 150ms ease-in;

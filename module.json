@@ -32,7 +32,6 @@
         "./scripts/action-hud.js",
         "./scripts/journal-tooltips.js",
         "./scripts/character-scene-display.js",
-        "./scripts/copy-html-to-journal.js",
         "./scripts/helper-hud.js"
     ],
     "styles": ["styles/style.css"],

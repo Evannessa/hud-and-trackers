@@ -104,10 +104,7 @@ export async function getEntityById(type, id) {
         default:
             break;
     }
-    console.log(
-        "🚀 ~ file: helper-functions.js ~ line 43 ~ getEntityById ~ ourEntity",
-        ourEntity
-    );
+    console.log("🚀 ~ file: helper-functions.js ~ line 43 ~ getEntityById ~ ourEntity", ourEntity);
     return ourEntity;
 }
 
@@ -146,9 +143,7 @@ export function addTokensToScene() {
 }
 
 export function getSceneTokenFromActor(actor) {
-    return canvas.scene.data.tokens.contents.find(
-        (token) => token.data.actorId == actor.id
-    );
+    return canvas.scene.data.tokens.contents.find((token) => token.data.actorId == actor.id);
 }
 
 export function getActorFromUser(user) {
@@ -244,25 +239,11 @@ export async function createTokenFromActor(ourActor, scene) {
     return tokenObject;
 }
 //https://stackoverflow.com/questions/6860853/generate-random-string-for-div-id/6860916
-export function idGenerator() {
+export function generateId() {
     var S4 = function () {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     };
-    return (
-        "id" +
-        S4() +
-        S4() +
-        "-" +
-        S4() +
-        "-" +
-        S4() +
-        "-" +
-        S4() +
-        "-" +
-        S4() +
-        S4() +
-        S4()
-    );
+    return "id" + S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
 }
 
 export function getGameActorById(id) {
@@ -414,9 +395,7 @@ export function getPCsNotInScene() {
         return element.data.token;
     });
     if (PCs) {
-        const notInScene = pcTokens.filter(
-            (element) => !tokenNamesInScene.includes(element.name)
-        );
+        const notInScene = pcTokens.filter((element) => !tokenNamesInScene.includes(element.name));
         return notInScene;
         // createTokenFromTokenData(notInScene, localPosition);
     } else {

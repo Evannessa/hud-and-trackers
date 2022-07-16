@@ -6,7 +6,6 @@ import { ClockViewer } from "./ClockViewer.js";
 import { ClockConfig } from "./ClockConfig.js";
 import * as PartyOverview from "./party-overview.js";
 import * as HelperFunctions from "./helper-functions.js";
-import { HudButtonConfig, getDocumentsFromFolder, getImage } from "./helper-hud.js";
 
 let hud;
 let lastTab = "attacks";

@@ -27,9 +27,7 @@ Hooks.once("init", async () => {
         config: false,
         type: Object,
     });
-    trackerCollection = new TrackerCollection(
-        game.settings.get("hud-and-trackers", "trackers")
-    );
+    trackerCollection = new TrackerCollection(game.settings.get("hud-and-trackers", "trackers"));
 });
 
 Hooks.once("ready", async () => {
@@ -95,6 +93,7 @@ async function loadHandleBarTemplates() {
         "modules/hud-and-trackers/templates/party-overview/po-abilities-partial.hbs",
         "modules/hud-and-trackers/templates/clock.hbs",
         "modules/hud-and-trackers/templates/tooltip/tooltip.hbs",
+        "modules/hud-and-trackers/templates/custom-button-partial.hbs",
     ];
     return loadTemplates(templatePaths);
 }
@@ -104,21 +103,7 @@ function idGenerator() {
     var S4 = function () {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     };
-    return (
-        "id" +
-        S4() +
-        S4() +
-        "-" +
-        S4() +
-        "-" +
-        S4() +
-        "-" +
-        S4() +
-        "-" +
-        S4() +
-        S4() +
-        S4()
-    );
+    return "id" + S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
 }
 
 /**
@@ -158,11 +143,7 @@ function setDraggable() {
         console.log(trackerCollection);
         let trackerObject = trackerCollection.getTrackerById(trackerElement.id);
         console.log(trackerObject);
-        let trackerObject2 = new Tracker(
-            trackerObject.id,
-            trackerObject.name,
-            trackerObject.trackedItems
-        );
+        let trackerObject2 = new Tracker(trackerObject.id, trackerObject.name, trackerObject.trackedItems);
         console.log("Tracker Object 2");
         console.log(trackerObject2);
         let trackedItemObject = trackerObject2.getTrackedItemById(draggableElem.id);
@@ -185,10 +166,7 @@ function setDraggable() {
             console.log(trackedItemObject2);
 
             //set the position to reflect the position we have stored
-            draggie.setPosition(
-                trackedItemObject2.position.x,
-                trackedItemObject2.position.y
-            );
+            draggie.setPosition(trackedItemObject2.position.x, trackedItemObject2.position.y);
         }
     }
     for (var draggie of draggies) {
@@ -212,15 +190,9 @@ function convertAllToObjects(ourCollection) {
             storedObject.trackedItems
         );
         let updatedObject = trackerCollection.trackerCollection[trackerObjectID];
-        for (let trackedItemID in trackerCollection.trackerCollection[trackerObjectID]
-            .trackedItems) {
-            let storedItemObject =
-                trackerCollection.trackerCollection[trackerObjectID].trackedItems[
-                    trackedItemID
-                ];
-            trackerCollection.trackerCollection[trackerObjectID].trackedItems[
-                trackedItemID
-            ] = new TrackedItem(
+        for (let trackedItemID in trackerCollection.trackerCollection[trackerObjectID].trackedItems) {
+            let storedItemObject = trackerCollection.trackerCollection[trackerObjectID].trackedItems[trackedItemID];
+            trackerCollection.trackerCollection[trackerObjectID].trackedItems[trackedItemID] = new TrackedItem(
                 storedItemObject.id,
                 storedItemObject.name,
                 storedItemObject.imageSource,
@@ -238,15 +210,9 @@ function convertAllToObjects(ourCollection) {
             storedObject.trackedItems
         );
         let updatedObject = trackerCollection.trackerCollection[trackerObjectID];
-        for (let trackedItemID in trackerCollection.trackerCollection[trackerObjectID]
-            .trackedItems) {
-            let storedItemObject =
-                trackerCollection.trackerCollection[trackerObjectID].trackedItems[
-                    trackedItemID
-                ];
-            trackerCollection.trackerCollection[trackerObjectID].trackedItems[
-                trackedItemID
-            ] = new TrackedItem(
+        for (let trackedItemID in trackerCollection.trackerCollection[trackerObjectID].trackedItems) {
+            let storedItemObject = trackerCollection.trackerCollection[trackerObjectID].trackedItems[trackedItemID];
+            trackerCollection.trackerCollection[trackerObjectID].trackedItems[trackedItemID] = new TrackedItem(
                 storedItemObject.id,
                 storedItemObject.name,
                 storedItemObject.imageSource,
@@ -643,14 +609,7 @@ class TrackerApp extends FormApplication {
         let ourDraggie = makeElementDraggable(trackedItem);
 
         //create a TrackedItem, passing in the draggableItem and imangesource, and add it to the tracker
-        let newItem = new TrackedItem(
-            generatedID,
-            name,
-            imageSource,
-            color,
-            type,
-            ourDraggie.position
-        );
+        let newItem = new TrackedItem(generatedID, name, imageSource, color, type, ourDraggie.position);
         console.log(newItem);
 
         let ourTracker = trackerCollection.getTrackerById(trackerContainer.id);

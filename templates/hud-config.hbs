@@ -4,8 +4,7 @@
 		<h1><input name="name" type="text" id="name" value="{{name}}" placeholder=" Name"></h1>
 	</header>
   <!--input for name-->
-	<p><input class="instructions notes" disabled value="{{{sentence}}}"/></p>
-	
+	<p class="instructions">{{{sentence}}}</p>
 	<div class="form-group">
 		<select name="type" id="type">
 		  <option value="">
@@ -49,6 +48,8 @@
 			</label>
 		{{/with}}
 	</div>
+	{{#unless isNested}}
+	<!-- don't generate multiple extra buttons if already nested -->		
 	  <div class="form-group reversed checkbox-or-radio-wrapper">
 		<input
 		class="flex0"
@@ -68,6 +69,7 @@
 		  in the selected folder, instead of choosing one
 		</label>
 	  </div>
+	{{/unless}}
 	<div class="form-group">
 		{{#with documentSelect}}
 			 
@@ -93,6 +95,7 @@
 			  </label>
 		{{/with}}
 	</div>
+
   <span class="horizontal-button-wrapper">
     <button type="submit" class="filled" {{#unless canSubmit}}
 		disabled	

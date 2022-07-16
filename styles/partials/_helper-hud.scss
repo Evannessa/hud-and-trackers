@@ -7,9 +7,9 @@
         gap: 0.75rem;
     }
     .instructions {
-        span {
-            color: var(--color-accent-base);
-        }
+        width: 100%;
+        background-color: transparent;
+        background: none;
     }
     form {
         gap: 1rem;
@@ -96,6 +96,24 @@
     height: max-content !important;
     button {
         aspect-ratio: 1/1;
+        &.add-button {
+            border: 3px ​solid rgba(255, 255, 255, 25%) !important;
+        }
+        &.hoverBar {
+            background: none;
+            background-color: transparent;
+            transform: scale(1.25);
+        }
+
+        &.custom-button {
+            img {
+                max-width: 4rem;
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1/1;
+                object-fit: cover;
+            }
+        }
     }
     img {
         // width: 3rem;
@@ -180,6 +198,7 @@
             left: 0;
             background-color: transparent;
             box-shadow: none;
+
             border: none;
         }
     }
@@ -188,6 +207,13 @@
         left: 100%;
         flex-direction: row;
         transform-origin: right center;
+        button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            object-fit: cover;
+            min-width: 2rem;
+        }
         .navigate {
             aspect-ratio: 1/1;
             text-align: center;
@@ -227,7 +253,7 @@
             display: flex;
             flex-direction: row-reverse;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             border-radius: 50%;
             border-color: transparent;
             transition: background-color 150ms ease-in, color 150ms ease-in, box-shadow 150ms ease-in,
