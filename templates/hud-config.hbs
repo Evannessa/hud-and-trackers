@@ -57,7 +57,7 @@
 		  id="isButtonList"
 		  name="isButtonList"
 			{{#if isButtonList}}checked{{/if}}
-			{{#unless folderSelect.value}}disabled{{/unless}}
+			{{#unless (eq typeSelect.value "group")}}disabled{{/unless}}
 		/>
 		<label for="single-or-multiple" class="text-primary">
 		  Generate buttons for all
@@ -76,6 +76,8 @@
 			  <select name="documentId" id="documentId" {{#if @root.isButtonList}}
 				disabled
 			  {{else if (eq @root.folderSelect.value "")}}
+				disabled
+				{{else if (eq @root.typeSelect.value "group")}}
 				disabled
 				{{else if (eq @root.typeSelect.value "")}}
 				disabled

@@ -800,7 +800,7 @@ button i {
 }
 #hud-button-config .form-group select:disabled,
 #hud-button-config .form-group input:disabled {
-  opacity: 50%;
+  opacity: 30%;
 }
 #hud-button-config .form-group select:disabled:hover,
 #hud-button-config .form-group input:disabled:hover {
@@ -808,7 +808,7 @@ button i {
 }
 #hud-button-config .form-group select:disabled ~ label,
 #hud-button-config .form-group input:disabled ~ label {
-  opacity: 50%;
+  opacity: 30%;
 }
 #hud-button-config .chip input[type=radio],
 #hud-button-config .chip input[type=checkbox] {

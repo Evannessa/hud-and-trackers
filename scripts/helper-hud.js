@@ -110,7 +110,8 @@ export class HudButtonConfig extends FormApplication {
                     macro: "Macro",
                     scene: "Scene",
                     actor: "Actor",
-                    // showUrl: "Show URL",
+                    // group: "Group",
+                    // / showUrl: "Show URL",
                 },
                 value: this.data.type || "",
             },
@@ -174,7 +175,8 @@ export class HudButtonConfig extends FormApplication {
             await updateButton(buttonData.id, buttonData);
         }
         //re-render the display
-        game.helperHud.render(true);
+        game.helperHud.element;
+        game.helperHud.render();
     }
 
     async _handleButtonClick(event) {
@@ -294,10 +296,11 @@ export class HelperHud extends Application {
     }
 
     async handleButtonClick(event) {
+        event.stopPropagation();
         let clickedElement = $(event.currentTarget);
+        console.log("Clicked on", event.target, event.currentTarget);
         let action = clickedElement.data().action;
         let docId = clickedElement.data().documentId;
-        console.log(clickedElement);
         let groupId = $(clickedElement[0]?.parentElement).data().groupId;
         if (clickedElement.hasClass("custom-button") && action !== "toggle" && !docId) {
             ui.notifications.warn("This button is broken. Perhaps its connected document was deleted. Try editing it.");
@@ -332,7 +335,18 @@ export class HelperHud extends Application {
                 game.macros.get(docId).sheet.render(true);
                 break;
             case "toggle":
-                clickedElement.toggleClass("holdOpen");
+                console.log(clickedElement);
+                if (clickedElement.hasClass("holdOpen")) {
+                    clickedElement.removeClass("holdOpen");
+                } else {
+                    clickedElement.addClass("holdOpen");
+                }
+                event.preventDefault();
+                return false;
+                // clickedElement.toggleClass("holdOpen");
+                break;
+            case "select":
+                // tokenDoc.object.control({ releaseOthers: true });
                 break;
             case "openPartyOverview":
                 let data = await game.user.getFlag("hud-and-trackers", "partyOverviewData");

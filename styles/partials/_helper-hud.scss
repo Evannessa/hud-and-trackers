@@ -37,12 +37,12 @@
         input {
             flex: 2;
             &:disabled {
-                opacity: 50%;
+                opacity: 30%;
                 &:hover {
                     cursor: not-allowed;
                 }
                 & ~ label {
-                    opacity: 50%;
+                    opacity: 30%;
                 }
             }
         }
