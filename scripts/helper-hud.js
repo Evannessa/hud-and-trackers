@@ -175,8 +175,10 @@ export class HudButtonConfig extends FormApplication {
             await updateButton(buttonData.id, buttonData);
         }
         //re-render the display
-        game.helperHud.element;
-        game.helperHud.render();
+        game.helperHud.render(true);
+        setTimeout(() => {
+            game.helperHud.render(true);
+        }, 400);
     }
 
     async _handleButtonClick(event) {
@@ -274,18 +276,8 @@ export class HelperHud extends Application {
                 return { id: location.data._id, name: location.data.name, img: location.thumbnail };
             });
         }
-        if (!this.customButtons) {
-            this.customButtons = await getAllButtons();
-            setAllButtonImages(this.customButtons);
-        }
-
-        if (!this.sceneContextButtons) {
-            this.sceneContextButtons = {
-                tavern: {},
-                blacksmith: {},
-                observatory: {},
-            };
-        }
+        this.customButtons = await getAllButtons();
+        // setAllButtonImages(this.customButtons);
 
         return {
             isGM: this.isGM,
@@ -297,6 +289,7 @@ export class HelperHud extends Application {
 
     async handleButtonClick(event) {
         event.stopPropagation();
+
         let clickedElement = $(event.currentTarget);
         console.log("Clicked on", event.target, event.currentTarget);
         let action = clickedElement.data().action;
@@ -341,10 +334,10 @@ export class HelperHud extends Application {
                 } else {
                     clickedElement.addClass("holdOpen");
                 }
+                event.stopPropagation();
                 event.preventDefault();
-                return false;
-                // clickedElement.toggleClass("holdOpen");
                 break;
+            // clickedElement.toggleClass("holdOpen");
             case "select":
                 // tokenDoc.object.control({ releaseOthers: true });
                 break;
