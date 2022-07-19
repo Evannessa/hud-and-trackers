@@ -49,6 +49,28 @@
     z-index: 200;
 }
 
+.interactive {
+    background-color: var(--tui-black4);
+    border-radius: 8px;
+    &:is(li) {
+        list-style-type: none;
+        margin-left: 0;
+    }
+    &:hover {
+        background-color: var(--color-accent-base);
+        cursor: pointer;
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+
+    &.removable {
+        &:hover {
+            background-color: #dc2424;
+        }
+    }
+}
+
 .btn {
     transition: all 100ms ease-in-out;
 

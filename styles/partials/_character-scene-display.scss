@@ -27,6 +27,41 @@
         flex: 0;
     }
 }
+#inner-scene-display {
+    // width: 50vw;
+    width: 60vw;
+    height: 50vh;
+    // width: 100%;
+}
+.characterOptions,
+.addedToScene,
+.innerScenes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .option {
+        display: grid;
+        grid-template-columns: minmax(20px, 2rem) 1fr;
+        grid-template-rows: 100%;
+        align-items: center;
+        gap: 0.5rem;
+        overflow: hidden;
+        max-width: 20%;
+        max-height: 50px;
+        padding-right: 0.5rem;
+        img {
+            grid-column: 1/2;
+            // max-width: 20%;
+            object-fit: cover;
+            height: 100%;
+        }
+        p {
+            margin: 0;
+            grid-column: 2/3;
+        }
+    }
+}
 
 .character-scene-display {
     position: relative;

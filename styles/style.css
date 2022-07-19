@@ -1968,6 +1968,25 @@ button i {
   z-index: 200;
 }
 
+.interactive {
+  background-color: var(--tui-black4);
+  border-radius: 8px;
+}
+.interactive:is(li) {
+  list-style-type: none;
+  margin-left: 0;
+}
+.interactive:hover {
+  background-color: var(--color-accent-base);
+  cursor: pointer;
+}
+.interactive:hover:disabled {
+  cursor: not-allowed;
+}
+.interactive.removable:hover {
+  background-color: #dc2424;
+}
+
 .btn {
   transition: all 100ms ease-in-out;
 }
@@ -3264,6 +3283,46 @@ button i {
 .tag-input-span button {
   display: inline-flex;
   flex: 0;
+}
+
+#inner-scene-display {
+  width: 60vw;
+  height: 50vh;
+}
+
+.characterOptions,
+.addedToScene,
+.innerScenes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.characterOptions .option,
+.addedToScene .option,
+.innerScenes .option {
+  display: grid;
+  grid-template-columns: minmax(20px, 2rem) 1fr;
+  grid-template-rows: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  max-width: 20%;
+  max-height: 50px;
+  padding-right: 0.5rem;
+}
+.characterOptions .option img,
+.addedToScene .option img,
+.innerScenes .option img {
+  grid-column: 1/2;
+  -o-object-fit: cover;
+     object-fit: cover;
+  height: 100%;
+}
+.characterOptions .option p,
+.addedToScene .option p,
+.innerScenes .option p {
+  margin: 0;
+  grid-column: 2/3;
 }
 
 .character-scene-display {

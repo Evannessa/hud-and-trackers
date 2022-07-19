@@ -384,7 +384,8 @@ export class HelperHud extends Application {
     activateListeners(html) {
         delete ui.windows[this.appId];
         let windowContent = html.closest(".window-content");
-        windowContent.on("click", "[data-action]", this.handleButtonClick.bind(this));
+        windowContent.off("click").on("click", "[data-action]", this.handleButtonClick.bind(this));
+        // windowContent.on("click", "[data-action]", this.handleButtonClick.bind(this));
     }
 
     static selectMyCharacter() {

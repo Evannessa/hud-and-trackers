@@ -1,16 +1,19 @@
 import * as HelperFunctions from "./helper-functions.js";
-let characterTags;
+let clanTags;
+let categoryIndividualTags;
 let basePath = "/Idyllwild/Art/Characters/";
 fetch("/Idyllwild/Test JSON Data/tags.json")
     .then((response) => {
         return response.json();
     })
-    .then(
-        (data) =>
-            (characterTags = data.filter((tags) => {
-                return tags.tag.includes("clans/");
-            }))
-    );
+    .then((data) => {
+        categoryIndividualTags = data.find((tags) => {
+            return tags.tag.includes("category/individual");
+        });
+        clanTags = data.filter((tags) => {
+            return tags.tag.includes("clans/");
+        });
+    });
 Hooks.on("ready", () => {
     // console.log("Our tags", characterTags, processTagData());
     game.characterTags = processTagData();
@@ -20,14 +23,21 @@ Hooks.on("ready", () => {
 });
 
 function processTagData() {
-    return characterTags.map((tagObject) => {
+    let individuals = categoryIndividualTags.relativePaths;
+    return clanTags.map((tagObject) => {
+        let characterPaths = tagObject.relativePaths.filter((charPath) => individuals.includes(charPath));
         return {
             tagName: tagObject.tag,
-            characters: tagObject.relativePaths.map((path) => {
+            characters: characterPaths.map((path, index) => {
                 let clanName = tagObject.tag.split("/").pop();
+                //get character name from file path
                 let name = path.split("/").pop().replace(".md", "");
                 let firstName = name.split(" ").shift();
+                if (!name.toLowerCase().includes(clanName.toLowerCase())) {
+                    firstName = name.split(" ").pop();
+                }
                 let pathName = name.split(" ").join("-").toLowerCase();
+
                 return {
                     name: name,
                     pathName: pathName,
@@ -78,13 +88,14 @@ class InnerSceneDisplay extends Application {
             template: `/modules/hud-and-trackers/templates/inner-scene-display/scene-map.hbs`,
             id: "inner-scene-display",
             title: "Inner Scene Display",
+            resizable: true,
         });
     }
 
     async getSceneDisplayData() {
         let currentScene = game.scenes.viewed;
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
-        if (!sceneDisplayData) {
+        if (!sceneDisplayData || !sceneDisplayData.characters || !sceneDisplayData.innerScenes) {
             let data = {
                 characters: [],
                 innerScenes: [],
@@ -94,28 +105,65 @@ class InnerSceneDisplay extends Application {
         return sceneDisplayData;
     }
 
+    async setSceneDisplayData(data) {
+        await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", data);
+    }
+    async addInnerScene(scene) {
+        let currentScene = game.scenes.viewed;
+        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
+        let innerScenes = sceneDisplayData.innerScenes;
+        innerScenes.push(scene);
+        sceneDisplayData = { ...sceneDisplayData, innerScenes: [...innerScenes] };
+        await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", sceneDisplayData);
+        this.render(true);
+    }
+
+    async updateInnerScene(scene) {}
+
     async addCharacter(character) {
         let currentScene = game.scenes.viewed;
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
         let characters = sceneDisplayData.characters;
-        characters.push(character);
-        sceneDisplayData = { ...sceneDisplayData, characters: [...characters] };
-        await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", sceneDisplayData);
-        this.render(true);
+
+        //make sure we don't already hve a character with this name before pushing
+        if (!characters.some((cha) => cha.name === character.name)) {
+            characters.push(character);
+            sceneDisplayData = { ...sceneDisplayData, characters: [...characters] };
+            await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", sceneDisplayData);
+            this.render(true);
+        }
     }
     async removeCharacter(character) {
         let currentScene = game.scenes.viewed;
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
         let characters = sceneDisplayData.characters;
-        characters = characters.filter((ch) => ch.name == character.name);
+        characters = characters.filter((ch) => ch.name !== character.name);
         sceneDisplayData = { ...sceneDisplayData, characters: [...characters] };
         await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", sceneDisplayData);
         this.render(true);
     }
 
-    async updateSceneDisplayData(newData) {
+    async updateSceneDisplayData(newData, type, isUpdate) {
+        let currentScene = game.scenes.viewed;
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
-        sceneDisplayData = { ...sceneDisplayData, ...newData };
+        if (type === "character") {
+            let characters = sceneDisplayData.characters;
+            //make sure we don't already hve a character with this name before pushing
+            if (!characters.some((cha) => cha.name === newData.name)) {
+                characters.push(newData);
+                sceneDisplayData = { ...sceneDisplayData, characters: [...characters] };
+            }
+        } else if (type === "innerScene") {
+            let innerScenes = sceneDisplayData.innerScenes;
+            if (!isUpdate) {
+                innerScenes.push(newData);
+            } else {
+                innerScenes.map((scene) => {
+                    return scene.id === newData.id ? newData : scene;
+                });
+            }
+            sceneDisplayData = { ...sceneDisplayData, innerScenes: [...innerScenes] };
+        }
         await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", sceneDisplayData);
         this.render(true);
     }
@@ -124,6 +172,9 @@ class InnerSceneDisplay extends Application {
         // Send data to the template
         let currentScene = game.scenes.viewed;
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
+        if (!sceneDisplayData) {
+            this.getSceneDisplayData();
+        }
         let clans = game.characterTags.map((obj) => {
             return {
                 name: obj.tagName.split("/").pop(),
@@ -134,8 +185,12 @@ class InnerSceneDisplay extends Application {
         if (this.data.clanSelect) {
             options = game.characterTags.find((el) => el.tagName === this.data.clanSelect).characters;
         }
-
-        console.table(options);
+        // filter out any that are included in the selected characters already
+        options = options.filter((opt) => {
+            return !sceneDisplayData.characters.map((char) => char.name).includes(opt.name);
+        });
+        options.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+        clans.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
 
         sceneDisplayData = {
             ...sceneDisplayData,
@@ -148,32 +203,47 @@ class InnerSceneDisplay extends Application {
     }
 
     _handleButtonClick(event) {
-        // console.log(this.element);
-        let clickedElement = $(event.target);
+        event.stopPropagation();
+        event.preventDefault();
+        let clickedElement = $(event.currentTarget); //$(event.target.closest("li"));
+
         let action = clickedElement.data().action;
         let name = clickedElement.data().name;
         let imagePath = clickedElement.data().imagePath;
+        let data = { name: name, imagePath: imagePath };
         switch (action) {
             case "select":
-                this.addCharacter({ name: name, imagePath: imagePath });
+                this.updateSceneDisplayData(data, "character", false);
                 break;
             case "remove":
-                this.removeCharacter({ name: name, imagePath: imagePath });
+                this.removeCharacter(data);
+                break;
+            case "browse":
+                // let img = clickedElement[0].src;
+                let name = clickedElement[0].closest("li").querySelector("input[type='text']").value || "New Scene";
+                let filepicker = new FilePicker({
+                    type: "image",
+                    callback: (path) => {
+                        data.imagePath = path;
+                        data.name = name;
+                        this.updateSceneDisplayData(data, "innerScene", false);
+                        // this.addInnerScene({ name: name, imagePath: path });
+                    },
+                }).render(true);
                 break;
         }
     }
 
     activateListeners(html) {
-        super.activateListeners(html);
+        delete ui.windows[this.appId];
+        // super.activateListeners(html);
+        let windowContent = html.closest(".window-content");
+        windowContent.off("click").on("click", "[data-action]", this._handleButtonClick.bind(this));
         this.handleChange();
-        html.on("click", ["data-action"], this._handleButtonClick.bind(this));
-        this.handleChange();
-        super.activateListeners(html);
     }
 
     handleChange() {
         $("select, input[type='checkbox'], input[type='text']").on("change", async function (event) {
-            // let selectedValue = event.currentTarget.value;
             let { value, name, checked, type } = event.currentTarget;
             game.innerSceneDisplay.data[name] = type == "checkbox" ? checked : value;
             game.innerSceneDisplay.render(true, { renderData: game.innerSceneDisplay.data });
@@ -483,7 +553,6 @@ export class CharacterProfileConfig extends FormApplication {
                     field: inputField,
                     callback: (path) => {
                         img = path;
-                        console.log(img);
                     },
                 }).render(true);
                 break;
