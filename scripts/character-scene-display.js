@@ -1,12 +1,53 @@
 import * as HelperFunctions from "./helper-functions.js";
-
+let characterTags;
+let basePath = "/Idyllwild/Art/Characters/";
+fetch("/Idyllwild/Test JSON Data/tags.json")
+    .then((response) => {
+        return response.json();
+    })
+    .then(
+        (data) =>
+            (characterTags = data.filter((tags) => {
+                return tags.tag.includes("clans/");
+            }))
+    );
 Hooks.on("ready", () => {
+    // console.log("Our tags", characterTags, processTagData());
+    game.characterTags = processTagData();
+
     // game.characterSceneDisplay = new CharacterSceneDisplay().render(true);
+    game.innerSceneDisplay = new InnerSceneDisplay().render(true);
 });
+
+function processTagData() {
+    return characterTags.map((tagObject) => {
+        return {
+            tagName: tagObject.tag,
+            characters: tagObject.relativePaths.map((path) => {
+                let clanName = tagObject.tag.split("/").pop();
+                let name = path.split("/").pop().replace(".md", "");
+                let firstName = name.split(" ").shift();
+                let pathName = name.split(" ").join("-").toLowerCase();
+                return {
+                    name: name,
+                    pathName: pathName,
+                    imagePath: `${basePath}/${clanName}/${firstName}.webp`,
+                };
+            }),
+        };
+    });
+}
+
+Hooks.on("canvasReady", async (canvas) => {
+    // game.innerSceneDisplay.data.temporaryCharacters = await HelperFunctions.getAllActorsInScene();
+    // game.innerSceneDisplay.currentScene = canvas.scene;
+    if (game.innerSceneDisplay) {
+        game.innerSceneDisplay.render(true);
+    }
+});
+
 Hooks.once("init", () => {
-    loadTemplates([
-        `modules/hud-and-trackers/templates/character-scene-display/actor-list-template.hbs`,
-    ]);
+    loadTemplates([`modules/hud-and-trackers/templates/character-scene-display/actor-list-template.hbs`]);
 });
 Hooks.on("renderCharacterSceneDisplay", (app, html) => {
     let windowApp = html.closest(".window-app");
@@ -19,6 +60,128 @@ Hooks.on("renderCharacterSceneDisplay", (app, html) => {
         // minWidth: "45vh",
     });
 });
+
+/**
+ * Will display scenes I don't want to make entire scenes for
+ * Along with characters
+ */
+class InnerSceneDisplay extends Application {
+    constructor(data) {
+        super();
+        this.getSceneDisplayData();
+        this.data = { ...data };
+    }
+
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            popOut: true,
+            template: `/modules/hud-and-trackers/templates/inner-scene-display/scene-map.hbs`,
+            id: "inner-scene-display",
+            title: "Inner Scene Display",
+        });
+    }
+
+    async getSceneDisplayData() {
+        let currentScene = game.scenes.viewed;
+        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
+        if (!sceneDisplayData) {
+            let data = {
+                characters: [],
+                innerScenes: [],
+            };
+            sceneDisplayData = await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", data);
+        }
+        return sceneDisplayData;
+    }
+
+    async addCharacter(character) {
+        let currentScene = game.scenes.viewed;
+        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
+        let characters = sceneDisplayData.characters;
+        characters.push(character);
+        sceneDisplayData = { ...sceneDisplayData, characters: [...characters] };
+        await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", sceneDisplayData);
+        this.render(true);
+    }
+    async removeCharacter(character) {
+        let currentScene = game.scenes.viewed;
+        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
+        let characters = sceneDisplayData.characters;
+        characters = characters.filter((ch) => ch.name == character.name);
+        sceneDisplayData = { ...sceneDisplayData, characters: [...characters] };
+        await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", sceneDisplayData);
+        this.render(true);
+    }
+
+    async updateSceneDisplayData(newData) {
+        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
+        sceneDisplayData = { ...sceneDisplayData, ...newData };
+        await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", sceneDisplayData);
+        this.render(true);
+    }
+
+    async getData() {
+        // Send data to the template
+        let currentScene = game.scenes.viewed;
+        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
+        let clans = game.characterTags.map((obj) => {
+            return {
+                name: obj.tagName.split("/").pop(),
+                value: obj.tagName,
+            };
+        });
+        let options = [];
+        if (this.data.clanSelect) {
+            options = game.characterTags.find((el) => el.tagName === this.data.clanSelect).characters;
+        }
+
+        console.table(options);
+
+        sceneDisplayData = {
+            ...sceneDisplayData,
+            clans: clans,
+            clanSelect: this.data.clanSelect || "",
+            options: options,
+        };
+
+        return sceneDisplayData;
+    }
+
+    _handleButtonClick(event) {
+        // console.log(this.element);
+        let clickedElement = $(event.target);
+        let action = clickedElement.data().action;
+        let name = clickedElement.data().name;
+        let imagePath = clickedElement.data().imagePath;
+        switch (action) {
+            case "select":
+                this.addCharacter({ name: name, imagePath: imagePath });
+                break;
+            case "remove":
+                this.removeCharacter({ name: name, imagePath: imagePath });
+                break;
+        }
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html);
+        this.handleChange();
+        html.on("click", ["data-action"], this._handleButtonClick.bind(this));
+        this.handleChange();
+        super.activateListeners(html);
+    }
+
+    handleChange() {
+        $("select, input[type='checkbox'], input[type='text']").on("change", async function (event) {
+            // let selectedValue = event.currentTarget.value;
+            let { value, name, checked, type } = event.currentTarget;
+            game.innerSceneDisplay.data[name] = type == "checkbox" ? checked : value;
+            game.innerSceneDisplay.render(true, { renderData: game.innerSceneDisplay.data });
+        });
+    }
+
+    async _updateObject(event, formData) {}
+}
 
 /**
  * Create an object representing the data of a character
@@ -41,15 +204,7 @@ function characterFactory(data = {}) {
             linkedDocuments: [],
         };
     }
-    let {
-        name,
-        char_full_body,
-        thumbnail_image,
-        description,
-        linkedDocuments,
-        relationships,
-        tags,
-    } = data;
+    let { name, char_full_body, thumbnail_image, description, linkedDocuments, relationships, tags } = data;
 
     let id;
     if (!data.id) {
@@ -85,10 +240,7 @@ export class FullProfile extends Application {
 <br /><select name="output-actorKey" id="output-actorKey">
 		</form>`;
 
-        let characters = await game.settings.get(
-            "hud-and-trackers",
-            "globalDisplayCharacters"
-        );
+        let characters = await game.settings.get("hud-and-trackers", "globalDisplayCharacters");
         characters = Object.values(characters); //Array.from(characters);
         console.log(characters);
 
@@ -139,21 +291,14 @@ export class FullProfile extends Application {
                     icon: "<i class='fas fa-check'></i>",
                     label: "Add Relationship",
                     callback: async (html) => {
-                        let actorKey = html
-                            .find("select[name='output-actorKey']")
-                            .val();
-                        let type = html
-                            .find("input[name='relationship_type']")
-                            .val();
+                        let actorKey = html.find("select[name='output-actorKey']").val();
+                        let type = html.find("input[name='relationship_type']").val();
                         //grab the character, so we can store their thumbnail & stuff
                         let newRelationshipData = {
                             id: actorKey,
                             type: type,
                         };
-                        this.data.relationships = [
-                            ...this.data.relationships,
-                            { id: actorKey, type: type },
-                        ];
+                        this.data.relationships = [...this.data.relationships, { id: actorKey, type: type }];
 
                         await updateCharacter(this.data.id, this.data);
 
@@ -194,16 +339,15 @@ export class FullProfile extends Application {
     async getData() {
         let convertedRelationships = [];
         for (let rel of this.data.relationships) {
-            convertedRelationships.push(
-                await this.convertRelationshipData(rel.id, rel.type)
-            );
+            convertedRelationships.push(await this.convertRelationshipData(rel.id, rel.type));
         }
 
         let convertedData = {
             ...this.data,
             relationships: convertedRelationships,
+            pathName: "andynia-alimoux",
+            imagePath: "/Idyllwild/Art/Characters/Alimoux/andynia.webp",
         };
-        console.log(convertedData);
         return convertedData;
     }
 
@@ -241,9 +385,7 @@ export class FullProfile extends Application {
                 let tagInput = el.prev()[0].querySelector("#tag-input");
                 //get the id of our character
 
-                this.data.tags = Array.from(
-                    new Set([...this.data.tags, tagInput.value])
-                ); //set our data to include the new tags
+                this.data.tags = Array.from(new Set([...this.data.tags, tagInput.value])); //set our data to include the new tags
 
                 await addNewTag(tagInput.value);
 
@@ -270,7 +412,7 @@ export class FullProfile extends Application {
         return mergeObject(super.defaultOptions, {
             resizeable: true,
             popOut: true,
-            template: `modules/hud-and-trackers/templates/character-scene-display/character-profile-full.hbs`,
+            template: `modules/hud-and-trackers/templates/character-scene-display/iframe-display.hbs`,
             id: "character-full-profile",
             title: "Character Profile",
         });
@@ -360,8 +502,7 @@ export class CharacterProfileConfig extends FormApplication {
             popOut: true,
             // submitOnChange: false,
             // closeOnSubmit: true,
-            template:
-                "modules/hud-and-trackers/templates/character-scene-display/config-partial.hbs",
+            template: "modules/hud-and-trackers/templates/character-scene-display/config-partial.hbs",
             id: "character-profile-config",
             title: "Character Profile Config",
             // onSubmit: (e) => e.preventDefault(),
@@ -401,9 +542,7 @@ export class CharacterSceneDisplay extends Application {
                     icon: "<i class='fas fa-check'></i>",
                     label: "Add Actor",
                     callback: async (html) => {
-                        let actorKey = html
-                            .find("select[name='output-actorKey']")
-                            .val();
+                        let actorKey = html.find("select[name='output-actorKey']").val();
                         let actor = game.actors.get(actorKey);
                         let data = {
                             name: actor.name,
@@ -447,10 +586,7 @@ export class CharacterSceneDisplay extends Application {
         //!NOTE: ()=>{} is different than function(). ()=>{} binds the 'this'
         // https://stackoverflow.com/questions/45203479/jquery-with-arrow-function
 
-        if (
-            typeof filterData !== "string" &&
-            Array.isArray(filterData) !== true
-        ) {
+        if (typeof filterData !== "string" && Array.isArray(filterData) !== true) {
             console.log("Error. Not array or string");
             return;
         }
@@ -504,9 +640,7 @@ export class CharacterSceneDisplay extends Application {
     filterBySearch() {
         $("#search").on("keyup", async function () {
             //save the current search data to our filters
-            game.characterSceneDisplay.data.currentSearch = $(this)
-                .val()
-                .toLowerCase();
+            game.characterSceneDisplay.data.currentSearch = $(this).val().toLowerCase();
             await game.characterSceneDisplay.applyFilters();
         });
     }
@@ -516,9 +650,7 @@ export class CharacterSceneDisplay extends Application {
     async filterByTag(tagValue) {
         //we're going to filter by the tag
         //update the current filter tags
-        this.data.currentFilterTags = Array.from(
-            new Set([...this.data.currentFilterTags, tagValue])
-        );
+        this.data.currentFilterTags = Array.from(new Set([...this.data.currentFilterTags, tagValue]));
         await this.applyFilters();
         this.render(true); //Re-render here to apply new elements rather than just hide already-rendered ones
     }
@@ -526,10 +658,7 @@ export class CharacterSceneDisplay extends Application {
         if (this.data.currentSearch || this.data.currentFilterTags.length > 0) {
             //if we have a current search or current tags
             let searchStrings = this.data.currentSearch;
-            let filterData = [
-                ...searchStrings.split(" "),
-                ...this.data.currentFilterTags,
-            ];
+            let filterData = [...searchStrings.split(" "), ...this.data.currentFilterTags];
             await this.filter(filterData, ".character-list > li");
         }
     }
@@ -545,10 +674,7 @@ export class CharacterSceneDisplay extends Application {
     }
 
     async getData() {
-        this.data.characters = await game.settings.get(
-            "hud-and-trackers",
-            "globalDisplayCharacters"
-        );
+        this.data.characters = await game.settings.get("hud-and-trackers", "globalDisplayCharacters");
         return {
             ...this.data,
             characters: this.data.characters,
@@ -565,8 +691,7 @@ export class CharacterSceneDisplay extends Application {
                 break;
             case "add-unlinked":
                 //add an unlinked character, for data without creating an actor
-                game.characterProfileConfig =
-                    new CharacterProfileConfig().render(true);
+                game.characterProfileConfig = new CharacterProfileConfig().render(true);
             case "display-drawer":
                 let drawer = el.closest(".side-drawer");
                 if (!this.data.visible) {
@@ -580,9 +705,7 @@ export class CharacterSceneDisplay extends Application {
             case "show-profile":
                 //show profile
                 let currentCharacter = this.data.characters[id];
-                game.fullCharacterProfile = new FullProfile(
-                    currentCharacter
-                ).render(true);
+                game.fullCharacterProfile = new FullProfile(currentCharacter).render(true);
                 break;
             case "edit":
                 //edit
@@ -593,10 +716,7 @@ export class CharacterSceneDisplay extends Application {
                 }
                 if (id) {
                     let currentCharacter = this.data.characters[id];
-                    game.characterProfileConfig = new CharacterProfileConfig(
-                        currentCharacter,
-                        true
-                    ).render(true);
+                    game.characterProfileConfig = new CharacterProfileConfig(currentCharacter, true).render(true);
                 } else {
                     console.log("No id!", id);
                 }
@@ -608,9 +728,7 @@ export class CharacterSceneDisplay extends Application {
                 event.stopPropagation();
                 if (id) {
                     let currentCharacter = this.data.characters[id];
-                    game.characterProfileConfig = new CharacterProfileConfig(
-                        currentCharacter
-                    ).render(true);
+                    game.characterProfileConfig = new CharacterProfileConfig(currentCharacter).render(true);
                 }
                 break;
             case "filter-tag":
@@ -698,10 +816,7 @@ async function getCharacter(id) {
 }
 
 async function getAllCharacters() {
-    let allCharacters = await game.settings.get(
-        "hud-and-trackers",
-        "globalDisplayCharacters"
-    );
+    let allCharacters = await game.settings.get("hud-and-trackers", "globalDisplayCharacters");
     return allCharacters;
 }
 

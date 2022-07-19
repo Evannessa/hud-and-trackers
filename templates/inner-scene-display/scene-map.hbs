@@ -1,0 +1,30 @@
+<div class="sceneMap character-scene-display">
+	{{log clanSelect}}
+  <select name="clanSelect" id="clanSelect">
+    {{#each clans}}
+      <option value="{{this.value}}" {{#if (eq @root.clanSelect this.value)}}
+		selected	
+	  {{/if}}>
+        {{this.name}}
+      </option>
+    {{/each}}
+  </select>
+
+  <ul class="characterOptions">
+	{{#each options}}
+	<li class="option actor-section rounded" data-action="select" data-name="{{this.name}}" data-image-path="{{this.imagePath}}">
+		<img src="{{this.imagePath}}" alt="{{this.name}}" srcset="">
+		<p>{{this.name}}</p>
+</li>
+	{{/each}}
+  </ul>
+  <li class="addedToScene">
+	{{#each characters}}
+	<li class="option actor-section rounded" data-action="remove" data-name="{{this.name}}" data-image-path="{{this.imagePath}}">
+		<img src="{{this.imagePath}}" alt="{{this.name}}" srcset="">
+		<p>{{this.name}}</p>
+</li>
+	{{/each}}
+  </li>
+
+</div>

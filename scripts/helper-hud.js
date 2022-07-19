@@ -23,7 +23,6 @@ export class HudButtonConfig extends FormApplication {
         this.data.isNested = isNested;
         this.data.groupId = groupId;
         if (isNested) {
-            console.log(this.data);
         }
 
         this.edit = edit;
@@ -247,9 +246,6 @@ export class HelperHud extends Application {
         super();
         this.isGM = game.user.isGM;
         this.customButtons = game.settings.get("hud-and-trackers", "hudButtons");
-        this.townLocations = game.folders.getName("Town").content.map((location) => {
-            return { id: location.data._id, name: location.data.name, img: location.thumbnail };
-        });
         this.currentScene = game.scenes.viewed;
     }
     /** @override */
@@ -271,17 +267,11 @@ export class HelperHud extends Application {
     }
 
     async getData() {
-        if (!this.townLocations) {
-            this.townLocations = game.folders.getName("Town").content.map((location) => {
-                return { id: location.data._id, name: location.data.name, img: location.thumbnail };
-            });
-        }
         this.customButtons = await getAllButtons();
         // setAllButtonImages(this.customButtons);
 
         return {
             isGM: this.isGM,
-            townLocations: this.townLocations,
             currentScene: this.currentScene,
             customButtons: this.customButtons,
         };
@@ -392,6 +382,7 @@ export class HelperHud extends Application {
     }
 
     activateListeners(html) {
+        delete ui.windows[this.appId];
         let windowContent = html.closest(".window-content");
         windowContent.on("click", "[data-action]", this.handleButtonClick.bind(this));
     }
