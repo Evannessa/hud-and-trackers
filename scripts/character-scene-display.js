@@ -106,6 +106,11 @@ class InnerSceneDisplayBar extends Application {
     }
 
     async activateListeners(html) {
+        $("#scene-display-bar img").on("load", (event) => {
+            let img = event.currentTarget;
+            img.dataset.width = img.naturalWidth;
+            img.dataset.height = img.naturalHeight;
+        });
         html[0].querySelector("button[data-action='config']").addEventListener("click", (event) => {
             game.innerSceneDisplayConfig.render(true);
         });
@@ -113,6 +118,8 @@ class InnerSceneDisplayBar extends Application {
             let name = event.currentTarget.dataset.name;
             let imagePath = event.currentTarget.dataset.img;
             let firstName = name.split(" ").shift();
+            let width = event.currentTarget.querySelector("img").dataset.width;
+            let height = event.currentTarget.querySelector("img").dataset.height;
             // if (!name.toLowerCase().includes(clanName.toLowerCase())) {
             //     firstName = name.split(" ").pop();
             // }
@@ -122,7 +129,9 @@ class InnerSceneDisplayBar extends Application {
             if (tile) {
                 this.panToTile(tile.data);
             } else {
-                game.scenes.viewed.createEmbeddedDocuments("Tile", [{ img: imagePath, width: 100, height: 100 }]);
+                game.scenes.viewed.createEmbeddedDocuments("Tile", [
+                    { img: imagePath, width: parseInt(width) * 0.5, height: parseInt(height) * 0.5 },
+                ]);
             }
         });
     }

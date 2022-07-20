@@ -4,7 +4,7 @@
       <li
         class="interactive"
         data-action="pan"
-		data-name="{{character.name}}"
+        data-name="{{character.name}}"
         data-img="{{character.imagePath}}"
       >
         <img src="{{character.imagePath}}" alt="" />
@@ -13,7 +13,12 @@
   </ul>
   <ul class="scene-group">
     {{#each innerScenes as |scene|}}
-      <li class="interactive" data-action="pan">
+      <li
+        class="interactive"
+        data-action="pan"
+        data-name="{{scene.name}}"
+        data-img="{{scene.imagePath}}"
+      >
         <img src="{{scene.imagePath}}" alt="" />
       </li>
     {{/each}}
