@@ -18,8 +18,8 @@ Hooks.on("ready", () => {
     // console.log("Our tags", characterTags, processTagData());
     game.characterTags = processTagData();
 
-    // game.characterSceneDisplay = new CharacterSceneDisplay().render(true);
-    game.innerSceneDisplay = new InnerSceneDisplay().render(true);
+    game.innerSceneDisplayBar = new InnerSceneDisplayBar().render(true);
+    game.innerSceneDisplayConfig = new InnerSceneDisplayConfig();
 });
 
 function processTagData() {
@@ -51,8 +51,11 @@ function processTagData() {
 Hooks.on("canvasReady", async (canvas) => {
     // game.innerSceneDisplay.data.temporaryCharacters = await HelperFunctions.getAllActorsInScene();
     // game.innerSceneDisplay.currentScene = canvas.scene;
-    if (game.innerSceneDisplay) {
-        game.innerSceneDisplay.render(true);
+    if (game.innerSceneDisplayBar) {
+        game.innerSceneDisplayBar.render(true);
+    }
+    if (game.innerSceneDisplayConfig && game.innerSceneDisplayConfig.rendered === true) {
+        game.innerSceneDisplayConfig.render(true);
     }
 });
 
@@ -71,11 +74,65 @@ Hooks.on("renderCharacterSceneDisplay", (app, html) => {
     });
 });
 
+class InnerSceneDisplayBar extends Application {
+    constructor(data) {
+        super();
+        this.setDisplayBarData();
+    }
+
+    async panToTile(tileData) {
+        game.canvas.animatePan({ x: tileData.x, y: tileData.y, scale: 1.0 });
+    }
+    async setDisplayBarData() {
+        let currentScene = game.scenes.viewed;
+        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
+        this.data = { ...sceneDisplayData };
+    }
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            popOut: true,
+            template: `/modules/hud-and-trackers/templates/inner-scene-display/scene-display-bar.hbs`,
+            id: "scene-display-bar",
+            title: "Scene Display Bar",
+            // resizable: true,
+        });
+    }
+    async getData() {
+        if (!this.data) {
+            await this.setDisplayBarData();
+        }
+        console.log("Data is", this.data);
+        return { ...this.data };
+    }
+
+    async activateListeners(html) {
+        html[0].querySelector("button[data-action='config']").addEventListener("click", (event) => {
+            game.innerSceneDisplayConfig.render(true);
+        });
+        $("#scene-display-bar li[data-action='pan']").click((event) => {
+            let name = event.currentTarget.dataset.name;
+            let imagePath = event.currentTarget.dataset.img;
+            let firstName = name.split(" ").shift();
+            // if (!name.toLowerCase().includes(clanName.toLowerCase())) {
+            //     firstName = name.split(" ").pop();
+            // }
+            let tile = game.scenes.viewed.tiles.contents.find((tile) => {
+                return tile.data.img.toLowerCase().includes(firstName.toLowerCase());
+            });
+            if (tile) {
+                this.panToTile(tile.data);
+            } else {
+                game.scenes.viewed.createEmbeddedDocuments("Tile", [{ img: imagePath, width: 100, height: 100 }]);
+            }
+        });
+    }
+}
+
 /**
  * Will display scenes I don't want to make entire scenes for
  * Along with characters
  */
-class InnerSceneDisplay extends Application {
+class InnerSceneDisplayConfig extends Application {
     constructor(data) {
         super();
         this.getSceneDisplayData();
@@ -226,6 +283,7 @@ class InnerSceneDisplay extends Application {
                     callback: (path) => {
                         data.imagePath = path;
                         data.name = name;
+                        data.id = HelperFunctions.generateId();
                         this.updateSceneDisplayData(data, "innerScene", false);
                         // this.addInnerScene({ name: name, imagePath: path });
                     },

@@ -1,0 +1,24 @@
+<section class="display-bar">
+  <ul class="character-group">
+    {{#each characters as |character|}}
+      <li
+        class="interactive"
+        data-action="pan"
+		data-name="{{character.name}}"
+        data-img="{{character.imagePath}}"
+      >
+        <img src="{{character.imagePath}}" alt="" />
+      </li>
+    {{/each}}
+  </ul>
+  <ul class="scene-group">
+    {{#each innerScenes as |scene|}}
+      <li class="interactive" data-action="pan">
+        <img src="{{scene.imagePath}}" alt="" />
+      </li>
+    {{/each}}
+  </ul>
+  <button data-action="config">
+    Config Bar
+  </button>
+</section>
