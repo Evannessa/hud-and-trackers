@@ -1,4 +1,50 @@
 <div class="sceneMap character-scene-display">
+	<fieldset class="button-group">
+		<input type="radio" name="mode" id="editMode" data-action="toggleMode" value="edit" {{#if (eq mode "edit")}}
+			checked	
+		{{/if}}>
+		<label for="editMode">Edit</label>
+
+		<input type="radio" name="mode" id="displayMode" data-action="toggleMode" value="display" {{#if (eq mode "display")}}
+			checked	
+		{{/if}}/>
+		<label for="displayMode">Display</label>
+	</fieldset>
+	{{#if (eq mode "display")}}
+		
+<section id="scene-display-bar" class="displayModeWrapper display-bar">
+<ul class="character-group">
+    {{#each characters as |character|}}
+      <li
+        class="interactive"
+        {{!-- data-action="pan" --}}
+        data-name="{{character.name}}"
+        data-img="{{character.imagePath}}"
+      >
+        <img src="{{character.imagePath}}" alt="" />
+		<ul class="hover-controls">
+			{{#each @root.displayTiles as |tileData|}}
+				<li><button data-action="pan" data-target="{{tileData.displayName}}">{{tileData.displayName}}</button></li>
+			{{/each}}
+		</ul>
+      </li>
+    {{/each}}
+  </ul>
+  <ul class="scene-group">
+    {{#each innerScenes as |scene|}}
+      <li
+        class="interactive"
+        data-action="pan"
+        data-name="{{scene.name}}"
+        data-img="{{scene.imagePath}}"
+      >
+        <img src="{{scene.imagePath}}" alt="" />
+      </li>
+    {{/each}}
+  </ul>
+</section>
+{{else}}
+<section class="editModeWrapper">
 <section class="innerSceneWrapper">
 	<ul class="innerScenes">
 	{{#each innerScenes as |scene|}}
@@ -45,4 +91,7 @@
 			</li>
 			{{/each}}
 		 </ul>
-		</div>
+		 </section>
+</section>
+	{{/if}}
+</div>

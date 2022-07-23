@@ -1968,6 +1968,75 @@ button i {
   z-index: 200;
 }
 
+.button-group {
+  grid-row: 1/2;
+  grid-column: 2/4;
+  display: flex;
+  flex-direction: row;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  padding: 0rem 0rem;
+  min-width: 50%;
+}
+.button-group label {
+  border: 2px solid var(--clr-dark-base);
+}
+.button-group label:not(:first-of-type, :last-of-type) {
+  border-left: none;
+  border-right: none;
+}
+.button-group label:first-of-type {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+.button-group label:last-of-type {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+.button-group input[type=radio] {
+  transform: scale(0);
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+}
+.button-group input[type=radio] + label {
+  background-color: var(--clr-purple-base);
+  padding: 0.25rem 0.5rem;
+  --hover-color: var(--clr-purple-light);
+  overflow: visible;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 150ms ease-out;
+  background-color: var(--clr-purple-base);
+}
+.button-group input[type=radio] + label:hover {
+  cursor: pointer;
+  background-color: var(--hover-color);
+  color: #212121;
+}
+.button-group input[type=radio]:checked + label {
+  --hover-color: var(--clr-purple-base);
+  color: white;
+  transition: background-color 250ms ease-out;
+  box-shadow: var(--box-shadow);
+}
+.button-group input[type=radio]:checked + label:not(:hover) {
+  background-color: var(--clr-purple-dark);
+}
+
 .interactive {
   background-color: var(--tui-black4);
   border-radius: 8px;
@@ -3262,12 +3331,6 @@ button i {
   width: fit-content;
 }
 
-#scene-display-bar, #scene-display-bar *:not(button, image, li) {
-  background: none;
-  background-color: transparent;
-  box-shadow: none;
-}
-
 .display-bar {
   display: flex;
   flex-wrap: wrap;
@@ -3320,6 +3383,16 @@ button i {
 #inner-scene-display {
   width: 60vw;
   height: 50vh;
+}
+#inner-scene-display, #inner-scene-display.displayMode *:not(button, image, li, input, label) {
+  background: none;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+li .hover-controls {
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .characterOptions,

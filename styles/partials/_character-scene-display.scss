@@ -4,15 +4,15 @@
     padding: 0.15rem 0.55rem;
     width: fit-content;
 }
-#scene-display-bar {
-    &,
-    & *:not(button, image, li) {
-        background: none;
-        background-color: transparent;
-        box-shadow: none;
-        // pointer-events: none;
-    }
-}
+// #scene-display-bar {
+//     &,
+//     & *:not(button, image, li) {
+//         background: none;
+//         background-color: transparent;
+//         box-shadow: none;
+//         // pointer-events: none;
+//     }
+// }
 .display-bar {
     display: flex;
     flex-wrap: wrap;
@@ -65,7 +65,22 @@
     width: 60vw;
     height: 50vh;
     // width: 100%;
+    &,
+    &.displayMode *:not(button, image, li, input, label) {
+        background: none;
+        background-color: transparent;
+        box-shadow: none;
+        // pointer-events: none;
+    }
 }
+
+li {
+    .hover-controls {
+        display: flex;
+        justify-content: space-evenly;
+    }
+}
+
 .characterOptions,
 .addedToScene,
 .innerScenes {

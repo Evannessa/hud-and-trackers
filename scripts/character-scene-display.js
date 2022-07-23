@@ -18,10 +18,35 @@ Hooks.on("ready", () => {
     // console.log("Our tags", characterTags, processTagData());
     game.characterTags = processTagData();
 
-    game.innerSceneDisplayBar = new InnerSceneDisplayBar().render(true);
-    game.innerSceneDisplayConfig = new InnerSceneDisplayConfig();
+    // game.innerSceneDisplayBar = new InnerSceneDisplayBar().render(true);
+    if (game.user.isGM) {
+        game.innerSceneDisplayConfig = new InnerSceneDisplayConfig().render(true);
+    }
+    // game.innerSceneDisplayConfig.render(true);
 });
 
+Hooks.on("canvasReady", async (canvas) => {
+    // game.innerSceneDisplayConfig.data.temporaryCharacters = await HelperFunctions.getAllActorsInScene();
+    // game.innerSceneDisplayConfig.currentScene = canvas.scene;
+    if (game.innerSceneDisplayConfig) {
+        game.innerSceneDisplayConfig.render(true);
+    }
+});
+
+Hooks.once("init", () => {
+    loadTemplates([`modules/hud-and-trackers/templates/character-scene-display/actor-list-template.hbs`]);
+});
+Hooks.on("renderCharacterSceneDisplay", (app, html) => {
+    let windowApp = html.closest(".window-app");
+    $(windowApp).css({
+        height: "-moz-max-content",
+        height: "fit-content",
+        // width: "-moz-max-content",
+        // width: "fit-content",
+        width: "45vw",
+        // minWidth: "45vh",
+    });
+});
 /**
  * Take the data from the JSON file, and convert it into usable data
  * @returns processed array of objects
@@ -52,38 +77,13 @@ function processTagData() {
     });
 }
 
-Hooks.on("canvasReady", async (canvas) => {
-    // game.innerSceneDisplay.data.temporaryCharacters = await HelperFunctions.getAllActorsInScene();
-    // game.innerSceneDisplay.currentScene = canvas.scene;
-    if (game.innerSceneDisplayBar) {
-        game.innerSceneDisplayBar.render(true);
-    }
-    if (game.innerSceneDisplayConfig && game.innerSceneDisplayConfig.rendered === true) {
-        game.innerSceneDisplayConfig.render(true);
-    }
-});
-
-Hooks.once("init", () => {
-    loadTemplates([`modules/hud-and-trackers/templates/character-scene-display/actor-list-template.hbs`]);
-});
-Hooks.on("renderCharacterSceneDisplay", (app, html) => {
-    let windowApp = html.closest(".window-app");
-    $(windowApp).css({
-        height: "-moz-max-content",
-        height: "fit-content",
-        // width: "-moz-max-content",
-        // width: "fit-content",
-        width: "45vw",
-        // minWidth: "45vh",
-    });
-});
-
 class InnerSceneDisplayBar extends Application {
     constructor(data) {
         super();
+        console.log(data);
         this.setDisplayBarData();
         this.data = { ...data };
-        console.log("Rerendered");
+        console.log("WE RE-RENDERED");
     }
 
     async panToTile(tileData) {
@@ -184,6 +184,7 @@ class InnerSceneDisplayConfig extends Application {
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
         if (!sceneDisplayData || !sceneDisplayData.characters || !sceneDisplayData.innerScenes) {
             let data = {
+                mode: "edit",
                 characters: [],
                 innerScenes: [],
             };
@@ -195,18 +196,24 @@ class InnerSceneDisplayConfig extends Application {
     async setSceneDisplayData(data) {
         await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", data);
     }
-    async addInnerScene(scene) {
+
+    async replaceTileImage(tileData) {
+        //TODO: more cleanly integrate this with JTCS module
+        let displayTiles = await this.getSceneDisplayTiles();
+        // if (displayTiles && displayTiles.length > 0) {
+        //     displayTiles = displayTiles.filter((tileData) => !tileData.isBoundingTile);
+        // }
+        console.log(displayTiles);
+    }
+    async getSceneDisplayTiles() {
         let currentScene = game.scenes.viewed;
-        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
-        let innerScenes = sceneDisplayData.innerScenes;
-        innerScenes.push(scene);
-        sceneDisplayData = { ...sceneDisplayData, innerScenes: [...innerScenes] };
-        await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", sceneDisplayData);
-        this.render(true);
+        let flaggedTiles = (await currentScene.getFlag("journal-to-canvas-slideshow", "slideshowTiles")) || [];
+        return flaggedTiles?.filter((tileData) => !tileData.isBoundingTile);
     }
 
-    async updateInnerScene(scene) {}
-
+    async panToTile(tileData) {
+        game.canvas.animatePan({ x: tileData.x, y: tileData.y, scale: 1.0 });
+    }
     async addCharacter(character) {
         let currentScene = game.scenes.viewed;
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
@@ -231,6 +238,7 @@ class InnerSceneDisplayConfig extends Application {
     }
 
     async updateSceneDisplayData(newData, type, isUpdate) {
+        console.log(newData, type);
         let currentScene = game.scenes.viewed;
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
         if (type === "character") {
@@ -250,6 +258,8 @@ class InnerSceneDisplayConfig extends Application {
                 });
             }
             sceneDisplayData = { ...sceneDisplayData, innerScenes: [...innerScenes] };
+        } else if (type === "mode") {
+            sceneDisplayData = { ...sceneDisplayData, mode: newData };
         }
         await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", sceneDisplayData);
         this.render(true);
@@ -297,10 +307,14 @@ class InnerSceneDisplayConfig extends Application {
         let action = clickedElement.data().action;
         let name = clickedElement.data().name;
         let imagePath = clickedElement.data().imagePath;
+        let value = event.currentTarget.value;
         let data = { name: name, imagePath: imagePath };
         switch (action) {
             case "select":
                 this.updateSceneDisplayData(data, "character", false);
+                break;
+            case "toggleMode":
+                this.updateSceneDisplayData(value, "mode", false);
                 break;
             case "remove":
                 this.removeCharacter(data);
@@ -319,6 +333,21 @@ class InnerSceneDisplayConfig extends Application {
                     },
                 }).render(true);
                 break;
+            case "pan":
+                let ourName = event.currentTarget.dataset.name;
+                let imagePath = event.currentTarget.dataset.img;
+                let firstName = ourName.split(" ").shift();
+                let width = event.currentTarget.querySelector("img").dataset.width;
+                let height = event.currentTarget.querySelector("img").dataset.height;
+                let tile = game.scenes.viewed.tiles.contents.find((tile) => {
+                    return tile.data.img.toLowerCase().includes(firstName.toLowerCase());
+                });
+                if (tile) {
+                    this.panToTile(tile.data);
+                } else {
+                    this.replaceTileImage();
+                }
+                break;
         }
     }
 
@@ -331,11 +360,14 @@ class InnerSceneDisplayConfig extends Application {
     }
 
     handleChange() {
-        $("select, input[type='checkbox'], input[type='text']").on("change", async function (event) {
-            let { value, name, checked, type } = event.currentTarget;
-            game.innerSceneDisplay.data[name] = type == "checkbox" ? checked : value;
-            game.innerSceneDisplay.render(true, { renderData: game.innerSceneDisplay.data });
-        });
+        $("select, input[type='checkbox'], input[type='radio'], input[type='text']").on(
+            "change",
+            async function (event) {
+                let { value, name, checked, type } = event.currentTarget;
+                game.innerSceneDisplayConfig.data[name] = type == "checkbox" ? checked : value;
+                game.innerSceneDisplayConfig.render(true, { renderData: game.innerSceneDisplayConfig.data });
+            }
+        );
     }
 
     async _updateObject(event, formData) {}
