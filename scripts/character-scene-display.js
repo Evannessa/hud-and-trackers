@@ -22,6 +22,10 @@ Hooks.on("ready", () => {
     game.innerSceneDisplayConfig = new InnerSceneDisplayConfig();
 });
 
+/**
+ * Take the data from the JSON file, and convert it into usable data
+ * @returns processed array of objects
+ */
 function processTagData() {
     let individuals = categoryIndividualTags.relativePaths;
     return clanTags.map((tagObject) => {
@@ -78,6 +82,8 @@ class InnerSceneDisplayBar extends Application {
     constructor(data) {
         super();
         this.setDisplayBarData();
+        this.data = { ...data };
+        console.log("Rerendered");
     }
 
     async panToTile(tileData) {
@@ -85,8 +91,25 @@ class InnerSceneDisplayBar extends Application {
     }
     async setDisplayBarData() {
         let currentScene = game.scenes.viewed;
+        console.log("Our current scene is", currentScene);
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
         this.data = { ...sceneDisplayData };
+    }
+
+    async createNewTile(imagePath, width, height) {
+        let scene = game.scenes.viewed;
+        let sceneSizeData = scene.dimensions;
+        width = parseInt(width);
+        height = parseInt(height);
+        let sizeData = HelperFunctions.calculateAspectRatioFit(
+            width,
+            height,
+            sceneSizeData.width,
+            sceneSizeData.height
+        );
+        game.scenes.viewed.createEmbeddedDocuments("Tile", [
+            { img: imagePath, width: parseInt(sizeData.width), height: parseInt(sizeData.height) },
+        ]);
     }
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
@@ -101,7 +124,6 @@ class InnerSceneDisplayBar extends Application {
         if (!this.data) {
             await this.setDisplayBarData();
         }
-        console.log("Data is", this.data);
         return { ...this.data };
     }
 
@@ -129,9 +151,7 @@ class InnerSceneDisplayBar extends Application {
             if (tile) {
                 this.panToTile(tile.data);
             } else {
-                game.scenes.viewed.createEmbeddedDocuments("Tile", [
-                    { img: imagePath, width: parseInt(width) * 0.5, height: parseInt(height) * 0.5 },
-                ]);
+                this.createNewTile(imagePath, width, height);
             }
         });
     }
@@ -146,6 +166,7 @@ class InnerSceneDisplayConfig extends Application {
         super();
         this.getSceneDisplayData();
         this.data = { ...data };
+        // game.innerSceneDisplayBar.render(true);
     }
 
     static get defaultOptions() {
@@ -996,6 +1017,3 @@ async function openCharacterProfile(currentCharacter) {
     //  let currentCharacter = this.data.characters[id];
     game.fullCharacterProfile = new FullProfile(currentCharacter).render(true);
 }
-async function openCharacterSideTab() {}
-
-async function renderDisplayToggleButton() {}

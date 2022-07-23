@@ -1,5 +1,11 @@
 export const moduleName = "hud-and-trackers";
-
+export function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
+    var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
+    return {
+        width: srcWidth * ratio,
+        height: srcHeight * ratio,
+    };
+}
 export function selectMyCharacter() {
     let actor = getActorFromUser(game.user);
     let tokenDoc = getSceneTokenFromActor(actor);
