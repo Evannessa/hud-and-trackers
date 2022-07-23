@@ -36,17 +36,15 @@ Hooks.on("canvasReady", async (canvas) => {
 Hooks.once("init", () => {
     loadTemplates([`modules/hud-and-trackers/templates/character-scene-display/actor-list-template.hbs`]);
 });
-Hooks.on("renderCharacterSceneDisplay", (app, html) => {
+Hooks.on("renderInnerSceneDisplayConfig", (app, html) => {
     let windowApp = html.closest(".window-app");
     $(windowApp).css({
         height: "-moz-max-content",
         height: "fit-content",
-        // width: "-moz-max-content",
-        // width: "fit-content",
-        width: "45vw",
-        // minWidth: "45vh",
+        width: "fit-content",
     });
 });
+
 /**
  * Take the data from the JSON file, and convert it into usable data
  * @returns processed array of objects
@@ -77,86 +75,6 @@ function processTagData() {
     });
 }
 
-class InnerSceneDisplayBar extends Application {
-    constructor(data) {
-        super();
-        console.log(data);
-        this.setDisplayBarData();
-        this.data = { ...data };
-        console.log("WE RE-RENDERED");
-    }
-
-    async panToTile(tileData) {
-        game.canvas.animatePan({ x: tileData.x, y: tileData.y, scale: 1.0 });
-    }
-    async setDisplayBarData() {
-        let currentScene = game.scenes.viewed;
-        console.log("Our current scene is", currentScene);
-        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
-        this.data = { ...sceneDisplayData };
-    }
-
-    async createNewTile(imagePath, width, height) {
-        let scene = game.scenes.viewed;
-        let sceneSizeData = scene.dimensions;
-        width = parseInt(width);
-        height = parseInt(height);
-        let sizeData = HelperFunctions.calculateAspectRatioFit(
-            width,
-            height,
-            sceneSizeData.width,
-            sceneSizeData.height
-        );
-        game.scenes.viewed.createEmbeddedDocuments("Tile", [
-            { img: imagePath, width: parseInt(sizeData.width), height: parseInt(sizeData.height) },
-        ]);
-    }
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            popOut: true,
-            template: `/modules/hud-and-trackers/templates/inner-scene-display/scene-display-bar.hbs`,
-            id: "scene-display-bar",
-            title: "Scene Display Bar",
-            // resizable: true,
-        });
-    }
-    async getData() {
-        if (!this.data) {
-            await this.setDisplayBarData();
-        }
-        return { ...this.data };
-    }
-
-    async activateListeners(html) {
-        $("#scene-display-bar img").on("load", (event) => {
-            let img = event.currentTarget;
-            img.dataset.width = img.naturalWidth;
-            img.dataset.height = img.naturalHeight;
-        });
-        html[0].querySelector("button[data-action='config']").addEventListener("click", (event) => {
-            game.innerSceneDisplayConfig.render(true);
-        });
-        $("#scene-display-bar li[data-action='pan']").click((event) => {
-            let name = event.currentTarget.dataset.name;
-            let imagePath = event.currentTarget.dataset.img;
-            let firstName = name.split(" ").shift();
-            let width = event.currentTarget.querySelector("img").dataset.width;
-            let height = event.currentTarget.querySelector("img").dataset.height;
-            // if (!name.toLowerCase().includes(clanName.toLowerCase())) {
-            //     firstName = name.split(" ").pop();
-            // }
-            let tile = game.scenes.viewed.tiles.contents.find((tile) => {
-                return tile.data.img.toLowerCase().includes(firstName.toLowerCase());
-            });
-            if (tile) {
-                this.panToTile(tile.data);
-            } else {
-                this.createNewTile(imagePath, width, height);
-            }
-        });
-    }
-}
-
 /**
  * Will display scenes I don't want to make entire scenes for
  * Along with characters
@@ -166,6 +84,9 @@ class InnerSceneDisplayConfig extends Application {
         super();
         this.getSceneDisplayData();
         this.data = { ...data };
+        if (this.data.mode === "display") {
+            this.element.addClass("transparent");
+        }
         // game.innerSceneDisplayBar.render(true);
     }
 
@@ -197,14 +118,6 @@ class InnerSceneDisplayConfig extends Application {
         await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", data);
     }
 
-    async replaceTileImage(tileData) {
-        //TODO: more cleanly integrate this with JTCS module
-        let displayTiles = await this.getSceneDisplayTiles();
-        // if (displayTiles && displayTiles.length > 0) {
-        //     displayTiles = displayTiles.filter((tileData) => !tileData.isBoundingTile);
-        // }
-        console.log(displayTiles);
-    }
     async getSceneDisplayTiles() {
         let currentScene = game.scenes.viewed;
         let flaggedTiles = (await currentScene.getFlag("journal-to-canvas-slideshow", "slideshowTiles")) || [];
@@ -214,19 +127,7 @@ class InnerSceneDisplayConfig extends Application {
     async panToTile(tileData) {
         game.canvas.animatePan({ x: tileData.x, y: tileData.y, scale: 1.0 });
     }
-    async addCharacter(character) {
-        let currentScene = game.scenes.viewed;
-        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
-        let characters = sceneDisplayData.characters;
 
-        //make sure we don't already hve a character with this name before pushing
-        if (!characters.some((cha) => cha.name === character.name)) {
-            characters.push(character);
-            sceneDisplayData = { ...sceneDisplayData, characters: [...characters] };
-            await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", sceneDisplayData);
-            this.render(true);
-        }
-    }
     async removeCharacter(character) {
         let currentScene = game.scenes.viewed;
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
@@ -265,13 +166,28 @@ class InnerSceneDisplayConfig extends Application {
         this.render(true);
     }
 
+    setStyles(mode) {
+        switch (mode) {
+            case "display":
+                this.element.addClass("transparent");
+                break;
+            case "edit":
+                this.element.removeClass("transparent");
+                break;
+            default:
+                break;
+        }
+    }
+
     async getData() {
         // Send data to the template
         let currentScene = game.scenes.viewed;
+        let displayTiles = await this.getSceneDisplayTiles();
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
         if (!sceneDisplayData) {
             this.getSceneDisplayData();
         }
+        this.setStyles(sceneDisplayData.mode);
         let clans = game.characterTags.map((obj) => {
             return {
                 name: obj.tagName.split("/").pop(),
@@ -294,6 +210,7 @@ class InnerSceneDisplayConfig extends Application {
             clans: clans,
             clanSelect: this.data.clanSelect || "",
             options: options,
+            displayTiles: displayTiles,
         };
 
         return sceneDisplayData;
@@ -344,9 +261,16 @@ class InnerSceneDisplayConfig extends Application {
                 });
                 if (tile) {
                     this.panToTile(tile.data);
-                } else {
-                    this.replaceTileImage();
                 }
+
+                break;
+            case "switch":
+                let targetTileId = clickedElement.data().target;
+                let boundingTileID = clickedElement.data().frame;
+                let imageElement = event.currentTarget.closest(".character, .innerScene").querySelector("img");
+                console.log(imageElement);
+                displayImageInScene(imageElement, targetTileId, boundingTileID);
+                // this.replaceTileImage(targetTileId);
                 break;
         }
     }
@@ -372,680 +296,127 @@ class InnerSceneDisplayConfig extends Application {
 
     async _updateObject(event, formData) {}
 }
+//TODO: Refactor this to actually access this method from the JTCS module
+async function displayImageInScene(imageElement, selectedTileID, boundingTileID) {
+    let url = imageElement.getAttribute("src");
 
-/**
- * Create an object representing the data of a character
- * @param {*} name
- * @param {*} imgPath
- * @param {*} description
- * @param {*} linkedDocuments
- * @returns
- */
-function characterFactory(data = {}) {
-    //if data is empty, fill it with default data
-    if (Object.keys(data).length === 0) {
-        data = {
-            name: "Test Name",
-            char_full_body: "icons/svg/mystery-man.svg",
-            thumbnail_image: "icons/svg/mystery-man.svg",
-            description: "This is a test character",
-            tags: [],
-            relationships: [],
-            linkedDocuments: [],
-        };
-    }
-    let { name, char_full_body, thumbnail_image, description, linkedDocuments, relationships, tags } = data;
+    let displayTile = game.scenes.viewed.tiles.get(selectedTileID);
 
-    let id;
-    if (!data.id) {
-        id = HelperFunctions.idGenerator();
+    //get the tile data from the selected tile id;
+
+    let boundingTile = game.scenes.viewed.tiles.get(boundingTileID);
+
+    await updateTileInScene(displayTile, boundingTile, game.scenes.viewed, url);
+}
+
+async function updateTileInScene(displayTile, boundingTile, ourScene, url) {
+    //load the texture from the source
+    const tex = await loadTexture(url);
+    var imageUpdate;
+
+    if (!boundingTile) {
+        imageUpdate = await scaleToScene(displayTile, tex, url);
     } else {
-        id = data.id;
+        imageUpdate = await scaleToBoundingTile(displayTile, boundingTile, tex, url);
     }
 
-    return {
-        name,
-        id,
-        char_full_body,
-        thumbnail_image,
-        description,
-        linkedDocuments,
-        relationships,
-        tags,
+    const updated = await ourScene.updateEmbeddedDocuments("Tile", [imageUpdate]);
+}
+
+async function scaleToScene(displayTile, tex, url) {
+    let displayScene = game.scenes.viewed;
+    var dimensionObject = calculateAspectRatioFit(
+        tex.width,
+        tex.height,
+        displayScene.data.width,
+        displayScene.data.height
+    );
+    //scale down factor is how big the tile will be in the scene
+    //make this scale down factor configurable at some point
+    var scaleDownFactor = 200;
+    dimensionObject.width -= scaleDownFactor;
+    dimensionObject.height -= scaleDownFactor;
+    //half of the scene's width or height is the center -- we're subtracting by half of the image's width or height to account for the offset because it's measuring from top/left instead of center
+
+    //separate objects depending on the texture's dimensions --
+    //create an 'update' object for if the image is wide (width is bigger than height)
+    var wideImageUpdate = {
+        _id: displayTile.id,
+        width: dimensionObject.width,
+        height: dimensionObject.height,
+        img: url,
+        x: scaleDownFactor / 2,
+        y: displayScene.data.height / 2 - dimensionObject.height / 2,
     };
+    //create an 'update' object for if the image is tall (height is bigger than width)
+    var tallImageUpdate = {
+        _id: displayTile.id,
+        width: dimensionObject.width,
+        height: dimensionObject.height,
+        img: url, // tex.baseTexture.resource.url,
+        y: scaleDownFactor / 2,
+        x: displayScene.data.width / 2 - dimensionObject.width / 2,
+    };
+    //https://stackoverflow.com/questions/38675447/how-do-i-get-the-center-of-an-image-in-javascript
+    //^used the above StackOverflow post to help me figure that out
+
+    //Determine if the image or video is wide, tall, or same dimensions and update depending on that
+    let testArray = [tallImageUpdate, wideImageUpdate];
+
+    if (dimensionObject.height > dimensionObject.width) {
+        //if the height is longer than the width, use the tall image object
+        return tallImageUpdate;
+        // return await displayScene.updateEmbeddedDocuments("Tile", [tallImageUpdate]);
+    } else if (dimensionObject.width > dimensionObject.height) {
+        //if the width is longer than the height, use the wide image object
+        return wideImageUpdate;
+        // return await displayScene.updateEmbeddedDocuments("Tile", [wideImageUpdate]);
+    }
+
+    //if the image length and width are pretty much the same, just default to the wide image update object
+    return wideImageUpdate;
+    // return await displayScene.updateEmbeddedDocuments("Tile", [wideImageUpdate]);
 }
 
-/**
- * actor list for actors that already exist in game
- */
+async function scaleToBoundingTile(displayTile, boundingTile, tex, url) {
+    var dimensionObject = calculateAspectRatioFit(
+        tex.width,
+        tex.height,
+        boundingTile.data.width,
+        boundingTile.data.height
+    );
 
-export class FullProfile extends Application {
-    constructor(data = {}) {
-        super();
-        this.data = data;
-    }
-    async showCharacterList() {
-        let content = `<form>
-  <label for="output-actorKey" style="vertical-align: top; margin-right: 10px;">Table Name:</label>
-<br /><select name="output-actorKey" id="output-actorKey">
-		</form>`;
+    var imageUpdate = {
+        _id: displayTile.id,
+        width: dimensionObject.width,
+        height: dimensionObject.height,
+        img: url,
+        y: boundingTile.data.y,
+        x: boundingTile.data.x,
+    };
+    //Ensure image is centered to bounding tile (stops images hugging the top left corner of the bounding box).
+    var boundingMiddle = {
+        x: boundingTile.data.x + boundingTile.data.width / 2,
+        y: boundingTile.data.y + boundingTile.data.height / 2,
+    };
 
-        let characters = await game.settings.get("hud-and-trackers", "globalDisplayCharacters");
-        characters = Object.values(characters); //Array.from(characters);
-        console.log(characters);
+    var imageMiddle = {
+        x: imageUpdate.x + imageUpdate.width / 2,
+        y: imageUpdate.y + imageUpdate.height / 2,
+    };
 
-        characters.forEach((character) => {
-            content += `<option value='${character.id}' data-name='${character.name}'>${character.name}</option>`;
-        });
-        content += `</select>`;
-
-        content += `<input list="relationship_types" name="relationship_type" id="relationship_type">
-		<datalist id="relationship_types">
-		<option value="Grandparent">
-		<option value="Grandmother">
-		<option value="Grandfather">
-		<option value="Mother">
-		<option value="Father">
-		<option value="Parent">
-		<option value="Child">
-		<option value="Son">
-		<option value="Daughter">
-		<option value="Child">
-		<option value="Sibling">
-		<option value="Brother">
-		<option value="Sister">
-		<option value="Cousin">
-		<option value="Pibling (NB Aunt/Uncle)">
-		<option value="Uncle">
-		<option value="Aunt">
-		<option value="Nibling">
-		<option value="Niece">
-		<option value="Nephew">
-		<option value="Family Member">
-		<option value="Friend">
-		<option value="Partner">
-		<option value="Lover">
-		<option value="Spouse">
-		<option value="Mentor">
-		<option value="Rival">
-		</datalist>
-		`;
-
-        content += `</div><br/></form>`;
-
-        new Dialog({
-            title: `Select Character to add`,
-            content: content,
-            buttons: {
-                yes: {
-                    icon: "<i class='fas fa-check'></i>",
-                    label: "Add Relationship",
-                    callback: async (html) => {
-                        let actorKey = html.find("select[name='output-actorKey']").val();
-                        let type = html.find("input[name='relationship_type']").val();
-                        //grab the character, so we can store their thumbnail & stuff
-                        let newRelationshipData = {
-                            id: actorKey,
-                            type: type,
-                        };
-                        this.data.relationships = [...this.data.relationships, { id: actorKey, type: type }];
-
-                        await updateCharacter(this.data.id, this.data);
-
-                        //re-render the display
-                        game.characterSceneDisplay.render(true);
-                    },
-                },
-                no: {
-                    icon: "<i class='fas fa-times'></i>",
-                    label: "Cancel",
-                },
-            },
-            default: "yes",
-        }).render(true);
-    }
-
-    /**
-     *
-     * @param {String} id - the id of the character
-     * @param {String} type - the type of relationship
-     * @returns  - an object including the character's name and thumbnail image
-     */
-    async convertRelationshipData(id, type) {
-        let character = await getCharacter(id);
-        let returnData;
-        if (character) {
-            returnData = {
-                name: character.name,
-                type: type,
-                img: character.thumbnail_image,
-                id: id,
-            };
-        } else {
-            returnData = {};
-        }
-        return returnData;
-    }
-    async getData() {
-        let convertedRelationships = [];
-        for (let rel of this.data.relationships) {
-            convertedRelationships.push(await this.convertRelationshipData(rel.id, rel.type));
-        }
-
-        let convertedData = {
-            ...this.data,
-            relationships: convertedRelationships,
-            pathName: "andynia-alimoux",
-            imagePath: "/Idyllwild/Art/Characters/Alimoux/andynia.webp",
-        };
-        return convertedData;
-    }
-
-    async saveTags(tagInput) {
-        this.data.tags = [...this.data.tags, tagInput.value]; //set our data to include the new tags
-
-        await updateCharacter(this.data.id, this.data);
-        this.render(true);
-    }
-
-    async _handleButtonClick(event) {
-        let el = $(event.currentTarget);
-        let action = el.data().action;
-        switch (action) {
-            case "render-sheet":
-                let collectionName = el.data().collection;
-                let docId = el.data().id;
-                let doc = game[collectionName].get(docId);
-                if (doc.sheet && !doc.sheet.rendered) {
-                    doc.sheet.render(true);
-                }
-
-                break;
-            case "add-relationship":
-                //render a relationship, or open as side-tab
-                this.showCharacterList();
-                break;
-            case "show-relationship":
-                let id = el.data().id;
-                let character = await getCharacter(id);
-                await openCharacterProfile(character);
-                break;
-            case "save-tags":
-                //input text field should be previous element
-                let tagInput = el.prev()[0].querySelector("#tag-input");
-                //get the id of our character
-
-                this.data.tags = Array.from(new Set([...this.data.tags, tagInput.value])); //set our data to include the new tags
-
-                await addNewTag(tagInput.value);
-
-                await updateCharacter(this.data.id, this.data);
-                this.render(true);
-                break;
-        }
-    }
-
-    activateListeners(html) {
-        //remove app from "ui.windows" to not let it close with the escape key
-        delete ui.windows[this.appId];
-        super.activateListeners(html);
-        html.on("click", "[data-action]", this._handleButtonClick.bind(this));
-
-        $("#tag-input").keypress(async (e) => {
-            if (e.keyCode == 13) {
-                this.saveTags.bind(this);
-                await this.saveTags(e.currentTarget);
-            }
-        });
-    }
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            resizeable: true,
-            popOut: true,
-            template: `modules/hud-and-trackers/templates/character-scene-display/iframe-display.hbs`,
-            id: "character-full-profile",
-            title: "Character Profile",
-        });
-    }
-
-    async _updateObject(event, formData) {}
+    imageUpdate.x += boundingMiddle.x - imageMiddle.x;
+    imageUpdate.y += boundingMiddle.y - imageMiddle.y;
+    // var updateArray = [];
+    // updateArray.push(imageUpdate);
+    return imageUpdate;
 }
-export class CharacterProfileConfig extends FormApplication {
-    constructor(data = {}, edit = false) {
-        console.log("Our profile data is", data);
-        super(data);
-        this.data = { ...data };
-        if (Object.keys(data).length === 0) {
-            //if it's empty data we're starting with
-            //call characterFactory with no parameters, which will return
-            //default data
-            this.data = characterFactory();
-        }
-        this.edit = edit;
-    }
-    getData() {
-        //if character data was passed in, copy its data. Else, use default data
-        // let defaultData = { ...this.data };
-        return { ...this.data };
-    }
-
-    async _updateObject(event, formData) {
-        const characterData = {
-            ...formData,
-            tags: this.data.tags,
-            relationships: this.data.relationships,
-            linkedDocuments: this.data.linkedDocuments,
-            id: this.data.id,
-        };
-
-        //if we're creating a new character
-        if (!this.edit) {
-            let newCharacter;
-            newCharacter = characterFactory(characterData);
-            await addNewCharacter(newCharacter);
-        } else {
-            //else if  we're just editing the same character
-            await updateCharacter(characterData.id, characterData);
-        }
-        //re-render the display
-        game.characterSceneDisplay.render(true);
-    }
-
-    async _handleButtonClick(event) {
-        // console.log(this.element);
-        let clickedElement = $(event.target);
-        let action = clickedElement.data().action;
-        let img;
-        switch (action) {
-            case "submit":
-                break;
-            case "cancel":
-                event.preventDefault();
-                this.close();
-                break;
-            case "open-picker":
-                event.preventDefault();
-                event.stopPropagation();
-                let inputField = clickedElement.prev()[0];
-                let filepicker = new FilePicker({
-                    type: "image",
-                    current: img,
-                    field: inputField,
-                    callback: (path) => {
-                        img = path;
-                    },
-                }).render(true);
-                break;
-        }
-    }
-    activateListeners(html) {
-        // html.off("click", ["data-action"]);
-        html.on("click", ["data-action"], this._handleButtonClick.bind(this));
-
-        super.activateListeners(html);
-        let windowContent = html.closest(".window-content");
-    }
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            // classes: ["form"],
-            popOut: true,
-            // submitOnChange: false,
-            // closeOnSubmit: true,
-            template: "modules/hud-and-trackers/templates/character-scene-display/config-partial.hbs",
-            id: "character-profile-config",
-            title: "Character Profile Config",
-            // onSubmit: (e) => e.preventDefault(),
-        });
-    }
-}
-
-export class CharacterSceneDisplay extends Application {
-    constructor(data = {}) {
-        super();
-        this.data = data;
-        this.data.currentFilterTags = [];
-        this.data.currentSearch = "";
-        this.data.visible = false;
-    }
-
-    async showActorList() {
-        let content = `<form>
-  <label for="output-actorKey" style="vertical-align: top; margin-right: 10px;">Table Name:</label>
-<br /><select name="output-actorKey" id="output-actorKey">
-		</form>`;
-
-        const actors = Array.from(game.actors);
-
-        actors.forEach((actor) => {
-            content += `<option value='${actor.id}'>${actor.name}</option>`;
-        });
-        content += `</select>`;
-
-        content += `</div><br/></form>`;
-
-        new Dialog({
-            title: `Select Actor to add`,
-            content: content,
-            buttons: {
-                yes: {
-                    icon: "<i class='fas fa-check'></i>",
-                    label: "Add Actor",
-                    callback: async (html) => {
-                        let actorKey = html.find("select[name='output-actorKey']").val();
-                        let actor = game.actors.get(actorKey);
-                        let data = {
-                            name: actor.name,
-                            id: actor.id,
-                            char_full_body: actor.img,
-                            thumbnail_image: actor.thumbnail,
-                            description: "",
-                            relationships: [],
-                            linkedDocuments: [
-                                {
-                                    name: actor.name,
-                                    collectionName: actor.collectionName,
-                                    documentId: actor.id,
-                                },
-                            ],
-                            tags: {},
-                        };
-                        let newData = characterFactory(data);
-
-                        //add new character
-                        await addNewCharacter(newData);
-                        //re-render the display
-                        game.characterSceneDisplay.render(true);
-                    },
-                },
-                no: {
-                    icon: "<i class='fas fa-times'></i>",
-                    label: "Cancel",
-                },
-            },
-            default: "yes",
-        }).render(true);
-    }
-
-    /**
-     *
-     * @param {String} filterData - the string we want to filter by
-     * @param {string} selectorString - the selector we want to query of objects we want to be filtered
-     */
-    async filter(filterData, selectorString) {
-        //!NOTE: ()=>{} is different than function(). ()=>{} binds the 'this'
-        // https://stackoverflow.com/questions/45203479/jquery-with-arrow-function
-
-        if (typeof filterData !== "string" && Array.isArray(filterData) !== true) {
-            console.log("Error. Not array or string");
-            return;
-        }
-        if (typeof filterData === "string") {
-            filterData = filterData.split(" ");
-        }
-        let allElements = $(selectorString);
-        let matchElements = [];
-        let notMatched = [];
-
-        //go through all the elements
-
-        Array.from(allElements).forEach((element) => {
-            let matchFound = false;
-
-            //go through every filter item
-            filterData.every((filterItem) => {
-                if ($(element).text().toLowerCase().indexOf(filterItem) > -1) {
-                    matchFound = true;
-                }
-                if (matchFound) {
-                    //if we find an item, push it to the elements that match, then cancel out of this loop
-                    matchElements.push(element);
-                    return false; //cancel out of the "every" function loop
-                } else {
-                    return true; //keep going
-                }
-            });
-            //if there wasn't a match after checking each filter item
-            if (!matchFound) {
-                notMatched.push(element);
-            }
-        });
-        console.log("Our matches are", matchElements);
-
-        $(matchElements).toggle(true);
-        $(notMatched).toggle(false);
-    }
-    filterByScene(pcArray, activeOrViewed) {
-        let sceneActors;
-        if (activeOrViewed == "active") {
-            sceneActors = game.scenes.active.tokens.map((token) => token.actor);
-        } else if (activeOrViewed == "viewed") {
-            sceneActors = game.scenes.viewed.tokens.map((token) => token.actor);
-        } else {
-            sceneActors = this.getPCs();
-        }
-        sceneActors = [...new Set(sceneActors)];
-        return this.filterByFolder(sceneActors, "Main PCs");
-    }
-    filterBySearch() {
-        $("#search").on("keyup", async function () {
-            //save the current search data to our filters
-            game.characterSceneDisplay.data.currentSearch = $(this).val().toLowerCase();
-            await game.characterSceneDisplay.applyFilters();
-        });
-    }
-    /**
-     * if a tag is clicked, we want to filter all the objects by it
-     */
-    async filterByTag(tagValue) {
-        //we're going to filter by the tag
-        //update the current filter tags
-        this.data.currentFilterTags = Array.from(new Set([...this.data.currentFilterTags, tagValue]));
-        await this.applyFilters();
-        this.render(true); //Re-render here to apply new elements rather than just hide already-rendered ones
-    }
-    async applyFilters() {
-        if (this.data.currentSearch || this.data.currentFilterTags.length > 0) {
-            //if we have a current search or current tags
-            let searchStrings = this.data.currentSearch;
-            let filterData = [...searchStrings.split(" "), ...this.data.currentFilterTags];
-            await this.filter(filterData, ".character-list > li");
-        }
-    }
-
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            resizeable: true,
-            popOut: true,
-            template: `modules/hud-and-trackers/templates/character-scene-display/character-scene-display.hbs`,
-            id: "character-scene-display",
-            title: "Character Scene Display",
-        });
-    }
-
-    async getData() {
-        this.data.characters = await game.settings.get("hud-and-trackers", "globalDisplayCharacters");
-        return {
-            ...this.data,
-            characters: this.data.characters,
-        };
-    }
-
-    async _handleButtonClick(event) {
-        let el = $(event.currentTarget);
-        let action = el.data().action;
-        let id = el.data().id;
-        switch (action) {
-            case "add-actor":
-                this.showActorList();
-                break;
-            case "add-unlinked":
-                //add an unlinked character, for data without creating an actor
-                game.characterProfileConfig = new CharacterProfileConfig().render(true);
-            case "display-drawer":
-                let drawer = el.closest(".side-drawer");
-                if (!this.data.visible) {
-                    drawer.addClass("visible");
-                    this.data.visible = true;
-                } else {
-                    drawer.removeClass("visible");
-                    this.data.visible = false;
-                }
-                break;
-            case "show-profile":
-                //show profile
-                let currentCharacter = this.data.characters[id];
-                game.fullCharacterProfile = new FullProfile(currentCharacter).render(true);
-                break;
-            case "edit":
-                //edit
-                event.stopPropagation();
-                //get id from parent element if we're clicking on a child
-                if (!id) {
-                    id = el.closest("li").data().id;
-                }
-                if (id) {
-                    let currentCharacter = this.data.characters[id];
-                    game.characterProfileConfig = new CharacterProfileConfig(currentCharacter, true).render(true);
-                } else {
-                    console.log("No id!", id);
-                }
-                break;
-            case "delete":
-                if (!id) {
-                    id = el.closest("li").data().id;
-                }
-                event.stopPropagation();
-                if (id) {
-                    let currentCharacter = this.data.characters[id];
-                    game.characterProfileConfig = new CharacterProfileConfig(currentCharacter).render(true);
-                }
-                break;
-            case "filter-tag":
-                // event.stopPropagation();
-                this.filterByTag(el.text().toLowerCase().trim());
-                break;
-            case "remove-tag-filter":
-                this.removeTagFilter(el.text().toLowerCase().trim());
-                break;
-        }
-    }
-
-    /**
-     *
-     * @param {String} filterTagValue - value of tag we want to remove
-     */
-    removeTagFilter(filterTagValue) {
-        //remove this one from the currentFilterTags
-        this.data.currentFilterTags = this.data.currentFilterTags.filter(
-            (item) => item.toLowerCase().trim() !== filterTagValue
-        );
-        this.render(true);
-    }
-
-    activateListeners(html) {
-        //remove app from "ui.windows" to not let it close with the escape key
-        delete ui.windows[this.appId];
-        super.activateListeners(html);
-        html.on("click", "[data-action]", this._handleButtonClick.bind(this));
-        //if current search isn't an empty string
-
-        //apply filters active from previous render
-        this.applyFilters();
-
-        //this will filter upon keypresses in the search bar
-        this.filterBySearch();
-    }
-
-    debounce(func, timeout = 300) {
-        let timer;
-        return (...args) => {
-            clearTimeout(timer);
-            timer = setTimeout(() => {
-                func.apply(this, args);
-            }, timeout);
-        };
-    }
-
-    processChange() {
-        this.debounce(() => this.render(true));
-    }
-
-    filterByFolder(pcArray, folderName) {
-        return pcArray.filter((actor) => {
-            return game.folders.getName(folderName).content.includes(actor);
-        });
-    }
-
-    async _updateObject(event, formData) {}
-}
-
-/**
- * C - Create in Crud
- * @param {Object} newCharacterData - the data of a character we're going to add
- */
-async function addNewCharacter(newCharacterData) {
-    //get current characters from
-    let currentCharacters = await getAllCharacters();
-
-    await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
-        ...currentCharacters,
-        [newCharacterData.id]: { ...newCharacterData },
-    });
-}
-
-/**
- * R - Read - the R in Crud
- * @param {string} id  - the id of the character we're looking for
- * @returns object containing the character data
- */
-async function getCharacter(id) {
-    let allCharacters = await getAllCharacters();
-    let ourCharacter = allCharacters[id];
-    return ourCharacter;
-}
-
-async function getAllCharacters() {
-    let allCharacters = await game.settings.get("hud-and-trackers", "globalDisplayCharacters");
-    return allCharacters;
-}
-
-/**
- * U - Update - the U in CRUD
- * @param {String} id  - the id of the character to update
- * @param {Object} characterUpdateData - the data we're using to update the character
- */
-async function updateCharacter(id, characterUpdateData) {
-    let currentCharacters = await getAllCharacters();
-    await game.settings.set("hud-and-trackers", "globalDisplayCharacters", {
-        ...currentCharacters,
-        [id]: { ...characterUpdateData, tags: [...characterUpdateData.tags] },
-        // newCharacter,
-    });
-}
-
-/**
- *
- * @returns all tags saved in the game settings
- */
-async function getAllTags() {
-    let tags = await game.settings.get("hud-and-trackers", "displayTags");
-    return tags;
-}
-
-/**
- *
- * @param {string} tagName - the tag string value to be added
- */
-async function addNewTag(tagName) {
-    let tags = getAllTags();
-    let savedTags = new Set();
-    savedTags.add(tags);
-    savedTags.add(tagName);
-    await game.settings.set("hud-and-trackers", "displayTags", [...savedTags]);
-}
-async function deleteTags() {}
-
-async function openCharacterProfile(currentCharacter) {
-    //  let currentCharacter = this.data.characters[id];
-    game.fullCharacterProfile = new FullProfile(currentCharacter).render(true);
+// V Used snippet from the below stackOverflow answer to help me with proportionally resizing the images
+/*https://stackoverflow.com/questions/3971841/how-to-resize-images-proportionally-keeping-the-aspect-ratio*/
+function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
+    var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
+    return {
+        width: srcWidth * ratio,
+        height: srcHeight * ratio,
+    };
 }

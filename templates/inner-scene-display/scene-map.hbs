@@ -1,5 +1,6 @@
-<div class="sceneMap character-scene-display">
+<div class="sceneMap character-scene-display {{#if (eq mode "display")}}compact{{/if}}">
 	<fieldset class="button-group">
+	<legend>Toggle Display Mode</legend>
 		<input type="radio" name="mode" id="editMode" data-action="toggleMode" value="edit" {{#if (eq mode "edit")}}
 			checked	
 		{{/if}}>
@@ -16,15 +17,16 @@
 <ul class="character-group">
     {{#each characters as |character|}}
       <li
-        class="interactive"
-        {{!-- data-action="pan" --}}
+        class="interactive character"
+        data-action="pan"
         data-name="{{character.name}}"
         data-img="{{character.imagePath}}"
+		title="{{character.name}}"
       >
         <img src="{{character.imagePath}}" alt="" />
 		<ul class="hover-controls">
 			{{#each @root.displayTiles as |tileData|}}
-				<li><button data-action="pan" data-target="{{tileData.displayName}}">{{tileData.displayName}}</button></li>
+				<li><button data-action="switch" data-target="{{tileData.id}}" data-frame="{{tileData.linkedBoundingTile}}">{{tileData.displayName}}</button></li>
 			{{/each}}
 		</ul>
       </li>
@@ -33,12 +35,18 @@
   <ul class="scene-group">
     {{#each innerScenes as |scene|}}
       <li
-        class="interactive"
+        class="interactive innerScene"
         data-action="pan"
         data-name="{{scene.name}}"
         data-img="{{scene.imagePath}}"
+		title="{{scene.name}}"
       >
         <img src="{{scene.imagePath}}" alt="" />
+			<ul class="hover-controls">
+			{{#each @root.displayTiles as |tileData|}}
+				<li><button data-action="switch" data-target="{{tileData.id}}" data-frame="{{tileData.linkedBoundingTile}}">{{tileData.displayName}}</button></li>
+			{{/each}}
+		</ul>
       </li>
     {{/each}}
   </ul>
@@ -46,6 +54,7 @@
 {{else}}
 <section class="editModeWrapper">
 <section class="innerSceneWrapper">
+	<h3>Inner Scenes</h3>
 	<ul class="innerScenes">
 	{{#each innerScenes as |scene|}}
 	<li class="option rounded interactive">
@@ -60,7 +69,7 @@
 </ul>
 </section> 
 <section class="selectedCharactersWrapper">
-	<h2>Characters In Scene</h2>
+	<h3>Characters In Scene</h3>
 	  <ul class="addedToScene">
 		{{#each characters}}
 		<li class="option rounded interactive removable" data-action="remove" data-name="{{this.name}}" data-image-path="{{this.imagePath}}">
@@ -72,7 +81,8 @@
 </section>
 <hr>
 	<section class="characterOptionsWrapper">
-		<label for="clanSelect">Pick A Clan</label>
+		<h3>Character Options</h3>
+	<label for="clanSelect">Pick A Clan</label>
 		<select name="clanSelect" id="clanSelect">
 		   {{#each clans}}
 			 <option value="{{this.value}}" {{#if (eq @root.clanSelect this.value)}}
@@ -82,7 +92,6 @@
 			 </option>
 		   {{/each}}
 		 </select>
-		<h2>Options Characters</h2>
 		 <ul class="characterOptions">
 			{{#each options}}
 			<li class="option rounded interactive" data-action="select" data-name="{{this.name}}" data-image-path="{{this.imagePath}}">
