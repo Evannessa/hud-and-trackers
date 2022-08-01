@@ -43,9 +43,7 @@ export async function getGlobalClockDisplayData() {
     let clocksToDisplay = {
         sharedClocks: getSharedClocks(),
         myClocks: getClocksByUser(game.userId),
-        sceneClocks: HelperFunctions.convertArrayIntoObjectById(
-            getClocksLinkedToEntity(game.scenes.viewed.id)
-        ),
+        sceneClocks: HelperFunctions.convertArrayIntoObjectById(getClocksLinkedToEntity(game.scenes.viewed.id)),
     };
 
     //text to display in a tooltip to describe each category when hovered
@@ -68,10 +66,7 @@ export async function getGlobalClockDisplayData() {
     };
     //the individual categories in the "accordion" that will be expanded.
     // For saving which ones the user has expanded
-    let categoriesShown = await game.user.getFlag(
-        "hud-and-trackers",
-        "displayCategoriesShown"
-    );
+    let categoriesShown = await game.user.getFlag("hud-and-trackers", "displayCategoriesShown");
 
     //if the flag returns null, create it, and set it to these defaults
     if (!categoriesShown) {
@@ -80,11 +75,7 @@ export async function getGlobalClockDisplayData() {
             myClocks: false,
             sceneClocks: false,
         };
-        await game.user.setFlag(
-            "hud-and-trackers",
-            "displayCategoriesShown",
-            categoriesShown
-        );
+        await game.user.setFlag("hud-and-trackers", "displayCategoriesShown", categoriesShown);
     }
     let allData = {
         clocksToDisplay: clocksToDisplay,
@@ -242,9 +233,7 @@ export class Clock extends FormApplication {
         let entityType = element.dataset.type;
         let entityId = element.id;
         let ourEntity;
-        await HelperFunctions.getEntityById(entityType, entityId).then(
-            (value) => (ourEntity = value)
-        );
+        await HelperFunctions.getEntityById(entityType, entityId).then((value) => (ourEntity = value));
 
         if (event.altKey) {
             //if alt key is pressed, we're going to unlink the entity
@@ -412,9 +401,7 @@ export class Clock extends FormApplication {
                             icon: '<i class="fas fa-check"></i>',
                             label: "Change Color",
                             callback: (html) => {
-                                let newGradient = html
-                                    .find("input[name='gradient']:checked")
-                                    .val();
+                                let newGradient = html.find("input[name='gradient']:checked").val();
 
                                 this.data.gradient = newGradient;
                                 this.saveAndRenderApp();
@@ -613,7 +600,7 @@ export class Clock extends FormApplication {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["form", "clockHud"],
+            classes: ["form", "clockHud", "hud-and-trackers"],
             popOut: true,
             submitOnChange: true,
             closeOnSubmit: false,
@@ -642,9 +629,7 @@ export class Clock extends FormApplication {
     async linkEntity(data) {
         //set this as a flag on the entity
         let ourEntity;
-        await HelperFunctions.getEntityById(data.type, data.id).then(
-            (value) => (ourEntity = value)
-        );
+        await HelperFunctions.getEntityById(data.type, data.id).then((value) => (ourEntity = value));
 
         if (ourEntity) {
             //save the linked entity on our clock
@@ -703,8 +688,7 @@ async function showClockDrawer(app) {
     linkedClocks = HelperFunctions.convertArrayIntoObjectById(linkedClocks);
 
     // get the handlebars template
-    const template =
-        "modules/hud-and-trackers/templates/clock-partials/clock-display.hbs";
+    const template = "modules/hud-and-trackers/templates/clock-partials/clock-display.hbs";
 
     let data = {};
     for (let clockId in linkedClocks) {
@@ -742,22 +726,16 @@ async function showClockDrawer(app) {
 
     //get the app's element and append this
     app.element.append(drawerHtml);
-    let wrapString =
-        "<div class='clock-display app-child'><section class='clock-container'></section></div>";
+    let wrapString = "<div class='clock-display app-child'><section class='clock-container'></section></div>";
 
     //if the drawer was expanded, we want it to be expanded when we refresh too
     if (await entity.getFlag("hud-and-trackers", "clockDrawerExpanded")) {
-        wrapString =
-            "<div class='clock-display app-child expanded'><section class='clock-container'></section></div>";
+        wrapString = "<div class='clock-display app-child expanded'><section class='clock-container'></section></div>";
     }
     drawerHtml.wrapAll(wrapString);
 
     //must be put in the dom first
-    clockHelpers._activateListeners(
-        drawerHtml.closest(".app-child"),
-        allData.data,
-        entity
-    );
+    clockHelpers._activateListeners(drawerHtml.closest(".app-child"), allData.data, entity);
 }
 
 //check if the clock is already rendered
@@ -942,9 +920,7 @@ async function refreshClockDependentItems(clockId, clockData, isDeletion) {
         // and use that to pass to the reRenderLinkedEntity method
         if (entityData == null) {
             let trimmedId = entityId.replace("-=", "");
-            let entityWindow = Object.values(ui.windows).find((window) =>
-                window.id?.includes(trimmedId)
-            );
+            let entityWindow = Object.values(ui.windows).find((window) => window.id?.includes(trimmedId));
             let entityWindowId = entityWindow.id;
             let type;
             if (entityWindowId.includes("actor")) {
@@ -954,16 +930,12 @@ async function refreshClockDependentItems(clockId, clockData, isDeletion) {
             } else if (entityWindowId.includes("journalentry")) {
                 type = "JournalEntry";
             }
-            await HelperFunctions.getEntityById(type, trimmedId).then(
-                (value) => (entity = value)
-            );
+            await HelperFunctions.getEntityById(type, trimmedId).then((value) => (entity = value));
             if (entity?.sheet && entity.sheet.rendered) {
                 reRenderLinkedEntity(entity, clockId);
             }
         } else {
-            await HelperFunctions.getEntityById(entityData.entity, entityId).then(
-                (value) => (entity = value)
-            );
+            await HelperFunctions.getEntityById(entityData.entity, entityId).then((value) => (entity = value));
             if (entity?.sheet && entity.sheet.rendered) {
                 reRenderLinkedEntity(entity, clockId);
             }
@@ -1024,7 +996,7 @@ class SectionConfig extends FormApplication {
     }
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["form"],
+            classes: ["form", "hud-and-trackers"],
             popOut: true,
             submitOnChange: false,
             closeOnSubmit: true,

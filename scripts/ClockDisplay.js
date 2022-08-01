@@ -38,7 +38,7 @@ export class ClockDisplay extends Application {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["form"],
+            classes: ["form", "hud-and-trackers"],
             popOut: true,
             left: -380,
             template: `modules/hud-and-trackers/templates/clock-partials/clock-display.hbs`,
@@ -131,11 +131,7 @@ export class ClockDisplay extends Application {
                 //call the expandButtonClicked method
                 this.expandButtonClicked(el);
                 this.data.categoriesShown[name] = !this.data.categoriesShown[name];
-                await game.user.setFlag(
-                    "hud-and-trackers",
-                    "displayCategoriesShown",
-                    this.data.categoriesShown
-                );
+                await game.user.setFlag("hud-and-trackers", "displayCategoriesShown", this.data.categoriesShown);
                 break;
         }
     }
@@ -154,11 +150,7 @@ export class ClockDisplay extends Application {
      */
     async measureAccordionContents(index, element) {
         var contentWidth = $(element).find(".clockCategory__inner").outerWidth();
-        let cs = await game.user.getFlag(
-            "hud-and-trackers",
-            "displayCategoriesShown",
-            this.data.categoriesShown
-        );
+        let cs = await game.user.getFlag("hud-and-trackers", "displayCategoriesShown", this.data.categoriesShown);
         let elementName = $(element).data().name;
         let inner = $(element).find(".clockCategory__inner");
         let parent = $(element).closest(".app");
@@ -216,11 +208,7 @@ export class ClockDisplay extends Application {
         }
         //set the variable to equal whether it is checked or not
         //save that in the user's flags
-        await game.user.setFlag(
-            "hud-and-trackers",
-            "displayCategoriesShown",
-            this.data.categoriesShown
-        );
+        await game.user.setFlag("hud-and-trackers", "displayCategoriesShown", this.data.categoriesShown);
         this.render();
     }
 
@@ -279,9 +267,7 @@ export class ClockDisplay extends Application {
      * (the associated element will have a class of the same name)
      */
     async applyGradient(clockData, parentName) {
-        let clockWrapper = $(
-            `#clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockWrapper`
-        );
+        let clockWrapper = $(`#clock-display .${parentName} form[data-id='${clockData.ourId}'] .clockWrapper`);
         clockWrapper.addClass("clockWrapper__squares");
         //make the background wrapper's gradient look like the chosen one
         if (clockData.gradient.includes("gradient")) {

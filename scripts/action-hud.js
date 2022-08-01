@@ -8,6 +8,7 @@ export class ActionHud extends Application {
     /** @override */
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
+            classes: ["hud-and-trackers"],
             popOut: true,
             submitOnChange: false,
             closeOnSubmit: false,

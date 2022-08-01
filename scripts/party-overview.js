@@ -17,11 +17,7 @@ Hooks.on("updateActor", (actor, data, diff, actorId) => {
         //maybe specify to only re-render if
         if (data.data?.pools || data.data?.damage) {
             //only update if pools or damage track have changed
-            if (
-                game.user.isGM &&
-                game.partyOverview.rendered &&
-                game.partyOverview.dataFilter == "stats"
-            ) {
+            if (game.user.isGM && game.partyOverview.rendered && game.partyOverview.dataFilter == "stats") {
                 game.partyOverview.render();
             }
         }
@@ -30,11 +26,7 @@ Hooks.on("updateActor", (actor, data, diff, actorId) => {
 Hooks.on("createItem", (item, data, id) => {
     let match = /skills|items/g;
     if (item.parent.type == "PC") {
-        if (
-            game.user.isGM &&
-            game.partyOverview.rendered &&
-            game.partyOverview.dataFilter.match(match)
-        ) {
+        if (game.user.isGM && game.partyOverview.rendered && game.partyOverview.dataFilter.match(match)) {
             game.partyOverview.render();
         }
     }
@@ -43,11 +35,7 @@ Hooks.on("createItem", (item, data, id) => {
 Hooks.on("updateItem", (item, data, id) => {
     let match = /skills|items/g;
     if (item.parent.type == "PC") {
-        if (
-            game.user.isGM &&
-            game.partyOverview.rendered &&
-            game.partyOverview.dataFilter.match(match)
-        ) {
+        if (game.user.isGM && game.partyOverview.rendered && game.partyOverview.dataFilter.match(match)) {
             game.partyOverview.render();
         }
     }
@@ -94,7 +82,7 @@ export class PartyOverview extends FormApplication {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["form"],
+            classes: ["form", "hud-and-trackers"],
             popOut: true,
             minimizable: true,
             resizable: true,
@@ -173,12 +161,8 @@ export class PartyOverview extends FormApplication {
         $("#party-overview tr:not(.stats)").click((event) => {
             let row = event.currentTarget;
             row.classList.toggle("expanded");
-            this.data.expandedRows.skills = $(
-                "#party-overview tr.skills.expanded"
-            ).toArray();
-            this.data.expandedRows.items = $(
-                "#party-overview tr.items.expanded"
-            ).toArray();
+            this.data.expandedRows.skills = $("#party-overview tr.skills.expanded").toArray();
+            this.data.expandedRows.items = $("#party-overview tr.items.expanded").toArray();
             this.data.expandedRows.skills = this.data.expandedRows.skills
                 .filter((item) => {
                     item.classList.contains("expanded");

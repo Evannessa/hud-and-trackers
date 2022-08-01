@@ -172,9 +172,7 @@ function getAllCombatants() {
  * @returns int initiative - the rolled initiative + the actor's bonus
  */
 function getRolledInitiative(token) {
-    let initiativeBonus = parseInt(
-        token.actor.data.data.settings.initiative.initiativeBonus
-    );
+    let initiativeBonus = parseInt(token.actor.data.data.settings.initiative.initiativeBonus);
     let initiativeTotal;
     if (token.actor.type === "PC") {
         let r = new Roll("1d20").evaluate({ async: false }).total;
@@ -235,11 +233,9 @@ function getTokensWithDisposition(tokens, disposition) {
  * @returns an array of tokens without duplicates
  */
 function filterOutDuplicates(tokens) {
-    return Array.from(new Set(tokens.map((token) => token.actor.name))).map(
-        (actorName) => {
-            return tokens.find((token) => token.actor.name == actorName);
-        }
-    );
+    return Array.from(new Set(tokens.map((token) => token.actor.name))).map((actorName) => {
+        return tokens.find((token) => token.actor.name == actorName);
+    });
 }
 
 function groupCombatantsIntoPhases() {}
@@ -262,15 +258,11 @@ async function rollNonCombatInitiative(combat) {
 
     // this will make sure there are no duplicate tokens w/ the same actor,
     // which CAN be a problem if not players.
-    let npcTokens = tokens.filter(
-        (token) => token.actor.type == "NPC" || token.actor.type == "Companion"
-    );
+    let npcTokens = tokens.filter((token) => token.actor.type == "NPC" || token.actor.type == "Companion");
     let playerTokens = tokens.filter((token) => token.actor.type == "PC");
-    playerTokens = Array.from(new Set(tokens.map((token) => token.actor.name))).map(
-        (actorName) => {
-            return tokens.find((token) => token.actor.name == actorName);
-        }
-    );
+    playerTokens = Array.from(new Set(tokens.map((token) => token.actor.name))).map((actorName) => {
+        return tokens.find((token) => token.actor.name == actorName);
+    });
     tokens = [...playerTokens, ...npcTokens];
 
     for (let token of tokens) {
@@ -455,10 +447,7 @@ async function removeRepCombatant(combat, tokenData) {
 async function setRepTokenInitiative(combat) {
     //set initiative to preset initiative
     for (let combatant of combat.turns) {
-        await combat.setInitiative(
-            combatant.id,
-            phasesWithInitiative[combatant.data.name]
-        );
+        await combat.setInitiative(combatant.id, phasesWithInitiative[combatant.data.name]);
     }
 }
 
@@ -556,10 +545,7 @@ function createMarkerOnToken(token, hasActed) {
     }
 
     console.log("Pixi stuff:", token, token.icon);
-    token.marker = token.addChildAt(
-        new PIXI.Container(),
-        token.getChildIndex(token.icon)
-    );
+    token.marker = token.addChildAt(new PIXI.Container(), token.getChildIndex(token.icon));
     const sprite = PIXI.Sprite.from(texturePath);
     token.marker.addChild(sprite);
     sprite.zIndex = 2000;
@@ -749,9 +735,7 @@ export default class CombatHud extends Application {
         } else {
             //if we do have saved combat data
             //create a new activation object w/ this saved data of the map
-            this.data.activationObject = new ActivationObject(
-                this.data.activationObject.activationMap
-            );
+            this.data.activationObject = new ActivationObject(this.data.activationObject.activationMap);
             //make the combat whatever combat's currently saved by the game
             this.data.ourCombat = game.combat;
             this.data.alreadyRendered = false;
@@ -797,13 +781,9 @@ export default class CombatHud extends Application {
         console.log(allCombatantTokens);
 
         //NPCS, separated into phases by disposition
-        let npcs = getTokensOfType(allCombatantTokens, "NPC").concat(
-            getTokensOfType(allCombatantTokens, "Companion")
-        );
+        let npcs = getTokensOfType(allCombatantTokens, "NPC").concat(getTokensOfType(allCombatantTokens, "Companion"));
         let enemies = getTokensWithDisposition(npcs, -1);
-        let npcAllies = getTokensWithDisposition(npcs, 1).concat(
-            getTokensWithDisposition(npcs, 0)
-        );
+        let npcAllies = getTokensWithDisposition(npcs, 1).concat(getTokensWithDisposition(npcs, 0));
 
         //all of the PC tokens
         let players = getTokensOfType(allCombatantTokens, "PC");
@@ -894,10 +874,7 @@ export default class CombatHud extends Application {
 
     setInitialTokenAndScene(actor) {
         //initial tokens needs to be set to the initial token on this scene
-        this.data.initialTokens.set(
-            actor.id,
-            HelperFunctions.getSceneTokenFromActor(actor).id
-        );
+        this.data.initialTokens.set(actor.id, HelperFunctions.getSceneTokenFromActor(actor).id);
         //initial scenes needs to be set to the initial scene
         this.data.initialScenes.set(actor.id, game.scenes.viewed.id);
     }
@@ -941,9 +918,7 @@ export default class CombatHud extends Application {
         }
         //find element in hud, and add class to show it has acted
 
-        let element = game.combatHud.app.element[0].querySelector(
-            `[data-id='${elementId}']`
-        );
+        let element = game.combatHud.app.element[0].querySelector(`[data-id='${elementId}']`);
         if (hasActed) {
             $(element).addClass("activated");
         } else {
@@ -957,9 +932,7 @@ export default class CombatHud extends Application {
     }
     //each time an actor is clicked on, check if it's the last. IF so, re-render the thing.
     async checkIfAllHaveActed(elementId) {
-        let element = game.combatHud.app.element[0].querySelector(
-            `[data-id='${elementId}']`
-        );
+        let element = game.combatHud.app.element[0].querySelector(`[data-id='${elementId}']`);
         let phaseName = element.dataset.phase;
         let map = game.combatHud.app.data.activationObject.getSpecificMap(phaseName);
         //go through the map, find which items are false.
@@ -994,6 +967,7 @@ export default class CombatHud extends Application {
     /** @override */
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
+            classes: ["hud-and-trackers"],
             popOut: true,
             submitOnChange: false,
             closeOnSubmit: false,
@@ -1011,16 +985,12 @@ export default class CombatHud extends Application {
     getData() {
         //convert our activationMap ids to tokens
 
-        let tokenMap = Object.values(this.data.activationObject.activationMap).map(
-            (obj) => {
-                return convertToArrayOfActors(Object.keys(obj));
-            }
-        );
-        let inSceneMap = Object.values(this.data.activationObject.activationMap).map(
-            (obj) => {
-                return checkInScene(Object.keys(obj));
-            }
-        );
+        let tokenMap = Object.values(this.data.activationObject.activationMap).map((obj) => {
+            return convertToArrayOfActors(Object.keys(obj));
+        });
+        let inSceneMap = Object.values(this.data.activationObject.activationMap).map((obj) => {
+            return checkInScene(Object.keys(obj));
+        });
         // let allCombatActors = tokenMap.flat();
         // console.log("Combat actors are", allCombatActors);
         // for (let actor of allCombatActors) {
@@ -1078,11 +1048,7 @@ export default class CombatHud extends Application {
             case "endCombat":
                 await this.data.ourCombat.endCombat();
                 this.unhighlightAll(game.canvas.tokens.placeables);
-                await game.settings.set(
-                    "hud-and-trackers",
-                    "savedCombat",
-                    this.initializeDefaultData()
-                );
+                await game.settings.set("hud-and-trackers", "savedCombat", this.initializeDefaultData());
                 game.combatHud.app.render(game.combatHud.app.position);
                 break;
             case "startCombat":
@@ -1135,25 +1101,17 @@ export default class CombatHud extends Application {
                     if (!combatantNames.includes(phase)) {
                         //so the combatant wants token data
                         //so we want to get the representative actor associated with this phase
-                        let actor = game.folders
-                            .getName("RepTokens")
-                            .content.find((actor) => actor.name === phase);
+                        let actor = game.folders.getName("RepTokens").content.find((actor) => actor.name === phase);
                         //push it to an array of token data
                         tokenData.push(actor.data.token);
                     }
                 }
                 //add all the token data to the combat
                 if (tokenData.length > 0) {
-                    let combatants = await addRepCombatant(
-                        this.data.ourCombat,
-                        tokenData
-                    );
+                    let combatants = await addRepCombatant(this.data.ourCombat, tokenData);
                     //set their initiative
                     for (let combatant of combatants) {
-                        this.data.ourCombat.setInitiative(
-                            combatant.id,
-                            phasesWithInitiative[combatant.data.name]
-                        );
+                        this.data.ourCombat.setInitiative(combatant.id, phasesWithInitiative[combatant.data.name]);
                     }
                     this.render(true);
                 }
@@ -1244,22 +1202,12 @@ export default class CombatHud extends Application {
                         if (!game.user.isGM) {
                             //set the token as has acted (must be done through socket request)
                             if (!event.altKey) {
-                                socket.executeAsGM(
-                                    "requestSetTokenHasActed",
-                                    elementId,
-                                    game.userId,
-                                    true
-                                );
+                                socket.executeAsGM("requestSetTokenHasActed", elementId, game.userId, true);
                                 socket.executeAsGM("requestIfAllHaveActed", elementId);
                             } else {
                                 //if we're holding down alt, we want to undo setting the token
                                 //as has acted
-                                socket.executeAsGM(
-                                    "requestSetTokenHasActed",
-                                    elementId,
-                                    game.userId,
-                                    false
-                                );
+                                socket.executeAsGM("requestSetTokenHasActed", elementId, game.userId, false);
                             }
                             //if we're the GM
                         } else {
@@ -1294,9 +1242,7 @@ export default class CombatHud extends Application {
                         }
                     }
                 });
-                let map = this.data.activationObject.getSpecificMap(
-                    combatantDiv.dataset.phase
-                );
+                let map = this.data.activationObject.getSpecificMap(combatantDiv.dataset.phase);
                 for (let id in map) {
                     if (combatantDiv.dataset.id == id) {
                         if (map[id] == true) {

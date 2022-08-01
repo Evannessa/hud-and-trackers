@@ -41,11 +41,16 @@ button i {
     transition: transform 100ms ease-out, opacity 100ms ease-out;
 }
 
+.fit-content-width {
+    width: fit-content;
+}
+
 .interactive {
     cursor: pointer;
 }
 .bg-none {
     background: none;
+    background-color: transparent;
 }
 
 .bg-neutral-base {

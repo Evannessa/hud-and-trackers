@@ -18,7 +18,7 @@ export class ClockViewer extends FormApplication {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["form"],
+            classes: ["form", "hud-and-trackers"],
             popOut: true,
             submitOnChange: false,
             closeOnSubmit: false,

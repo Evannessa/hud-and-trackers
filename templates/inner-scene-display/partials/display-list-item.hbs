@@ -1,0 +1,25 @@
+<li
+    class="{{this.type}} | interactive bg-none shadow-none hover-grow"
+    data-type="{{this.type}}"
+    data-action="pan"
+    data-name="{{this.name}}"
+    data-img="{{this.imagePath}}"
+    title="{{this.name}}"
+>
+    <img src="{{this.imagePath}}" alt="" />
+    {{#if @root.isGM}}
+
+        <ul class="hover-controls">
+            {{#each @root.displayTiles as |tileData|}}
+                <li><button
+                        class="interactive bg-neutral-darkest hover-bg-primary"
+                        data-action="switch"
+                        data-target="{{tileData.id}}"
+                        data-frame="{{tileData.linkedBoundingTile}}"
+                        title="Display {{character.name}} on Tile {{tileData.displayName}}"
+                    >{{tileData.displayName}}</button></li>
+            {{/each}}
+        </ul>
+
+    {{/if}}
+</li>

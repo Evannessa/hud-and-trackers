@@ -24,9 +24,7 @@ async function setUserRollMode(rollMode) {
 }
 Hooks.on("renderSidebarTab", (app, html) => {
     if (app.options.id == "chat") {
-        let button = $(
-            "<button style='margin-bottom: 10px'>Ambient Roll</button>"
-        );
+        let button = $("<button style='margin-bottom: 10px'>Ambient Roll</button>");
         button.click((event) => {
             game.ambientRollPrompt = new PromptAmbientRoll().render(true);
         });
@@ -78,7 +76,7 @@ class PromptAmbientRoll extends FormApplication {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["form"],
+            classes: ["form", "hud-and-trackers"],
             popOut: true,
             template: `modules/hud-and-trackers/templates/dice-pool/ambient-prompt.hbs`,
             id: "ambient-prompt",
@@ -166,7 +164,7 @@ export class AmbientDicePool extends FormApplication {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["form"],
+            classes: ["form", "hud-and-trackers"],
             popOut: true,
             template: `modules/hud-and-trackers/templates/dice-pool/dice-pool.hbs`,
             id: "ambient-dice-pool",
@@ -182,44 +180,40 @@ export class AmbientDicePool extends FormApplication {
     }
 
     handleBoonBaneButtons(which) {
-        $(`#ambient-dice-pool .${which}Div button[data-number]`).mousedown(
-            (event) => {
-                event.preventDefault();
-                let button = event.currentTarget;
-                let changeBy = 1;
-                if (event.which === 3) {
-                    //right mouse button subtract instead
-                    changeBy = -1;
-                }
-                //add the new number that's going to show for the boon and bane number
-                let newNumber = this.data[`${which}s`][button.name];
-                newNumber += changeBy;
-
-                //make sure it doesn't go less than 0
-                if (newNumber <= 0) {
-                    newNumber = 0;
-                }
-
-                //add the new number that's going to show above the boon and bane category
-                this.data[`${which}s`][button.name] = newNumber;
-
-                //make sure it doesn't go less than zero
-                this.data[`${which}Number`] += changeBy;
-                if (this.data[`${which}Number`] <= 1) {
-                    this.data[`${which}Number`] = 1;
-                }
-
-                button.dataset.number = newNumber.toString();
-                this.render();
+        $(`#ambient-dice-pool .${which}Div button[data-number]`).mousedown((event) => {
+            event.preventDefault();
+            let button = event.currentTarget;
+            let changeBy = 1;
+            if (event.which === 3) {
+                //right mouse button subtract instead
+                changeBy = -1;
             }
-        );
+            //add the new number that's going to show for the boon and bane number
+            let newNumber = this.data[`${which}s`][button.name];
+            newNumber += changeBy;
+
+            //make sure it doesn't go less than 0
+            if (newNumber <= 0) {
+                newNumber = 0;
+            }
+
+            //add the new number that's going to show above the boon and bane category
+            this.data[`${which}s`][button.name] = newNumber;
+
+            //make sure it doesn't go less than zero
+            this.data[`${which}Number`] += changeBy;
+            if (this.data[`${which}Number`] <= 1) {
+                this.data[`${which}Number`] = 1;
+            }
+
+            button.dataset.number = newNumber.toString();
+            this.render();
+        });
     }
     handleBoonBaneNumbers(which) {
         for (let b in this.data[`${which}s`]) {
             let number = this.data[`${which}s`][b];
-            let button = $(
-                `#ambient-dice-pool .${which}Div button[name='${b}']`
-            );
+            let button = $(`#ambient-dice-pool .${which}Div button[name='${b}']`);
             button.data("number", number);
             if (number > 0) {
                 button.append(`<div class="displayNumber">${number}</div>`);
@@ -264,18 +258,14 @@ export class AmbientDicePool extends FormApplication {
         ambientRoll.terms.forEach((term) => {
             console.log(term);
             if (term.number) {
-                boonBaneResultString +=
-                    "<span class='boonBane'>" + term.number + "</span>";
+                boonBaneResultString += "<span class='boonBane'>" + term.number + "</span>";
                 // for (let o of term.results) {
                 //     boonBaneResultString +=
                 //         "<span class='boonBane'>" + o.result + "</span>";
                 // }
             }
             if (term.operator) {
-                boonBaneResultString +=
-                    "</span> " +
-                    term.operator +
-                    " <span class='baneSpan'>Banes: ";
+                boonBaneResultString += "</span> " + term.operator + " <span class='baneSpan'>Banes: ";
             }
         });
         boonBaneResultString += "</span>";

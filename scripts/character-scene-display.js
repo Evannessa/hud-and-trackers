@@ -100,7 +100,7 @@ class InnerSceneDisplayConfig extends Application {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["transparent"],
+            classes: ["transparent", "hud-and-trackers"],
             popOut: true,
             template: `/modules/hud-and-trackers/templates/inner-scene-display/scene-map.hbs`,
             id: "inner-scene-display",
@@ -170,9 +170,6 @@ class InnerSceneDisplayConfig extends Application {
                 let index = innerScenesArray.indexOf(foundSceneData);
                 let updatedData = { ...foundSceneData, ...newData };
                 innerScenesArray.splice(index, 1, updatedData);
-                // innerScenesArray.map((sceneData) => {
-                //     return sceneData.id === newData.id ? newData : sceneData;
-                // });
             }
             sceneDisplayData = { ...sceneDisplayData, innerScenes: [...innerScenesArray] };
         } else if (type === "mode") {
@@ -228,6 +225,7 @@ class InnerSceneDisplayConfig extends Application {
             options: options,
             displayTiles: displayTiles,
             isGM: game.user.isGM,
+            basePath: basePath,
         };
 
         return sceneDisplayData;

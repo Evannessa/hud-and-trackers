@@ -9,7 +9,7 @@ class ClockApplication extends FormApplication {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["form"],
+            classes: ["form", "hud-and-trackers"],
             popOut: true,
             template: `myFormApplication.html`,
             id: "my-form-application",

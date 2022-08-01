@@ -1,0 +1,26 @@
+<li
+    class="{{this.type}} option interactive | bg-neutral-darkest {{this.hoverClass}} rounded"
+    data-action="{{this.action}}"
+    data-id="{{this.id}}"
+    data-name="{{this.name}}"
+    data-image-path="{{this.imagePath}}"
+    style="--innerSceneBackground: url('/{{this.imagePath}}')"
+>
+    {{#unless (eq this.type "innerScene")}}
+        <img src="{{this.imagePath}}" alt="{{this.name}}" srcset="" />
+    {{/unless}}
+    {{#if this.includeInput}}
+        <input
+            class="bg-none"
+            type="text"
+            data-id="{{this.id}}"
+            name="{{this.name}}"
+            value="{{this.name}}"
+            data-type="{{this.type}}"
+        />
+    {{else}}
+        <p>
+            {{this.name}}
+        </p>
+    {{/if}}
+</li>

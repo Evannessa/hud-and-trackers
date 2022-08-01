@@ -1359,12 +1359,19 @@ button i {
   transition: transform 100ms ease-out, opacity 100ms ease-out;
 }
 
+.fit-content-width {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
 .interactive {
   cursor: pointer;
 }
 
 .bg-none {
   background: none;
+  background-color: transparent;
 }
 
 .bg-neutral-base {
@@ -1382,32 +1389,32 @@ button i {
 .hover-grow {
   transition: transform 150ms ease-in;
 }
-.hover-grow:hover {
+.hover-grow:hover, .hud-and-trackers button.hover-grow:focus {
   transform: scale(1.2);
 }
 
 .hover-bg-primary {
   transition: background-color 150ms ease-in;
 }
-.hover-bg-primary:hover {
+.hover-bg-primary:hover, .hud-and-trackers button.hover-bg-primary:focus {
   background-color: var(--color-secondary-base);
 }
 
 .hover-bg-secondary {
   transition: background-color 150ms ease-in;
 }
-.hover-bg-secondary:hover {
+.hover-bg-secondary:hover, .hud-and-trackers button.hover-bg-secondary:focus {
   background-color: var(--color-secondary-base);
 }
 
 .hover-bg-removable {
   transition: background-color 150ms ease-in;
 }
-.hover-bg-removable:hover {
+.hover-bg-removable:hover, .hud-and-trackers button.hover-bg-removable:focus {
   background-color: var(--color-danger-base);
 }
 
-.hover-bg-none:hover {
+.hover-bg-none:hover, .hud-and-trackers button.hover-bg-none:focus {
   background: none;
   background-color: transparent;
 }
@@ -1566,7 +1573,7 @@ button i {
   border: 1px solid white;
   border-color: var(--color-primary-base);
 }
-.ghost:hover {
+.ghost:hover, .hud-and-trackers button.ghost:focus {
   border-color: var(--color-secondary-base);
   color: var(--color-secondary-base);
 }
@@ -1577,7 +1584,7 @@ button i {
   color: white;
   transition: border-color 100ms ease-in, background-color 100ms ease-in;
 }
-.filled:hover {
+.filled:hover, .hud-and-trackers button.filled:focus {
   background-color: var(--color-secondary-base);
   border-color: var(--color-secondary-base);
 }
@@ -1596,7 +1603,7 @@ button i {
   opacity: 0;
   transition: opacity 100ms ease-in;
 }
-.remove-on-click:hover:before {
+.remove-on-click:hover:before, .hud-and-trackers button.remove-on-click:focus:before {
   opacity: 100%;
 }
 
@@ -1652,7 +1659,7 @@ button i {
   opacity: 0%;
   transition: opacity 100ms ease-out;
 }
-.hover-shadow:hover:before {
+.hover-shadow:hover:before, .hud-and-trackers button.hover-shadow:focus:before {
   opacity: 100%;
 }
 
@@ -1685,7 +1692,7 @@ button i {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-.file-input-wrapper input {
+.file-input-wrapper input, .file-input-wrapper .hud-and-trackers button:focus, .hud-and-trackers .file-input-wrapper button:focus {
   flex: 1 0 auto;
   max-width: 60%;
   height: 100%;
@@ -1723,7 +1730,7 @@ button i {
   border-radius: 10px;
   background: none;
 }
-#tracker-app .btn:hover {
+#tracker-app .btn:hover, #tracker-app .hud-and-trackers button.btn:focus, .hud-and-trackers #tracker-app button.btn:focus {
   cursor: pointer;
 }
 #tracker-app .addItem {
@@ -1768,7 +1775,7 @@ button i {
   background-color: #09F !important;
   z-index: 3;
 }
-#tracker-app .container .draggableItem.delete-mode:hover {
+#tracker-app .container .draggableItem.delete-mode:hover, #tracker-app .container .hud-and-trackers button.draggableItem.delete-mode:focus, .hud-and-trackers #tracker-app .container button.draggableItem.delete-mode:focus {
   background-color: red;
 }
 #tracker-app .container .draggableItem .itemLabel {
@@ -1786,7 +1793,7 @@ button i {
   justify-content: flex-start;
   margin: auto 0;
 }
-#tracker-app .container .draggableWaypoint.delete-mode .handle:hover {
+#tracker-app .container .draggableWaypoint.delete-mode .handle:hover, #tracker-app .container .draggableWaypoint.delete-mode .hud-and-trackers button.handle:focus, .hud-and-trackers #tracker-app .container .draggableWaypoint.delete-mode button.handle:focus {
   background-color: red;
   opacity: 50%;
 }
@@ -1876,7 +1883,7 @@ button i {
   border-bottom: 2px hidden white;
   transition: background-color 100ms linear, border-style 100ms linear;
 }
-#tokenHud .button-wrapper button:hover {
+#tokenHud .button-wrapper button:hover, #tokenHud .button-wrapper .hud-and-trackers button:focus, .hud-and-trackers #tokenHud .button-wrapper button:focus {
   background-color: var(--tui-black4L);
 }
 #tokenHud .button-wrapper button.active.showAttacks {
@@ -1952,7 +1959,7 @@ button i {
 #tokenHud .hud-item-wrapper .pinnedDiv .hud-item .hud-item__damage {
   color: #ffbdad !important;
 }
-#tokenHud .hud-item-wrapper .pinnedDiv .hud-item:hover {
+#tokenHud .hud-item-wrapper .pinnedDiv .hud-item:hover, #tokenHud .hud-item-wrapper .pinnedDiv .hud-and-trackers button.hud-item:focus, .hud-and-trackers #tokenHud .hud-item-wrapper .pinnedDiv button.hud-item:focus {
   background: #6589a5;
   cursor: pointer;
 }
@@ -1985,7 +1992,7 @@ button i {
 #tokenHud .hud-item-wrapper .hud-item.pinned .hud-item__damage {
   color: #ffbdad !important;
 }
-#tokenHud .hud-item-wrapper .hud-item.pinned:hover {
+#tokenHud .hud-item-wrapper .hud-item.pinned:hover, #tokenHud .hud-item-wrapper .hud-and-trackers button.hud-item.pinned:focus, .hud-and-trackers #tokenHud .hud-item-wrapper button.hud-item.pinned:focus {
   background: #6589a5;
   cursor: pointer;
 }
@@ -2013,11 +2020,11 @@ button i {
 #tokenHud .hud-item-wrapper .hud-item:active {
   background: #424e57;
 }
-#tokenHud .hud-item-wrapper .hud-item:hover {
+#tokenHud .hud-item-wrapper .hud-item:hover, #tokenHud .hud-item-wrapper .hud-and-trackers button.hud-item:focus, .hud-and-trackers #tokenHud .hud-item-wrapper button.hud-item:focus {
   background: #424e57;
   cursor: pointer;
 }
-#tokenHud .hud-item-wrapper .hud-item:hover .hud-item__description {
+#tokenHud .hud-item-wrapper .hud-item:hover .hud-item__description, #tokenHud .hud-item-wrapper .hud-and-trackers button.hud-item:focus .hud-item__description, .hud-and-trackers #tokenHud .hud-item-wrapper button.hud-item:focus .hud-item__description {
   display: block;
 }
 
@@ -2050,7 +2057,7 @@ button i {
   margin-left: 2rem;
   gap: 1.5rem;
 }
-#hud-button-config .form-group.checkbox-or-radio-wrapper input {
+#hud-button-config .form-group.checkbox-or-radio-wrapper input, #hud-button-config .form-group.checkbox-or-radio-wrapper .hud-and-trackers button:focus, .hud-and-trackers #hud-button-config .form-group.checkbox-or-radio-wrapper button:focus {
   flex: unset;
   flex-grow: 0;
 }
@@ -2061,23 +2068,33 @@ button i {
   flex-direction: row;
 }
 #hud-button-config .form-group select,
-#hud-button-config .form-group input {
+#hud-button-config .form-group input,
+#hud-button-config .form-group .hud-and-trackers button:focus,
+.hud-and-trackers #hud-button-config .form-group button:focus {
   flex: 2;
 }
 #hud-button-config .form-group select:disabled,
-#hud-button-config .form-group input:disabled {
+#hud-button-config .form-group input:disabled,
+#hud-button-config .form-group .hud-and-trackers button:disabled:focus,
+.hud-and-trackers #hud-button-config .form-group button:disabled:focus {
   opacity: 30%;
 }
 #hud-button-config .form-group select:disabled:hover,
-#hud-button-config .form-group input:disabled:hover {
+#hud-button-config .form-group input:disabled:hover,
+#hud-button-config .form-group .hud-and-trackers button:disabled:focus,
+.hud-and-trackers #hud-button-config .form-group button:disabled:focus {
   cursor: not-allowed;
 }
 #hud-button-config .form-group select:disabled ~ label,
-#hud-button-config .form-group input:disabled ~ label {
+#hud-button-config .form-group input:disabled ~ label,
+#hud-button-config .form-group .hud-and-trackers button:disabled:focus ~ label,
+.hud-and-trackers #hud-button-config .form-group button:disabled:focus ~ label {
   opacity: 30%;
 }
-#hud-button-config .chip input[type=radio],
-#hud-button-config .chip input[type=checkbox] {
+#hud-button-config .chip input[type=radio], #hud-button-config .chip .hud-and-trackers button[type=radio]:focus, .hud-and-trackers #hud-button-config .chip button[type=radio]:focus,
+#hud-button-config .chip input[type=checkbox],
+#hud-button-config .chip .hud-and-trackers button[type=checkbox]:focus,
+.hud-and-trackers #hud-button-config .chip button[type=checkbox]:focus {
   display: none;
   position: absolute;
   overflow: hidden;
@@ -2088,8 +2105,10 @@ button i {
   padding: 0;
   border: 0;
 }
-#hud-button-config .chip input[type=radio] ~ label,
-#hud-button-config .chip input[type=checkbox] ~ label {
+#hud-button-config .chip input[type=radio] ~ label, #hud-button-config .chip .hud-and-trackers button[type=radio]:focus ~ label, .hud-and-trackers #hud-button-config .chip button[type=radio]:focus ~ label,
+#hud-button-config .chip input[type=checkbox] ~ label,
+#hud-button-config .chip .hud-and-trackers button[type=checkbox]:focus ~ label,
+.hud-and-trackers #hud-button-config .chip button[type=checkbox]:focus ~ label {
   /* background-color: transparent; */
   border: 1px solid cornflowerblue !important;
   /* color: cornflowerblue; */
@@ -2103,12 +2122,16 @@ button i {
   align-items: center;
   gap: 0.45rem;
 }
-#hud-button-config .chip input[type=radio] ~ label:hover,
-#hud-button-config .chip input[type=checkbox] ~ label:hover {
+#hud-button-config .chip input[type=radio] ~ label:hover, #hud-button-config .chip .hud-and-trackers button[type=radio]:focus ~ label:hover, .hud-and-trackers #hud-button-config .chip button[type=radio]:focus ~ label:hover,
+#hud-button-config .chip input[type=checkbox] ~ label:hover,
+#hud-button-config .chip .hud-and-trackers button[type=checkbox]:focus ~ label:hover,
+.hud-and-trackers #hud-button-config .chip button[type=checkbox]:focus ~ label:hover {
   cursor: pointer;
 }
-#hud-button-config .chip input[type=radio]:checked ~ label,
-#hud-button-config .chip input[type=checkbox]:checked ~ label {
+#hud-button-config .chip input[type=radio]:checked ~ label, #hud-button-config .chip .hud-and-trackers button[type=radio]:checked:focus ~ label, .hud-and-trackers #hud-button-config .chip button[type=radio]:checked:focus ~ label,
+#hud-button-config .chip input[type=checkbox]:checked ~ label,
+#hud-button-config .chip .hud-and-trackers button[type=checkbox]:checked:focus ~ label,
+.hud-and-trackers #hud-button-config .chip button[type=checkbox]:checked:focus ~ label {
   background-color: cornflowerblue;
   color: white;
   font-weight: bold;
@@ -2177,10 +2200,10 @@ button i {
   transition: background-color 150ms;
   padding: 0.5rem 0.75rem;
 }
-#helperHud .hoverBar:hover {
+#helperHud .hoverBar:hover, #helperHud .hud-and-trackers button.hoverBar:focus, .hud-and-trackers #helperHud button.hoverBar:focus {
   color: var(--accent-300);
 }
-#helperHud .hoverBar:hover img {
+#helperHud .hoverBar:hover img, #helperHud .hud-and-trackers button.hoverBar:focus img, .hud-and-trackers #helperHud button.hoverBar:focus img {
   filter: brightness(1.2);
 }
 #helperHud .button-group {
@@ -2268,7 +2291,7 @@ button i {
   transition-delay: 50ms;
   transition: transform 170ms ease-in;
 }
-#helperHud .utility button:hover {
+#helperHud .utility button:hover, #helperHud .utility .hud-and-trackers button:focus, .hud-and-trackers #helperHud .utility button:focus {
   color: white;
   background-color: rgba(112, 112, 112, 0.4784313725);
   border-top: 1px solid rgba(255, 255, 255, 0.198);
@@ -2276,18 +2299,18 @@ button i {
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
 @supports ((-webkit-backdrop-filter: blur(2px)) or (backdrop-filter: blur(2px))) or (-webkit-backdrop-filter: blur(2px)) {
-  #helperHud .utility button:hover {
+  #helperHud .utility button:hover, #helperHud .utility .hud-and-trackers button:focus, .hud-and-trackers #helperHud .utility button:focus {
     background-color: rgba(112, 112, 112, 0.2666666667);
     -webkit-backdrop-filter: blur(2px);
             backdrop-filter: blur(2px);
   }
 }
 @supports not ((-webkit-backdrop-filter: blur(2px)) or (backdrop-filter: blur(2px))) {
-  #helperHud .utility button:hover {
+  #helperHud .utility button:hover, #helperHud .utility .hud-and-trackers button:focus, .hud-and-trackers #helperHud .utility button:focus {
     background-color: rgba(112, 112, 112, 0.4784313725);
   }
 }
-#helperHud .utility button:hover img {
+#helperHud .utility button:hover img, #helperHud .utility .hud-and-trackers button:focus img, .hud-and-trackers #helperHud .utility button:focus img {
   transform: scale(1.2);
 }
 
@@ -2336,7 +2359,7 @@ button i {
   height: 2rem;
   background-color: var(--color-primary-base);
 }
-#combatHud .addCombatant:hover {
+#combatHud .addCombatant:hover, #combatHud .hud-and-trackers button.addCombatant:focus, .hud-and-trackers #combatHud button.addCombatant:focus {
   background-color: var(--color-primary-400);
 }
 #combatHud .removeCombatant {
@@ -2347,7 +2370,7 @@ button i {
   height: 2rem;
   background-color: #CC3333;
 }
-#combatHud .removeCombatant:hover {
+#combatHud .removeCombatant:hover, #combatHud .hud-and-trackers button.removeCombatant:focus, .hud-and-trackers #combatHud button.removeCombatant:focus {
   background-color: #cc5c5c;
 }
 #combatHud .combat-controls {
@@ -2364,7 +2387,7 @@ button i {
   height: fit-content;
   padding: 0.25rem 0.5rem;
 }
-#combatHud .combat-controls .button:hover {
+#combatHud .combat-controls .button:hover, #combatHud .combat-controls .hud-and-trackers button.button:focus, .hud-and-trackers #combatHud .combat-controls button.button:focus {
   background-color: var(--color-primary-base);
 }
 #combatHud .combat-controls .turnButton {
@@ -2404,7 +2427,7 @@ button i {
 #combatHud .phaseName.fastPlayers {
   color: hsl(16deg, 100%, 76%);
 }
-#combatHud:hover .tooltip {
+#combatHud:hover .tooltip, .hud-and-trackers button#combatHud:focus .tooltip {
   opacity: 100%;
 }
 #combatHud h1,
@@ -2421,7 +2444,7 @@ button i {
   transition-property: background-color;
   transition-duration: 0.3s;
 }
-#combatHud .window-content:hover {
+#combatHud .window-content:hover, #combatHud .hud-and-trackers button.window-content:focus, .hud-and-trackers #combatHud button.window-content:focus {
   background-color: rgba(22, 26, 29, 0.8549019608);
 }
 #combatHud .combatant-wrapper {
@@ -2544,7 +2567,7 @@ button i {
   background-color: transparent;
   transition: color 100ms linear, background-color 100ms linear;
 }
-#combatHud .combatant-wrapper .combatant-div .not-in-scene__message .btn__wrapper .goToPreviousScene:hover {
+#combatHud .combatant-wrapper .combatant-div .not-in-scene__message .btn__wrapper .goToPreviousScene:hover, #combatHud .combatant-wrapper .combatant-div .not-in-scene__message .btn__wrapper .hud-and-trackers button.goToPreviousScene:focus, .hud-and-trackers #combatHud .combatant-wrapper .combatant-div .not-in-scene__message .btn__wrapper button.goToPreviousScene:focus {
   border-color: var(--color-primary-300);
   background-color: var(--color-primary-300);
   color: white;
@@ -2575,14 +2598,14 @@ button i {
   transition: opacity 100ms linear;
   pointer-events: none;
 }
-#combatHud .combatant-wrapper .combatant-div:hover {
+#combatHud .combatant-wrapper .combatant-div:hover, #combatHud .combatant-wrapper .hud-and-trackers button.combatant-div:focus, .hud-and-trackers #combatHud .combatant-wrapper button.combatant-div:focus {
   cursor: pointer;
   color: white;
 }
-#combatHud .combatant-wrapper .combatant-div:hover:after {
+#combatHud .combatant-wrapper .combatant-div:hover:after, #combatHud .combatant-wrapper .hud-and-trackers button.combatant-div:focus:after, .hud-and-trackers #combatHud .combatant-wrapper button.combatant-div:focus:after {
   opacity: 0.5;
 }
-#combatHud .combatant-wrapper .combatant-div:hover .not-in-scene__message {
+#combatHud .combatant-wrapper .combatant-div:hover .not-in-scene__message, #combatHud .combatant-wrapper .hud-and-trackers button.combatant-div:focus .not-in-scene__message, .hud-and-trackers #combatHud .combatant-wrapper button.combatant-div:focus .not-in-scene__message {
   display: block;
 }
 
@@ -2901,12 +2924,12 @@ button i {
   right: 0;
   transition: height 200ms ease-out;
 }
-#custom_playerlist .window-content .content .current-character .otherCharacters:hover {
+#custom_playerlist .window-content .content .current-character .otherCharacters:hover, #custom_playerlist .window-content .content .current-character .hud-and-trackers button.otherCharacters:focus, .hud-and-trackers #custom_playerlist .window-content .content .current-character button.otherCharacters:focus {
   overflow: visible;
   height: 100%;
   transition-delay: 100ms;
 }
-#custom_playerlist .window-content .content .current-character .otherCharacters:hover .secondary-character:not(:first-child) {
+#custom_playerlist .window-content .content .current-character .otherCharacters:hover .secondary-character:not(:first-child), #custom_playerlist .window-content .content .current-character .hud-and-trackers button.otherCharacters:focus .secondary-character:not(:first-child), .hud-and-trackers #custom_playerlist .window-content .content .current-character button.otherCharacters:focus .secondary-character:not(:first-child) {
   transform: scale(1);
   transition: transform 100 ease-out;
   transition-delay: none;
@@ -2928,7 +2951,7 @@ button i {
   transition: transform 100ms ease-in;
   transition-delay: 100ms;
 }
-#custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character:hover {
+#custom_playerlist .window-content .content .current-character .otherCharacters .secondary-character:hover, #custom_playerlist .window-content .content .current-character .otherCharacters .hud-and-trackers button.secondary-character:focus, .hud-and-trackers #custom_playerlist .window-content .content .current-character .otherCharacters button.secondary-character:focus {
   border-color: var(--color-accent-400);
 }
 #custom_playerlist .window-content .content .other-users {
@@ -2994,10 +3017,10 @@ button i {
   height: 2rem;
   align-self: flex-start;
 }
-#custom_playerlist .window-content .content .other-users .active-user:hover {
+#custom_playerlist .window-content .content .other-users .active-user:hover, #custom_playerlist .window-content .content .other-users .hud-and-trackers button.active-user:focus, .hud-and-trackers #custom_playerlist .window-content .content .other-users button.active-user:focus {
   cursor: pointer;
 }
-#custom_playerlist .window-content .content .other-users .active-user:hover .user-detail {
+#custom_playerlist .window-content .content .other-users .active-user:hover .user-detail, #custom_playerlist .window-content .content .other-users .hud-and-trackers button.active-user:focus .user-detail, .hud-and-trackers #custom_playerlist .window-content .content .other-users button.active-user:focus .user-detail {
   transform: scaleX(1);
   opacity: 1;
 }
@@ -3060,10 +3083,10 @@ button i {
   transition: color 120ms linear, filter 120ms linear;
   z-index: 13;
 }
-#custom_playerlist .window-content .utility-buttons button:hover {
+#custom_playerlist .window-content .utility-buttons button:hover, #custom_playerlist .window-content .utility-buttons .hud-and-trackers button:focus, .hud-and-trackers #custom_playerlist .window-content .utility-buttons button:focus {
   color: var(--royal-blue-light);
 }
-#custom_playerlist .window-content .utility-buttons button:hover i {
+#custom_playerlist .window-content .utility-buttons button:hover i, #custom_playerlist .window-content .utility-buttons .hud-and-trackers button:focus i, .hud-and-trackers #custom_playerlist .window-content .utility-buttons button:focus i {
   filter: drop-shadow(0 0 5px var(--neon-blue));
 }
 #custom_playerlist .window-content .utility-buttons button.toggled {
@@ -3106,7 +3129,7 @@ button i {
 .showTooltip {
   overflow: visible;
 }
-.showTooltip:hover {
+.showTooltip:hover, .hud-and-trackers button.showTooltip:focus {
   color: pink;
 }
 
@@ -3194,6 +3217,220 @@ button i {
   color: var(--royal-blue-light);
 }
 
+.hud-and-trackers {
+  /* --- Range Input --- */
+  /* -------------- */
+  /* ------------------- */
+}
+.hud-and-trackers body,
+.hud-and-trackers .directory .action-buttons button {
+  font-family: "roboto";
+}
+.hud-and-trackers ::-moz-selection {
+  background-color: var(--palette-light, var(--tui-selection));
+  color: var(--color-neutral-base);
+}
+.hud-and-trackers ::selection {
+  background-color: var(--palette-light, var(--tui-selection));
+  color: var(--color-neutral-base);
+}
+.hud-and-trackers ::-webkit-scrollbar-track {
+  box-shadow: none;
+  background: var(--palette-dialog-background-light, var(--tui-black2L));
+}
+.hud-and-trackers ::-webkit-scrollbar-thumb {
+  border: none;
+  background: var(--palette-dialog-darker, var(--tui-black4));
+}
+.hud-and-trackers h1,
+.hud-and-trackers h2 {
+  font-weight: 900;
+  border: none;
+}
+.hud-and-trackers input[type=text]:focus, .hud-and-trackers button[type=text]:focus,
+.hud-and-trackers input[type=number]:focus,
+.hud-and-trackers button[type=number]:focus,
+.hud-and-trackers input[type=password]:focus,
+.hud-and-trackers button[type=password]:focus,
+.hud-and-trackers input[type=date]:focus,
+.hud-and-trackers button[type=date]:focus,
+.hud-and-trackers input[type=time]:focus,
+.hud-and-trackers button[type=time]:focus {
+  box-shadow: var(--tui-shadow);
+}
+.hud-and-trackers input, .hud-and-trackers button:focus,
+.hud-and-trackers select,
+.hud-and-trackers button {
+  transition: all 0.15s ease-in-out;
+}
+.hud-and-trackers .filepicker .display-modes a {
+  background: unset !important;
+  background: var(--palette-dialog-dark, var(--tui-black4L)) !important;
+  border: unset !important;
+}
+.hud-and-trackers .filepicker .display-modes a.active {
+  background: unset !important;
+  background: var(--palette-dialog-dark, var(--tui-black4L)) !important;
+  border: unset !important;
+}
+.hud-and-trackers input[type=text], .hud-and-trackers button[type=text]:focus,
+.hud-and-trackers input[type=number],
+.hud-and-trackers button[type=number]:focus,
+.hud-and-trackers input[type=password],
+.hud-and-trackers button[type=password]:focus,
+.hud-and-trackers input[type=date],
+.hud-and-trackers button[type=date]:focus,
+.hud-and-trackers input[type=time],
+.hud-and-trackers button[type=time]:focus,
+.hud-and-trackers select,
+.hud-and-trackers select option {
+  color: var(--palette-dialog-background-contrast-text, var(--tui-white1));
+  background-color: var(--palette-dialog-darker, var(--tui-black4));
+  border: none;
+}
+.hud-and-trackers input:hover, .hud-and-trackers input:focus, .hud-and-trackers button:focus,
+.hud-and-trackers textarea:hover,
+.hud-and-trackers textarea:focus {
+  background: var(--palette-primary-light, var(--tui-black3L));
+  box-shadow: var(--tui-shadow);
+}
+.hud-and-trackers select:hover,
+.hud-and-trackers select:focus {
+  background: var(--palette-primary-light, var(--tui-black3L));
+  box-shadow: none;
+}
+.hud-and-trackers input[type=checkbox]:hover, .hud-and-trackers input[type=checkbox]:focus, .hud-and-trackers button[type=checkbox]:focus,
+.hud-and-trackers input[type=radio]:hover,
+.hud-and-trackers input[type=radio]:focus,
+.hud-and-trackers button[type=radio]:focus,
+.hud-and-trackers input[type=range]:hover,
+.hud-and-trackers input[type=range]:focus,
+.hud-and-trackers button[type=range]:focus {
+  box-shadow: none;
+  background: transparent;
+}
+.hud-and-trackers button {
+  color: var(--palette-dialog-background-contrast-text, var(--tui-white1));
+  background-color: var(--palette-primary, var(--tui-black3));
+  border: none;
+  font-family: "roboto";
+  font-weight: 500;
+}
+.hud-and-trackers button:hover, .hud-and-trackers button:focus {
+  background: var(--palette-primary-light, var(--tui-black3L));
+  box-shadow: none;
+}
+.hud-and-trackers button:focus {
+  background: var(--palette-primary, var(--tui-black3));
+}
+.hud-and-trackers input::-moz-placeholder, .hud-and-trackers button:focus::-moz-placeholder {
+  color: var(--palette-app-background-contrast-text, var(--tui-white3));
+}
+.hud-and-trackers input:-ms-input-placeholder, .hud-and-trackers button:focus:-ms-input-placeholder {
+  color: var(--palette-app-background-contrast-text, var(--tui-white3));
+}
+.hud-and-trackers input::placeholder, .hud-and-trackers button:focus::placeholder {
+  color: var(--palette-app-background-contrast-text, var(--tui-white3));
+}
+.hud-and-trackers .form-group input:not([type=checkbox]), .hud-and-trackers .form-group button:not([type=checkbox]):focus,
+.hud-and-trackers .form-group select {
+  border: none;
+  padding: 5px 10px;
+  font-size: 0.813rem;
+}
+.hud-and-trackers .form-group input[type=range], .hud-and-trackers .form-group button[type=range]:focus {
+  padding: 0;
+}
+.hud-and-trackers .form-group input[type=radio], .hud-and-trackers .form-group button[type=radio]:focus {
+  height: auto;
+  padding: 0;
+}
+.hud-and-trackers .form-group input[type=color], .hud-and-trackers .form-group button[type=color]:focus {
+  padding: 0 2px;
+  height: revert;
+}
+.hud-and-trackers input[type=color][data-edit][data-edit], .hud-and-trackers button[type=color][data-edit][data-edit]:focus {
+  border: none;
+  background: var(--palette-primary, var(--tui-black3));
+  border-radius: 3px;
+}
+.hud-and-trackers input[type=range]::-webkit-slider-thumb, .hud-and-trackers button[type=range]:focus::-webkit-slider-thumb {
+  border: 1px solid #000000;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: var(--palette-dialog-background-contrast-text, var(--tui-white1));
+  cursor: pointer;
+  margin-top: -5.5px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+.hud-and-trackers input[type=range]::-webkit-slider-runnable-track, .hud-and-trackers button[type=range]:focus::-webkit-slider-runnable-track {
+  cursor: pointer;
+  background: var(--palette-primary, var(--tui-black3));
+  box-shadow: none;
+  height: 8px;
+  border-radius: 4px;
+}
+.hud-and-trackers input[type=range]:focus::-webkit-slider-runnable-track, .hud-and-trackers button[type=range]:focus::-webkit-slider-runnable-track {
+  background: var(--palette-primary, var(--tui-black3));
+}
+.hud-and-trackers input[type=range] + .range-value, .hud-and-trackers button[type=range]:focus + .range-value {
+  background: var(--palette-primary, var(--tui-black3));
+  border: none;
+  border-radius: 3px;
+  padding: 5px;
+}
+.hud-and-trackers hr {
+  border: none;
+  border-bottom: 1px solid var(--palette-dialog-darker, var(--tui-black4));
+}
+.hud-and-trackers img {
+  border: none;
+  border-radius: 0;
+}
+.hud-and-trackers a:hover {
+  text-shadow: 0 0 8px var(--primary-accent);
+}
+.hud-and-trackers label.checkbox:hover {
+  cursor: pointer;
+}
+.hud-and-trackers a.entity-link,
+.hud-and-trackers a.inline-roll,
+.hud-and-trackers a.gmroll.inline-roll {
+  background: var(--raisin-black);
+  border: none;
+  color: var(--palette-primary, var(--tui-accent1));
+  display: inline-flex;
+  transition: all 0.1s ease-in-out;
+}
+.hud-and-trackers a.entity-link i,
+.hud-and-trackers a.inline-roll i,
+.hud-and-trackers a.gmroll.inline-roll i {
+  color: var(--palette-primary, var(--tui-accent1));
+  font-size: 75%;
+  align-self: center;
+  display: inline-block;
+  margin-right: 3px;
+  transition: all 0.1s ease-in-out;
+}
+.hud-and-trackers a.entity-link:hover,
+.hud-and-trackers a.inline-roll:hover,
+.hud-and-trackers a.gmroll.inline-roll:hover {
+  color: var(--palette-primary-light, var(--tui-accent1L));
+  text-shadow: none;
+}
+.hud-and-trackers a.entity-link:hover i,
+.hud-and-trackers a.inline-roll:hover i,
+.hud-and-trackers a.gmroll.inline-roll:hover i {
+  color: var(--palette-primary-light, var(--tui-accent1L));
+}
+.hud-and-trackers table tr:nth-child(even) {
+  background: var(--color-neutral-base) L;
+}
+.hud-and-trackers body canvas {
+  border: none;
+}
+
 .theatre-narrator-content {
   overflow-x: hidden !important;
 }
@@ -3270,7 +3507,7 @@ button i {
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 }
-.button-group input[type=radio] {
+.button-group input[type=radio], .button-group .hud-and-trackers button[type=radio]:focus, .hud-and-trackers .button-group button[type=radio]:focus {
   transform: scale(0);
   position: absolute;
   overflow: hidden;
@@ -3281,7 +3518,7 @@ button i {
   padding: 0;
   border: 0;
 }
-.button-group input[type=radio] + label {
+.button-group input[type=radio] + label, .button-group .hud-and-trackers button[type=radio]:focus + label, .hud-and-trackers .button-group button[type=radio]:focus + label {
   background-color: var(--clr-purple-base);
   padding: 0.25rem 0.5rem;
   --hover-color: var(--clr-purple-light);
@@ -3298,18 +3535,18 @@ button i {
   transition: background-color 150ms ease-out;
   background-color: var(--clr-purple-base);
 }
-.button-group input[type=radio] + label:hover {
+.button-group input[type=radio] + label:hover, .button-group .hud-and-trackers button[type=radio]:focus + label:hover, .hud-and-trackers .button-group button[type=radio]:focus + label:hover {
   cursor: pointer;
   background-color: var(--hover-color);
   color: #212121;
 }
-.button-group input[type=radio]:checked + label {
+.button-group input[type=radio]:checked + label, .button-group .hud-and-trackers button[type=radio]:checked:focus + label, .hud-and-trackers .button-group button[type=radio]:checked:focus + label {
   --hover-color: var(--clr-purple-base);
   color: white;
   transition: background-color 250ms ease-out;
   box-shadow: var(--box-shadow);
 }
-.button-group input[type=radio]:checked + label:not(:hover) {
+.button-group input[type=radio]:checked + label:not(:hover), .button-group .hud-and-trackers button[type=radio]:checked:focus + label:not(:hover), .hud-and-trackers .button-group button[type=radio]:checked:focus + label:not(:hover) {
   background-color: var(--clr-purple-dark);
 }
 
@@ -3335,7 +3572,7 @@ button i {
   color: white;
   border: 2px solid white;
 }
-.btn-ghost:hover, .btn-ghost:focus, .btn-ghost:active {
+.btn-ghost:hover, .hud-and-trackers button.btn-ghost:focus, .btn-ghost:focus, .btn-ghost:active {
   background: transparent;
   color: var(--color-secondary-base);
   border-color: var(--color-secondary-base);
@@ -3352,7 +3589,7 @@ button i {
   background-size: 100%;
   border: none;
 }
-.btn-primary:active, .btn-primary:focus, .btn-primary:hover {
+.btn-primary:active, .btn-primary:focus, .btn-primary:hover, .hud-and-trackers button.btn-primary:focus {
   background: linear-gradient(to left, var(--color-primary-base), var(--color-secondary-base));
   background-position: 150% 150%;
 }
@@ -3495,7 +3732,7 @@ button i {
   /* moves it down */
   z-index: 1000;
 }
-.clockHud .window-content .headerWrapper [data-action]:hover .tooltip {
+.clockHud .window-content .headerWrapper [data-action]:hover .tooltip, .clockHud .window-content .headerWrapper .hud-and-trackers button[data-action]:focus .tooltip, .hud-and-trackers .clockHud .window-content .headerWrapper button[data-action]:focus .tooltip {
   display: block;
 }
 .clockHud .window-content .headerWrapper .delete {
@@ -3620,7 +3857,7 @@ button i {
 .clockHud .window-content .clockSection.filled .label {
   color: black;
 }
-.clockHud .window-content .clockSection.filled:hover {
+.clockHud .window-content .clockSection.filled:hover, .clockHud .window-content .hud-and-trackers button.clockSection.filled:focus, .hud-and-trackers .clockHud .window-content button.clockSection.filled:focus {
   background-position: right center;
   /* change the direction of the change here */
   color: #fff;
@@ -3661,7 +3898,7 @@ button i {
 #clockConfig .form-group label.delete {
   color: rgba(233, 65, 65, 0.841);
 }
-#clockConfig .form-group input {
+#clockConfig .form-group input, #clockConfig .form-group .hud-and-trackers button:focus, .hud-and-trackers #clockConfig .form-group button:focus {
   background-color: rgba(255, 255, 255, 0.083);
 }
 #clockConfig .submit {
@@ -3712,7 +3949,7 @@ button i {
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
 }
-.clock-drawer.pop-out:hover {
+.clock-drawer.pop-out:hover, .hud-and-trackers button.clock-drawer.pop-out:focus {
   left: 0rem;
 }
 .clock-drawer__header {
@@ -3734,7 +3971,7 @@ button i {
 .clock-drawer .button-holder button + button {
   padding-top: 0.5rem;
 }
-.clock-drawer:hover {
+.clock-drawer:hover, .hud-and-trackers button.clock-drawer:focus {
   padding: 0.5rem 0rem;
   left: -10rem;
   width: 10rem;
@@ -3744,10 +3981,10 @@ button i {
   justify-content: flex-start;
   align-items: center;
 }
-.clock-drawer:hover .clock-drawer__header {
+.clock-drawer:hover .clock-drawer__header, .hud-and-trackers button.clock-drawer:focus .clock-drawer__header {
   transform: rotate(0deg);
 }
-.clock-drawer:hover .button-holder {
+.clock-drawer:hover .button-holder, .hud-and-trackers button.clock-drawer:focus .button-holder {
   display: block;
 }
 
@@ -3781,12 +4018,16 @@ button i {
 .app-child.no-transition * {
   transition: none !important;
 }
-#clock-display input[type=checkbox],
-.app-child input[type=checkbox] {
+#clock-display input[type=checkbox], #clock-display .hud-and-trackers button[type=checkbox]:focus, .hud-and-trackers #clock-display button[type=checkbox]:focus,
+.app-child input[type=checkbox],
+.app-child .hud-and-trackers button[type=checkbox]:focus,
+.hud-and-trackers .app-child button[type=checkbox]:focus {
   display: none;
 }
-#clock-display input[type=checkbox] + label,
-.app-child input[type=checkbox] + label {
+#clock-display input[type=checkbox] + label, #clock-display .hud-and-trackers button[type=checkbox]:focus + label, .hud-and-trackers #clock-display button[type=checkbox]:focus + label,
+.app-child input[type=checkbox] + label,
+.app-child .hud-and-trackers button[type=checkbox]:focus + label,
+.hud-and-trackers .app-child button[type=checkbox]:focus + label {
   transition: all 500ms ease;
   font-size: 1em;
   cursor: pointer;
@@ -3799,15 +4040,19 @@ button i {
   display: inline-block;
   text-align: center;
 }
-#clock-display input[type=checkbox]:checked + label,
-.app-child input[type=checkbox]:checked + label {
+#clock-display input[type=checkbox]:checked + label, #clock-display .hud-and-trackers button[type=checkbox]:checked:focus + label, .hud-and-trackers #clock-display button[type=checkbox]:checked:focus + label,
+.app-child input[type=checkbox]:checked + label,
+.app-child .hud-and-trackers button[type=checkbox]:checked:focus + label,
+.hud-and-trackers .app-child button[type=checkbox]:checked:focus + label {
   transition: all 500ms ease;
   background-color: #fc6c27;
   color: white;
   border-color: #fc6c27;
 }
-#clock-display input[type=checkbox]:checked + label span,
-.app-child input[type=checkbox]:checked + label span {
+#clock-display input[type=checkbox]:checked + label span, #clock-display .hud-and-trackers button[type=checkbox]:checked:focus + label span, .hud-and-trackers #clock-display button[type=checkbox]:checked:focus + label span,
+.app-child input[type=checkbox]:checked + label span,
+.app-child .hud-and-trackers button[type=checkbox]:checked:focus + label span,
+.hud-and-trackers .app-child button[type=checkbox]:checked:focus + label span {
   margin-right: 10px;
 }
 #clock-display .window-header,
@@ -3893,10 +4138,16 @@ button i {
   display: flex;
   margin-bottom: 0.5rem;
 }
-#clock-display .window-content .categoryFilter input + label,
+#clock-display .window-content .categoryFilter input + label, #clock-display .window-content .categoryFilter .hud-and-trackers button:focus + label, .hud-and-trackers #clock-display .window-content .categoryFilter button:focus + label,
 #clock-display .clock-container .categoryFilter input + label,
+#clock-display .clock-container .categoryFilter .hud-and-trackers button:focus + label,
+.hud-and-trackers #clock-display .clock-container .categoryFilter button:focus + label,
 .app-child .window-content .categoryFilter input + label,
-.app-child .clock-container .categoryFilter input + label {
+.app-child .window-content .categoryFilter .hud-and-trackers button:focus + label,
+.hud-and-trackers .app-child .window-content .categoryFilter button:focus + label,
+.app-child .clock-container .categoryFilter input + label,
+.app-child .clock-container .categoryFilter .hud-and-trackers button:focus + label,
+.hud-and-trackers .app-child .clock-container .categoryFilter button:focus + label {
   margin-left: 0.25rem;
 }
 #clock-display .window-content .clockCategory__wrapper,
@@ -4046,10 +4297,16 @@ button i {
   z-index: 1000;
   pointer-events: none;
 }
-#clock-display .window-content .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover .tooltip,
+#clock-display .window-content .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover .tooltip, #clock-display .window-content .clockCategory__wrapper .clockCategory__inner .hud-and-trackers button.addClock.actionButton:focus .tooltip, .hud-and-trackers #clock-display .window-content .clockCategory__wrapper .clockCategory__inner button.addClock.actionButton:focus .tooltip,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover .tooltip,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory__inner .hud-and-trackers button.addClock.actionButton:focus .tooltip,
+.hud-and-trackers #clock-display .clock-container .clockCategory__wrapper .clockCategory__inner button.addClock.actionButton:focus .tooltip,
 .app-child .window-content .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover .tooltip,
-.app-child .clock-container .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover .tooltip {
+.app-child .window-content .clockCategory__wrapper .clockCategory__inner .hud-and-trackers button.addClock.actionButton:focus .tooltip,
+.hud-and-trackers .app-child .window-content .clockCategory__wrapper .clockCategory__inner button.addClock.actionButton:focus .tooltip,
+.app-child .clock-container .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover .tooltip,
+.app-child .clock-container .clockCategory__wrapper .clockCategory__inner .hud-and-trackers button.addClock.actionButton:focus .tooltip,
+.hud-and-trackers .app-child .clock-container .clockCategory__wrapper .clockCategory__inner button.addClock.actionButton:focus .tooltip {
   transform: scale(1);
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__inner .addClock.actionButton i,
@@ -4058,10 +4315,16 @@ button i {
 .app-child .clock-container .clockCategory__wrapper .clockCategory__inner .addClock.actionButton i {
   margin-right: 0;
 }
-#clock-display .window-content .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover,
+#clock-display .window-content .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover, #clock-display .window-content .clockCategory__wrapper .clockCategory__inner .hud-and-trackers button.addClock.actionButton:focus, .hud-and-trackers #clock-display .window-content .clockCategory__wrapper .clockCategory__inner button.addClock.actionButton:focus,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover,
+#clock-display .clock-container .clockCategory__wrapper .clockCategory__inner .hud-and-trackers button.addClock.actionButton:focus,
+.hud-and-trackers #clock-display .clock-container .clockCategory__wrapper .clockCategory__inner button.addClock.actionButton:focus,
 .app-child .window-content .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover,
-.app-child .clock-container .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover {
+.app-child .window-content .clockCategory__wrapper .clockCategory__inner .hud-and-trackers button.addClock.actionButton:focus,
+.hud-and-trackers .app-child .window-content .clockCategory__wrapper .clockCategory__inner button.addClock.actionButton:focus,
+.app-child .clock-container .clockCategory__wrapper .clockCategory__inner .addClock.actionButton:hover,
+.app-child .clock-container .clockCategory__wrapper .clockCategory__inner .hud-and-trackers button.addClock.actionButton:focus,
+.hud-and-trackers .app-child .clock-container .clockCategory__wrapper .clockCategory__inner button.addClock.actionButton:focus {
   background-color: var(--primary-color-400);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   transform: translateY(-3px);
@@ -4112,10 +4375,16 @@ button i {
   z-index: 1000;
   pointer-events: none;
 }
-#clock-display .window-content .clockCategory__wrapper .clockCategory__btn:hover .tooltip,
+#clock-display .window-content .clockCategory__wrapper .clockCategory__btn:hover .tooltip, #clock-display .window-content .clockCategory__wrapper .hud-and-trackers button.clockCategory__btn:focus .tooltip, .hud-and-trackers #clock-display .window-content .clockCategory__wrapper button.clockCategory__btn:focus .tooltip,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn:hover .tooltip,
+#clock-display .clock-container .clockCategory__wrapper .hud-and-trackers button.clockCategory__btn:focus .tooltip,
+.hud-and-trackers #clock-display .clock-container .clockCategory__wrapper button.clockCategory__btn:focus .tooltip,
 .app-child .window-content .clockCategory__wrapper .clockCategory__btn:hover .tooltip,
-.app-child .clock-container .clockCategory__wrapper .clockCategory__btn:hover .tooltip {
+.app-child .window-content .clockCategory__wrapper .hud-and-trackers button.clockCategory__btn:focus .tooltip,
+.hud-and-trackers .app-child .window-content .clockCategory__wrapper button.clockCategory__btn:focus .tooltip,
+.app-child .clock-container .clockCategory__wrapper .clockCategory__btn:hover .tooltip,
+.app-child .clock-container .clockCategory__wrapper .hud-and-trackers button.clockCategory__btn:focus .tooltip,
+.hud-and-trackers .app-child .clock-container .clockCategory__wrapper button.clockCategory__btn:focus .tooltip {
   transform: scale(1);
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__btn.open .accordionBtn__text span,
@@ -4149,16 +4418,28 @@ button i {
 .app-child .clock-container .clockCategory__wrapper .clockCategory__btn .accordionBtn__text span {
   margin-left: 1rem;
 }
-#clock-display .window-content .clockCategory__wrapper .clockCategory__btn:hover,
+#clock-display .window-content .clockCategory__wrapper .clockCategory__btn:hover, #clock-display .window-content .clockCategory__wrapper .hud-and-trackers button.clockCategory__btn:focus, .hud-and-trackers #clock-display .window-content .clockCategory__wrapper button.clockCategory__btn:focus,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn:hover,
+#clock-display .clock-container .clockCategory__wrapper .hud-and-trackers button.clockCategory__btn:focus,
+.hud-and-trackers #clock-display .clock-container .clockCategory__wrapper button.clockCategory__btn:focus,
 .app-child .window-content .clockCategory__wrapper .clockCategory__btn:hover,
-.app-child .clock-container .clockCategory__wrapper .clockCategory__btn:hover {
+.app-child .window-content .clockCategory__wrapper .hud-and-trackers button.clockCategory__btn:focus,
+.hud-and-trackers .app-child .window-content .clockCategory__wrapper button.clockCategory__btn:focus,
+.app-child .clock-container .clockCategory__wrapper .clockCategory__btn:hover,
+.app-child .clock-container .clockCategory__wrapper .hud-and-trackers button.clockCategory__btn:focus,
+.hud-and-trackers .app-child .clock-container .clockCategory__wrapper button.clockCategory__btn:focus {
   color: #7555c6;
 }
-#clock-display .window-content .clockCategory__wrapper .clockCategory__btn:hover span,
+#clock-display .window-content .clockCategory__wrapper .clockCategory__btn:hover span, #clock-display .window-content .clockCategory__wrapper .hud-and-trackers button.clockCategory__btn:focus span, .hud-and-trackers #clock-display .window-content .clockCategory__wrapper button.clockCategory__btn:focus span,
 #clock-display .clock-container .clockCategory__wrapper .clockCategory__btn:hover span,
+#clock-display .clock-container .clockCategory__wrapper .hud-and-trackers button.clockCategory__btn:focus span,
+.hud-and-trackers #clock-display .clock-container .clockCategory__wrapper button.clockCategory__btn:focus span,
 .app-child .window-content .clockCategory__wrapper .clockCategory__btn:hover span,
-.app-child .clock-container .clockCategory__wrapper .clockCategory__btn:hover span {
+.app-child .window-content .clockCategory__wrapper .hud-and-trackers button.clockCategory__btn:focus span,
+.hud-and-trackers .app-child .window-content .clockCategory__wrapper button.clockCategory__btn:focus span,
+.app-child .clock-container .clockCategory__wrapper .clockCategory__btn:hover span,
+.app-child .clock-container .clockCategory__wrapper .hud-and-trackers button.clockCategory__btn:focus span,
+.hud-and-trackers .app-child .clock-container .clockCategory__wrapper button.clockCategory__btn:focus span {
   transform: scale(1.15) rotate(270deg);
 }
 #clock-display .window-content .clockCategory__wrapper .clockCategory__btn__title,
@@ -4218,10 +4499,16 @@ button i {
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
-#clock-display .window-content .showClocks:hover,
+#clock-display .window-content .showClocks:hover, #clock-display .window-content .hud-and-trackers button.showClocks:focus, .hud-and-trackers #clock-display .window-content button.showClocks:focus,
 #clock-display .clock-container .showClocks:hover,
+#clock-display .clock-container .hud-and-trackers button.showClocks:focus,
+.hud-and-trackers #clock-display .clock-container button.showClocks:focus,
 .app-child .window-content .showClocks:hover,
-.app-child .clock-container .showClocks:hover {
+.app-child .window-content .hud-and-trackers button.showClocks:focus,
+.hud-and-trackers .app-child .window-content button.showClocks:focus,
+.app-child .clock-container .showClocks:hover,
+.app-child .clock-container .hud-and-trackers button.showClocks:focus,
+.hud-and-trackers .app-child .clock-container button.showClocks:focus {
   background-color: #4776E6;
 }
 #clock-display .window-content .contentWrapper,
@@ -4433,10 +4720,16 @@ button i {
 .app-child .clock-container .clockWrapper .clockSection.filled .label {
   color: black;
 }
-#clock-display .window-content .clockWrapper .clockSection.filled:hover,
+#clock-display .window-content .clockWrapper .clockSection.filled:hover, #clock-display .window-content .clockWrapper .hud-and-trackers button.clockSection.filled:focus, .hud-and-trackers #clock-display .window-content .clockWrapper button.clockSection.filled:focus,
 #clock-display .clock-container .clockWrapper .clockSection.filled:hover,
+#clock-display .clock-container .clockWrapper .hud-and-trackers button.clockSection.filled:focus,
+.hud-and-trackers #clock-display .clock-container .clockWrapper button.clockSection.filled:focus,
 .app-child .window-content .clockWrapper .clockSection.filled:hover,
-.app-child .clock-container .clockWrapper .clockSection.filled:hover {
+.app-child .window-content .clockWrapper .hud-and-trackers button.clockSection.filled:focus,
+.hud-and-trackers .app-child .window-content .clockWrapper button.clockSection.filled:focus,
+.app-child .clock-container .clockWrapper .clockSection.filled:hover,
+.app-child .clock-container .clockWrapper .hud-and-trackers button.clockSection.filled:focus,
+.hud-and-trackers .app-child .clock-container .clockWrapper button.clockSection.filled:focus {
   background-position: right center;
   /* change the direction of the change here */
   color: #fff;
@@ -4636,7 +4929,7 @@ button i {
   width: -moz-fit-content;
   width: fit-content;
 }
-#inner-scene-display *:is(button, image, li, input, label, select, option) {
+#inner-scene-display *:is(button, image, li, input, .hud-and-trackers button:focus, label, select, option) {
   pointer-events: auto;
 }
 
@@ -4716,6 +5009,10 @@ button i {
   flex-direction: column;
   gap: 1rem;
 }
+.editModeWrapper .innerScene {
+  background: var(--innerSceneBackground);
+  background-position: cover;
+}
 
 li {
   position: relative;
@@ -4737,7 +5034,7 @@ li .hover-controls {
   transition-delay: 100ms;
   transition: transform 150ms ease-in, opacity 150ms ease-in;
 }
-li .hover-controls:hover {
+li .hover-controls:hover, li .hud-and-trackers button.hover-controls:focus, .hud-and-trackers li button.hover-controls:focus {
   opacity: 100%;
   transform: scale(1);
   transition-delay: 150ms;
@@ -4821,8 +5118,10 @@ li .hover-controls button {
 .character-scene-display .interactions {
   display: flex;
 }
-.character-scene-display .chip input[type=radio],
-.character-scene-display .chip input[type=checkbox] {
+.character-scene-display .chip input[type=radio], .character-scene-display .chip .hud-and-trackers button[type=radio]:focus, .hud-and-trackers .character-scene-display .chip button[type=radio]:focus,
+.character-scene-display .chip input[type=checkbox],
+.character-scene-display .chip .hud-and-trackers button[type=checkbox]:focus,
+.hud-and-trackers .character-scene-display .chip button[type=checkbox]:focus {
   display: none;
   position: absolute;
   overflow: hidden;
@@ -4833,8 +5132,10 @@ li .hover-controls button {
   padding: 0;
   border: 0;
 }
-.character-scene-display .chip input[type=radio] ~ label,
-.character-scene-display .chip input[type=checkbox] ~ label {
+.character-scene-display .chip input[type=radio] ~ label, .character-scene-display .chip .hud-and-trackers button[type=radio]:focus ~ label, .hud-and-trackers .character-scene-display .chip button[type=radio]:focus ~ label,
+.character-scene-display .chip input[type=checkbox] ~ label,
+.character-scene-display .chip .hud-and-trackers button[type=checkbox]:focus ~ label,
+.hud-and-trackers .character-scene-display .chip button[type=checkbox]:focus ~ label {
   /* background-color: transparent; */
   border: 1px solid cornflowerblue !important;
   /* color: cornflowerblue; */
@@ -4848,12 +5149,16 @@ li .hover-controls button {
   align-items: center;
   gap: 0.45rem;
 }
-.character-scene-display .chip input[type=radio] ~ label:hover,
-.character-scene-display .chip input[type=checkbox] ~ label:hover {
+.character-scene-display .chip input[type=radio] ~ label:hover, .character-scene-display .chip .hud-and-trackers button[type=radio]:focus ~ label:hover, .hud-and-trackers .character-scene-display .chip button[type=radio]:focus ~ label:hover,
+.character-scene-display .chip input[type=checkbox] ~ label:hover,
+.character-scene-display .chip .hud-and-trackers button[type=checkbox]:focus ~ label:hover,
+.hud-and-trackers .character-scene-display .chip button[type=checkbox]:focus ~ label:hover {
   cursor: pointer;
 }
-.character-scene-display .chip input[type=radio]:checked ~ label,
-.character-scene-display .chip input[type=checkbox]:checked ~ label {
+.character-scene-display .chip input[type=radio]:checked ~ label, .character-scene-display .chip .hud-and-trackers button[type=radio]:checked:focus ~ label, .hud-and-trackers .character-scene-display .chip button[type=radio]:checked:focus ~ label,
+.character-scene-display .chip input[type=checkbox]:checked ~ label,
+.character-scene-display .chip .hud-and-trackers button[type=checkbox]:checked:focus ~ label,
+.hud-and-trackers .character-scene-display .chip button[type=checkbox]:checked:focus ~ label {
   background-color: cornflowerblue;
   color: white;
   font-weight: bold;
@@ -6072,8 +6377,10 @@ li .hover-controls button {
 #party-overview .window-content .dataFilterGroup label:last-of-type {
   border-radius: 0 4px 4px 0;
 }
-#party-overview .window-content .sceneFilterGroup input,
-#party-overview .window-content .dataFilterGroup input {
+#party-overview .window-content .sceneFilterGroup input, #party-overview .window-content .sceneFilterGroup .hud-and-trackers button:focus, .hud-and-trackers #party-overview .window-content .sceneFilterGroup button:focus,
+#party-overview .window-content .dataFilterGroup input,
+#party-overview .window-content .dataFilterGroup .hud-and-trackers button:focus,
+.hud-and-trackers #party-overview .window-content .dataFilterGroup button:focus {
   position: absolute !important;
   clip: rect(0 0 0 0);
   height: 1px;
@@ -6081,12 +6388,14 @@ li .hover-controls button {
   border: 0;
   overflow: hidden;
 }
-#party-overview .window-content .sceneFilterGroup input:checked + label,
-#party-overview .window-content .dataFilterGroup input:checked + label {
+#party-overview .window-content .sceneFilterGroup input:checked + label, #party-overview .window-content .sceneFilterGroup .hud-and-trackers button:checked:focus + label, .hud-and-trackers #party-overview .window-content .sceneFilterGroup button:checked:focus + label,
+#party-overview .window-content .dataFilterGroup input:checked + label,
+#party-overview .window-content .dataFilterGroup .hud-and-trackers button:checked:focus + label,
+.hud-and-trackers #party-overview .window-content .dataFilterGroup button:checked:focus + label {
   background-color: #2ab7ca;
   box-shadow: none;
 }
-#party-overview .window-content input[type=text] {
+#party-overview .window-content input[type=text], #party-overview .window-content .hud-and-trackers button[type=text]:focus, .hud-and-trackers #party-overview .window-content button[type=text]:focus {
   height: 2rem;
   box-shadow: unset;
   border: unset;
@@ -6097,13 +6406,13 @@ li .hover-controls button {
   width: 50%;
   position: relative;
 }
-#party-overview .window-content input[type=text]:after {
+#party-overview .window-content input[type=text]:after, #party-overview .window-content .hud-and-trackers button[type=text]:focus:after, .hud-and-trackers #party-overview .window-content button[type=text]:focus:after {
   content: "Search";
   position: absolute;
   display: none;
   color: #2ab7ca;
 }
-#party-overview .window-content input[type=text]:focus:after {
+#party-overview .window-content input[type=text]:focus:after, #party-overview .window-content .hud-and-trackers button[type=text]:focus:after, .hud-and-trackers #party-overview .window-content button[type=text]:focus:after {
   content: "Search";
   display: block;
   position: absolute;
@@ -6137,7 +6446,7 @@ li .hover-controls button {
   background-color: hsl(240deg, 10%, 22%);
   cursor: pointer;
 }
-#party-overview .window-content table tr td li .name:hover {
+#party-overview .window-content table tr td li .name:hover, #party-overview .window-content table tr td li .hud-and-trackers button.name:focus, .hud-and-trackers #party-overview .window-content table tr td li button.name:focus {
   color: #947bd3;
   cursor: pointer;
 }
@@ -7460,15 +7769,19 @@ li .hover-controls button {
 #ambient-dice-pool .diceDiv {
   padding: 1rem 0.5rem;
 }
-#ambient-dice-pool .footerButtonWrapper input[type=text],
-#ambient-dice-pool .diceDiv input[type=text] {
+#ambient-dice-pool .footerButtonWrapper input[type=text], #ambient-dice-pool .footerButtonWrapper .hud-and-trackers button[type=text]:focus, .hud-and-trackers #ambient-dice-pool .footerButtonWrapper button[type=text]:focus,
+#ambient-dice-pool .diceDiv input[type=text],
+#ambient-dice-pool .diceDiv .hud-and-trackers button[type=text]:focus,
+.hud-and-trackers #ambient-dice-pool .diceDiv button[type=text]:focus {
   width: 40%;
   margin: 1rem 0.5rem;
   padding: 1rem 0.5rem;
   border-bottom: 2px solid #947bd3;
 }
-#ambient-dice-pool .footerButtonWrapper input[type=text]:hover, #ambient-dice-pool .footerButtonWrapper input[type=text]:focus,
+#ambient-dice-pool .footerButtonWrapper input[type=text]:hover, #ambient-dice-pool .footerButtonWrapper .hud-and-trackers button[type=text]:focus, .hud-and-trackers #ambient-dice-pool .footerButtonWrapper button[type=text]:focus, #ambient-dice-pool .footerButtonWrapper input[type=text]:focus,
 #ambient-dice-pool .diceDiv input[type=text]:hover,
+#ambient-dice-pool .diceDiv .hud-and-trackers button[type=text]:focus,
+.hud-and-trackers #ambient-dice-pool .diceDiv button[type=text]:focus,
 #ambient-dice-pool .diceDiv input[type=text]:focus {
   background-color: hsl(240deg, 10%, 22%);
 }
@@ -7575,7 +7888,7 @@ li .hover-controls button {
   z-index: 1000;
   transition: opacity 0.5s;
 }
-#ambient-prompt [data-action]:hover .tooltip {
+#ambient-prompt [data-action]:hover .tooltip, #ambient-prompt .hud-and-trackers button[data-action]:focus .tooltip, .hud-and-trackers #ambient-prompt button[data-action]:focus .tooltip {
   display: block;
   opacity: 100%;
 }

@@ -4,22 +4,11 @@
             Inner Scenes
         </h3>
         <ul class="innerScenes">
-            {{#each innerScenes as |scene|}}
-                <li class="[ option ] [interactive bg-neutral-darkest hover-bg-primary rounded]">
-                    <img src="{{scene.imagePath}}" alt="{{scene.name}}" data-action="browse" />
-                    <input
-                        type="text"
-                        data-id="{{scene.id}}"
-                        name="{{scene.name}}"
-                        value="{{scene.name}}"
-                        data-type="innerScene"
-                    />
-                </li>
+            {{#each innerScenes}}
+				{{>  "modules/hud-and-trackers/templates/inner-scene-display/partials/edit-list-item.hbs" hoverClass="hover-bg-primary" action="browse" type="innerScene" includeInput=true basePath=@root.basePath}}
             {{/each}}
-            <li class="option | interactive bg-neutral-darkest hover-bg-primary rounded" data-action="browse">
-                <img src="/Idyllwild/Art/Characters/placeholder.webp" alt="placeholder" data-action="browse" />
-                <input type="text" value="New Inner Scene" />
-            </li>
+				{{!-- Default inner scene for adding new ones --}}
+				{{>  "modules/hud-and-trackers/templates/inner-scene-display/partials/edit-list-item.hbs" hoverClass="hover-bg-primary" action="browse" type="innerScene" includeInput=true imagePath="/Idyllwild/Art/Characters/placeholder.webp" name="New Inner Scene"}}
         </ul>
     </section>
     <section class="selectedCharactersWrapper">
@@ -28,17 +17,7 @@
         </h3>
         <ul class="addedToScene">
             {{#each characters}}
-                <li
-                    class="option interactive | bg-neutral-darkest hover-bg-removable rounded"
-                    data-action="remove"
-                    data-name="{{this.name}}"
-                    data-image-path="{{this.imagePath}}"
-                >
-                    <img src="{{this.imagePath}}" alt="{{this.name}}" srcset="" />
-                    <p>
-                        {{this.name}}
-                    </p>
-                </li>
+				{{>  "modules/hud-and-trackers/templates/inner-scene-display/partials/edit-list-item.hbs" hoverClass="hover-bg-removable" action="remove" type="character"}}
             {{/each}}
         </ul>
     </section>

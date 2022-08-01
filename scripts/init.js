@@ -96,6 +96,8 @@ async function loadHandleBarTemplates() {
         "modules/hud-and-trackers/templates/custom-button-partial.hbs",
         "modules/hud-and-trackers/templates/inner-scene-display/partials/edit-mode.hbs",
         "modules/hud-and-trackers/templates/inner-scene-display/partials/display-mode.hbs",
+        "modules/hud-and-trackers/templates/inner-scene-display/partials/display-list-item.hbs",
+        "modules/hud-and-trackers/templates/inner-scene-display/partials/edit-list-item.hbs",
     ];
     return loadTemplates(templatePaths);
 }

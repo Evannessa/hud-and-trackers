@@ -233,6 +233,7 @@ export class HudButtonConfig extends FormApplication {
     }
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
+            classes: ["hud-and-trackers"],
             popOut: true,
             template: "modules/hud-and-trackers/templates/hud-config.hbs",
             id: "hud-button-config",
@@ -251,6 +252,7 @@ export class HelperHud extends Application {
     /** @override */
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
+            classes: ["hud-and-trackers"],
             popOut: true,
             submitOnChange: false,
             closeOnSubmit: false,
