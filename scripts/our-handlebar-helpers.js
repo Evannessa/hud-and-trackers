@@ -18,8 +18,11 @@ export default function registerAllHandlebarHelpers() {
     Handlebars.registerHelper("returnLength", (object) => {
         return Object.keys(object).length;
     });
-    // Handlebars.registerHelper("getCharacterData", (id) => {
-
-    // });
-    // Handlebars.registerHelper("areScenesEqual", )
+    Handlebars.registerHelper("ternary", function (test, yes, no) {
+        return test ? yes : no;
+    });
 }
+// Handlebars.registerHelper("getCharacterData", (id) => {
+
+// });
+// Handlebars.registerHelper("areScenesEqual", )

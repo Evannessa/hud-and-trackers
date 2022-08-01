@@ -73,10 +73,12 @@ export function setInvisibleHeader(html, showIcon) {
         Array.from(windowHeader.children).forEach((element) => {
             element.style = "display: none";
         });
+        windowHeader.classList.add("minimal-window-header");
         if (showIcon) {
-            let node = document.createElement("p");
+            let node = document.createElement("span");
             node.innerHTML = '<i class="fas fa-arrows-alt"></i>';
             windowHeader.appendChild(node);
+            windowHeader.classList.add("invisible");
         }
     }
 }

@@ -1,106 +1,23 @@
-<div class="sceneMap character-scene-display {{#if (eq mode "display")}}compact{{/if}}">
-	<fieldset class="button-group">
-	<legend>Toggle Display Mode</legend>
-		<input type="radio" name="mode" id="editMode" data-action="toggleMode" value="edit" {{#if (eq mode "edit")}}
-			checked	
-		{{/if}}>
-		<label for="editMode">Edit</label>
+<div class="sceneMap character-scene-display {{ternary (eq mode "display") "compact" ""}}">
+	<button class="img-button framed | bg-none | hover-bg-none hover-grow | focus-bg-none | child-glow-on-open" data-action="toggle-fold" data-target="displayModeInnerWrapper" title="Minimize controls">
+		<img src="/modules/hud-and-trackers/images/Button Badges/family.webp" alt="character-button-image" class="glow-on-open" srcset="">
+	</button>
+<section id="displayModeInnerWrapper" class="displayModeInnerWrapper">
+	{{#if isGM}}
+			<fieldset class="button-group">
+		<input type="radio" name="mode" id="editMode" data-action="toggleMode" value="edit" title="toggle edit mode" {{ternary (eq mode "edit") "checked" ""}}
+		>
+		<label for="editMode" title="toggle edit mode">Edit</label>
 
-		<input type="radio" name="mode" id="displayMode" data-action="toggleMode" value="display" {{#if (eq mode "display")}}
-			checked	
-		{{/if}}/>
-		<label for="displayMode">Display</label>
+		<input type="radio" name="mode" id="displayMode" data-action="toggleMode" value="display" title="toggle display mode" {{ternary (eq mode "display") "checked" ""}}/>
+		<label for="displayMode" title="toggle display mode">Display</label>
 	</fieldset>
-	{{#if (eq mode "display")}}
-		
-<section id="scene-display-bar" class="displayModeWrapper display-bar">
-<ul class="character-group">
-    {{#each characters as |character|}}
-      <li
-        class="interactive character"
-        data-action="pan"
-        data-name="{{character.name}}"
-        data-img="{{character.imagePath}}"
-		title="{{character.name}}"
-      >
-        <img src="{{character.imagePath}}" alt="" />
-		<ul class="hover-controls">
-			{{#each @root.displayTiles as |tileData|}}
-				<li><button data-action="switch" data-target="{{tileData.id}}" data-frame="{{tileData.linkedBoundingTile}}">{{tileData.displayName}}</button></li>
-			{{/each}}
-		</ul>
-      </li>
-    {{/each}}
-  </ul>
-  <ul class="scene-group">
-    {{#each innerScenes as |scene|}}
-      <li
-        class="interactive innerScene"
-        data-action="pan"
-        data-name="{{scene.name}}"
-        data-img="{{scene.imagePath}}"
-		title="{{scene.name}}"
-      >
-        <img src="{{scene.imagePath}}" alt="" />
-			<ul class="hover-controls">
-			{{#each @root.displayTiles as |tileData|}}
-				<li><button data-action="switch" data-target="{{tileData.id}}" data-frame="{{tileData.linkedBoundingTile}}">{{tileData.displayName}}</button></li>
-			{{/each}}
-		</ul>
-      </li>
-    {{/each}}
-  </ul>
-</section>
-{{else}}
-<section class="editModeWrapper">
-<section class="innerSceneWrapper">
-	<h3>Inner Scenes</h3>
-	<ul class="innerScenes">
-	{{#each innerScenes as |scene|}}
-	<li class="option rounded interactive">
-		<img src="{{scene.imagePath}}" alt="{{scene.name}}" data-action="browse">
-		<input type="text" value="{{scene.name}}">
-	</li>
-	{{/each}}
-	<li class="option rounded interactive" data-action="browse">
-		<img src="/Idyllwild/Art/Characters/placeholder.webp" alt="placeholder" data-action="browse">
-		<input type="text" value="New Inner Scene">
-	</li>
-</ul>
-</section> 
-<section class="selectedCharactersWrapper">
-	<h3>Characters In Scene</h3>
-	  <ul class="addedToScene">
-		{{#each characters}}
-		<li class="option rounded interactive removable" data-action="remove" data-name="{{this.name}}" data-image-path="{{this.imagePath}}">
-			<img src="{{this.imagePath}}" alt="{{this.name}}" srcset="">
-			<p>{{this.name}}</p>
-	</li>
-		{{/each}}
-	  </ul>
-</section>
-<hr>
-	<section class="characterOptionsWrapper">
-		<h3>Character Options</h3>
-	<label for="clanSelect">Pick A Clan</label>
-		<select name="clanSelect" id="clanSelect">
-		   {{#each clans}}
-			 <option value="{{this.value}}" {{#if (eq @root.clanSelect this.value)}}
-				selected	
-			  {{/if}}>
-			   {{this.name}}
-			 </option>
-		   {{/each}}
-		 </select>
-		 <ul class="characterOptions">
-			{{#each options}}
-			<li class="option rounded interactive" data-action="select" data-name="{{this.name}}" data-image-path="{{this.imagePath}}">
-				<img src="{{this.imagePath}}" alt="{{this.name}}" srcset="">
-				<p>{{this.name}}</p>
-			</li>
-			{{/each}}
-		 </ul>
-		 </section>
-</section>
 	{{/if}}
+
+{{#if (eq mode "display")}}
+  {{> "modules/hud-and-trackers/templates/inner-scene-display/partials/display-mode.hbs"}}
+{{else}}
+    {{> "modules/hud-and-trackers/templates/inner-scene-display/partials/edit-mode.hbs"}}
+	{{/if}}
+	</section>
 </div>

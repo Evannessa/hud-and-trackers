@@ -41,6 +41,22 @@
     // bottom: -999px !important;
 }
 //This should overtake the above
+.window-app .window-header.minimal-window-header {
+    // flex: 0 0 0.75rem;
+    &.invisible {
+        width: fit-content;
+        height: auto;
+        > span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+    // &:hover {
+    //     background-color: var(--color-primary-base);
+    //     border-radius: 50%;
+    // }
+}
 
 .bring-on-screen {
     transition: left 100ms ease-in;
@@ -48,6 +64,11 @@
     opacity: 100%;
     z-index: 200;
 }
+
+.send-to-back {
+    z-index: 0 !important;
+}
+
 .button-group {
     grid-row: 1/2;
     grid-column: 2/4;
@@ -114,27 +135,27 @@
         }
     }
 }
-.interactive {
-    background-color: var(--tui-black4);
-    border-radius: 8px;
-    &:is(li) {
-        list-style-type: none;
-        margin-left: 0;
-    }
-    &:hover {
-        background-color: var(--color-accent-base);
-        cursor: pointer;
-        &:disabled {
-            cursor: not-allowed;
-        }
-    }
+// .interactive {
+//     background-color: var(--tui-black4);
+//     border-radius: 8px;
+//     &:is(li) {
+//         list-style-type: none;
+//         margin-left: 0;
+//     }
+//     &:hover {
+//         background-color: var(--color-hover-color);
+//         cursor: pointer;
+//         &:disabled {
+//             cursor: not-allowed;
+//         }
+//     }
 
-    &.removable {
-        &:hover {
-            background-color: #dc2424;
-        }
-    }
-}
+//     &.removable {
+//         &:hover {
+//             background-color: #dc2424;
+//         }
+//     }
+// }
 
 .btn {
     transition: all 100ms ease-in-out;
@@ -170,8 +191,8 @@
         &:focus,
         &:active {
             background: transparent;
-            color: var(--color-accent-base);
-            border-color: var(--color-accent-base);
+            color: var(--color-secondary-base);
+            border-color: var(--color-secondary-base);
         }
 
         &:active {
@@ -182,7 +203,7 @@
 
     &-primary {
         color: $black2;
-        background: linear-gradient(to left, var(--color-primary-base), var(--color-accent-base));
+        background: linear-gradient(to left, var(--color-primary-base), var(--color-secondary-base));
         background-position: 100% 100%;
         background-repeat: no-repeat;
         background-size: 100%;
@@ -191,9 +212,9 @@
         &:active,
         &:focus,
         &:hover {
-            background: linear-gradient(to left, var(--color-primary-base), var(--color-accent-base));
+            background: linear-gradient(to left, var(--color-primary-base), var(--color-secondary-base));
             background-position: 150% 150%;
-            // background: var(--color-accent-base);
+            // background: var(--color-secondary-base);
         }
     }
 }

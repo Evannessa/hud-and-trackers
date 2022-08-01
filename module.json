@@ -17,6 +17,12 @@
             "label": "HUD and Trackers",
             "path": "/packs/macros.db",
             "entity": "Macro"
+        },
+        {
+            "name": "premade-scenes",
+            "label": "HUD and Trackers Premade Display Scenes",
+            "path": "./packs/hat-premade-display-scenes.db",
+            "entity": "Scene"
         }
     ],
     "scripts": ["scripts/draggabilly.min.js", "greensock/dist/gsap.min.js"],

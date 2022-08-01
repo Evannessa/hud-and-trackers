@@ -1,0 +1,51 @@
+<section id="scene-display-bar" class="displayModeWrapper display-bar">
+    <ul class="character-group">
+        {{#each characters as |character|}}
+            <li
+                class="character | interactive bg-none shadow-none hover-grow"
+                data-action="pan"
+                data-name="{{character.name}}"
+                data-img="{{character.imagePath}}"
+                title="{{character.name}}"
+            >
+                <img src="{{character.imagePath}}" alt="" />
+                {{#if @root.isGM}}
+
+                    <ul class="hover-controls">
+                        {{#each @root.displayTiles as |tileData|}}
+                            <li><button
+                                    class="interactive bg-neutral-darkest hover-bg-primary"
+                                    data-action="switch"
+                                    data-target="{{tileData.id}}"
+                                    data-frame="{{tileData.linkedBoundingTile}}"
+                                >{{tileData.displayName}}</button></li>
+                        {{/each}}
+                    </ul>
+
+                {{/if}}
+            </li>
+        {{/each}}
+    </ul>
+    <ul class="scene-group">
+        {{#each innerScenes as |scene|}}
+            <li
+                class="interactive innerScene | bg-neutral-darkest | hover-grow |"
+                data-action="pan"
+                data-name="{{scene.name}}"
+                data-img="{{scene.imagePath}}"
+                title="{{scene.name}}"
+            >
+                <img src="{{scene.imagePath}}" alt="" />
+                <ul class="hover-controls">
+                    {{#each @root.displayTiles as |tileData|}}
+                        <li><button
+                                data-action="switch"
+                                data-target="{{tileData.id}}"
+                                data-frame="{{tileData.linkedBoundingTile}}"
+                            >{{tileData.displayName}}</button></li>
+                    {{/each}}
+                </ul>
+            </li>
+        {{/each}}
+    </ul>
+</section>

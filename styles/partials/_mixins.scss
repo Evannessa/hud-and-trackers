@@ -1,55 +1,96 @@
 @function map-deep-get($map, $keys...) {
-	@each $key in $keys {
-		$map: map-get($map, $key);
-	}
+    @each $key in $keys {
+        $map: map-get($map, $key);
+    }
 
-	@return $map;
+    @return $map;
 }
 
 @function color($color-name) {
-	@return var(--color-#{$color-name});
+    @return var(--color-#{$color-name});
 }
 
-@mixin ba($ba, $width, $height, $top, $left, $z-index:inherit, $center: false, $scale: 1, $rel:true, $content:null) {
-	@if ($rel==true) {
-		position: relative;
-	}
+// #region Display flex, block, grid
+// for display
+$displayProps: (
+    "block",
+    "inline-block",
+    "inline",
+    "flex",
+    "grid",
+    "inline-flex",
+    "inline-grid",
+    "table",
+    "inline-table",
+    "list-item",
+    "none",
+    "contents"
+);
 
-
-
-	&:#{$ba} {
-		position: absolute;
-		width: $width;
-		height: $height;
-		top: $top;
-		left: $left;
-		content: "#{$content}";
-		z-index: $z-index;
-		@content;
-
-		@if ($center==true) {
-			transform: translate(-50%, -50%) scale($scale);
-		}
-	}
+@each $disp in $displayProps {
+    .d-#{$disp} {
+        display: #{$disp};
+    }
 }
+// #endregion
 
+// #region Align and Justify
+$alignments: ("center", "space-between", "space-around", "space-evenly", "flex-start", "flex-end");
 
+@each $align in $alignments {
+    .justify-#{$align} {
+        justify-content: #{$align};
+    }
+
+    .items-#{$align} {
+        align-items: #{$align};
+    }
+
+    .justify-items-#{$align} {
+        justify-items: #{$align};
+    }
+
+    .content-#{$align} {
+        align-content: #{$align};
+    }
+}
+// #endregion
+
+@mixin ba($ba, $width, $height, $top, $left, $z-index: inherit, $center: false, $scale: 1, $rel: true, $content: null) {
+    @if ($rel==true) {
+        position: relative;
+    }
+
+    &:#{$ba} {
+        position: absolute;
+        width: $width;
+        height: $height;
+        top: $top;
+        left: $left;
+        content: "#{$content}";
+        z-index: $z-index;
+        @content;
+
+        @if ($center==true) {
+            transform: translate(-50%, -50%) scale($scale);
+        }
+    }
+}
 
 //for glass
 @mixin glassBlur {
-	background-color: #7070707a;
-	border-top: 1px solid rgba(255, 255, 255, 0.198);
-	border-bottom: 1px solid rgba(255, 255, 255, 0.198);
+    background-color: #7070707a;
+    border-top: 1px solid rgba(255, 255, 255, 0.198);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.198);
 
-	@supports (backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px)) {
-		background-color: #70707044;
-		backdrop-filter: blur(2px);
-	}
-
+    @supports (backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px)) {
+        background-color: #70707044;
+        backdrop-filter: blur(2px);
+    }
 }
 
 @mixin glassShine {
-	background: linear-gradient(to bottom, transparent 40%, rgba(255, 255, 255, 0.23));
-	border-bottom: 1px solid rgba(255, 255, 255, 0.308);
-	opacity: 57%;
+    background: linear-gradient(to bottom, transparent 40%, rgba(255, 255, 255, 0.23));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.308);
+    opacity: 57%;
 }

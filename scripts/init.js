@@ -94,6 +94,8 @@ async function loadHandleBarTemplates() {
         "modules/hud-and-trackers/templates/clock.hbs",
         "modules/hud-and-trackers/templates/tooltip/tooltip.hbs",
         "modules/hud-and-trackers/templates/custom-button-partial.hbs",
+        "modules/hud-and-trackers/templates/inner-scene-display/partials/edit-mode.hbs",
+        "modules/hud-and-trackers/templates/inner-scene-display/partials/display-mode.hbs",
     ];
     return loadTemplates(templatePaths);
 }

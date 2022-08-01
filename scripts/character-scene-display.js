@@ -1,7 +1,7 @@
 import * as HelperFunctions from "./helper-functions.js";
 let clanTags;
 let categoryIndividualTags;
-let basePath = "/Idyllwild/Art/Characters/";
+let basePath = "/Idyllwild/Art/Characters";
 fetch("/Idyllwild/Test JSON Data/tags.json")
     .then((response) => {
         return response.json();
@@ -14,14 +14,17 @@ fetch("/Idyllwild/Test JSON Data/tags.json")
             return tags.tag.includes("clans/");
         });
     });
+
 Hooks.on("ready", () => {
     // console.log("Our tags", characterTags, processTagData());
     game.characterTags = processTagData();
 
-    // game.innerSceneDisplayBar = new InnerSceneDisplayBar().render(true);
-    if (game.user.isGM) {
-        game.innerSceneDisplayConfig = new InnerSceneDisplayConfig().render(true);
-    }
+    let data = {
+        mode: "display",
+    };
+
+    game.innerSceneDisplayConfig = new InnerSceneDisplayConfig(data).render(true, { data });
+    console.log(game.innerSceneDisplayConfig.data);
     // game.innerSceneDisplayConfig.render(true);
 });
 
@@ -29,6 +32,7 @@ Hooks.on("canvasReady", async (canvas) => {
     // game.innerSceneDisplayConfig.data.temporaryCharacters = await HelperFunctions.getAllActorsInScene();
     // game.innerSceneDisplayConfig.currentScene = canvas.scene;
     if (game.innerSceneDisplayConfig) {
+        console.log(game.innerSceneDisplayConfig.data);
         game.innerSceneDisplayConfig.render(true);
     }
 });
@@ -43,6 +47,7 @@ Hooks.on("renderInnerSceneDisplayConfig", (app, html) => {
         height: "fit-content",
         width: "fit-content",
     });
+    HelperFunctions.setInvisibleHeader(html, true);
 });
 
 /**
@@ -57,6 +62,8 @@ function processTagData() {
             tagName: tagObject.tag,
             characters: characterPaths.map((path, index) => {
                 let clanName = tagObject.tag.split("/").pop();
+                clanName = clanName.charAt(0).toUpperCase() + clanName.slice(1);
+                console.log(clanName);
                 //get character name from file path
                 let name = path.split("/").pop().replace(".md", "");
                 let firstName = name.split(" ").shift();
@@ -84,14 +91,17 @@ class InnerSceneDisplayConfig extends Application {
         super();
         this.getSceneDisplayData();
         this.data = { ...data };
+        if (!game.user.isGM) {
+            this.data.mode === "display";
+        }
         if (this.data.mode === "display") {
             this.element.addClass("transparent");
         }
-        // game.innerSceneDisplayBar.render(true);
     }
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
+            classes: ["transparent"],
             popOut: true,
             template: `/modules/hud-and-trackers/templates/inner-scene-display/scene-map.hbs`,
             id: "inner-scene-display",
@@ -125,7 +135,8 @@ class InnerSceneDisplayConfig extends Application {
     }
 
     async panToTile(tileData) {
-        game.canvas.animatePan({ x: tileData.x, y: tileData.y, scale: 1.0 });
+        let scale = game.scenes.viewed._viewPosition;
+        game.canvas.animatePan({ x: tileData.x, y: tileData.y, scale: scale });
     }
 
     async removeCharacter(character) {
@@ -139,7 +150,6 @@ class InnerSceneDisplayConfig extends Application {
     }
 
     async updateSceneDisplayData(newData, type, isUpdate) {
-        console.log(newData, type);
         let currentScene = game.scenes.viewed;
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
         if (type === "character") {
@@ -211,9 +221,14 @@ class InnerSceneDisplayConfig extends Application {
             clanSelect: this.data.clanSelect || "",
             options: options,
             displayTiles: displayTiles,
+            isGM: game.user.isGM,
         };
 
         return sceneDisplayData;
+    }
+    _handleHover(event) {
+        event.stopPropagation();
+        event.preventDefault();
     }
 
     _handleButtonClick(event) {
@@ -233,6 +248,28 @@ class InnerSceneDisplayConfig extends Application {
             case "toggleMode":
                 this.updateSceneDisplayData(value, "mode", false);
                 break;
+            case "toggle-fold":
+                let targetId = clickedElement.data().target;
+
+                let targetElement = document.querySelector(`#${targetId}`);
+                targetElement = $(targetElement);
+                if (targetElement.hasClass("minimize")) {
+                    //show the target element and style button as active
+                    targetElement.removeClass("minimize");
+                    clickedElement.addClass("open");
+                    $(clickedElement[0].querySelector("img")).addClass("open");
+                    clickedElement[0].setAttribute("title", "Minimize controls");
+                } else {
+                    //hide the target element and style button as inactive
+                    targetElement.addClass("minimize");
+                    clickedElement.removeClass("open");
+                    $(clickedElement[0].querySelector("img")).removeClass("open");
+                    clickedElement[0].setAttribute("title", "Show controls");
+                }
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+            // clickedElement.toggleClass("holdOpen");
             case "remove":
                 this.removeCharacter(data);
                 break;
@@ -281,6 +318,21 @@ class InnerSceneDisplayConfig extends Application {
         let windowContent = html.closest(".window-content");
         windowContent.off("click").on("click", "[data-action]", this._handleButtonClick.bind(this));
         this.handleChange();
+        this.handleHover();
+    }
+
+    handleHover() {
+        let api = game.modules.get("journal-to-canvas-slideshow")?.api;
+        $(".hover-controls button").on("mouseenter", (event) => {
+            let button = $(event.currentTarget);
+            let tileId = button.data().target;
+            api.filterTile(tileId);
+        });
+        $(".hover-controls button").on("mouseleave", (event) => {
+            let button = $(event.currentTarget);
+            let tileId = button.data().target;
+            api.filterTile(tileId, true);
+        });
     }
 
     handleChange() {

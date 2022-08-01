@@ -128,14 +128,6 @@
             filter: brightness(1.2);
         }
 
-        &:hover {
-            img {
-                filter: brightness(1);
-            }
-            // background-color: var(--accent-300);
-
-            color: white;
-        }
         + .utility {
             display: flex;
             flex-direction: column;

@@ -11,8 +11,7 @@ Hooks.on("canvasReady", async (canvas) => {
         if (!game.customPlayerList) {
             return;
         }
-        game.customPlayerList.otherCharacters =
-            await HelperFunctions.getAllActorsInScene();
+        game.customPlayerList.otherCharacters = await HelperFunctions.getAllActorsInScene();
         game.customPlayerList.render();
     }
 });
@@ -20,12 +19,22 @@ Hooks.on("canvasReady", async (canvas) => {
 Hooks.on("renderPlayerList", async (playerList, html) => {
     game.defaultPlayerList = playerList;
 
+    //hide the default list off screen
     playerList.element.addClass("hide-off-screen");
+
+    //get the height of the player list
+    let plHeight = playerList.element[0].clientHeight;
+    let plBottom = window.getComputedStyle(game.defaultPlayerList.element[0]).marginBottom;
+    //add CSS custom properties to the root element so that we can shift the custom player list upward and out of the way when we want to view the default one
+    let rootElement = document.documentElement;
+    rootElement.style.setProperty("--playerlist-height", plHeight + "px");
+    rootElement.style.setProperty("--playerlist-bottom", plBottom);
 });
 
 Hooks.on("renderPlayerList", async (playerList, html) => {
     if (game.customPlayerList) {
         game.customPlayerList.render();
+        // game.customPlayerList.element.addClass("draggable");
     }
 });
 
@@ -49,10 +58,7 @@ function highlightCharacterPortrait(token, isControlled) {
     }
     let playerList = game.customPlayerList.element;
     let currentPCArea = playerList.find(".current-character");
-    if (
-        token.actor.id === $(".current-character img").data().pcid &&
-        isControlled
-    ) {
+    if (token.actor.id === $(".current-character img").data().pcid && isControlled) {
         currentPCArea.addClass("selected");
     } else {
         currentPCArea.removeClass("selected");
@@ -91,9 +97,7 @@ export class CustomPlayerlist extends Application {
         //making this dummy object for situations in which no controlled token but still want to compare controlled char to something else
         let controlledCharacter = { id: "", name: "null" };
         if (game.canvas.tokens.controlled[0]) {
-            controlledCharacter = await HelperFunctions.getActorFromToken(
-                game.canvas.tokens.controlled[0]
-            );
+            controlledCharacter = await HelperFunctions.getActorFromToken(game.canvas.tokens.controlled[0]);
         }
 
         let otherCharacters;
@@ -133,14 +137,12 @@ export class CustomPlayerlist extends Application {
         let action = el.data().action;
         switch (action) {
             case "toggle-player-list":
-                if (
-                    game.defaultPlayerList.element.hasClass("bring-on-screen")
-                ) {
-                    game.defaultPlayerList.element.removeClass(
-                        "bring-on-screen"
-                    );
+                if (game.defaultPlayerList.element.hasClass("bring-on-screen")) {
+                    game.defaultPlayerList.element.removeClass("bring-on-screen");
+                    game.customPlayerList.element.removeClass("slide-up");
                 } else {
                     game.defaultPlayerList.element.addClass("bring-on-screen");
+                    game.customPlayerList.element.addClass("slide-up");
                 }
         }
     }

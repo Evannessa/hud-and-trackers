@@ -1,101 +1,246 @@
 button i {
-	display: grid;
-	place-content: center;
-	margin: 0;
+    display: grid;
+    place-content: center;
+    margin: 0;
+}
+
+.img-button {
+    background: none;
+    background-color: transparent;
+    width: fit-content;
+    height: fit-content;
+    img {
+        max-width: 3rem;
+        // filter: inherit;
+        // filter: drop-shadow(2px 4px 6px black);
+        // transition: filter 150ms ease-in;
+    }
+    &.framed {
+        position: relative;
+        img {
+            clip-path: circle(50%);
+        }
+        &:before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url("/modules/hud-and-trackers/images/Button Badges/Frames & Borders/circle-frame.webp");
+        }
+    }
+}
+
+.minimize {
+    transform: scaleY(0);
+    opacity: 0;
+    height: fit-content;
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    transform-origin: top center;
+    transition: transform 100ms ease-out, opacity 100ms ease-out;
+}
+
+.interactive {
+    cursor: pointer;
+}
+.bg-none {
+    background: none;
+}
+
+.bg-neutral-base {
+    background-color: var(--color-neutral-base);
+}
+.bg-neutral-darkest {
+    background-color: var(--color-neutral-darkest);
+}
+.bg-neutral-lightest {
+    background-color: var(--color-neutral-lightest);
+}
+
+.hover-grow {
+    transition: transform 150ms ease-in;
+    &:hover {
+        transform: scale(1.2);
+    }
+}
+.hover-bg-primary {
+    transition: background-color 150ms ease-in;
+    &:hover {
+        background-color: var(--color-secondary-base);
+    }
+}
+.hover-bg-secondary {
+    transition: background-color 150ms ease-in;
+    &:hover {
+        background-color: var(--color-secondary-base);
+    }
+}
+.hover-bg-removable {
+    transition: background-color 150ms ease-in;
+    &:hover {
+        background-color: var(--color-danger-base);
+    }
+}
+.hover-bg-none {
+    &:hover {
+        background: none;
+        background-color: transparent;
+    }
+}
+.focus-bg-none {
+    &:focus {
+        background: none;
+        background-color: transparent;
+    }
+}
+
+.hover-disabled {
+    &:disabled {
+        cursor: not-allowed;
+    }
+}
+.brighten-on-open {
+    &.open {
+        filter: brightness(1.2);
+    }
+}
+.glow-on-open {
+    &.open {
+        filter: drop-shadow(0 0 0.75rem crimson);
+    }
+}
+.child-glow-on-open {
+    &.open {
+        > img {
+            filter: drop-shadow(0 0 0.75rem crimson);
+        }
+    }
+}
+
+.shadow-none {
+    box-shadow: var(--shadow-none);
+}
+
+.shadow-lowest {
+    box-shadow: var(--shadow-lowest);
+}
+.shadow-base {
+    box-shadow: var(--shadow-base);
+}
+
+.shadow-highest {
+    box-shadow: var(--shadow-highest);
+}
+.shadow-circle {
+    filter: drop-shadow(2px 4px 6px black);
+    transition: filter 150ms ease-in;
+}
+
+.scroll-y {
+    overflow-y: scroll;
+}
+
+.scroll-x {
+    overflow-x: scroll;
+}
+
+.hidden-y {
+    overflow-y: hidden;
+}
+.hidden-x {
+    overflow-x: hidden;
 }
 
 .square {
-	width: 2rem;
-	height: 2rem;
+    width: 2rem;
+    height: 2rem;
 }
 
 .horizontal-button-wrapper {
-	display: flex;
-	align-items: center;
-	justify-content: space-evenly;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 .button-list {
-	display: flex;
+    display: flex;
 
-	li {
-		list-style-type: none;
-	}
+    li {
+        list-style-type: none;
+    }
 }
 
-
-
 .header {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
 }
 
 .config-wrapper {
-	display: flex;
-	background-color: $jet-5;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	gap: 1rem;
-
+    display: flex;
+    background-color: $jet-5;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
 }
 
 .drawer-visible {
-	right: unset;
-	left: 0px;
+    right: unset;
+    left: 0px;
 }
 
 .side-drawer {
-	position: absolute;
-	right: 100%;
-	z-index: 200;
-	width: 50%;
+    position: absolute;
+    right: 100%;
+    z-index: 200;
+    width: 50%;
 
-	.tab {
-		position: absolute;
-		left: 100%;
-		top: 50%;
-		width: 3rem;
-		height: 3rem;
-		background-color: var(--color-accent-base);
-		color: white;
-		z-index: 200;
-	}
+    .tab {
+        position: absolute;
+        left: 100%;
+        top: 50%;
+        width: 3rem;
+        height: 3rem;
+        background-color: var(--color-secondary-base);
+        color: white;
+        z-index: 200;
+    }
 }
 
 .justify-self-right {
-	margin-left: auto;
+    margin-left: auto;
 }
 
 .flex-column {
-	display: flex;
-	flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .flex-centered {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .chip-span {
-	display: inline-flex;
-	justify-content: space-evenly;
-	height: fit-content;
-	width: 100%;
-	gap: 0.5rem;
-	padding: 0.5rem;
+    display: inline-flex;
+    justify-content: space-evenly;
+    height: fit-content;
+    width: 100%;
+    gap: 0.5rem;
+    padding: 0.5rem;
 }
 
 .wrap {
-	flex-wrap: wrap;
+    flex-wrap: wrap;
 }
 
 //text
 .text-centered {
-	text-align: center;
+    text-align: center;
 }
 
 //wether filled or ghost
@@ -104,162 +249,155 @@ button i {
 //what color the text is
 
 .ghost {
-	background-color: transparent;
-	color: var(--color-primary-base);
-	border: 1px solid white;
-	border-color: var(--color-primary-base);
+    background-color: transparent;
+    color: var(--color-primary-base);
+    border: 1px solid white;
+    border-color: var(--color-primary-base);
 
-	&:hover {
-		border-color: var(--color-accent-base);
-		color: var(--color-accent-base);
-	}
+    &:hover {
+        border-color: var(--color-secondary-base);
+        color: var(--color-secondary-base);
+    }
 }
 
 .filled {
-	background-color: var(--color-primary-base);
-	border-color: var(--color-primary-base);
-	color: white;
-	transition: border-color 100ms ease-in, background-color 100ms ease-in;
+    background-color: var(--color-primary-base);
+    border-color: var(--color-primary-base);
+    color: white;
+    transition: border-color 100ms ease-in, background-color 100ms ease-in;
 
-	&:hover {
-		background-color: var(--color-accent-base);
-		border-color: var(--color-accent-base);
-	}
+    &:hover {
+        background-color: var(--color-secondary-base);
+        border-color: var(--color-secondary-base);
+    }
 }
 
 //for things like removing tags with a click
 .remove-on-click {
-	position: relative;
+    position: relative;
 
-	&:before {
-		position: absolute;
-		pointer-events: none;
-		;
-		width: 100%;
-		height: 100%;
-		border-radius: inherit;
-		background-color: rgb(255, 92, 63);
-		content: 'Remove?';
-		opacity: 0;
-		transition: opacity 100ms ease-in;
-	}
+    &:before {
+        position: absolute;
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background-color: rgb(255, 92, 63);
+        content: "Remove?";
+        opacity: 0;
+        transition: opacity 100ms ease-in;
+    }
 
-	&:hover {
-
-		&:before {
-			opacity: 100%;
-		}
-
-	}
+    &:hover {
+        &:before {
+            opacity: 100%;
+        }
+    }
 }
 
 .bg-accent {
-	background-color: var(--color-accent-base);
-	border-color: var(--color-primary-base);
+    background-color: var(--color-secondary-base);
+    border-color: var(--color-primary-base);
 }
 
 .rounded {
-	border-radius: 8px;
+    border-radius: 8px;
 }
 
 .slight-rounded {
-
-	border-radius: 5px;
+    border-radius: 5px;
 }
 
 .cap-rounded {
-	border-radius: 999px;
+    border-radius: 999px;
 }
 
 // #region Colors
 
 .text-white {
-	color: white;
+    color: white;
 }
 
 .text-warning {
-	color: rgb(255, 92, 63);
+    color: rgb(255, 92, 63);
 }
 
 .text-primary {
-	color: var(--color-primary-base);
+    color: var(--color-primary-base);
 }
 
 .text-accent {
-	color: var(--color-accent-base);
+    color: var(--color-secondary-base);
 }
 
 .border-primary {
-	border-color: var(--color-primary-base);
+    border-color: var(--color-primary-base);
 }
 
 .border-accent {
-	border-color: var(--color-accent-base);
-
+    border-color: var(--color-secondary-base);
 }
 
 // #endregion
 
 .hover-shadow {
-	&:before {
-		pointer-events: none;
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		content: '';
-		border-radius: inherit;
-		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
-		opacity: 0%;
-		transition: opacity 100ms ease-out;
+    &:before {
+        pointer-events: none;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        content: "";
+        border-radius: inherit;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
+        opacity: 0%;
+        transition: opacity 100ms ease-out;
+    }
 
-	}
-
-	&:hover {
-		&:before {
-			opacity: 100%;
-
-		}
-	}
+    &:hover {
+        &:before {
+            opacity: 100%;
+        }
+    }
 }
 
 .window-padding {
-	padding: clamp(0.5rem, 0.5rem + 1vw, 1rem) clamp(0.5rem, 0.5rem + 1vh, 1rem);
+    padding: clamp(0.5rem, 0.5rem + 1vw, 1rem) clamp(0.5rem, 0.5rem + 1vh, 1rem);
 }
 
 .window-gap {
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .input-and-label-wrapper {
-	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .file-input-wrapper {
-	display: flex;
-	max-width: 100%;
+    display: flex;
+    max-width: 100%;
 
-	button {
-		//grow none, shrink normal scale
-		flex: 1 1 auto;
-		display: flex;
-		align-items: center;
-		justify-content: space-evenly;
-		height: 100%;
-		border-top-left-radius: 0;
-		border-bottom-left-radius: 0;
-	}
+    button {
+        //grow none, shrink normal scale
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        height: 100%;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
 
-	input {
-		//max, min, ideal
-		//grow normal scale, shrink none
-		flex: 1 0 auto;
-		max-width: 60%;
-		height: 100%;
-		border-top-right-radius: 0;
-		border-bottom-right-radius: 0;
-	}
+    input {
+        //max, min, ideal
+        //grow normal scale, shrink none
+        flex: 1 0 auto;
+        max-width: 60%;
+        height: 100%;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
 }
