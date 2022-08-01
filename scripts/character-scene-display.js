@@ -63,7 +63,6 @@ function processTagData() {
             characters: characterPaths.map((path, index) => {
                 let clanName = tagObject.tag.split("/").pop();
                 clanName = clanName.charAt(0).toUpperCase() + clanName.slice(1);
-                console.log(clanName);
                 //get character name from file path
                 let name = path.split("/").pop().replace(".md", "");
                 let firstName = name.split(" ").shift();
@@ -291,18 +290,14 @@ class InnerSceneDisplayConfig extends Application {
                 }).render(true);
                 break;
             case "pan":
-                let ourName = event.currentTarget.dataset.name;
+                let type = event.currentTarget.dataset.type;
                 let imagePath = event.currentTarget.dataset.img;
-                let firstName = ourName.split(" ").shift();
-                let width = event.currentTarget.querySelector("img").dataset.width;
-                let height = event.currentTarget.querySelector("img").dataset.height;
                 let tile = game.scenes.viewed.tiles.contents.find((tile) => {
-                    return tile.data.img.toLowerCase().includes(firstName.toLowerCase());
+                    return tile.data.img.toLowerCase().includes(imagePath.toLowerCase());
                 });
                 if (tile) {
                     this.panToTile(tile);
                 }
-
                 break;
             case "switch":
                 let targetTileId = clickedElement.data().target;

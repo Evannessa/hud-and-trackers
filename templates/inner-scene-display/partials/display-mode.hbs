@@ -3,6 +3,7 @@
         {{#each characters as |character|}}
             <li
                 class="character | interactive bg-none shadow-none hover-grow"
+                data-type="character"
                 data-action="pan"
                 data-name="{{character.name}}"
                 data-img="{{character.imagePath}}"
@@ -18,6 +19,7 @@
                                     data-action="switch"
                                     data-target="{{tileData.id}}"
                                     data-frame="{{tileData.linkedBoundingTile}}"
+                                    title="Display {{character.name}} on Tile {{tileData.displayName}}"
                                 >{{tileData.displayName}}</button></li>
                         {{/each}}
                     </ul>
@@ -29,22 +31,27 @@
     <ul class="scene-group">
         {{#each innerScenes as |scene|}}
             <li
-                class="interactive innerScene | bg-neutral-darkest | hover-grow |"
+                class="interactive innerScene | bg-neutral-darkest | hover-grow"
                 data-action="pan"
+                data-type="innerScene"
                 data-name="{{scene.name}}"
                 data-img="{{scene.imagePath}}"
                 title="{{scene.name}}"
             >
                 <img src="{{scene.imagePath}}" alt="" />
-                <ul class="hover-controls">
-                    {{#each @root.displayTiles as |tileData|}}
-                        <li><button
-                                data-action="switch"
-                                data-target="{{tileData.id}}"
-                                data-frame="{{tileData.linkedBoundingTile}}"
-                            >{{tileData.displayName}}</button></li>
-                    {{/each}}
-                </ul>
+
+                {{#if @root.isGM}}
+                    <ul class="hover-controls">
+                        {{#each @root.displayTiles as |tileData|}}
+                            <li><button
+                                    data-action="switch"
+                                    data-target="{{tileData.id}}"
+                                    data-frame="{{tileData.linkedBoundingTile}}"
+                                    title="Display {{scene.name}} on Tile {{tileData.displayName}}"
+                                >{{tileData.displayName}}</button></li>
+                        {{/each}}
+                    </ul>
+                {{/if}}
             </li>
         {{/each}}
     </ul>

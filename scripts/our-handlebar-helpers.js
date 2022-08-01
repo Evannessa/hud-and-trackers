@@ -21,6 +21,9 @@ export default function registerAllHandlebarHelpers() {
     Handlebars.registerHelper("ternary", function (test, yes, no) {
         return test ? yes : no;
     });
+    Handlebars.registerHelper("capitalize", (stringInput) => {
+        return stringInput.charAt(0).toUpperCase() + stringInput.slice(1);
+    });
 }
 // Handlebars.registerHelper("getCharacterData", (id) => {
 
