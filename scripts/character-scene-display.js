@@ -134,9 +134,11 @@ class InnerSceneDisplayConfig extends Application {
         return flaggedTiles?.filter((tileData) => !tileData.isBoundingTile);
     }
 
-    async panToTile(tileData) {
+    async panToTile(tile) {
         let scale = game.scenes.viewed._viewPosition;
-        game.canvas.animatePan({ x: tileData.x, y: tileData.y, scale: scale });
+        let tileObject = tile.object;
+
+        game.canvas.animatePan({ x: tileObject.center.x, y: tile.object.center.y, scale: scale });
     }
 
     async removeCharacter(character) {
@@ -241,6 +243,7 @@ class InnerSceneDisplayConfig extends Application {
         let imagePath = clickedElement.data().imagePath;
         let value = event.currentTarget.value;
         let data = { name: name, imagePath: imagePath };
+
         switch (action) {
             case "select":
                 this.updateSceneDisplayData(data, "character", false);
@@ -297,15 +300,19 @@ class InnerSceneDisplayConfig extends Application {
                     return tile.data.img.toLowerCase().includes(firstName.toLowerCase());
                 });
                 if (tile) {
-                    this.panToTile(tile.data);
+                    this.panToTile(tile);
                 }
 
                 break;
             case "switch":
                 let targetTileId = clickedElement.data().target;
+                if (event.ctrlKey) {
+                    let api = game.modules.get("journal-to-canvas-slideshow")?.api;
+                    api.selectTile(targetTileId);
+                    break;
+                }
                 let boundingTileID = clickedElement.data().frame;
                 let imageElement = event.currentTarget.closest(".character, .innerScene").querySelector("img");
-                console.log(imageElement);
                 displayImageInScene(imageElement, targetTileId, boundingTileID);
                 // this.replaceTileImage(targetTileId);
                 break;
@@ -326,12 +333,12 @@ class InnerSceneDisplayConfig extends Application {
         $(".hover-controls button").on("mouseenter", (event) => {
             let button = $(event.currentTarget);
             let tileId = button.data().target;
-            api.filterTile(tileId);
+            api?.showTileBorder(tileId);
         });
         $(".hover-controls button").on("mouseleave", (event) => {
             let button = $(event.currentTarget);
             let tileId = button.data().target;
-            api.filterTile(tileId, true);
+            api?.showTileBorder(tileId, 0);
         });
     }
 
