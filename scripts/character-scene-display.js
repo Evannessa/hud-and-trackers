@@ -150,7 +150,7 @@ class InnerSceneDisplayConfig extends Application {
         this.render(true);
     }
 
-    async updateSceneDisplayData(newData, type, isUpdate) {
+    async updateSceneDisplayData(newData, type) {
         let currentScene = game.scenes.viewed;
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
         if (type === "character") {
@@ -161,15 +161,20 @@ class InnerSceneDisplayConfig extends Application {
                 sceneDisplayData = { ...sceneDisplayData, characters: [...characters] };
             }
         } else if (type === "innerScene") {
-            let innerScenes = sceneDisplayData.innerScenes;
-            if (!isUpdate) {
-                innerScenes.push(newData);
+            let innerScenesArray = sceneDisplayData.innerScenes;
+            let foundSceneData = innerScenesArray.find((sceneData) => sceneData.id === newData.id);
+            //see if the id already exists
+            if (!foundSceneData) {
+                innerScenesArray.push(newData);
             } else {
-                innerScenes.map((scene) => {
-                    return scene.id === newData.id ? newData : scene;
-                });
+                let index = innerScenesArray.indexOf(foundSceneData);
+                let updatedData = { ...foundSceneData, ...newData };
+                innerScenesArray.splice(index, 1, updatedData);
+                // innerScenesArray.map((sceneData) => {
+                //     return sceneData.id === newData.id ? newData : sceneData;
+                // });
             }
-            sceneDisplayData = { ...sceneDisplayData, innerScenes: [...innerScenes] };
+            sceneDisplayData = { ...sceneDisplayData, innerScenes: [...innerScenesArray] };
         } else if (type === "mode") {
             sceneDisplayData = { ...sceneDisplayData, mode: newData };
         }
@@ -278,19 +283,19 @@ class InnerSceneDisplayConfig extends Application {
             case "browse":
                 // let img = clickedElement[0].src;
                 let name = clickedElement[0].closest("li").querySelector("input[type='text']").value || "New Scene";
+
                 let filepicker = new FilePicker({
                     type: "image",
-                    callback: (path) => {
+                    callback: async (path) => {
                         data.imagePath = path;
                         data.name = name;
-                        data.id = HelperFunctions.generateId();
-                        this.updateSceneDisplayData(data, "innerScene", false);
+                        data.id = foundry.utils.randomID();
+                        await this.updateSceneDisplayData(data, "innerScene");
                         // this.addInnerScene({ name: name, imagePath: path });
                     },
                 }).render(true);
                 break;
             case "pan":
-                let type = event.currentTarget.dataset.type;
                 let imagePath = event.currentTarget.dataset.img;
                 let tile = game.scenes.viewed.tiles.contents.find((tile) => {
                     return tile.data.img.toLowerCase().includes(imagePath.toLowerCase());
@@ -309,7 +314,6 @@ class InnerSceneDisplayConfig extends Application {
                 let boundingTileID = clickedElement.data().frame;
                 let imageElement = event.currentTarget.closest(".character, .innerScene").querySelector("img");
                 displayImageInScene(imageElement, targetTileId, boundingTileID);
-                // this.replaceTileImage(targetTileId);
                 break;
         }
     }
@@ -342,8 +346,23 @@ class InnerSceneDisplayConfig extends Application {
             "change",
             async function (event) {
                 let { value, name, checked, type } = event.currentTarget;
+                let ourType = event.currentTarget.dataset.type;
+                let ourId = event.currentTarget.dataset.id;
                 game.innerSceneDisplayConfig.data[name] = type == "checkbox" ? checked : value;
-                game.innerSceneDisplayConfig.render(true, { renderData: game.innerSceneDisplayConfig.data });
+
+                let data = {
+                    id: ourId,
+                    name: value,
+                };
+                if (type === "text") {
+                    await game.innerSceneDisplayConfig.updateSceneDisplayData(data, ourType);
+                } else {
+                    game.innerSceneDisplayConfig.render(true, { renderData: game.innerSceneDisplayConfig.data });
+                }
+
+                //update the flags
+
+                //re-render
             }
         );
     }

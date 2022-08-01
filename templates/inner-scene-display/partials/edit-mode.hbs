@@ -1,84 +1,72 @@
 <section class="editModeWrapper">
-  <section class="innerSceneWrapper">
-    <h3>
-      Inner Scenes
-    </h3>
-    <ul class="innerScenes">
-      {{#each innerScenes as |scene|}}
-        <li
-          class="[ option ] [interactive bg-neutral-darkest hover-bg-primary rounded]"
-        >
-          <img
-            src="{{scene.imagePath}}"
-            alt="{{scene.name}}"
-            data-action="browse"
-          />
-          <input type="text" value="{{scene.name}}" />
-        </li>
-      {{/each}}
-      <li
-        class="option | interactive bg-neutral-darkest hover-bg-primary rounded"
-        data-action="browse"
-      >
-        <img
-          src="/Idyllwild/Art/Characters/placeholder.webp"
-          alt="placeholder"
-          data-action="browse"
-        />
-        <input type="text" value="New Inner Scene" />
-      </li>
-    </ul>
-  </section>
-  <section class="selectedCharactersWrapper">
-    <h3>
-      Characters In Scene
-    </h3>
-    <ul class="addedToScene">
-      {{#each characters}}
-        <li
-          class="option interactive | bg-neutral-darkest hover-bg-removable rounded"
-          data-action="remove"
-          data-name="{{this.name}}"
-          data-image-path="{{this.imagePath}}"
-        >
-          <img src="{{this.imagePath}}" alt="{{this.name}}" srcset="" />
-          <p>
-            {{this.name}}
-          </p>
-        </li>
-      {{/each}}
-    </ul>
-  </section>
-  <hr />
-  <section class="characterOptionsWrapper | scroll-y">
-    <h3>
-      Character Options
-    </h3>
-    <label for="clanSelect">
-      Pick A Clan
-    </label>
-    <select name="clanSelect" id="clanSelect">
-      {{selectOptions
-        clans
-        selected=clanSelect
-        nameAttr="value"
-        labelAttr="name"
-      }}
-    </select>
-    <ul class="characterOptions">
-      {{#each options}}
-        <li
-          class="option interactive | bg-neutral-darkest hover-bg-primary rounded"
-          data-action="select"
-          data-name="{{this.name}}"
-          data-image-path="{{this.imagePath}}"
-        >
-          <img src="{{this.imagePath}}" alt="{{this.name}}" srcset="" />
-          <p>
-            {{this.name}}
-          </p>
-        </li>
-      {{/each}}
-    </ul>
-  </section>
+    <section class="innerSceneWrapper">
+        <h3>
+            Inner Scenes
+        </h3>
+        <ul class="innerScenes">
+            {{#each innerScenes as |scene|}}
+                <li class="[ option ] [interactive bg-neutral-darkest hover-bg-primary rounded]">
+                    <img src="{{scene.imagePath}}" alt="{{scene.name}}" data-action="browse" />
+                    <input
+                        type="text"
+                        data-id="{{scene.id}}"
+                        name="{{scene.name}}"
+                        value="{{scene.name}}"
+                        data-type="innerScene"
+                    />
+                </li>
+            {{/each}}
+            <li class="option | interactive bg-neutral-darkest hover-bg-primary rounded" data-action="browse">
+                <img src="/Idyllwild/Art/Characters/placeholder.webp" alt="placeholder" data-action="browse" />
+                <input type="text" value="New Inner Scene" />
+            </li>
+        </ul>
+    </section>
+    <section class="selectedCharactersWrapper">
+        <h3>
+            Characters In Scene
+        </h3>
+        <ul class="addedToScene">
+            {{#each characters}}
+                <li
+                    class="option interactive | bg-neutral-darkest hover-bg-removable rounded"
+                    data-action="remove"
+                    data-name="{{this.name}}"
+                    data-image-path="{{this.imagePath}}"
+                >
+                    <img src="{{this.imagePath}}" alt="{{this.name}}" srcset="" />
+                    <p>
+                        {{this.name}}
+                    </p>
+                </li>
+            {{/each}}
+        </ul>
+    </section>
+    <hr />
+    <section class="characterOptionsWrapper | scroll-y">
+        <h3>
+            Character Options
+        </h3>
+        <label for="clanSelect">
+            Pick A Clan
+        </label>
+        <select name="clanSelect" id="clanSelect">
+            {{selectOptions clans selected=clanSelect nameAttr="value" labelAttr="name"}}
+        </select>
+        <ul class="characterOptions">
+            {{#each options}}
+                <li
+                    class="option interactive | bg-neutral-darkest hover-bg-primary rounded"
+                    data-action="select"
+                    data-name="{{this.name}}"
+                    data-image-path="{{this.imagePath}}"
+                >
+                    <img src="{{this.imagePath}}" alt="{{this.name}}" srcset="" />
+                    <p>
+                        {{this.name}}
+                    </p>
+                </li>
+            {{/each}}
+        </ul>
+    </section>
 </section>
