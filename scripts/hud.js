@@ -7,9 +7,18 @@ import { ClockConfig } from "./ClockConfig.js";
 import * as PartyOverview from "./party-overview.js";
 import * as HelperFunctions from "./helper-functions.js";
 
+Hooks.on("renderHotbar", async (hotbar, html, data) => {
+    let defaultHotbar = html;
+    //get the height of the player list
+    let plHeight = defaultHotbar[0].clientHeight;
+    let plBottom = window.getComputedStyle(defaultHotbar[0]).marginBottom;
+    //add CSS custom properties to the root element so that we can shift the custom player list upward and out of the way when we want to view the default one
+    let rootElement = document.documentElement;
+    rootElement.style.setProperty("--default-hotbar-height", plHeight + "px");
+    rootElement.style.setProperty("--default-hotbar-bottom", plBottom);
+});
 let hud;
 let lastTab = "attacks";
-let inCombat = false;
 
 Handlebars.registerHelper("firstChar", function (strInputCode) {
     return strInputCode.charAt(0);
@@ -311,21 +320,11 @@ function itemRollMacro(
     // Parse data to All-in-One Dialog
 }
 
-// Hooks.once("renderHelperHud", (app, html) => {
-//     let position = game.settings.get("hud-and-trackers", "helperHudPosition");
-//     if (Object.keys(position).length > 0) {
-//         app.setPosition({ top: position.top, left: position.left });
-//     }
-// });
-// Hooks.on("renderHelperHud", (app, html) => {
-//     HelperFunctions.setInvisibleHeader(html, true);
-// });
-
 Hooks.once("renderHud", (app, html) => {
-    let position = game.settings.get("hud-and-trackers", "tokenHudPosition");
-    if (Object.keys(position).length > 0) {
-        app.setPosition({ top: position.top, left: position.left });
-    }
+    // let position = game.settings.get("hud-and-trackers", "tokenHudPosition");
+    // if (Object.keys(position).length > 0) {
+    //     app.setPosition({ top: position.top, left: position.left });
+    // }
 });
 
 Hooks.on("renderHud", (app, html) => {
@@ -342,6 +341,11 @@ export class Hud extends Application {
         this.isGM = game.user.isGM;
         this.ourToken = object;
         this.ourActor = this.ourToken.actor; //this.getActor(this.ourToken);
+        this.tabTypes = ["attacks", "cyphers", "artifacts"];
+        if (this.ourActor.type === "PC") {
+            let pcExclusiveTypes = ["abilities", "skills"];
+            this.tabTypes = [...this.tabTypes, ...pcExclusiveTypes];
+        }
         this.attacks = this.getStuffFromSheet(this.ourActor, "attack");
         this.abilities = this.getStuffFromSheet(this.ourActor, "ability");
         this.skills = this.getStuffFromSheet(this.ourActor, "skill");
@@ -377,7 +381,6 @@ export class Hud extends Application {
         } else {
             this.pinnedAbilities = this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities");
         }
-        this.combatActive = inCombat;
     }
 
     constructor(object) {
@@ -392,18 +395,16 @@ export class Hud extends Application {
             submitOnChange: false,
             closeOnSubmit: false,
             minimizable: false,
-            top: 100,
-            left: 100,
             resizable: false,
-            background: "none",
-            template: "modules/hud-and-trackers/templates/hud.html",
+            bottom: 63,
+            left: 220,
+            template: "modules/hud-and-trackers/templates/hud.hbs",
             id: "tokenHud",
             title: "tokenHud",
             onSubmit: (e) => e.preventDefault(),
         });
     }
     async _updateObject(event, formData) {
-        console.log(formData);
         this.render();
     }
 
@@ -420,20 +421,29 @@ export class Hud extends Application {
             });
             this.pinnedItems[key] = array;
         }
-        // console.log(this.pinnedItems);
-        // this.pinnedAbilities = this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities").map( pin => new Item(pin));
-
-        return {
-            ourToken: this.ourToken,
-            isGM: this.isGM,
-            type: this.ourActor.type,
-            ourActor: this.ourActor,
+        let allItems = {
             attacks: this.attacks,
             skills: this.skills,
             abilities: this.abilities,
             cyphers: this.cyphers,
             artifacts: this.artifacts,
-            pinnedItems: this.pinnedItems,
+        };
+        let currentItemArray = allItems[this.showTab];
+        let currentPinnedItemsArray = this.pinnedItems[this.showTab];
+
+        return {
+            ourToken: this.ourToken,
+            isGM: this.isGM,
+            tabTypes: this.tabTypes,
+            type: this.ourActor.type,
+            ourActor: this.ourActor,
+            items: currentItemArray,
+            // attacks: this.attacks,
+            // skills: this.skills,
+            // abilities: this.abilities,
+            // cyphers: this.cyphers,
+            // artifacts: this.artifacts,
+            pinnedItems: currentPinnedItemsArray,
             pinnedAbilities: this.pinnedAbilities, //this.ourActor.getFlag("hud-and-trackers", "pinnedAbilities"),
             showTab: this.showTab,
             combatActive: this.combatActive,
@@ -470,7 +480,6 @@ export class Hud extends Application {
         this.setActive(element); //make the pinned one active first
         //to remove active state from its siblings
         let siblings = Hud.getSiblings(element);
-        console.log("Setting pinned " + element.classList);
         siblings.forEach((sibling) => {
             if (sibling.classList.contains("pinned")) {
                 $(sibling).removeClass("pinned");
@@ -497,7 +506,8 @@ export class Hud extends Application {
 
         let windowContent = html.closest(".window-content");
         let buttonWrapper = windowContent.find(".button-wrapper")[0];
-        let buttons = buttonWrapper.children;
+        let buttons = buttonWrapper.querySelectorAll("button");
+        console.log("Our buttons are", buttons);
 
         windowContent[0].addEventListener("mouseleave", async (event) => {
             if (this.showTab == "none" || this.pinnedTab != "none") {
@@ -648,7 +658,57 @@ export class Hud extends Application {
         let items = ourActor.data.items.contents.filter((item) => {
             return item.data.type === type;
         });
-        return items.sort();
+        return items.sort().map((item) => this.organizeData(item));
+    }
+    organizeData(item) {
+        let name = item.data.name;
+        let id = item.data._id;
+        let data = item.data.data;
+        let type = data.type;
+        let summaryInfo = "";
+        let fullInfo = [data.type];
+        if (data.notes) {
+            fullInfo.push({ name: "Notes", value: data.notes });
+        }
+        if (data.range) {
+            fullInfo.push({ name: "Range", value: data.range });
+        }
+        let level = data.level || " ";
+        let damage = data.damage || " ";
+        let costPoints = data.costPoints || " ";
+        let costPool = data.costPool || " ";
+        let skillRating = data.skillRating || " ";
+        switch (type) {
+            case "attack":
+                summaryInfo += `${damage} dmg`;
+                fullInfo.push({ name: "Damage", value: damage });
+                break;
+            case "ability":
+                summaryInfo += `${costPoints}${costPool.charAt(0)}`;
+                fullInfo.push({ name: "Cost", value: `${costPoints}${costPool}` });
+                break;
+            case "skill":
+                summaryInfo += `${skillRating?.charAt(0)}`;
+                fullInfo.push({ name: "", value: skillRating });
+                break;
+            case "cypher":
+                summaryInfo += `Lvl ${level}`;
+                fullInfo.push({ name: "Level", value: level });
+                break;
+            case "artifact":
+                summaryInfo += `Lvl ${level}`;
+                fullInfo.push({ name: "Level", value: level });
+                break;
+        }
+
+        let organized = {
+            name: name,
+            id: id,
+            description: data.description,
+            summaryInfo: summaryInfo,
+            fullInfo: fullInfo,
+        };
+        return organized;
     }
 }
 window.hud = hud;

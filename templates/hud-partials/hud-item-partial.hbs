@@ -1,0 +1,12 @@
+	<div {{#if (eq pinned "true")}}class="hud-item pinned"{{else}}class="hud-item | bg-glass hover-bg-dynamic | rounded"{{/if}} id={{id}} data-type={{type}}>
+		<h1 class="hud-item__title">{{this.name}}</h1>
+		<span>{{clean summaryInfo}}</span>
+		{{#unless (eq this.description "")}}
+		<div class="hud-item__description">
+		{{#each fullInfo}}
+			<h3><span>{{clean (@key)}}:</span> {{clean this}}</h3>
+		{{/each}}
+			<p>{{clean description}}</p>
+		</div>
+		{{/unless}}
+	</div>

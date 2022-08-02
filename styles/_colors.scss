@@ -27,6 +27,14 @@ $colors: (
         300: hsl(240, 17%, 70%),
         lightest: hsl(240, 17%, 90%),
     ),
+    glass: (
+        no-blur: hsla(0, 0%, 44%, 0.478),
+        blur: hsla(0, 0%, 44%, 0.267),
+        border: hsla(0, 0%, 100%, 0.198),
+        no-blur-dark: hsla(240, 11%, 14%, 0.769),
+        blur-dark: hsla(240, 11%, 14%, 0.161),
+        border-dark: hsla(240, 10%, 40%, 0.568),
+    ),
     danger: (
         dark: hsl(0, 89%, 20%),
         base: hsl(0, 59%, 50%),

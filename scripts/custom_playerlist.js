@@ -80,9 +80,8 @@ export class CustomPlayerlist extends Application {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["hud-and-trackers"],
-            resizeable: false,
-            popOut: false,
+            resizeable: true,
+            popOut: true,
             template: `modules/hud-and-trackers/templates/party-overview/custom_playerlist.hbs`,
             id: "custom_playerlist",
             title: "Custom Playerlist",

@@ -2,6 +2,7 @@ import * as HelperFunctions from "./helper-functions.js";
 let clanTags;
 let categoryIndividualTags;
 let basePath = "/Idyllwild/Art/Characters";
+
 fetch("/Idyllwild/Test JSON Data/tags.json")
     .then((response) => {
         return response.json();
@@ -24,8 +25,6 @@ Hooks.on("ready", () => {
     };
 
     game.innerSceneDisplayConfig = new InnerSceneDisplayConfig(data).render(true, { data });
-    console.log(game.innerSceneDisplayConfig.data);
-    // game.innerSceneDisplayConfig.render(true);
 });
 
 Hooks.on("canvasReady", async (canvas) => {

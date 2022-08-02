@@ -44,7 +44,22 @@ button i {
 .fit-content-width {
     width: fit-content;
 }
-
+.hover-reveal-up {
+    position: relative;
+    &:hover {
+        .hover-reveal-up-child {
+            transform: scale(1);
+        }
+    }
+    &-child {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        transform-origin: bottom center;
+        // transform: scale(0);
+        transition: transform 150ms ease-out;
+    }
+}
 .interactive {
     cursor: pointer;
 }
@@ -61,6 +76,14 @@ button i {
 }
 .bg-neutral-lightest {
     background-color: var(--color-neutral-lightest);
+}
+.bg-glass {
+    background-color: var(--color-glass-no-blur);
+    @supports (backdrop-filter: blur(12px)) {
+        background-color: var(--color-glass-blur);
+        backdrop-filter: blur(12px);
+    }
+    border: 1px solid var(--color-glass-border);
 }
 
 .hover-grow {
@@ -93,6 +116,12 @@ button i {
         background-color: transparent;
     }
 }
+.hover-bg-dynamic {
+    transition: background-color 150ms ease-in;
+    &:hover {
+        background-color: var(--bg-color);
+    }
+}
 .focus-bg-none {
     &:focus {
         background: none;
@@ -122,6 +151,12 @@ button i {
         }
     }
 }
+.drop-shadow {
+    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.35));
+}
+.text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
 
 .shadow-none {
     box-shadow: var(--shadow-none);
@@ -150,16 +185,54 @@ button i {
     overflow-x: scroll;
 }
 
-.hidden-y {
+.hidden-overflow-y {
     overflow-y: hidden;
 }
-.hidden-x {
+.hidden-overflow-x {
     overflow-x: hidden;
 }
 
 .square {
     width: 2rem;
     height: 2rem;
+}
+.square-medium {
+    width: 4rem;
+    height: 4rem;
+}
+.square-large {
+    width: 6rem;
+    height: 6rem;
+}
+
+.before-color-overlay {
+    &:before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: var(--bg-color);
+        mix-blend-mode: color;
+        opacity: 20%;
+        transition: opacity 100ms ease-in;
+    }
+}
+.before-hover-opacity {
+    &:hover {
+        &:before {
+            opacity: 100%;
+        }
+    }
+}
+.rounded-outer-children {
+    &:first-child button {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+    &:last-child button {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
 }
 
 .horizontal-button-wrapper {
@@ -217,6 +290,10 @@ button i {
 
 .justify-self-right {
     margin-left: auto;
+}
+.flex-row {
+    display: flex;
+    flex-direction: row;
 }
 
 .flex-column {
@@ -303,6 +380,15 @@ button i {
 .bg-accent {
     background-color: var(--color-secondary-base);
     border-color: var(--color-primary-base);
+}
+
+.overflow-hidden {
+}
+.overflow-visible {
+}
+
+.sharp-corners {
+    border-radius: 0px;
 }
 
 .rounded {

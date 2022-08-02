@@ -2,12 +2,12 @@ import CombatHud from "./combat-hud.js";
 import * as HelperFunctions from "./helper-functions.js";
 
 export default function registerSettings() {
-    // game.settings.register(HelperFunctions.moduleName, "sharedClocks", {
-    //     scope: "client",
-    //     config: false,
-    //     type: Object,
-    //     default: {},
-    // });
+    game.settings.register("hud-and-trackers", "characterImagePath", {
+        scope: "world",
+        config: true,
+        type: String,
+        default: "/Idyllwild/Art/Characters",
+    });
 
     game.settings.register("hud-and-trackers", "hudButtons", {
         scope: "world",

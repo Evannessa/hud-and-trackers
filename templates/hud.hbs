@@ -1,0 +1,37 @@
+{{#if ourToken}}
+<h1 class="tokenName">{{ourToken.name}}</h1>
+
+<div class="button-wrapper | rounded rounded-outer-children | shadow-base">
+		{{#each tabTypes}}
+			<section class="ability-wrapper hover-reveal-up">
+				{{#if (eq @root.showTab this)}}
+						{{log @root.showTab "vs" this}}
+				<div class="hud-item-wrapper hover-reveal-up-child | shadow-base" data-layout="column" data-overflow="scroll" data-type="{{this}}">
+					<div class="pinnedDiv">
+						{{#each @root.pinnedItems}}
+							{{> "modules/hud-and-trackers/templates/hud-partials/hud-item-partial.hbs"}}
+						{{/each}}
+					</div>
+					{{#each @root.items}}
+						{{> "modules/hud-and-trackers/templates/hud-partials/hud-item-partial.hbs"}}
+					{{/each}}
+				</div>
+
+				{{/if}}
+				{{> "modules/hud-and-trackers/templates/hud-partials/button-partial.hbs"}} 
+			</section>
+		{{/each}}
+</div>
+<br />
+{{! #unless (eq showTab "none")}}
+{{!<div class="instructions">
+    <p>
+        <span>Left click to All-in-One Roll.</span> |
+        <span>Right Click to Pin to top.</span> |<span>
+            Alt-Click to Open Item Sheet.</span
+        >
+    </p>
+</div>
+{{/unless}}
+
+{{/if}}
