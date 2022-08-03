@@ -44,11 +44,27 @@ button i {
 .fit-content-width {
     width: fit-content;
 }
-.hover-reveal-up {
+.hover-reveal-right {
     position: relative;
     &:hover {
+        .hover-reveal-right-child {
+            opacity: 100%;
+        }
+    }
+    &-child {
+        position: absolute;
+        opacity: 0;
+        left: 100%;
+        top: 0;
+    }
+}
+.hover-reveal-up {
+    position: relative;
+    &:hover,
+    &.open {
         .hover-reveal-up-child {
-            transform: scale(1);
+            opacity: 1;
+            // transform: scale(1);
         }
     }
     &-child {
@@ -57,7 +73,9 @@ button i {
         left: 0;
         transform-origin: bottom center;
         // transform: scale(0);
-        transition: transform 150ms ease-out;
+        opacity: 0;
+        transition: opacity 150ms ease-out backdrop-filter 150ms ease-out;
+        // transition: transform 150ms ease-out;
     }
 }
 .interactive {
@@ -78,10 +96,11 @@ button i {
     background-color: var(--color-neutral-lightest);
 }
 .bg-glass {
+    transition: background-color 100ms ease-in backdrop-filter 100ms ease-in;
     background-color: var(--color-glass-no-blur);
     @supports (backdrop-filter: blur(12px)) {
         background-color: var(--color-glass-blur);
-        backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px) opacity(1);
     }
     border: 1px solid var(--color-glass-border);
 }

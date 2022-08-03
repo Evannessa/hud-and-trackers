@@ -1368,18 +1368,32 @@ button i {
   width: fit-content;
 }
 
+.hover-reveal-right {
+  position: relative;
+}
+.hover-reveal-right:hover .hover-reveal-right-child, .hud-and-trackers button.hover-reveal-right:focus .hover-reveal-right-child {
+  opacity: 100%;
+}
+.hover-reveal-right-child {
+  position: absolute;
+  opacity: 0;
+  left: 100%;
+  top: 0;
+}
+
 .hover-reveal-up {
   position: relative;
 }
-.hover-reveal-up:hover .hover-reveal-up-child, .hud-and-trackers button.hover-reveal-up:focus .hover-reveal-up-child {
-  transform: scale(1);
+.hover-reveal-up:hover .hover-reveal-up-child, .hud-and-trackers button.hover-reveal-up:focus .hover-reveal-up-child, .hover-reveal-up.open .hover-reveal-up-child {
+  opacity: 1;
 }
 .hover-reveal-up-child {
   position: absolute;
   bottom: 100%;
   left: 0;
   transform-origin: bottom center;
-  transition: transform 150ms ease-out;
+  opacity: 0;
+  transition: opacity 150ms ease-out backdrop-filter 150ms ease-out;
 }
 
 .interactive {
@@ -1404,14 +1418,15 @@ button i {
 }
 
 .bg-glass {
+  transition: background-color 100ms ease-in backdrop-filter 100ms ease-in;
   background-color: var(--color-glass-no-blur);
   border: 1px solid var(--color-glass-border);
 }
 @supports ((-webkit-backdrop-filter: blur(12px)) or (backdrop-filter: blur(12px))) {
   .bg-glass {
     background-color: var(--color-glass-blur);
-    -webkit-backdrop-filter: blur(12px);
-            backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px) opacity(1);
+            backdrop-filter: blur(12px) opacity(1);
   }
 }
 

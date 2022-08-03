@@ -466,7 +466,8 @@ export class Hud extends Application {
     }
 
     static setActive(element) {
-        console.log("Setting active " + element.classList);
+        // let parent = element.parentNode;
+        // parent.addClass("active");
         let siblings = Hud.getSiblings(element);
         siblings.forEach((sibling) => {
             if (sibling.classList.contains("active")) {
