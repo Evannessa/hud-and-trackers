@@ -1750,6 +1750,14 @@ button i {
   border-color: var(--color-secondary-base);
 }
 
+[data-type=art] {
+  --accent-color: blue;
+}
+
+[data-type=frame] {
+  --accent-color: red;
+}
+
 .hover-shadow:before {
   pointer-events: none;
   position: absolute;
@@ -5023,6 +5031,9 @@ button i {
   background-color: hsla(223deg, 8%, 17%, 0.5);
   border: hsla(0deg, 0%, 28%, 0.5);
 }
+#inner-scene-display .window-content * {
+  overflow: visible;
+}
 @supports ((-webkit-backdrop-filter: blur(8px)) or (backdrop-filter: blur(8px))) {
   #inner-scene-display .window-content {
     -webkit-backdrop-filter: blur(8px);
@@ -5200,6 +5211,7 @@ li .hover-controls button {
 .characterOptions .option,
 .addedToScene .option,
 .innerScenes .option {
+  background-color: var(--color-neutral-darkest);
   display: grid;
   grid-template-columns: minmax(20px, 2rem) 1fr;
   grid-template-rows: 100%;
@@ -5221,6 +5233,11 @@ li .hover-controls button {
 .innerScenes .option p {
   margin: 0;
   grid-column: 2/3;
+}
+
+.characterOptions {
+  max-height: 30vh;
+  overflow-y: scroll !important;
 }
 
 .character-scene-display {

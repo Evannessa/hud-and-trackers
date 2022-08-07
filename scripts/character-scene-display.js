@@ -215,19 +215,25 @@ class InnerSceneDisplayConfig extends Application {
     async getData() {
         // Send data to the template
         let currentScene = game.scenes.viewed;
-        let displayTiles = await this.getSceneDisplayTiles();
+        let displayTiles = await this.getSceneDisplayTiles(); //TODO: Update to fit API
         let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
         if (!sceneDisplayData) {
             this.getSceneDisplayData();
         }
         this.setStyles(sceneDisplayData.mode);
-        let clans = game.characterTags.map((obj) => {
-            return {
-                name: obj.tagName.split("/").pop(),
-                value: obj.tagName,
-            };
-        });
+        let clans = game.characterTags
+            .filter((tag) => tag.tagName !== "clans/")
+            .map((obj) => {
+                return {
+                    name: obj.tagName.split("/").pop(),
+                    value: obj.tagName,
+                };
+            });
+
+        clans = clans.filter((clan) => clan.name !== " " || "");
         let options = [];
+
+        //get any character tags that fit the tag name
         if (this.data.clanSelect) {
             options = game.characterTags.find((el) => el.tagName === this.data.clanSelect).characters;
         }
@@ -241,7 +247,7 @@ class InnerSceneDisplayConfig extends Application {
         sceneDisplayData = {
             ...sceneDisplayData,
             clans: clans,
-            clanSelect: this.data.clanSelect || "",
+            clanSelect: this.data.clanSelect || "none",
             options: options,
             displayTiles: displayTiles,
             isGM: game.user.isGM,
@@ -348,18 +354,30 @@ class InnerSceneDisplayConfig extends Application {
         this.handleHover();
     }
 
-    handleHover() {
+    async handleHover() {
         let api = game.modules.get("journal-to-canvas-slideshow")?.api;
-        $(".hover-controls button").on("mouseenter", (event) => {
+
+        $(".hover-controls button").on("mouseenter mouseleave", async (event) => {
+            let isLeave = event.type === "mouseleave" || event.type === "mouseout";
             let button = $(event.currentTarget);
-            let tileId = button.data().target;
-            api?.showTileBorder(tileId);
+            let tileID = button.data().target;
+            let frameID = button.data().frame;
+            let tile = await api?.getTileByID(tileID);
+            let frame = await api?.getTileByID(frameID);
+            if (!isLeave) {
+                api?.showTileIndicator(tile);
+                if (frame) api?.showTileIndicator(frame, 0.5);
+            } else {
+                api?.hideTileIndicator(tile);
+                if (frame) api?.hideTileIndicator(frame);
+            }
         });
-        $(".hover-controls button").on("mouseleave", (event) => {
-            let button = $(event.currentTarget);
-            let tileId = button.data().target;
-            api?.showTileBorder(tileId, 0);
-        });
+        // $(".hover-controls button").on("mouseleave", async (event) => {
+        //     let button = $(event.currentTarget);
+        //     let tileID = button.data().target;
+        //     let tile = await api?.getTileByID(tileID);
+        //     api?.hideTileIndicator(tile);
+        // });
     }
 
     handleChange() {

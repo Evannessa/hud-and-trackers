@@ -448,6 +448,14 @@ button i {
     border-color: var(--color-secondary-base);
 }
 
+[data-type="art"] {
+    --accent-color: blue;
+}
+
+[data-type="frame"] {
+    --accent-color: red;
+}
+
 // #endregion
 
 .hover-shadow {

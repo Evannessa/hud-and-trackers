@@ -12,6 +12,9 @@
     }
 
     .window-content {
+        * {
+            overflow: visible;
+        }
         background-color: hsla(223, 8%, 17%, 0.5);
         border: hsla(0, 0%, 28%, 0.5);
         @supports (backdrop-filter: blur(8px)) {
@@ -185,6 +188,7 @@ li {
     gap: 1rem;
 
     .option {
+        background-color: var(--color-neutral-darkest);
         display: grid;
         grid-template-columns: minmax(20px, 2rem) 1fr;
         grid-template-rows: 100%;
@@ -204,6 +208,10 @@ li {
             grid-column: 2/3;
         }
     }
+}
+.characterOptions {
+    max-height: 30vh;
+    overflow-y: scroll !important;
 }
 
 .character-scene-display {
