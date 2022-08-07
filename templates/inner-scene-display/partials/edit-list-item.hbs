@@ -4,11 +4,9 @@
     data-id="{{this.id}}"
     data-name="{{this.name}}"
     data-image-path="{{this.imagePath}}"
-    style="--innerSceneBackground: url('/{{this.imagePath}}')"
+    {{!-- style="--innerSceneBackground: url('/{{this.imagePath}}'"--}}
 >
-    {{#unless (eq this.type "innerScene")}}
-        <img src="{{this.imagePath}}" alt="{{this.name}}" srcset="" />
-    {{/unless}}
+    <img src="{{this.imagePath}}" alt="{{this.name}}" srcset="" />
     {{#if this.includeInput}}
         <input
             class="bg-none"

@@ -6,21 +6,25 @@
 			<section class="ability-wrapper hover-reveal-up">
 				{{#if (eq @root.showTab this)}}
 						{{log @root.showTab "vs" this}}
-				<div class="hud-item-wrapper hover-reveal-up-child | shadow-base" data-layout="column" data-overflow="scroll" data-type="{{this}}">
-					<div class="pinnedDiv">
+					<div class="hud-item-wrapper hover-reveal-up-child | shadow-base" data-layout="column" data-overflow="scroll" data-type="{{this}}">
+						<div class="pinnedDiv">
 						{{#each @root.pinnedItems}}
 							{{> "modules/hud-and-trackers/templates/hud-partials/hud-item-partial.hbs"}}
 						{{/each}}
-					</div>
+						</div>
 					{{#each @root.items}}
 						{{> "modules/hud-and-trackers/templates/hud-partials/hud-item-partial.hbs"}}
 					{{/each}}
-				</div>
+					</div>
 
 				{{/if}}
 				{{> "modules/hud-and-trackers/templates/hud-partials/button-partial.hbs"}} 
 			</section>
 		{{/each}}
+</div>
+{{!
+<div class="button-wrapper">
+	{{!> "modules/hud-and-trackers/templates/hud-partials/button-partial.hbs"}}
 </div>
 <br />
 {{! #unless (eq showTab "none")}}

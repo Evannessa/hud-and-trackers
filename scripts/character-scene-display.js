@@ -36,6 +36,26 @@ Hooks.on("canvasReady", async (canvas) => {
     }
 });
 
+Hooks.on("createTile", async (tile) => {
+    let tileID = tile.id;
+    let sceneTiles = await game.JTCS.getSceneSlideshowTiles("", true);
+    let foundTileData = await game.JTCS.getTileDataFromFlag(tileID, sceneTiles);
+
+    if (foundTileData && game.innerSceneDisplayConfig) {
+        game.innerSceneDisplayConfig.render(true);
+    }
+});
+Hooks.on("deleteTile", async (tile) => {
+    let tileID = tile.id;
+
+    let sceneTiles = await game.JTCS.getSceneSlideshowTiles("", true);
+    let foundTileData = await game.JTCS.getTileDataFromFlag(tileID, sceneTiles);
+
+    if (foundTileData && game.innerSceneDisplayConfig) {
+        game.innerSceneDisplayConfig.render(true);
+    }
+});
+
 Hooks.once("init", () => {
     loadTemplates([`modules/hud-and-trackers/templates/character-scene-display/actor-list-template.hbs`]);
 });
@@ -127,9 +147,10 @@ class InnerSceneDisplayConfig extends Application {
     }
 
     async getSceneDisplayTiles() {
-        let currentScene = game.scenes.viewed;
-        let flaggedTiles = (await currentScene.getFlag("journal-to-canvas-slideshow", "slideshowTiles")) || [];
-        return flaggedTiles?.filter((tileData) => !tileData.isBoundingTile);
+        let flaggedTiles = await game.JTCS.getSceneSlideshowTiles("art", true);
+        // let currentScene = game.scenes.viewed;
+        // let flaggedTiles = (await currentScene.getFlag("journal-to-canvas-slideshow", "slideshowTiles")) || [];
+        return flaggedTiles;
     }
 
     async panToTile(tile) {
@@ -234,7 +255,7 @@ class InnerSceneDisplayConfig extends Application {
         event.preventDefault();
     }
 
-    _handleButtonClick(event) {
+    async _handleButtonClick(event) {
         event.stopPropagation();
         event.preventDefault();
         let clickedElement = $(event.currentTarget); //$(event.target.closest("li"));
@@ -310,7 +331,10 @@ class InnerSceneDisplayConfig extends Application {
                 }
                 let boundingTileID = clickedElement.data().frame;
                 let imageElement = event.currentTarget.closest(".character, .innerScene").querySelector("img");
-                displayImageInScene(imageElement, targetTileId, boundingTileID);
+                if (game.JTCS) {
+                    await game.JTCS.displayImageInScene(imageElement, targetTileId, boundingTileID);
+                }
+                // displayImageInScene(imageElement, targetTileId, boundingTileID);
                 break;
         }
     }

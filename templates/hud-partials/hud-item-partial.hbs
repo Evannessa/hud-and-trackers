@@ -2,7 +2,7 @@
 		<h1 class="hud-item__title">{{this.name}}</h1>
 		<span>{{clean summaryInfo}}</span>
 		{{#unless (eq this.description "")}}
-			<div class="hud-item__description hover-reveal-right-child">
+			<div class="hud-item__description hover-reveal-right-child" style="position: fixed;">
 				{{#each fullInfo}}
 					<h3><span>{{clean (@key)}}:</span> {{clean this}}</h3>
 				{{/each}}

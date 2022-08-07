@@ -22,7 +22,9 @@ export default function registerAllHandlebarHelpers() {
         return test ? yes : no;
     });
     Handlebars.registerHelper("capitalize", (stringInput) => {
-        return stringInput.charAt(0).toUpperCase() + stringInput.slice(1);
+        if (stringInput && typeof stringInput === "string") {
+            return stringInput.charAt(0).toUpperCase() + stringInput.slice(1);
+        }
     });
 }
 // Handlebars.registerHelper("getCharacterData", (id) => {

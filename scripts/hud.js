@@ -337,6 +337,24 @@ export class Hud extends Application {
         this.render();
     }
 
+    async showTooltip(event) {
+        let element = event.currentTarget;
+        console.log(element, element.nextElementSibling);
+        let tooltipData = element.querySelector(".hud-item__description")?.innerHTML;
+        console.log(tooltipData);
+        var rect = element.getBoundingClientRect();
+        console.log(rect.top, rect.right, rect.bottom, rect.left);
+        const template = "/modules/hud-and-trackers/templates/tooltip/tooltip.hbs";
+        const data = {
+            // title: title,
+            description: tooltipData,
+        };
+        const tooltipHtml = await renderTemplate(template, { data: data });
+        $(element.closest(".window-app")).append(tooltipHtml);
+        tooltipHtml.setAttribute("position", "absolute");
+        tooltipHtml.setAttribute("left", rect.left);
+        tooltipHtml.setAttribute("top", rect.top);
+    }
     async setFields(object) {
         this.isGM = game.user.isGM;
         this.ourToken = object;
@@ -508,7 +526,6 @@ export class Hud extends Application {
         let windowContent = html.closest(".window-content");
         let buttonWrapper = windowContent.find(".button-wrapper")[0];
         let buttons = buttonWrapper.querySelectorAll("button");
-        console.log("Our buttons are", buttons);
 
         windowContent[0].addEventListener("mouseleave", async (event) => {
             if (this.showTab == "none" || this.pinnedTab != "none") {
@@ -539,7 +556,6 @@ export class Hud extends Application {
                 HelperFunctions.callMacro("NPC Effort");
             });
         }
-
         //go through the tabs,, and add the active class if our show tab
         //shows it as the active class, or pinned class
         tabs.forEach((tab) => {
@@ -643,6 +659,10 @@ export class Hud extends Application {
                         }
                     }
                 });
+                //TODO: complete this implementation
+                // hudItem.addEventListener("mouseenter", async (event) => {
+                //     this.showTooltip(event);
+                // });
             }
         }
     }
