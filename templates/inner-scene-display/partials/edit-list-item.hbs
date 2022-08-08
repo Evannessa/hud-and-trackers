@@ -1,12 +1,17 @@
 <li
-    class="{{this.type}} option interactive | bg-neutral-darkest {{this.hoverClass}} rounded"
-    data-action="{{this.action}}"
+    class="{{this.type}} option interactive list-item | bg-neutral-darkest {{this.hoverClass}} rounded"
+    {{!-- data-action="{{this.action}}" --}}
     data-id="{{this.id}}"
     data-name="{{this.name}}"
     data-image-path="{{this.imagePath}}"
+	{{#if this.includeInput}}
+		data-variant="child-buttons"
+	{{/if}}
     {{!-- style="--innerSceneBackground: url('/{{this.imagePath}}'"--}}
 >
-    <img src="{{this.imagePath}}" alt="{{this.name}}" srcset="" />
+
+    {{log this}}
+    <img src="{{this.imagePath}}" alt="{{this.name}}" data-action="browse" srcset="" />
     {{#if this.includeInput}}
         <input
             class="bg-none"
@@ -16,6 +21,7 @@
             value="{{this.name}}"
             data-type="{{this.type}}"
         />
+        <button class="danger" data-id="{{this.id}}" data-action="delete"><i class="far fa-trash"></i></button>
     {{else}}
         <p>
             {{this.name}}

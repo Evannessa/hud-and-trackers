@@ -5,7 +5,7 @@
         </h3>
         <ul class="innerScenes">
             {{#each innerScenes}}
-				{{>  "modules/hud-and-trackers/templates/inner-scene-display/partials/edit-list-item.hbs" hoverClass="hover-bg-primary" action="browse" type="innerScene" includeInput=true basePath=@root.basePath}}
+				{{>  "modules/hud-and-trackers/templates/inner-scene-display/partials/edit-list-item.hbs" hoverClass="hover-bg-primary" type="innerScene" includeInput=true basePath=@root.basePath}}
             {{/each}}
 				{{!-- Default inner scene for adding new ones --}}
 				{{>  "modules/hud-and-trackers/templates/inner-scene-display/partials/edit-list-item.hbs" hoverClass="hover-bg-primary" action="browse" type="innerScene" includeInput=true imagePath="/Idyllwild/Art/Characters/placeholder.webp" name="New Inner Scene"}}

@@ -1,6 +1,6 @@
 @import "partials/mixins";
 @import "_variables";
-@import "_utility";
+@import "globals";
 
 @import "partials/tracker-app";
 
@@ -11,7 +11,7 @@
 @import "partials/combat-hud";
 @import "partials/custom_playerlist";
 @import "partials/journal-tooltip";
-@import "globals";
+@import "_utility";
 
 .theatre-narrator-content {
     overflow-x: hidden !important;
@@ -44,7 +44,9 @@
 //This should overtake the above
 .window-app .window-header.minimal-window-header {
     // flex: 0 0 0.75rem;
+    display: none;
     &.invisible {
+        display: none;
         width: fit-content;
         height: auto;
         > span {
@@ -53,10 +55,6 @@
             justify-content: center;
         }
     }
-    // &:hover {
-    //     background-color: var(--color-primary-base);
-    //     border-radius: 50%;
-    // }
 }
 
 .bring-on-screen {
@@ -108,9 +106,9 @@
         border: 0;
 
         & + label {
-            background-color: var(--clr-purple-base);
+            background-color: var(--color-primary-base);
             padding: 0.25rem 0.5rem;
-            --hover-color: var(--clr-purple-light);
+            --hover-color: var(--color-primary-400);
             overflow: visible;
             width: fit-content;
             width: max-content;
@@ -118,7 +116,7 @@
             justify-content: center;
             align-items: center;
             transition: background-color 150ms ease-out;
-            background-color: var(--clr-purple-base);
+            background-color: var(--color-primary-base);
             &:hover {
                 cursor: pointer;
                 background-color: var(--hover-color);
@@ -126,12 +124,12 @@
             }
         }
         &:checked + label {
-            --hover-color: var(--clr-purple-base);
+            --hover-color: var(--color-primary-base);
             color: white;
             transition: background-color 250ms ease-out;
             box-shadow: var(--box-shadow);
             &:not(:hover) {
-                background-color: var(--clr-purple-dark);
+                background-color: var(--color-primary-darkest);
             }
         }
     }

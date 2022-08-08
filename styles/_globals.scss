@@ -98,8 +98,8 @@
     }
 
     button {
-        color: $white1;
-        background-color: $black3;
+        color: var(--text-color);
+        background-color: var(--bg-color);
         border: none;
         font-family: "roboto";
         font-weight: 500;
@@ -108,14 +108,13 @@
             border: 1px solid var(--color-glass-border);
         }
 
-        &:hover {
-            background: $black3L;
+        &:hover:not(.image-button) {
+            background: var(--bg-color);
             box-shadow: none;
         }
 
-        &:focus {
-            @extend input, :hover;
-            background: $black3;
+        &:focus:not(.image-button) {
+            background: var(--bg-color);
         }
     }
 

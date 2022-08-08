@@ -5,9 +5,8 @@
     max-height: 50vh;
     .button-group {
         display: flex;
-        // flex-direction: column;
         padding: 0.5rem 1rem;
-        background-color: var(--tui-black4);
+        background-color: var(--bg-color);
         width: fit-content;
     }
 
@@ -15,19 +14,15 @@
         * {
             overflow: visible;
         }
-        background-color: hsla(223, 8%, 17%, 0.5);
-        border: hsla(0, 0%, 28%, 0.5);
-        @supports (backdrop-filter: blur(8px)) {
-            backdrop-filter: blur(8px);
-        }
     }
     &,
-    & *:not(button, image, li, input, label, select, option, .window-content, .window-header, hr, fieldset) {
+    &
+        *:not(button, image, li, input, label, select, option, .window-content, .window-header, #drag-handle, hr, fieldset) {
         background-color: transparent;
     }
 
     &.transparent,
-    &.transparent *:not(.window-header, button, image, li, input, label, select, option, hr, fieldset) {
+    &.transparent *:not(#drag-handle, .window-header, button, image, li, input, label, select, option, hr, fieldset) {
         background: none;
         background-color: transparent;
         box-shadow: none;
@@ -59,12 +54,6 @@
 }
 .flow > * + * {
     margin-top: var(--flow-space, 1em);
-}
-
-.tag-chip {
-    display: inline-flex;
-    padding: 0.15rem 0.55rem;
-    width: fit-content;
 }
 
 .display-bar {
@@ -131,13 +120,13 @@
         background: var(--innerSceneBackground);
         background-position: cover;
     }
-    // .innerScene[data-image-path]:before {
-    //     position: absolute;
-    //     content: attr(data-image-path);
-    //     width: 100%;
-    //     height: 100%;
-    //     background-position: cover;
-    // }
+    .innerScene[data-image-path].background-mode:before {
+        position: absolute;
+        content: attr(data-image-path);
+        width: 100%;
+        height: 100%;
+        background-position: cover;
+    }
 }
 
 li {
@@ -188,104 +177,11 @@ li {
     gap: 1rem;
 
     .option {
-        background-color: var(--color-neutral-darkest);
-        display: grid;
-        grid-template-columns: minmax(20px, 2rem) 1fr;
-        grid-template-rows: 100%;
-        align-items: center;
-        overflow: hidden;
-        // max-width: 20%;
-        max-height: 50px;
-        padding-right: 0.5rem;
-        img {
-            grid-column: 1/2;
-            // max-width: 20%;
-            object-fit: cover;
-            height: 100%;
-        }
-        p {
-            margin: 0;
-            grid-column: 2/3;
-        }
+        --bg-color: var(--color-neutral-darkest);
+        background-color: var(--bg-color);
     }
 }
 .characterOptions {
     max-height: 30vh;
     overflow-y: scroll !important;
-}
-
-.character-scene-display {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    gap: 1rem;
-    position: relative;
-    overflow-y: auto;
-    &.compact {
-        justify-content: flex-start;
-        gap: 0rem;
-    }
-
-    /** change this */
-    fieldset {
-        display: flex;
-        // justify-content: space-evenly;
-    }
-
-    .character-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, 10rem);
-        gap: 1rem;
-    }
-
-    .button-wrapper {
-        display: flex;
-        margin-left: auto;
-        gap: 1rem;
-    }
-
-    .views,
-    .interactions {
-        display: flex;
-    }
-
-    .chip {
-        input[type="radio"],
-        input[type="checkbox"] {
-            display: none;
-            position: absolute;
-            overflow: hidden;
-            clip: rect(0 0 0 0);
-            height: 1px;
-            width: 1px;
-            margin: -1px;
-            padding: 0;
-            border: 0;
-
-            & ~ label {
-                /* background-color: transparent; */
-                border: 1px solid cornflowerblue !important;
-                /* color: cornflowerblue; */
-                padding: 0.5em 1em;
-                text-align: center;
-                border-radius: 9999px;
-                z-index: 10;
-                display: inline-block;
-                vertical-align: middle;
-                display: flex;
-                align-items: center;
-                gap: 0.45rem;
-
-                &:hover {
-                    cursor: pointer;
-                }
-            }
-
-            &:checked ~ label {
-                background-color: cornflowerblue;
-                color: white;
-                font-weight: bold;
-            }
-        }
-    }
 }

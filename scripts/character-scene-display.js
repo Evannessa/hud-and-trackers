@@ -306,14 +306,21 @@ class InnerSceneDisplayConfig extends Application {
                 break;
             case "browse":
                 // let img = clickedElement[0].src;
-                let name = clickedElement[0].closest("li").querySelector("input[type='text']").value || "New Scene";
+                let parentLi = clickedElement[0].closest("li");
+
+                let name = parentLi.querySelector("input[type='text']").value || parentLi.dataset.name;
+                let id = parentLi.dataset.id;
+                console.log(parentLi, parentLi.dataset, id);
 
                 let filepicker = new FilePicker({
                     type: "image",
                     callback: async (path) => {
                         data.imagePath = path;
-                        data.name = name;
-                        data.id = foundry.utils.randomID();
+                        if (!id) {
+                            //if this is a tile that hasn't been created yet
+                            data.name = name;
+                            data.id = foundry.utils.randomID();
+                        }
                         await this.updateSceneDisplayData(data, "innerScene");
                         // this.addInnerScene({ name: name, imagePath: path });
                     },
@@ -372,12 +379,6 @@ class InnerSceneDisplayConfig extends Application {
                 if (frame) api?.hideTileIndicator(frame);
             }
         });
-        // $(".hover-controls button").on("mouseleave", async (event) => {
-        //     let button = $(event.currentTarget);
-        //     let tileID = button.data().target;
-        //     let tile = await api?.getTileByID(tileID);
-        //     api?.hideTileIndicator(tile);
-        // });
     }
 
     handleChange() {
@@ -385,6 +386,7 @@ class InnerSceneDisplayConfig extends Application {
             "change",
             async function (event) {
                 let { value, name, checked, type } = event.currentTarget;
+
                 let ourType = event.currentTarget.dataset.type;
                 let ourId = event.currentTarget.dataset.id;
                 game.innerSceneDisplayConfig.data[name] = type == "checkbox" ? checked : value;
