@@ -2,7 +2,7 @@ import * as HelperFunctions from "./helper-functions.js";
 
 Hooks.on("canvasReady", () => {
     if (!game.helperHud) {
-        game.helperHud = new HelperHud().render(true);
+        // game.helperHud = new HelperHud().render(true);
     }
 });
 
@@ -383,11 +383,18 @@ export class HelperHud extends Application {
         }
     }
 
+    dragHandler(html) {
+        let ancestorElement = html[0].closest(".window-app");
+        HelperFunctions.addDragHandle(html, ancestorElement);
+        const dragHandle = $(ancestorElement).find("#drag-handle")[0];
+        const drag = new Draggable(this, html, dragHandle, false);
+        HelperFunctions.handleDrag(drag);
+    }
     activateListeners(html) {
         delete ui.windows[this.appId];
         let windowContent = html.closest(".window-content");
         windowContent.off("click").on("click", "[data-action]", this.handleButtonClick.bind(this));
-        // windowContent.on("click", "[data-action]", this.handleButtonClick.bind(this));
+        this.dragHandler(html);
     }
 
     static selectMyCharacter() {

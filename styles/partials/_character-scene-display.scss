@@ -1,8 +1,13 @@
 #inner-scene-display {
+    --padding: 1rem;
     width: 60vw;
     max-width: 60vw;
     height: 50vh;
     max-height: 50vh;
+    box-shadow: none;
+    overflow: visible;
+    background: none;
+
     .button-group {
         display: flex;
         padding: 0.5rem 1rem;
@@ -11,49 +16,27 @@
     }
 
     .window-content {
+        background-color: transparent;
+        background: none;
+        background-image: none;
+        pointer-events: none;
+        box-shadow: none;
+        overflow: visible;
         * {
             overflow: visible;
-        }
-    }
-    &,
-    &
-        *:not(button, image, li, input, label, select, option, .window-content, .window-header, #drag-handle, hr, fieldset) {
-        background-color: transparent;
-    }
-
-    &.transparent,
-    &.transparent *:not(#drag-handle, .window-header, button, image, li, input, label, select, option, hr, fieldset) {
-        background: none;
-        background-color: transparent;
-        box-shadow: none;
-        pointer-events: none;
-        overflow: visible;
-        .window-header {
             pointer-events: auto;
         }
-        .window-content {
-            overflow: visible;
-            background-color: transparent;
-            background: none;
-            width: fit-content;
-            // background-color: hsla(0, 0%, 80%, 0.5);
-            // border: hsla(0, 0%, 98%, 0.5);
-            backdrop-filter: unset;
-        }
-        .button-group {
-            background-color: hsla(223, 8%, 17%, 0.5);
-            border: hsla(0, 0%, 28%, 0.5);
-        }
-    }
-    &.transparent {
-        width: fit-content;
-    }
-    & *:is(button, image, li, input, label, select, option) {
-        pointer-events: auto;
     }
 }
-.flow > * + * {
-    margin-top: var(--flow-space, 1em);
+
+#sceneMap-controls {
+    position: absolute;
+    // top: -100%;
+    top: 0;
+    transform: translateY(-100%);
+    left: 0;
+    display: flex;
+    gap: 1rem;
 }
 
 .display-bar {
@@ -61,6 +44,7 @@
     flex-wrap: wrap;
     background: none;
     background-color: transparent;
+    pointer-events: none;
 
     li.character,
     li.innerScene {
@@ -116,6 +100,10 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    background: var(--bg-color);
+    box-shadow: 0px 0px 4px var(--box-shadow);
+    overflow-y: scroll;
+    border-radius: 8px;
     .innerScene {
         background: var(--innerSceneBackground);
         background-position: cover;
@@ -127,6 +115,10 @@
         height: 100%;
         background-position: cover;
     }
+}
+.displayModeWrapper {
+    --bg-color: transparent;
+    overflow-y: visible;
 }
 
 li {

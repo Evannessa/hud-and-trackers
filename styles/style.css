@@ -3053,6 +3053,11 @@
 :root {
   --bg-color: var(--color-primary-base);
   --text-color: white;
+  --flow-space: 1em;
+}
+
+.flow > * + * {
+  margin-top: var(--flow-space, 1em);
 }
 
 .drag-handle {
@@ -3067,6 +3072,10 @@
 
 .draggable {
   cursor: move;
+}
+
+.padding {
+  padding: var(--padding);
 }
 
 button i {
@@ -4996,10 +5005,14 @@ button.img-button.framed:before {
 }
 
 #inner-scene-display {
+  --padding: 1rem;
   width: 60vw;
   max-width: 60vw;
   height: 50vh;
   max-height: 50vh;
+  box-shadow: none;
+  overflow: visible;
+  background: none;
 }
 #inner-scene-display .button-group {
   display: flex;
@@ -5009,47 +5022,26 @@ button.img-button.framed:before {
   width: -moz-fit-content;
   width: fit-content;
 }
+#inner-scene-display .window-content {
+  background-color: transparent;
+  background: none;
+  background-image: none;
+  pointer-events: none;
+  box-shadow: none;
+  overflow: visible;
+}
 #inner-scene-display .window-content * {
   overflow: visible;
-}
-#inner-scene-display, #inner-scene-display *:not(button, image, li, input, label, select, option, .window-content, .window-header, #drag-handle, hr, fieldset) {
-  background-color: transparent;
-}
-#inner-scene-display.transparent, #inner-scene-display.transparent *:not(#drag-handle, .window-header, button, image, li, input, label, select, option, hr, fieldset) {
-  background: none;
-  background-color: transparent;
-  box-shadow: none;
-  pointer-events: none;
-  overflow: visible;
-}
-#inner-scene-display.transparent .window-header, #inner-scene-display.transparent *:not(#drag-handle, .window-header, button, image, li, input, label, select, option, hr, fieldset) .window-header {
-  pointer-events: auto;
-}
-#inner-scene-display.transparent .window-content, #inner-scene-display.transparent *:not(#drag-handle, .window-header, button, image, li, input, label, select, option, hr, fieldset) .window-content {
-  overflow: visible;
-  background-color: transparent;
-  background: none;
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
-  -webkit-backdrop-filter: unset;
-          backdrop-filter: unset;
-}
-#inner-scene-display.transparent .button-group, #inner-scene-display.transparent *:not(#drag-handle, .window-header, button, image, li, input, label, select, option, hr, fieldset) .button-group {
-  background-color: hsla(223deg, 8%, 17%, 0.5);
-  border: hsla(0deg, 0%, 28%, 0.5);
-}
-#inner-scene-display.transparent {
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
-}
-#inner-scene-display *:is(button, image, li, input, label, select, option) {
   pointer-events: auto;
 }
 
-.flow > * + * {
-  margin-top: var(--flow-space, 1em);
+#sceneMap-controls {
+  position: absolute;
+  top: 0;
+  transform: translateY(-100%);
+  left: 0;
+  display: flex;
+  gap: 1rem;
 }
 
 .display-bar {
@@ -5057,6 +5049,7 @@ button.img-button.framed:before {
   flex-wrap: wrap;
   background: none;
   background-color: transparent;
+  pointer-events: none;
 }
 .display-bar li.character,
 .display-bar li.innerScene {
@@ -5119,6 +5112,10 @@ button.img-button.framed:before {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  background: var(--bg-color);
+  box-shadow: 0px 0px 4px var(--box-shadow);
+  overflow-y: scroll;
+  border-radius: 8px;
 }
 .editModeWrapper .innerScene {
   background: var(--innerSceneBackground);
@@ -5130,6 +5127,11 @@ button.img-button.framed:before {
   width: 100%;
   height: 100%;
   background-position: cover;
+}
+
+.displayModeWrapper {
+  --bg-color: transparent;
+  overflow-y: visible;
 }
 
 li {

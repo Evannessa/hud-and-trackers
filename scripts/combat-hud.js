@@ -40,6 +40,8 @@ Hooks.on("init", () => {
 Hooks.on("ready", async () => {
     registerSettings();
 
+    //TODO: Re-enable this, but clean it up
+    return;
     //if we have a saved combat, render the combat app with details
     //from our saved combat
     //otherwise, render it blank

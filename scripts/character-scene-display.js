@@ -24,35 +24,35 @@ Hooks.on("ready", () => {
         mode: "display",
     };
 
-    game.innerSceneDisplayConfig = new InnerSceneDisplayConfig(data).render(true, { data });
+    // game.innerSceneDisplayConfig = new InnerSceneDisplayConfig(data).render(true, { data });
 });
 
 Hooks.on("canvasReady", async (canvas) => {
     // game.innerSceneDisplayConfig.data.temporaryCharacters = await HelperFunctions.getAllActorsInScene();
     // game.innerSceneDisplayConfig.currentScene = canvas.scene;
-    if (game.innerSceneDisplayConfig) {
-        console.log(game.innerSceneDisplayConfig.data);
-        game.innerSceneDisplayConfig.render(true);
-    }
+    // if (game.innerSceneDisplayConfig) {
+    //     console.log(game.innerSceneDisplayConfig.data);
+    //     game.innerSceneDisplayConfig.render(true);
+    // }
 });
 
 Hooks.on("createTile", async (tile) => {
     let tileID = tile.id;
-    let sceneTiles = await game.JTCS.getSceneSlideshowTiles("", true);
-    let foundTileData = await game.JTCS.getTileDataFromFlag(tileID, sceneTiles);
+    let sceneTiles = await game.JTCS.tileUtils.getSceneSlideshowTiles("", true);
+    let foundTileData = await game.JTCS.tileUtils.getTileDataFromFlag(tileID, sceneTiles);
 
     if (foundTileData && game.innerSceneDisplayConfig) {
-        game.innerSceneDisplayConfig.render(true);
+        // game.innerSceneDisplayConfig.render(true);
     }
 });
 Hooks.on("deleteTile", async (tile) => {
     let tileID = tile.id;
 
-    let sceneTiles = await game.JTCS.getSceneSlideshowTiles("", true);
-    let foundTileData = await game.JTCS.getTileDataFromFlag(tileID, sceneTiles);
+    let sceneTiles = await game.JTCS.tileUtils.getSceneSlideshowTiles("", true);
+    let foundTileData = await game.JTCS.tileUtils.getTileDataFromFlag(tileID, sceneTiles);
 
     if (foundTileData && game.innerSceneDisplayConfig) {
-        game.innerSceneDisplayConfig.render(true);
+        // game.innerSceneDisplayConfig.render(true);
     }
 });
 
@@ -147,7 +147,7 @@ class InnerSceneDisplayConfig extends Application {
     }
 
     async getSceneDisplayTiles() {
-        let flaggedTiles = await game.JTCS.getSceneSlideshowTiles("art", true);
+        let flaggedTiles = await game.JTCS.tileUtils.getSceneSlideshowTiles("art", true);
         // let currentScene = game.scenes.viewed;
         // let flaggedTiles = (await currentScene.getFlag("journal-to-canvas-slideshow", "slideshowTiles")) || [];
         return flaggedTiles;
@@ -338,31 +338,79 @@ class InnerSceneDisplayConfig extends Application {
             case "switch":
                 let targetTileId = clickedElement.data().target;
                 if (event.ctrlKey) {
-                    let api = game.modules.get("journal-to-canvas-slideshow")?.api;
-                    api.selectTile(targetTileId);
+                    game.JTCS.tileUtils.selectTile(targetTileId);
                     break;
                 }
                 let boundingTileID = clickedElement.data().frame;
                 let imageElement = event.currentTarget.closest(".character, .innerScene").querySelector("img");
                 if (game.JTCS) {
-                    await game.JTCS.displayImageInScene(imageElement, targetTileId, boundingTileID);
+                    await game.JTCS.tileUtils.displayImageInScene(imageElement, targetTileId, boundingTileID);
                 }
                 // displayImageInScene(imageElement, targetTileId, boundingTileID);
                 break;
         }
     }
+    dragHandler(html) {
+        let ancestorElement = html[0].closest(".window-app");
+
+        HelperFunctions.addDragHandle(html, ancestorElement, "#sceneMap-controls");
+        const dragHandle = $(ancestorElement).find("#drag-handle")[0];
+        const drag = new Draggable(this, html, dragHandle, false);
+
+        HelperFunctions.handleDrag(drag);
+    }
 
     activateListeners(html) {
         delete ui.windows[this.appId];
-        // super.activateListeners(html);
+
+        this.dragHandler(html);
+
         let windowContent = html.closest(".window-content");
         windowContent.off("click").on("click", "[data-action]", this._handleButtonClick.bind(this));
+
         this.handleChange();
         this.handleHover();
+
+        // let img = html[0].querySelector(".frame-image");
+        // let iFrame = html[0].querySelector("iframe");
+        // console.log(iFrame);
+        // iFrame.addEventListener("load", () => {
+        //     console.log(iFrame.children);
+        //     let source = iFrame.contentWindow.document.querySelector(".featured-image").src;
+        //     img.src = source;
+        // });
     }
 
+    async handleDrag(drag) {
+        //referenced SmallTime to figure this out
+        drag._onDragMouseMove = function _newOnDragMouseMove(event) {
+            event.preventDefault();
+            // Limit dragging to 60 updates per second.
+            const now = Date.now();
+            if (now - this._moveTime < 1000 / 60) return;
+            this._moveTime = now;
+
+            this.app.setPosition({
+                left: this.position.left + (event.clientX - this._initial.x),
+                top: this.position.top + (event.clientY - this._initial.y),
+            });
+        };
+
+        drag._onDragMouseUp = async function _newOnDragMouseUp(event) {
+            event.preventDefault();
+
+            window.removeEventListener(...this.handlers.dragMove);
+            window.removeEventListener(...this.handlers.dragUp);
+            // let windowPos = $("#smalltime-app").position();
+            // let newPos = { top: windowPos.top, left: windowPos.left };
+            // await game.settings.set("smalltime", "position", newPos);
+            // await game.settings.set("smalltime", "pinned", false);
+        };
+    }
     async handleHover() {
-        let api = game.modules.get("journal-to-canvas-slideshow")?.api;
+        let api = game.JTCS;
+        // Have to override this because of the non-standard drag handle, and
+        // also to manage the pin lock zone and animation effects.
 
         $(".hover-controls button").on("mouseenter mouseleave", async (event) => {
             let isLeave = event.type === "mouseleave" || event.type === "mouseout";
@@ -372,11 +420,11 @@ class InnerSceneDisplayConfig extends Application {
             let tile = await api?.getTileByID(tileID);
             let frame = await api?.getTileByID(frameID);
             if (!isLeave) {
-                api?.showTileIndicator(tile);
-                if (frame) api?.showTileIndicator(frame, 0.5);
+                api?.indicatorUtils.showTileIndicator(tile);
+                if (frame) api?.indicatorUtils.showTileIndicator(frame, 0.5);
             } else {
-                api?.hideTileIndicator(tile);
-                if (frame) api?.hideTileIndicator(frame);
+                api?.indicatorUtils.hideTileIndicator(tile);
+                if (frame) api?.indicatorUtils.hideTileIndicator(frame);
             }
         });
     }
@@ -533,4 +581,36 @@ function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
         width: srcWidth * ratio,
         height: srcHeight * ratio,
     };
+}
+export class FullProfile extends Application {
+    constructor(data = {}) {
+        super();
+        this.data = data;
+    }
+    getData() {}
+
+    activateListeners(html) {
+        //remove app from "ui.windows" to not let it close with the escape key
+        delete ui.windows[this.appId];
+        super.activateListeners(html);
+        html.on("click", "[data-action]", this._handleButtonClick.bind(this));
+
+        $("#tag-input").keypress(async (e) => {
+            if (e.keyCode == 13) {
+                this.saveTags.bind(this);
+                await this.saveTags(e.currentTarget);
+            }
+        });
+    }
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            resizeable: false,
+            popOut: true,
+            template: `modules/hud-and-trackers/templates/character-scene-display/iframe-display.hbs`,
+            id: "character-full-profile",
+            title: "Character Profile",
+        });
+    }
+
+    async _updateObject(event, formData) {}
 }

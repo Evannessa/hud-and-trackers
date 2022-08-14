@@ -1,6 +1,11 @@
 :root {
     --bg-color: var(--color-primary-base);
     --text-color: white;
+    --flow-space: 1em;
+}
+
+.flow > * + * {
+    margin-top: var(--flow-space, 1em);
 }
 .drag-handle {
     display: flex;
@@ -13,6 +18,9 @@
 }
 .draggable {
     cursor: move;
+}
+.padding {
+    padding: var(--padding);
 }
 
 button i {

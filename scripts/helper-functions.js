@@ -61,6 +61,15 @@ export function convertArrayIntoObjectById(array) {
 // 	let viewedScene = game.scenes.viewed;
 
 // }
+/**
+ *
+ * @param {Array} prependMessage - an array of arguments to be passed
+ * @param {String} textColor - the color of the text in the log
+ * @param {String} bgColor - the color of the background in the log
+ */
+export function colorfulLog(prependMessage, variables = [], textColor = "cyan", bgColor = "transparent") {
+    console.log(`%c${prependMessage}`, `color: ${textColor}; background-color: ${bgColor};`, ...variables);
+}
 
 export function getPCItemsOfType(pc, type) {
     return pc.data.items.map((item) => {
@@ -75,12 +84,47 @@ export function setInvisibleHeader(html, showIcon) {
         });
         windowHeader.classList.add("minimal-window-header");
         if (showIcon) {
-            let node = document.createElement("span");
-            node.innerHTML = '<i class="fas fa-arrows-alt"></i>';
-            windowHeader.appendChild(node);
             windowHeader.classList.add("invisible");
+            if (!html[0].querySelector("#drag-handle")) {
+                addDragHandle(html);
+            }
         }
     }
+}
+
+export async function addDragHandle(html, ancestorElement = null, childElementSelector = ".window-content") {
+    ancestorElement = ancestorElement || html[0].closest(".window-app");
+    let handleDiv = document.createElement("div");
+    handleDiv.setAttribute("id", "drag-handle");
+    handleDiv.classList.add("draggable", "drag-handle");
+
+    ancestorElement.querySelector(childElementSelector).prepend(handleDiv);
+}
+export async function handleDrag(drag) {
+    //referenced SmallTime to figure this out
+    drag._onDragMouseMove = function _newOnDragMouseMove(event) {
+        event.preventDefault();
+        // Limit dragging to 60 updates per second.
+        const now = Date.now();
+        if (now - this._moveTime < 1000 / 60) return;
+        this._moveTime = now;
+
+        this.app.setPosition({
+            left: this.position.left + (event.clientX - this._initial.x),
+            top: this.position.top + (event.clientY - this._initial.y),
+        });
+    };
+
+    drag._onDragMouseUp = async function _newOnDragMouseUp(event) {
+        event.preventDefault();
+
+        window.removeEventListener(...this.handlers.dragMove);
+        window.removeEventListener(...this.handlers.dragUp);
+        // let windowPos = $("#smalltime-app").position();
+        // let newPos = { top: windowPos.top, left: windowPos.left };
+        // await game.settings.set("smalltime", "position", newPos);
+        // await game.settings.set("smalltime", "pinned", false);
+    };
 }
 
 /**

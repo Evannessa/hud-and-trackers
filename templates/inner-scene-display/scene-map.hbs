@@ -1,24 +1,33 @@
-<div id="#drag-handle" class="drag-handle draggable"></div>
 <div class="sceneMap character-scene-display {{ternary (eq mode "display") "compact" ""}}">
-	<button class="img-button framed | bg-none | hover-bg-none hover-grow | focus-bg-none | child-glow-on-open" data-action="toggle-fold" data-target="displayModeInnerWrapper" title="Minimize controls">
-		<img src="/modules/hud-and-trackers/images/Button Badges/family.webp" alt="character-button-image" class="glow-on-open" srcset="">
-	</button>
-<section id="displayModeInnerWrapper" class="displayModeInnerWrapper">
-	{{#if isGM}}
-			<fieldset class="button-group">
-		<input type="radio" name="mode" id="editMode" data-action="toggleMode" value="edit" title="toggle edit mode" {{ternary (eq mode "edit") "checked" ""}}
-		>
-		<label for="editMode" title="toggle edit mode">Edit</label>
+	<section id="sceneMap-controls">
+		<button class="img-button framed 
+						| bg-none hover-bg-none hover-grow focus-bg-none" 
+						data-action="toggle-fold" 
+						data-target="displayModeInnerWrapper" 
+						title="Minimize controls">
+			<img src="/modules/hud-and-trackers/images/Button Badges/family.webp" alt="character-button-image" class="glow-on-open" srcset="">
+		</button>
+		<fieldset class="button-group">
+			<input type="radio" name="mode" id="editMode" 				
+				data-action="toggleMode" value="edit" 
+				title="toggle edit mode" 
+				{{ternary (eq mode "edit") "checked" ""}}
+			>
+			<label for="editMode" title="toggle edit mode">Edit</label>
+			<input type="radio" name="mode" id="displayMode" data-action="toggleMode" value="display" title="toggle display mode" {{ternary (eq mode "display") "checked" ""}}/>
+			<label for="displayMode" title="toggle display mode">Display</label>
+		</fieldset>
+	</section>
+	{{!-- <div class="iframeTest"> --}}
+		{{!-- <img class="frame-image" src="" alt="choux alimoux"> --}}
+		{{!-- <iframe src="https://classy-bavarois-433634.netlify.app/choux-alimoux" frameborder="0"></iframe> --}}
 
-		<input type="radio" name="mode" id="displayMode" data-action="toggleMode" value="display" title="toggle display mode" {{ternary (eq mode "display") "checked" ""}}/>
-		<label for="displayMode" title="toggle display mode">Display</label>
-	</fieldset>
-	{{/if}}
-
-{{#if (eq mode "display")}}
-  {{> "modules/hud-and-trackers/templates/inner-scene-display/partials/display-mode.hbs"}}
-{{else}}
-    {{> "modules/hud-and-trackers/templates/inner-scene-display/partials/edit-mode.hbs"}}
-	{{/if}}
+	{{!-- </div> --}}
+	<section id="displayModeInnerWrapper" class="displayModeInnerWrapper minimize">
+		{{#if (eq mode "display")}}
+			{{> "modules/hud-and-trackers/templates/inner-scene-display/partials/display-mode.hbs"}}
+		{{else}}
+			{{> "modules/hud-and-trackers/templates/inner-scene-display/partials/edit-mode.hbs"}}
+		{{/if}}
 	</section>
 </div>
