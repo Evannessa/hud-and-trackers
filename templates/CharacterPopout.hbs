@@ -1,0 +1,22 @@
+<section class="card">
+    <nav class="flexrow">
+        <fieldset class="button-group flex-col">
+            {{#each tabs}}
+                <div class="flex-col">
+                    <input
+                        type="radio"
+                        id="input{{this.id}}"
+                        data-tab="{{this.id}}"
+                        name="selectedTab"
+                        value="{{this.id}}"
+                    />
+                    <label class="hidden-input" for="input{{this.id}}">{{this.id}}</label>
+                    <section id="{{this.id}}" class="flex-col flexcol">
+
+                    </section>
+                </div>
+            {{/each}}
+        </fieldset>
+    </nav>
+
+</section>

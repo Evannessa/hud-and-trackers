@@ -1,3 +1,32 @@
+#CharacterPopout {
+    .flex-col {
+        align-items: flex-start;
+    }
+    min-height: 45vh;
+    img {
+        max-height: 300px;
+    }
+    label {
+        max-height: fit-content;
+    }
+    input[type="radio"] ~ section {
+        top: -999px;
+        left: -999px;
+        opacity: 0;
+        position: absolute;
+        transform: scale(0);
+    }
+    input[type="radio"]:checked ~ section {
+        top: unset;
+        left: unset;
+        position: relative;
+        opacity: 100%;
+        transform: scale(1);
+        display: flex;
+        width: 100%;
+    }
+}
+
 #inner-scene-display {
     --padding: 1rem;
     width: 60vw;

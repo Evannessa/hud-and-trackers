@@ -5004,6 +5004,37 @@ button.img-button.framed:before {
   display: none;
 }
 
+#CharacterPopout {
+  min-height: 45vh;
+}
+#CharacterPopout .flex-col {
+  align-items: flex-start;
+}
+#CharacterPopout img {
+  max-height: 300px;
+}
+#CharacterPopout label {
+  max-height: -webkit-fit-content;
+  max-height: -moz-fit-content;
+  max-height: fit-content;
+}
+#CharacterPopout input[type=radio] ~ section {
+  top: -999px;
+  left: -999px;
+  opacity: 0;
+  position: absolute;
+  transform: scale(0);
+}
+#CharacterPopout input[type=radio]:checked ~ section {
+  top: unset;
+  left: unset;
+  position: relative;
+  opacity: 100%;
+  transform: scale(1);
+  display: flex;
+  width: 100%;
+}
+
 #inner-scene-display {
   --padding: 1rem;
   width: 60vw;

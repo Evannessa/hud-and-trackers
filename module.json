@@ -38,7 +38,8 @@
         "./scripts/action-hud.js",
         "./scripts/journal-tooltips.js",
         "./scripts/character-scene-display.js",
-        "./scripts/helper-hud.js"
+        "./scripts/helper-hud.js",
+        "./scripts/classes/CharacterPopout.js"
     ],
     "styles": ["styles/style.css"],
     "dependencies": [],
