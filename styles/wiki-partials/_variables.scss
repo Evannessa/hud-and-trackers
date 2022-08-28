@@ -1,0 +1,13 @@
+@use "colors" as *;
+// @use "shadows" as *;
+
+:root {
+    @each $color, $shades in $colors {
+        @each $shade, $value in $shades {
+            --color-#{$color}-#{$shade}: #{$value};
+        }
+    }
+    // @each $shadow, $value in $shadows {
+    //     --shadow-#{$shadow}: #{$value};
+    // }
+}

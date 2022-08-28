@@ -1,22 +1,36 @@
-<section class="card">
-    <nav class="flexrow">
-        <fieldset class="button-group flex-col">
-            {{#each tabs}}
-                <div class="flex-col">
-                    <input
-                        type="radio"
-                        id="input{{this.id}}"
-                        data-tab="{{this.id}}"
-                        name="selectedTab"
-                        value="{{this.id}}"
-                    />
-                    <label class="hidden-input" for="input{{this.id}}">{{this.id}}</label>
-                    <section id="{{this.id}}" class="flex-col flexcol">
-
-                    </section>
-                </div>
-            {{/each}}
-        </fieldset>
+{{#with global}}
+    <nav class="nav flex-row">
+        {{#each tabs}}
+            <button data-tab="{{this.id}}" data-tab-type="global">{{this.label}}</button>
+        {{/each}}
     </nav>
+{{/with}}
+<section class="tab-section" id="locations">
 
+</section>
+<section class="tab-section" id="all-characters">
+    {{#with clans}}
+        {{#each tabs}}
+            <button data-tab={{this}} data-tab-type="clans">{{this}}</button>
+        {{/each}}
+    {{/with}}
+</section>
+<section class="tab-section" id="selected-character">
+    {{#with item}}
+        <header class="header flex-row">
+            <section class="tabs-container flex-row">
+                {{#each tabs}}
+                    <button data-tab="{{this.id}}" data-tab-type="item">{{this.label}}</button>
+                {{/each}}
+            </section>
+        </header>
+        <div class="main flex-col">
+            {{#each tabs}}
+                <section id="{{this.id}}" class="content flex-col flex-wrap"></section>
+            {{/each}}
+        </div>
+        {{! <footer class="related-to flex-row">
+
+        </footer> }}
+    {{/with}}
 </section>
