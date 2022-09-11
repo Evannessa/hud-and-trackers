@@ -9,28 +9,46 @@
 
 </section>
 <section class="tab-section" id="all-characters">
-    {{#with clans}}
-        {{#each tabs}}
-            <button data-tab={{this}} data-tab-type="clans">{{this}}</button>
-        {{/each}}
-    {{/with}}
+    <header class="flex-row flex-wrap">
+
+        {{#with clans}}
+            {{#each tabs}}
+                <button data-tab={{this.id}} data-tab-type="clans">{{this.label}}</button>
+            {{/each}}
+        {{/with}}
+    </header>
+    <div class="main flex-row">
+
+    </div>
 </section>
 <section class="tab-section" id="selected-character">
     {{#with item}}
         <header class="header flex-row">
-            <section class="tabs-container flex-row">
-                {{#each tabs}}
-                    <button data-tab="{{this.id}}" data-tab-type="item">{{this.label}}</button>
-                {{/each}}
-            </section>
+
         </header>
-        <div class="main flex-col">
-            {{#each tabs}}
-                <section id="{{this.id}}" class="content flex-col flex-wrap"></section>
-            {{/each}}
+        <div class="main flex-col" id="character-content">
+            <div class="content-wrapper">
+                {{#each tabs}}
+                    <section id="{{this.id}}" class="content flex-col flex-wrap"></section>
+                {{/each}}
+            </div>
+
         </div>
+        <section class="tabs-container flex-row flex-wrap" id="character-tabs">
+            {{#each tabs}}
+                <button data-tab="{{this.id}}" data-tab-type="item">{{this.label}}</button>
+            {{/each}}
+        </section>
         {{! <footer class="related-to flex-row">
 
         </footer> }}
     {{/with}}
+</section>
+<section class="tab-section" id="characters-in-scene">
+    <header class="flex-row">
+        <h2>Characters in Scene</h2>
+    </header>
+    <div class="main flex-row flex-wrap">
+
+    </div>
 </section>
