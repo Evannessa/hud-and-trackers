@@ -25,7 +25,7 @@ export class InSceneCharacterManager {
         if (!currentScene) currentScene = game.scenes.viewed;
         let charactersInScene = await currentScene.getFlag("hud-and-trackers", "charactersInScene");
         if (!charactersInScene) {
-            await currentScene.setFlag("hud-and-trackers", "charactersInScene", []);
+            charactersInScene = await currentScene.setFlag("hud-and-trackers", "charactersInScene", []);
         }
         return charactersInScene;
     }
