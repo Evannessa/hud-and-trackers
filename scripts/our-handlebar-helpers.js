@@ -26,6 +26,10 @@ export default function registerAllHandlebarHelpers() {
             return stringInput.charAt(0).toUpperCase() + stringInput.slice(1);
         }
     });
+    Handlebars.registerHelper("equalAny", (stringInput, array) => {
+        let equalsAny = array.some((el) => el === stringInput);
+        return equalsAny;
+    });
 }
 // Handlebars.registerHelper("getCharacterData", (id) => {
 

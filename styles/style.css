@@ -1014,12 +1014,12 @@ button.icon-button {
   grid-column: 3/4;
   grid-row: 1;
 }
-#CharacterPopout .tab-section#characters-in-scene .main .content, #CharacterPopout .tab-section#all-characters .main .content {
+#CharacterPopout .tab-section#characters-in-scene .main .content, #CharacterPopout .tab-section#all-characters .main .content, #CharacterPopout .tab-section#all-locations .main .content, #CharacterPopout .tab-section#linked-locations .main .content {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
 }
-#CharacterPopout .tab-section#characters-in-scene .main .card, #CharacterPopout .tab-section#all-characters .main .card {
+#CharacterPopout .tab-section#characters-in-scene .main .card, #CharacterPopout .tab-section#all-characters .main .card, #CharacterPopout .tab-section#all-locations .main .card, #CharacterPopout .tab-section#linked-locations .main .card {
   height: unset;
   height: -webkit-fit-content;
   height: -moz-fit-content;
@@ -1032,15 +1032,15 @@ button.icon-button {
   grid-template-columns: 30% 1fr;
   grid-template-rows: 3rem;
 }
-#CharacterPopout .tab-section#characters-in-scene .main .card-img__wrapper, #CharacterPopout .tab-section#all-characters .main .card-img__wrapper {
+#CharacterPopout .tab-section#characters-in-scene .main .card-img__wrapper, #CharacterPopout .tab-section#all-characters .main .card-img__wrapper, #CharacterPopout .tab-section#all-locations .main .card-img__wrapper, #CharacterPopout .tab-section#linked-locations .main .card-img__wrapper {
   grid-column: 1/2;
   grid-row: 1;
 }
-#CharacterPopout .tab-section#characters-in-scene .main .card__content, #CharacterPopout .tab-section#all-characters .main .card__content {
+#CharacterPopout .tab-section#characters-in-scene .main .card__content, #CharacterPopout .tab-section#all-characters .main .card__content, #CharacterPopout .tab-section#all-locations .main .card__content, #CharacterPopout .tab-section#linked-locations .main .card__content {
   grid-column: 2/3;
   grid-row: 1;
 }
-#CharacterPopout .tab-section#characters-in-scene .main .card__content *, #CharacterPopout .tab-section#all-characters .main .card__content * {
+#CharacterPopout .tab-section#characters-in-scene .main .card__content *, #CharacterPopout .tab-section#all-characters .main .card__content *, #CharacterPopout .tab-section#all-locations .main .card__content *, #CharacterPopout .tab-section#linked-locations .main .card__content * {
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;

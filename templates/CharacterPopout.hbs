@@ -4,8 +4,53 @@
             <button data-tab="{{this.id}}" data-tab-type="global">{{this.label}}</button>
         {{/each}}
     </nav>
+    {{#each tabs}}
+        <section class="tab-section" id="{{this.id}}">
+            <header class="header flex-row flex-wrap">
+                {{#if (eq this.id "all-characters")}}
+                    {{#with @root.clans}}
+                        {{#each tabs}}
+                            <button data-tab={{this.id}} data-tab-type="clans">{{this.label}}</button>
+                        {{/each}}
+                    {{/with}}
+
+                {{/if}}
+
+            </header>
+            <div class="main flex-row flex-wrap">
+
+                {{#if (eq this.id "selected-character")}}
+                    <div class="content-wrapper">
+                        {{#each @root.character.tabs}}
+                            <section id="{{this.id}}" class="content flex-col flex-wrap"></section>
+                        {{/each}}
+                    </div>
+                {{/if}}
+                {{#if (eq this.id "current-location")}}
+                    <div class="content-wrapper">
+                        {{#each @root.location.tabs}}
+                            <section id="{{this.id}}" class="content flex-col flex-wrap"></section>
+                        {{/each}}
+                    </div>
+                {{/if}}
+            </div>
+            <section class="tabs-container flex-row flex-wrap" id="character-tabs">
+                {{#if (eq this.id "selected-character")}}
+                    {{#each @root.character.tabs}}
+                        <button data-tab="{{this.id}}" data-tab-type="character">{{this.label}}</button>
+                    {{/each}}
+                {{else}}
+                    {{#each @root.location.tabs}}
+                        <button data-tab="{{this.id}}" data-tab-type="location">{{this.label}}</button>
+                    {{/each}}
+                {{/if}}
+            </section>
+
+        </section>
+    {{/each}}
+
 {{/with}}
-<section class="tab-section" id="all-locations">
+{{! <section class="tab-section" id="all-locations">
     <header>
 
     </header>
@@ -13,7 +58,7 @@
 
     </div>
 </section>
-<section class="tab-section" id="linked-scenes">
+<section class="tab-section" id="linked-locations">
     <header>
 
     </header>
@@ -21,7 +66,15 @@
 
     </div>
 </section>
-<section class="tab-section" id="all-characters">
+<section class="tab-section" id="current-location">
+    <header class="header">
+
+    </header>
+    <div class="main">
+
+    </div>
+</section> }}
+{{!-- <section class="tab-section" id="all-characters">
     <header class="flex-row flex-wrap">
 
         {{#with clans}}
@@ -64,4 +117,4 @@
     <div class="main flex-row flex-wrap">
 
     </div>
-</section>
+</section> --}}

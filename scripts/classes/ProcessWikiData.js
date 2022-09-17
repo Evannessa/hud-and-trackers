@@ -1,6 +1,6 @@
 import { InSceneCharacterManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
 import { LocationsManager } from "../classes/LocationsManager.js";
-let characterDatabaseURL = "https://classy-bavarois-433634.netlify.app/";
+let baseURL = "https://classy-bavarois-433634.netlify.app/";
 let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/00-locations-moc";
 export let clanTags;
 export let locationTags;
@@ -34,10 +34,11 @@ export const tabsData = {
             "characters-in-scene": {
                 id: "characters-in-scene",
                 label: "Characters In Scene",
-                isFetched: false,
+                // isFetched: false,
                 callback: async (event, html) => {
                     let characters = await CharacterManager.getCharactersInScene();
-                    await populateSelectedCharacters(characters, html);
+                    console.log("Our characters in scene are", characters);
+                    populateSelectedCharacters(characters, html);
                 },
             },
             "all-locations": {
@@ -48,71 +49,76 @@ export const tabsData = {
                     await fetchAllLocations(html);
                 },
             },
-            "linked-scenes": {
-                id: "linked-scenes",
-                label: "Inner Scenes",
-                isFetched: false,
+            "linked-locations": {
+                id: "linked-locations",
+                label: "Connected Locations",
                 callback: async (event, html) => {
                     let locations = await LocationsManager.getLinkedLocations();
-                    await populateSelectedScenes(locations, html);
+                    console.log("Our locations in scene are", locations);
+                    populateLinkedLocations(locations, html);
+                },
+            },
+            "current-location": {
+                id: "current-location",
+                label: "Current Location",
+                isFetched: false,
+                callback: async (event, html) => {
+                    await fetchLocationData(html);
                 },
             },
         },
     },
-    item: {
+    character: {
         selectedTab: "traits",
         tabs: {},
     },
+    location: {
+        selectedTab: "",
+        tabs: {},
+    },
     clans: {},
+    locations: {},
 };
-async function populateSelectedScenes(innerScenes, $html) {
-    let locationsContainer = $html[0].querySelector("#linked-locations");
-    let main = locationsContainer.querySelector(".main");
-    innerScenes.forEach((sceneData) => {
-        let { cardHTML, url } = sceneData;
-        main.insertAdjacentHTML("beforeend", cardHTML);
+/**
+ * For the selected "charactersInScene, and linkedLocations", for this scene, add our cards
+ * @param {Array} cardCollection - an array of "card" objects holding locations or characters
+ * @param {JQuery} $html - an object refering to the jquery element of our app
+ * @param {String} containerSelector - the selector for the section we want to add the cards to
+ */
+async function addCardsToSection(cardCollection, $html, containerSelector) {
+    let containerElement = $html[0].querySelector(`${containerSelector} .main`);
+    $(containerElement).empty();
+    cardCollection.forEach((data) => {
+        let { cardHTML, url } = data;
+        containerElement.insertAdjacentHTML("beforeend", cardHTML);
     });
+}
+function populateLinkedLocations(linkedLocations, $html) {
+    addCardsToSection(linkedLocations, $html, "#linked-locations");
 }
 
-async function populateSelectedCharacters(charactersInScene, $html) {
-    let characterContainer = $html[0].querySelector("#characters-in-scene");
-    let main = characterContainer.querySelector(".main");
-    charactersInScene.forEach((charData) => {
-        let { cardHTML, url } = charData;
-        main.insertAdjacentHTML("beforeend", cardHTML);
+function populateSelectedCharacters(charactersInScene, $html) {
+    addCardsToSection(charactersInScene, $html, "#characters-in-scene");
+}
+function processTags(tagArray) {
+    let names = tagArray.map((tag) => tag.tag).filter((tag) => tag !== "clans/");
+    names = names.map((tag) => tag.split("/").pop());
+    names = names.sort();
+    let tagObjects = {};
+    names.forEach((tagName) => {
+        tagObjects[tagName] = {
+            id: tagName,
+            label: tagName,
+        };
     });
+    tagArray = tagObjects;
+    return tagArray;
 }
 export async function processClanNames() {
-    let clanNames = clanTags.map((clan) => clan.tag).filter((clan) => clan !== "clans/");
-    clanNames = clanNames.map((clan) => clan.split("/").pop());
-    clanNames = clanNames.sort();
-    let clanTabObjects = {};
-    clanNames.forEach((clanName) => {
-        clanTabObjects[clanName] = {
-            id: clanName,
-            label: clanName,
-            // callback: async (event, appElement) => {
-            //     html.querySelector(".tab-section#all-characters").append(tag);
-            // },
-        };
-    });
-    clanTags = clanTabObjects;
+    clanTags = processTags(clanTags);
 }
 export async function processLocations() {
-    let locationNames = locationTags.map((location) => location.tag);
-    locationNames = locationNames.map((location) => location.split("/").pop());
-    locationNames = locationNames.sort();
-    let locationTabObjects = {};
-    locationNames.forEach((locationName) => {
-        locationTabObjects[locationName] = {
-            id: locationName,
-            label: locationName,
-            // callback: async (event, appElement) => {
-            //     html.querySelector(".tab-section#all-characters").append(tag);
-            // },
-        };
-    });
-    locationTags = locationTabObjects;
+    locationTags = processTags(locationTags);
 }
 
 export async function fetchAllLocations($html) {
@@ -125,12 +131,23 @@ export async function fetchAllLocations($html) {
 export async function getAllLocations(data, html) {
     const dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
-    // let locationsData = Array.from(dummyElement.querySelector("content").querySelectorAll("a"));
-    let { anchorTags, cards } = await convertAnchorsAndImages(dummyElement, "content");
-    console.log(anchorTags);
+    let anchorTags = Array.from(dummyElement.querySelector("content").querySelectorAll("a"));
+    // let anchorTags = locationsAnchors.map((a) => a.textContent);
+
+    // let { anchorTags } = convertAnchorsAndImages(dummyElement, "content");
     let locationsContainer = html.querySelector(".tab-section#all-locations .main");
     anchorTags.forEach((data) => {
-        locationsContainer.append(data);
+        let card = document.createElement("div");
+        card.classList.add("card");
+        let imgWrapper = document.createElement("div");
+        imgWrapper.classList.add("card-img__wrapper");
+        let content = document.createElement("div");
+        content.classList.add("card__content");
+        card.append(imgWrapper);
+        card.append(content);
+        content.insertAdjacentElement("afterbegin", data);
+        console.log(card);
+        locationsContainer.append(card);
     });
     // locationsContainer.append(locationsData);
 
@@ -167,18 +184,42 @@ export async function getAllLocations(data, html) {
  */
 export async function fetchAllCharacters($html) {
     const html = $html[0];
-    fetch(characterDatabaseURL)
+    fetch(baseURL)
         .then((response) => response.text())
         .then(async (data) => await getAllCharacters(data, html));
 }
 
-export async function fetchCharacterData($html) {
+export async function fetchLocationData($html) {
     const html = $html[0];
-    await clearCurrentCharacterData(html);
-    let url = characterDatabaseURL + game.characterPopout.currentCharacterUrl;
+    await clearCurrentEntityData(html);
+    let url = baseURL + "the-martyred-moon-café-and-divination-shop";
+    // let url = baseURL + game.characterPopout.currentLocationUrl;
+    console.log("Url is", game.characterPopout.currentLocationUrl);
     fetch(url)
         .then((response) => response.text())
-        .then(async (data) => await getSelectedCharacterData(data, html));
+        .then(
+            async (data) =>
+                await getSelectedEntityData(
+                    data,
+                    html,
+                    "#current-location",
+                    ".wrapper main article content",
+                    2,
+                    "h1",
+                    "location"
+                )
+        );
+}
+export async function fetchCharacterData($html) {
+    const html = $html[0];
+    await clearCurrentEntityData(html);
+    let url = baseURL + game.characterPopout.currentCharacterUrl;
+    console.log(game.characterPopout.currentCharacterUrl);
+    fetch(url)
+        .then((response) => response.text())
+        .then(
+            async (data) => await getSelectedEntityData(data, html, "#selected-character", "content article content")
+        );
 }
 
 export function convertAnchorsAndImages(dummyElement, selector = "") {
@@ -186,8 +227,9 @@ export function convertAnchorsAndImages(dummyElement, selector = "") {
     let anchorTags = dummyElement.querySelectorAll("a");
     anchorTags = Array.from(anchorTags);
     anchorTags.forEach((a) => {
-        if (a.classList.contains("internal-link")) {
-            let oldHref = a.getAttribute("href");
+        let oldHref = a.getAttribute("href");
+        if (oldHref.includes("https")) {
+            // console.log("Internal link?", a);
             let newHref = `https://classy-bavarois-433634.netlify.app${oldHref}`;
             a.setAttribute("href", newHref);
         }
@@ -196,9 +238,13 @@ export function convertAnchorsAndImages(dummyElement, selector = "") {
     let imgTags = dummyElement.querySelectorAll("img");
     imgTags = Array.from(imgTags);
     imgTags.forEach((img) => {
-        let oldSrc = img.getAttribute("src").trim();
-        let newSrc = `https://classy-bavarois-433634.netlify.app${oldSrc}`;
-        img.setAttribute("src", newSrc);
+        let src = img.getAttribute("src").trim();
+        if (!src.includes("https")) {
+            //only re-append internal images -- external ones should have https
+            let oldSrc = img.getAttribute("src").trim();
+            let newSrc = `https://classy-bavarois-433634.netlify.app${oldSrc}`;
+            img.setAttribute("src", newSrc);
+        }
     });
 
     let cards = Array.from(dummyElement.querySelectorAll(".card"));
@@ -260,33 +306,35 @@ export async function getAllCharacters(data, html) {
         }
     }
 }
-export async function clearCurrentCharacterData(html) {
-    let contentSection = html.querySelector(".tab-section#selected-character");
-    let featuredImage = contentSection.querySelector(".featured-image");
-    //remove featured image
-    if (featuredImage) {
-        $(featuredImage).remove();
-    }
-    //remove content
-    $("#selected-character section.content").empty();
+
+export async function clearCurrentEntityData(html, selector) {
+    let contentSection = html.querySelector(`.tab-section${selector}`);
+    $(`${selector} header`).empty();
+    $(`${selector} section.content`).empty();
 }
-
-export async function getSelectedCharacterData(data, html) {
-    const headingLevel = 2;
-
+export async function getSelectedEntityData(
+    data,
+    html,
+    appSelector,
+    wikiSiteSelector,
+    headingLevel = 2,
+    titleSelector = ".featured-image",
+    tabDataKey = "character"
+) {
     const dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
-    const content = dummyElement.querySelector("content article content");
-    const title = dummyElement.querySelector(".featured-image");
+    const content = dummyElement.querySelector(wikiSiteSelector);
+    const title = dummyElement.querySelector(titleSelector);
     // let anchorTags = dummyElement.querySelectorAll("a");
 
     let { anchorTags, imgTags } = convertAnchorsAndImages(dummyElement);
-    let relationships = anchorTags.filter((element) => element.closest(".card"));
-    let relationshipCards = relationships.map((a) => a.closest(".card"));
+    // let relationships = anchorTags.filter((element) => element.closest(".card"));
+    // let relationshipCards = relationships.map((a) => a.closest(".card"));
 
     let allChildren = Array.from(content.children);
     let headings = dummyElement.querySelectorAll(`content h${headingLevel}`);
     headings = Array.from(headings);
+    console.log("Page content is", content.children, "headings are", headings);
 
     //get the index of the heading
     let indexes = headings.map((heading) => {
@@ -315,8 +363,9 @@ export async function getSelectedCharacterData(data, html) {
     });
     // This should be an object with the key being the "id" of the heading, and the value being an array of each element between it and the next header
     let sectionsObject = Object.fromEntries(sections);
+    console.log("Sections object is", sectionsObject);
 
-    let contentSection = html.querySelector(".tab-section#selected-character");
+    let contentSection = html.querySelector(`.tab-section${appSelector}`);
     contentSection.querySelector(".header").prepend(title);
 
     // let combinedContent = sectionsObject[sectionKey].map((el) => el).join();
@@ -324,7 +373,7 @@ export async function getSelectedCharacterData(data, html) {
         //sectionsObject[sectionKey] is an array of html elements
         sectionsObject[sectionKey].forEach((el) => {
             if (sectionKey && sectionKey !== "undefined") {
-                tabsData.item.tabs[sectionKey] = {
+                tabsData[tabDataKey].tabs[sectionKey] = {
                     id: sectionKey,
                     label: sectionKey,
                 };
@@ -336,20 +385,98 @@ export async function getSelectedCharacterData(data, html) {
                     let newTab = document.createElement("button");
                     charPropertySection = document.createElement("section");
                     newTab.dataset.tab = sectionKey;
-                    newTab.dataset.tabType = "item";
+                    newTab.dataset.tabType = tabDataKey;
                     newTab.textContent = sectionKey;
                     charPropertySection.setAttribute("id", sectionKey);
                     $(charPropertySection).addClass("content flex-col flex-wrap");
                     charPropertySection.insertAdjacentHTML("beforeend", el);
-                    contentSection.querySelector(".tabs-container").append(newTab);
-                    contentSection.querySelector(".content-wrapper").append(charPropertySection);
+                    contentSection.querySelector(".tabs-container")?.append(newTab);
+                    contentSection.querySelector(".content-wrapper")?.append(charPropertySection);
                 }
             }
         });
     }
-
-    //#TODO: put this back in later
-    // relationshipCards.forEach((card) => {
-    //     contentSection.querySelector("footer").append(card);
-    // });
 }
+
+// export async function getSelectedCharacterData(data, html) {
+//     const headingLevel = 2;
+
+//     const dummyElement = document.createElement("div");
+//     dummyElement.insertAdjacentHTML("beforeend", data);
+//     const content = dummyElement.querySelector("content article content");
+//     const title = dummyElement.querySelector(".featured-image");
+//     // let anchorTags = dummyElement.querySelectorAll("a");
+
+//     let { anchorTags, imgTags } = convertAnchorsAndImages(dummyElement);
+//     let relationships = anchorTags.filter((element) => element.closest(".card"));
+//     let relationshipCards = relationships.map((a) => a.closest(".card"));
+
+//     let allChildren = Array.from(content.children);
+//     let headings = dummyElement.querySelectorAll(`content h${headingLevel}`);
+//     headings = Array.from(headings);
+
+//     //get the index of the heading
+//     let indexes = headings.map((heading) => {
+//         return allChildren.indexOf(heading);
+//     });
+//     let sections = [];
+
+//     // get all the sections (each element between a header of the level we designated (2))
+//     indexes.forEach((headingIndex, index) => {
+//         let start = headingIndex;
+//         let end = indexes[index + 1];
+//         if (end > allChildren.length) {
+//             end = allChildren.length - 1;
+//         }
+
+//         //filter out any that include "Placeholder" for now
+//         let content = allChildren.slice(start + 1, end).map((obj) => obj?.outerHTML); //an array of elements
+//         content = content.filter((elHTML) => !elHTML.toLowerCase().includes("placeholder"));
+
+//         //get the id of the heading-2 to act as the key
+//         let sectionKey = allChildren[start]?.getAttribute("id");
+
+//         if (content.length > 0 && sectionKey !== undefined) {
+//             sections.push([sectionKey, content]);
+//         }
+//     });
+//     // This should be an object with the key being the "id" of the heading, and the value being an array of each element between it and the next header
+//     let sectionsObject = Object.fromEntries(sections);
+
+//     let contentSection = html.querySelector(".tab-section#selected-character");
+//     contentSection.querySelector(".header").prepend(title);
+
+//     // let combinedContent = sectionsObject[sectionKey].map((el) => el).join();
+//     for (let sectionKey in sectionsObject) {
+//         //sectionsObject[sectionKey] is an array of html elements
+//         sectionsObject[sectionKey].forEach((el) => {
+//             if (sectionKey && sectionKey !== "undefined") {
+//                 tabsData.item.tabs[sectionKey] = {
+//                     id: sectionKey,
+//                     label: sectionKey,
+//                 };
+//             }
+//             let charPropertySection = contentSection.querySelector(`#${sectionKey}`);
+//             if (charPropertySection) charPropertySection.insertAdjacentHTML("beforeend", el);
+//             else {
+//                 if (sectionKey) {
+//                     let newTab = document.createElement("button");
+//                     charPropertySection = document.createElement("section");
+//                     newTab.dataset.tab = sectionKey;
+//                     newTab.dataset.tabType = "item";
+//                     newTab.textContent = sectionKey;
+//                     charPropertySection.setAttribute("id", sectionKey);
+//                     $(charPropertySection).addClass("content flex-col flex-wrap");
+//                     charPropertySection.insertAdjacentHTML("beforeend", el);
+//                     contentSection.querySelector(".tabs-container").append(newTab);
+//                     contentSection.querySelector(".content-wrapper").append(charPropertySection);
+//                 }
+//             }
+//         });
+//     }
+
+//     //#TODO: put this back in later
+//     // relationshipCards.forEach((card) => {
+//     //     contentSection.querySelector("footer").append(card);
+//     // });
+// }

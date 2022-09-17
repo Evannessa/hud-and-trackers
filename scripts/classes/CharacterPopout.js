@@ -3,6 +3,7 @@ import { setInvisibleHeader, handleDrag, addDragHandle } from "../helper-functio
 const MODULE_ID = "hud-and-trackers";
 import { InSceneCharacterManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
 import * as ProcessWikiData from "../classes/ProcessWikiData.js";
+import { LocationsManager } from "./LocationsManager.js";
 Hooks.on("ready", async () => {
     let { processClanNames, processLocations } = ProcessWikiData;
     await processClanNames();
@@ -25,8 +26,14 @@ export class CharacterPopout extends Application {
         let clickedCard = event.currentTarget;
         let url = clickedCard.querySelector(".internal-link").getAttribute("href");
         url = url.split("/").pop();
-        // app.currentCharacterUrl = url;
         await CharacterManager.addCharacterToScene({ cardHTML: clickedCard.outerHTML, url });
+    }
+
+    async linkLocationToScene(event, app) {
+        let clickedCard = event.currentTarget;
+        let url = clickedCard.querySelector(".internal-link").getAttribute("href");
+        url = url.split("/").pop();
+        await LocationsManager.linkLocationToScene({ cardHTML: clickedCard.outerHTML, url });
     }
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
@@ -41,20 +48,20 @@ export class CharacterPopout extends Application {
     }
 
     async getData() {
-        let { tabsData, clanTags } = ProcessWikiData;
-        let ourData = { ...tabsData, clans: { tabs: clanTags } };
+        let { tabsData, clanTags, locationTags } = ProcessWikiData;
+        let ourData = { ...tabsData, clans: { tabs: clanTags }, locations: { tabs: locationTags } };
         this.tabsData = ourData;
         return ourData;
     }
     async setTab(tabId, tabType, event, appElement) {
-        // //for dash to camelCase and vise versa
+        console.log("Our tabs data is", this.tabsData, "Tab type is", tabType);
         const sectionData = this.tabsData[tabType].tabs[tabId];
         if (sectionData.hasOwnProperty("callback")) {
             let isFetched = sectionData.hasOwnProperty("isFetched") && sectionData.isFetched === true;
             //if it doesn't have an isFetched property, or it's set to false
             if (!isFetched) {
                 await sectionData.callback(event, appElement);
-                if (isFetched === false) {
+                if (sectionData.hasOwnProperty("isFetched")) {
                     //if it's false (triple === will make sure it's false, not just undefined)
                     //set it to true
                     sectionData.isFetched = true;
@@ -104,10 +111,17 @@ export class CharacterPopout extends Application {
             async (event) => await this._handleAction(event, "tabClick", this)
         );
         html.off("click", ".card").on("click", ".card", async (event) => {
-            if (event.currentTarget.closest("#all-characters")) {
+            let el = event.currentTarget;
+            console.log("Cards are being clicked");
+
+            if (el.closest("#all-characters")) {
                 await this._handleAction(event, "addToScene", this);
-            } else if (event.currentTarget.closest("#characters-in-scene")) {
+            } else if (el.closest("#all-locations")) {
+                await this._handleAction(event, "linkLocation", this);
+            } else if (el.closest("#characters-in-scene")) {
                 await this._handleAction(event, "selectCharacter", this);
+            } else if (event.currentTarget.closest("#linked-locations")) {
+                await this._handleAction(event, "selectLocation", this);
             }
         });
 
@@ -129,18 +143,26 @@ export class CharacterPopout extends Application {
         if (!actionType || !app) {
             return;
         }
-        if (actionType === "addToScene") {
+        if (actionType === "addToScene" || actionType === "linkLocation") {
             //if the card is an "all characters" card, add it to the "charactersInScene"
-            await this.addCharacterToScene(event, app.element);
-        } else if (actionType === "selectCharacter") {
-            //if the card is an "add to scene" card, choose it as the selected character
+            if (actionType === "addToScene") await this.addCharacterToScene(event, app.element);
+            if (actionType === "linkLocation") await this.linkLocationToScene(event, app.element);
+        } else if (actionType === "selectCharacter" || actionType === "selectLocation") {
+            //if the card is an "add to scene" card, choose it as the selected character or scene
             //we'll want to get the url of the selected character
             let link = currentTarget[0].querySelector(".internal-link");
             let url = link.getAttribute("href").split("/").pop();
-            let characterName = link.innerText;
-            app.currentCharacterUrl = url;
-            //change the tab to reflect the name of the selected character
-            app.element[0].querySelector("[data-tab='selected-character']").textContent = characterName;
+            console.log("Our selected link", link);
+            let entityName = link.innerText;
+            let propertyName = actionType === "selectCharacter" ? "currentCharacterUrl" : "currentLocationUrl";
+            let dataSelector = actionType === "selectCharacter" ? "selected-character" : "current-location";
+
+            //set the selected character on the app's object
+            app[propertyName] = url;
+            // console.log(entityName, propertyName, dataSelector);
+
+            //change the tab to reflect the name of the selected character or location
+            app.element[0].querySelector(`[data-tab='${dataSelector}']`).textContent = entityName;
         } else if (actionType === "tabClick") {
             let tabType = currentTarget.data().tabType;
             let tabId = event.currentTarget.dataset.tab;
