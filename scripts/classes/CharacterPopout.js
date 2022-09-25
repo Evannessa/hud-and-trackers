@@ -39,8 +39,10 @@ export class CharacterPopout extends Application {
         return mergeObject(super.defaultOptions, {
             classes: ["form"],
             popOut: true,
-            resizable: true,
+            height: 200,
+            // resizable: true,
             minimizeable: true,
+            top: "100%",
             template: `modules/${MODULE_ID}/templates/CharacterPopout.hbs`,
             id: "CharacterPopout",
             title: " Character Popout",
@@ -49,7 +51,14 @@ export class CharacterPopout extends Application {
 
     async getData() {
         let { tabsData, clanTags, locationTags } = ProcessWikiData;
-        let ourData = { ...tabsData, clans: { tabs: clanTags }, locations: { tabs: locationTags } };
+
+        let ourData = {
+            ...tabsData,
+            clans: { tabs: clanTags },
+            locations: { tabs: locationTags },
+            currentCharacterUrl: this.currentCharacterUrl,
+            currentLocationUrl: this.currentLocationUrl,
+        };
         this.tabsData = ourData;
         return ourData;
     }
@@ -125,7 +134,18 @@ export class CharacterPopout extends Application {
             }
         });
 
-        await this.activateDefaultTab(html, "all-characters");
+        html.off("click", "[data-action]").on(
+            "click",
+            "[data-action]",
+            async (event) => await this._handleAction(event, "expand", this)
+        );
+        html.off("click", "img").on(
+            "click",
+            "img",
+            async (event) => await this._handleAction(event, "sendToTile", this)
+        );
+        this.hideTabs(html);
+        await this.activateDefaultTab(html, "linked-locations");
     }
     dragHandler(html) {
         let ancestorElement = html[0].closest(".window-app");
@@ -137,11 +157,27 @@ export class CharacterPopout extends Application {
         handleDrag(drag);
     }
 
+    hideTabs($html) {
+        if (!this.currentCharacterUrl) {
+            $html.find("[data-tab='selected-character']").addClass("hidden");
+        }
+        if (!this.currentLocationUrl) {
+            $html.find("[data-tab='current-location']").addClass("hidden");
+        }
+        if (!game.user.isGM) {
+            $html.find("[data-tab='all-locations']").addClass("hidden");
+            $html.find("[data-tab='all-characters']").addClass("hidden");
+        }
+    }
+
     async _handleAction(event, actionType, app) {
         event.preventDefault();
         const currentTarget = $(event.currentTarget);
         if (!actionType || !app) {
             return;
+        }
+        if (actionType === "expand") {
+            app.element[0].closest("#CharacterPopout").classList.toggle("expanded");
         }
         if (actionType === "addToScene" || actionType === "linkLocation") {
             //if the card is an "all characters" card, add it to the "charactersInScene"
@@ -152,21 +188,47 @@ export class CharacterPopout extends Application {
             //we'll want to get the url of the selected character
             let link = currentTarget[0].querySelector(".internal-link");
             let url = link.getAttribute("href").split("/").pop();
-            console.log("Our selected link", link);
             let entityName = link.innerText;
             let propertyName = actionType === "selectCharacter" ? "currentCharacterUrl" : "currentLocationUrl";
             let dataSelector = actionType === "selectCharacter" ? "selected-character" : "current-location";
 
             //set the selected character on the app's object
             app[propertyName] = url;
-            // console.log(entityName, propertyName, dataSelector);
 
             //change the tab to reflect the name of the selected character or location
-            app.element[0].querySelector(`[data-tab='${dataSelector}']`).textContent = entityName;
+            const ourTab = app.element[0].querySelector(`[data-tab='${dataSelector}']`);
+            ourTab.textContent = entityName;
+
+            //show the tab
+            ourTab.classList.remove("hidden");
+
+            //reset the "isFetched" so new data can be fetched
+            console.log(this.tabsData.global.tabs[dataSelector]);
+            this.tabsData.global.tabs[dataSelector].isFetched = false;
         } else if (actionType === "tabClick") {
             let tabType = currentTarget.data().tabType;
             let tabId = event.currentTarget.dataset.tab;
             await this.setTab(tabId, tabType, event, app.element);
+        } else if (actionType === "sendToTile") {
+            let name = "Wiki Display Journal";
+            let wikiDisplayJournal = game.journal.getName(name);
+            let createData = {
+                name: name,
+            };
+            if (!wikiDisplayJournal) {
+                // let wikiJournalData = new JournalEntry(createData);
+                wikiDisplayJournal = await JournalEntry.create(createData, {});
+            }
+
+            let updateData = {
+                _id: wikiDisplayJournal.id,
+                content: currentTarget[0].outerHTML,
+            };
+            // console.log(updateData);
+            // JournalEntry.update(updateData);
+            wikiDisplayJournal.update(updateData);
+            // let templatePath = game.JTCS.templates["share-link-partial"]
+            // game.JTCS.utils.createDialog("Share Image", templatePath, )
         }
     }
 }

@@ -1,7 +1,7 @@
 import { InSceneCharacterManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
 import { LocationsManager } from "../classes/LocationsManager.js";
 let baseURL = "https://classy-bavarois-433634.netlify.app/";
-let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/00-locations-moc";
+let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-locations";
 export let clanTags;
 export let locationTags;
 fetch("/Idyllwild/Test JSON Data/tags.json")
@@ -21,24 +21,40 @@ export const tabsData = {
         tabs: {
             "selected-character": {
                 id: "selected-character",
-                label: "Current",
+                label: "Current Character",
                 isFetched: false,
                 callback: async (event, html) => await fetchCharacterData(html),
             },
-            "all-characters": {
-                id: "all-characters",
-                label: "All",
-                isFetched: false,
-                callback: async (event, html) => await fetchAllCharacters(html),
-            },
             "characters-in-scene": {
                 id: "characters-in-scene",
-                label: "Characters In Scene",
+                label: "Scene NPCs",
                 // isFetched: false,
                 callback: async (event, html) => {
                     let characters = await CharacterManager.getCharactersInScene();
                     console.log("Our characters in scene are", characters);
                     populateSelectedCharacters(characters, html);
+                },
+            },
+            "all-characters": {
+                id: "all-characters",
+                label: "All Characters",
+                isFetched: false,
+                callback: async (event, html) => await fetchAllCharacters(html),
+            },
+            "current-location": {
+                id: "current-location",
+                label: "Current Location",
+                isFetched: false,
+                callback: async (event, html) => {
+                    await fetchLocationData(html);
+                },
+            },
+            "linked-locations": {
+                id: "linked-locations",
+                label: "Inner Locations",
+                callback: async (event, html) => {
+                    let locations = await LocationsManager.getLinkedLocations();
+                    populateLinkedLocations(locations, html);
                 },
             },
             "all-locations": {
@@ -47,23 +63,6 @@ export const tabsData = {
                 isFetched: false,
                 callback: async (event, html) => {
                     await fetchAllLocations(html);
-                },
-            },
-            "linked-locations": {
-                id: "linked-locations",
-                label: "Connected Locations",
-                callback: async (event, html) => {
-                    let locations = await LocationsManager.getLinkedLocations();
-                    console.log("Our locations in scene are", locations);
-                    populateLinkedLocations(locations, html);
-                },
-            },
-            "current-location": {
-                id: "current-location",
-                label: "Current Location",
-                isFetched: false,
-                callback: async (event, html) => {
-                    await fetchLocationData(html);
                 },
             },
         },
@@ -131,7 +130,8 @@ export async function fetchAllLocations($html) {
 export async function getAllLocations(data, html) {
     const dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
-    let anchorTags = Array.from(dummyElement.querySelector("content").querySelectorAll("a"));
+    console.log("Location dummy is", dummyElement);
+    let anchorTags = Array.from(dummyElement.querySelector("main").querySelectorAll("a"));
     // let anchorTags = locationsAnchors.map((a) => a.textContent);
 
     // let { anchorTags } = convertAnchorsAndImages(dummyElement, "content");
@@ -146,37 +146,8 @@ export async function getAllLocations(data, html) {
         card.append(imgWrapper);
         card.append(content);
         content.insertAdjacentElement("afterbegin", data);
-        console.log(card);
         locationsContainer.append(card);
     });
-    // locationsContainer.append(locationsData);
-
-    // let { anchorTags, cards } = convertAnchorsAndImages(dummyElement, "content");
-
-    // let characterData = cards.map((data) => data);
-
-    // let urls = {};
-    // for (let clanKey in items) {
-    //     let updatedData = items[clanKey].map((card) => card.querySelector("a").textContent);
-    //     urls[clanKey] = updatedData;
-    // }
-    // let clanContainer = html.querySelector(".tab-section#all-locations .main");
-    //add the cards to the all-characters tab section
-    // for (let clanKey in items) {
-    //     let clanSection = document.createElement("section");
-    //     clanSection.setAttribute("id", clanKey);
-    //     clanSection.classList.add("content");
-    //     clanContainer.append(clanSection);
-    //     items[clanKey].forEach((charDataItem) => {
-    //         clanSection.append(charDataItem);
-    //     });
-    //     //activate the default tab
-    //     let defaultKey = "alimoux";
-    //     if (clanKey === defaultKey) {
-    //         clanSection.classList.add("visible");
-    //         html.querySelector(`[data-tab='${clanKey}']`).classList.add("active");
-    //     }
-    // }
 }
 
 /**
@@ -191,10 +162,13 @@ export async function fetchAllCharacters($html) {
 
 export async function fetchLocationData($html) {
     const html = $html[0];
-    await clearCurrentEntityData(html);
-    let url = baseURL + "the-martyred-moon-café-and-divination-shop";
-    // let url = baseURL + game.characterPopout.currentLocationUrl;
-    console.log("Url is", game.characterPopout.currentLocationUrl);
+    await clearCurrentEntityData(html, "#current-location");
+    // let url = baseURL + "the-martyred-moon-café-and-divination-shop";
+    let url = baseURL + game.characterPopout.currentLocationUrl;
+    if (!url) {
+        console.error("No url stored");
+        return;
+    }
     fetch(url)
         .then((response) => response.text())
         .then(
@@ -212,9 +186,12 @@ export async function fetchLocationData($html) {
 }
 export async function fetchCharacterData($html) {
     const html = $html[0];
-    await clearCurrentEntityData(html);
+    await clearCurrentEntityData(html, "#selected-character");
     let url = baseURL + game.characterPopout.currentCharacterUrl;
-    console.log(game.characterPopout.currentCharacterUrl);
+    if (!url) {
+        console.error("No url stored");
+        return;
+    }
     fetch(url)
         .then((response) => response.text())
         .then(
@@ -222,9 +199,9 @@ export async function fetchCharacterData($html) {
         );
 }
 
-export function convertAnchorsAndImages(dummyElement, selector = "") {
-    if (selector) dummyElement = dummyElement.querySelector(selector);
-    let anchorTags = dummyElement.querySelectorAll("a");
+export function convertAnchorsAndImages(convertedElement, selector = "") {
+    if (selector) convertedElement = convertedElement.querySelector(selector);
+    let anchorTags = convertedElement.querySelectorAll("a");
     anchorTags = Array.from(anchorTags);
     anchorTags.forEach((a) => {
         let oldHref = a.getAttribute("href");
@@ -235,7 +212,7 @@ export function convertAnchorsAndImages(dummyElement, selector = "") {
         }
     });
 
-    let imgTags = dummyElement.querySelectorAll("img");
+    let imgTags = convertedElement.querySelectorAll("img");
     imgTags = Array.from(imgTags);
     imgTags.forEach((img) => {
         let src = img.getAttribute("src").trim();
@@ -247,11 +224,12 @@ export function convertAnchorsAndImages(dummyElement, selector = "") {
         }
     });
 
-    let cards = Array.from(dummyElement.querySelectorAll(".card"));
+    let cards = Array.from(convertedElement.querySelectorAll(".card"));
     return {
         anchorTags,
         imgTags,
         cards,
+        convertedElement,
     };
 }
 export function sortCharacters(characterDataArray) {
@@ -307,7 +285,8 @@ export async function getAllCharacters(data, html) {
     }
 }
 
-export async function clearCurrentEntityData(html, selector) {
+export async function clearCurrentEntityData(html, selector = "") {
+    console.log("Clearing entity data", html, selector);
     let contentSection = html.querySelector(`.tab-section${selector}`);
     $(`${selector} header`).empty();
     $(`${selector} section.content`).empty();
@@ -321,20 +300,22 @@ export async function getSelectedEntityData(
     titleSelector = ".featured-image",
     tabDataKey = "character"
 ) {
-    const dummyElement = document.createElement("div");
+    let dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
-    const content = dummyElement.querySelector(wikiSiteSelector);
-    const title = dummyElement.querySelector(titleSelector);
+    const title = convertAnchorsAndImages(dummyElement, titleSelector).convertedElement;
     // let anchorTags = dummyElement.querySelectorAll("a");
 
-    let { anchorTags, imgTags } = convertAnchorsAndImages(dummyElement);
+    const content = convertAnchorsAndImages(dummyElement, wikiSiteSelector).convertedElement;
+    // dummyElement = convertedDummyData.element;
+
+    console.log(title, content);
     // let relationships = anchorTags.filter((element) => element.closest(".card"));
     // let relationshipCards = relationships.map((a) => a.closest(".card"));
 
     let allChildren = Array.from(content.children);
     let headings = dummyElement.querySelectorAll(`content h${headingLevel}`);
     headings = Array.from(headings);
-    console.log("Page content is", content.children, "headings are", headings);
+    // console.log("Page content is", content.children, "headings are", headings);
 
     //get the index of the heading
     let indexes = headings.map((heading) => {
@@ -363,7 +344,7 @@ export async function getSelectedEntityData(
     });
     // This should be an object with the key being the "id" of the heading, and the value being an array of each element between it and the next header
     let sectionsObject = Object.fromEntries(sections);
-    console.log("Sections object is", sectionsObject);
+    // console.log("Sections object is", sectionsObject);
 
     let contentSection = html.querySelector(`.tab-section${appSelector}`);
     contentSection.querySelector(".header").prepend(title);

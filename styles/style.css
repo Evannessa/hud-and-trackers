@@ -907,6 +907,11 @@ button.icon-button {
 
 #CharacterPopout {
   /* #region  Global and Type Selectors */
+  position: fixed;
+  transform: translateY(0%);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 1, 1);
+  top: 100% !important;
+  min-height: 200px;
   min-height: 25vh;
   min-width: 30vw;
   /* Composition */
@@ -926,6 +931,32 @@ button.icon-button {
   /* #region  Content and layout */
   /* #region SIDEBAR  */
 }
+#CharacterPopout .card a {
+  pointer-events: none;
+}
+#CharacterPopout #linked-locations .card,
+#CharacterPopout #all-locations .card {
+  display: flex !important;
+  padding: 0.25rem 0.5rem;
+}
+#CharacterPopout #linked-locations .card-img__wrapper,
+#CharacterPopout #all-locations .card-img__wrapper {
+  display: none;
+}
+#CharacterPopout.expanded {
+  transform: translateY(-100%);
+  transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1);
+}
+#CharacterPopout .toggle-show-hide {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  max-width: -webkit-fit-content;
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
 #CharacterPopout nav {
   position: absolute !important;
   flex-direction: column;
@@ -933,9 +964,15 @@ button.icon-button {
   max-width: -webkit-fit-content;
   max-width: -moz-fit-content;
   max-width: fit-content;
+  background-color: transparent;
+  z-index: -1;
 }
 #CharacterPopout .is-hidden {
   display: none;
+}
+#CharacterPopout .display-section {
+  max-height: 100%;
+  padding-top: 0.5rem;
 }
 #CharacterPopout img {
   max-height: 200px;
@@ -943,13 +980,12 @@ button.icon-button {
   -o-object-fit: cover;
      object-fit: cover;
 }
-#CharacterPopout button[data-tab-type=global] {
-  --wiki-bg-color: hsl(337, 100%, 51%);
-  --wiki-active-color: hsl(349, 73%, 63%);
-}
-#CharacterPopout button[data-tab-type=item] {
+#CharacterPopout button[data-tab-type=character] {
   --wiki-bg-color: hsl(250, 66%, 62%);
   --wiki-active-color: hsl(249, 100%, 79%);
+  max-width: -webkit-fit-content;
+  max-width: -moz-fit-content;
+  max-width: fit-content;
 }
 #CharacterPopout button[data-tab-type=clans] {
   --wiki-bg-color: hsl(250, 66%, 62%);
@@ -958,8 +994,45 @@ button.icon-button {
   max-width: -moz-fit-content;
   max-width: fit-content;
 }
+#CharacterPopout button[data-tab-type=location] {
+  --wiki-bg-color: hsl(250, 66%, 62%);
+  --wiki-active-color: hsl(249, 100%, 79%);
+  max-width: -webkit-fit-content;
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+}
+#CharacterPopout button[data-tab-type=all-locations] {
+  --wiki-bg-color: hsl(250, 66%, 62%);
+  --wiki-active-color: hsl(249, 100%, 79%);
+  max-width: -webkit-fit-content;
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+}
+#CharacterPopout button[data-tab-type=global] {
+  --wiki-bg-color: hsl(337, 100%, 51%);
+  --wiki-active-color: hsl(349, 73%, 63%);
+}
+#CharacterPopout button[data-tab-type=global][data-tab=current-location] {
+  --wiki-bg-color: hsl(192, 100%, 41%);
+  --wiki-active-color: hsl(192, 93%, 53%);
+}
+#CharacterPopout button[data-tab-type=global][data-tab=all-locations] {
+  --wiki-bg-color: hsl(192, 100%, 41%);
+  --wiki-active-color: hsl(192, 93%, 53%);
+}
+#CharacterPopout button[data-tab-type=global][data-tab=linked-locations] {
+  --wiki-bg-color: hsl(192, 100%, 41%);
+  --wiki-active-color: hsl(192, 93%, 53%);
+}
+#CharacterPopout button[data-tab-type=global]:nth-child(2), #CharacterPopout button[data-tab-type=global]:nth-child(5) {
+  transform: translateX(5px);
+}
+#CharacterPopout button[data-tab-type=global]:nth-child(3), #CharacterPopout button[data-tab-type=global]:nth-child(6) {
+  transform: translateX(10px);
+}
 #CharacterPopout button[data-tab] {
   max-height: 2rem;
+  white-space: nowrap;
   background-color: var(--wiki-bg-color) !important;
 }
 #CharacterPopout button[data-tab].active {
@@ -975,6 +1048,11 @@ button.icon-button {
 }
 #CharacterPopout section.content {
   box-shadow: rgba(0, 0, 0, 0.26) 0px 2px 4px 0px inset;
+  padding: 0.5rem;
+}
+#CharacterPopout .content-wrapper {
+  width: 100%;
+  max-height: 100%;
   padding: 0.5rem;
 }
 #CharacterPopout section.content,
@@ -1014,7 +1092,7 @@ button.icon-button {
   grid-column: 3/4;
   grid-row: 1;
 }
-#CharacterPopout .tab-section#characters-in-scene .main .content, #CharacterPopout .tab-section#all-characters .main .content, #CharacterPopout .tab-section#all-locations .main .content, #CharacterPopout .tab-section#linked-locations .main .content {
+#CharacterPopout .tab-section#characters-in-scene .main, #CharacterPopout .tab-section#all-characters .main, #CharacterPopout .tab-section#all-locations .main, #CharacterPopout .tab-section#linked-locations .main {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
@@ -1054,53 +1132,95 @@ button.icon-button {
   grid-column: 1/2;
   grid-row: 2/3;
 }
-#CharacterPopout .tab-section#selected-character {
+#CharacterPopout .tab-section#selected-character, #CharacterPopout .tab-section#current-location {
+  grid-template-columns: 30% minmax(0, 1fr);
   gap: 0;
-  grid-template-rows: 10% 90%;
+  grid-template-rows: 15% minmax(0, 1fr);
+}
+#CharacterPopout .tab-section#selected-character main,
+#CharacterPopout .tab-section#selected-character main .content-wrapper,
+#CharacterPopout .tab-section#selected-character .content-wrapper .content, #CharacterPopout .tab-section#current-location main,
+#CharacterPopout .tab-section#current-location main .content-wrapper,
+#CharacterPopout .tab-section#current-location .content-wrapper .content {
+  max-height: 100%;
+}
+#CharacterPopout .tab-section#selected-character .content-wrapper .content, #CharacterPopout .tab-section#current-location .content-wrapper .content {
+  height: 100%;
+}
+#CharacterPopout .tab-section#selected-character .main, #CharacterPopout .tab-section#current-location .main {
+  grid-row: 2/3;
+  grid-column: 2/3;
+  max-height: 100%;
+}
+#CharacterPopout .tab-section#selected-character .tabs-container {
+  grid-row: 1/2;
+  grid-column: 2/3;
 }
 #CharacterPopout .tab-section#selected-character header {
   grid-row: 1/3;
 }
-#CharacterPopout .tab-section#selected-character .tabs-section {
+#CharacterPopout .tab-section#current-location .tabs-container {
+  overflow-y: scroll;
+  font-size: small;
+  overflow-x: hidden;
+  grid-row: 1/3;
+  grid-column: 1/2;
+}
+#CharacterPopout .tab-section#current-location header {
+  grid-column: 2/3;
   grid-row: 1/2;
 }
-#CharacterPopout .tab-section#selected-character .main {
-  grid-row: 2/3;
+#CharacterPopout .tab-section#current-location header h1 {
+  font-size: small;
+  margin: unset;
+  padding: unset;
 }
-#CharacterPopout .tab-section#all-characters {
+#CharacterPopout .tab-section#all-characters, #CharacterPopout .tab-section#all-locations {
   grid-template-columns: 1fr;
   grid-template-rows: 20% 1fr;
 }
-#CharacterPopout .tab-section#all-characters header {
+#CharacterPopout .tab-section#all-characters header, #CharacterPopout .tab-section#all-locations header {
   grid-column: 1;
   grid-row: 1/2;
 }
-#CharacterPopout .tab-section#all-characters header button {
+#CharacterPopout .tab-section#all-characters header button, #CharacterPopout .tab-section#all-locations header button {
   display: inline-flex;
   align-items: center;
   font-size: 0.45rem !important;
 }
-#CharacterPopout .tab-section#all-characters header details {
+#CharacterPopout .tab-section#all-characters header details, #CharacterPopout .tab-section#all-locations header details {
   width: 100%;
   padding: unset;
 }
-#CharacterPopout .tab-section#all-characters header details summary {
+#CharacterPopout .tab-section#all-characters header details summary, #CharacterPopout .tab-section#all-locations header details summary {
   display: flex;
   max-height: -webkit-fit-content;
   max-height: -moz-fit-content;
   max-height: fit-content;
 }
-#CharacterPopout .tab-section#all-characters header details summary h3 {
+#CharacterPopout .tab-section#all-characters header details summary h3, #CharacterPopout .tab-section#all-locations header details summary h3 {
   margin-bottom: unset;
 }
-#CharacterPopout .tab-section#all-characters .main {
+#CharacterPopout .tab-section#all-characters .main, #CharacterPopout .tab-section#all-locations .main {
   grid-column: 1;
   grid-row: 2/3;
 }
-#CharacterPopout .tab-section#all-characters .main .content {
+#CharacterPopout .tab-section#all-characters .main .content, #CharacterPopout .tab-section#all-locations .main .content {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
+}
+#CharacterPopout .tab-section#characters-in-scene, #CharacterPopout .tab-section#linked-locations, #CharacterPopout .tab-section#all-locations {
+  display: flex;
+  flex-direction: column;
+}
+#CharacterPopout .tab-section#characters-in-scene header, #CharacterPopout .tab-section#linked-locations header, #CharacterPopout .tab-section#all-locations header {
+  display: none;
+}
+#CharacterPopout .tab-section#characters-in-scene .main, #CharacterPopout .tab-section#linked-locations .main, #CharacterPopout .tab-section#all-locations .main {
+  display: flex;
+  width: 100%;
+  height: 100%;
 }
 #CharacterPopout .content {
   overflow-y: scroll;
@@ -1602,7 +1722,6 @@ button.icon-button {
 }
 #CharacterPopout .card__content a {
   display: inline-flex;
-  pointer-events: auto;
   font-weight: 800;
   font-size: 0.7rem;
   /* Fallback value */
@@ -1743,28 +1862,6 @@ button.icon-button {
 #CharacterPopout *::-webkit-scrollbar-thumb {
   background-color: #3d3375;
   border-radius: 10px;
-}
-#CharacterPopout nav .nav-section {
-  display: none;
-}
-#CharacterPopout nav.open .nav-section {
-  display: flex;
-  flex-direction: column;
-}
-@media (min-width: 1000px) {
-  #CharacterPopout nav {
-    display: flex;
-    position: fixed;
-    width: 100%;
-    background-color: rgba(39, 33, 70, 0.75);
-    box-shadow: 0 4px 8px 0px rgba(24, 20, 46, 0.6);
-    margin: 0;
-    z-index: 200;
-  }
-}
-#CharacterPopout nav .nav-section {
-  display: flex;
-  align-items: center;
 }
 #CharacterPopout blockquote {
   padding: 1.5em;

@@ -1,55 +1,60 @@
-{{#with global}}
-    <nav class="nav flex-row">
+<section class="display-section">
+    {{#with global}}
+        <nav class="nav flex-row">
+            {{#each tabs}}
+                <button data-tab="{{this.id}}" data-tab-type="global">{{this.label}}</button>
+            {{/each}}
+        </nav>
         {{#each tabs}}
-            <button data-tab="{{this.id}}" data-tab-type="global">{{this.label}}</button>
-        {{/each}}
-    </nav>
-    {{#each tabs}}
-        <section class="tab-section" id="{{this.id}}">
-            <header class="header flex-row flex-wrap">
-                {{#if (eq this.id "all-characters")}}
-                    {{#with @root.clans}}
-                        {{#each tabs}}
-                            <button data-tab={{this.id}} data-tab-type="clans">{{this.label}}</button>
-                        {{/each}}
-                    {{/with}}
+            <section class="tab-section" id="{{this.id}}">
+                <header class="header flex-row flex-wrap">
+                    {{#if (eq this.id "all-characters")}}
+                        {{#with @root.clans}}
+                            {{#each tabs}}
+                                <button data-tab={{this.id}} data-tab-type="clans">{{this.label}}</button>
+                            {{/each}}
+                        {{/with}}
 
-                {{/if}}
+                    {{/if}}
 
-            </header>
-            <div class="main flex-row flex-wrap">
+                </header>
+                <div class="main flex-row flex-wrap">
 
-                {{#if (eq this.id "selected-character")}}
-                    <div class="content-wrapper">
+                    {{#if (eq this.id "selected-character")}}
+                        <div class="content-wrapper">
+                            {{#each @root.character.tabs}}
+                                <section id="{{this.id}}" class="content flex-col flex-wrap"></section>
+                            {{/each}}
+                        </div>
+                    {{/if}}
+                    {{#if (eq this.id "current-location")}}
+                        <div class="content-wrapper">
+                            {{#each @root.location.tabs}}
+                                <section id="{{this.id}}" class="content flex-col flex-wrap"></section>
+                            {{/each}}
+                        </div>
+                    {{/if}}
+                </div>
+                <section class="tabs-container flex-row flex-wrap" id="character-tabs">
+                    {{#if (eq this.id "selected-character")}}
                         {{#each @root.character.tabs}}
-                            <section id="{{this.id}}" class="content flex-col flex-wrap"></section>
+                            <button data-tab="{{this.id}}" data-tab-type="character">{{this.label}}</button>
                         {{/each}}
-                    </div>
-                {{/if}}
-                {{#if (eq this.id "current-location")}}
-                    <div class="content-wrapper">
+                    {{else}}
                         {{#each @root.location.tabs}}
-                            <section id="{{this.id}}" class="content flex-col flex-wrap"></section>
+                            <button data-tab="{{this.id}}" data-tab-type="location">{{this.label}}</button>
                         {{/each}}
-                    </div>
-                {{/if}}
-            </div>
-            <section class="tabs-container flex-row flex-wrap" id="character-tabs">
-                {{#if (eq this.id "selected-character")}}
-                    {{#each @root.character.tabs}}
-                        <button data-tab="{{this.id}}" data-tab-type="character">{{this.label}}</button>
-                    {{/each}}
-                {{else}}
-                    {{#each @root.location.tabs}}
-                        <button data-tab="{{this.id}}" data-tab-type="location">{{this.label}}</button>
-                    {{/each}}
-                {{/if}}
+                    {{/if}}
+                </section>
+
             </section>
+        {{/each}}
 
-        </section>
-    {{/each}}
-
-{{/with}}
+    {{/with}}
+</section>
+<button class="toggle-show-hide" data-action="expand">
+    Scene Characters and Locations
+</button>
 {{! <section class="tab-section" id="all-locations">
     <header>
 

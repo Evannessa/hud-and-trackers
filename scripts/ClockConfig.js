@@ -80,7 +80,7 @@ export class ClockConfig extends FormApplication {
         if (!formData.copyLabels) {
             //generate all sections as section objects to store
             for (let i = 0; i < formData.sectionCount; i++) {
-                let sectionID = HelperFunctions.idGenerator();
+                let sectionID = foundry.utils.randomID(); //foundry.utils.randomID()();
                 let sectionData = {
                     id: sectionID,
                     label: "",
@@ -91,10 +91,10 @@ export class ClockConfig extends FormApplication {
 
             //populate the break labels with default strings
             formData.breaks.forEach((el) => {
-                let labelId = HelperFunctions.idGenerator();
+                let labelId = foundry.utils.randomID();
                 breakLabels[labelId] = "Input Label";
 
-                let waypointId = HelperFunctions.idGenerator();
+                let waypointId = foundry.utils.randomID();
                 waypoints[waypointId] = "Waypoint";
             });
         } else {
@@ -104,7 +104,7 @@ export class ClockConfig extends FormApplication {
             waypoints = this.data.waypoints;
         }
 
-        let id = HelperFunctions.idGenerator();
+        let id = foundry.utils.randomID();
 
         //TODO: Add functionality to delete original clock
         // if (formData.deleteOriginal) {
