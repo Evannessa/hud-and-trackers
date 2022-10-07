@@ -2,6 +2,7 @@ import { InSceneCharacterManager as CharacterManager } from "../classes/InSceneC
 import { LocationsManager } from "../classes/LocationsManager.js";
 let baseURL = "https://classy-bavarois-433634.netlify.app/";
 let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-locations";
+let characterDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-characters";
 export let clanTags;
 export let locationTags;
 fetch("/Idyllwild/Test JSON Data/tags.json")
@@ -154,7 +155,7 @@ export async function getAllLocations(data, html) {
  */
 export async function fetchAllCharacters($html) {
     const html = $html[0];
-    fetch(baseURL)
+    fetch(characterDatabaseURL)
         .then((response) => response.text())
         .then(async (data) => await getAllCharacters(data, html));
 }
@@ -213,6 +214,7 @@ export async function fetchCharacterData($html) {
 
 export function convertAnchorsAndImages(convertedElement, selector = "") {
     if (selector) convertedElement = convertedElement.querySelector(selector);
+
     let anchorTags = convertedElement.querySelectorAll("a");
     anchorTags = Array.from(anchorTags);
     anchorTags.forEach((a) => {
@@ -300,6 +302,7 @@ export async function getAllCharacters(data, html) {
 export async function clearCurrentEntityData(html, selector = "") {
     console.log("Clearing entity data", html, selector);
     let contentSection = html.querySelector(`.tab-section${selector}`);
+    $(`${selector} .tabs-container .wrapper`).empty();
     $(`${selector} header`).empty();
     $(`${selector} section.content`).empty();
 }
@@ -382,99 +385,21 @@ export async function getSelectedEntityData(
                     let cleanKey = sectionKey
                         .replaceAll(/-+/g, " ")
                         .replace("site", "(Site)")
-                        .replace("area", "[Area]");
+                        .replace("area", "[Area]")
+                        .replace("region", "Region - ");
                     cleanKey = game.JTCS.utils.manager.capitalizeEachWord(cleanKey);
                     newTab.textContent = cleanKey;
                     charPropertySection.setAttribute("id", sectionKey);
-                    $(charPropertySection).addClass("content flex-col flex-wrap");
+                    $(charPropertySection).addClass("content");
+                    charPropertySection.insertAdjacentHTML("afterbegin", `<h2 class="subtitle">${cleanKey}</h2>`);
                     charPropertySection.insertAdjacentHTML("beforeend", el);
-                    contentSection.querySelector(".tabs-container")?.append(newTab);
+                    contentSection.querySelector(".tabs-container .wrapper")?.append(newTab);
                     contentSection.querySelector(".content-wrapper")?.append(charPropertySection);
                 }
             }
         });
     }
+    let buttons = contentSection.querySelectorAll(".tabs-container .wrapper button");
+    console.log("%cProcessWikiData.js line:403 buttons", "color: #26bfa5;", buttons);
+    buttons[0].click();
 }
-
-// export async function getSelectedCharacterData(data, html) {
-//     const headingLevel = 2;
-
-//     const dummyElement = document.createElement("div");
-//     dummyElement.insertAdjacentHTML("beforeend", data);
-//     const content = dummyElement.querySelector("content article content");
-//     const title = dummyElement.querySelector(".featured-image");
-//     // let anchorTags = dummyElement.querySelectorAll("a");
-
-//     let { anchorTags, imgTags } = convertAnchorsAndImages(dummyElement);
-//     let relationships = anchorTags.filter((element) => element.closest(".card"));
-//     let relationshipCards = relationships.map((a) => a.closest(".card"));
-
-//     let allChildren = Array.from(content.children);
-//     let headings = dummyElement.querySelectorAll(`content h${headingLevel}`);
-//     headings = Array.from(headings);
-
-//     //get the index of the heading
-//     let indexes = headings.map((heading) => {
-//         return allChildren.indexOf(heading);
-//     });
-//     let sections = [];
-
-//     // get all the sections (each element between a header of the level we designated (2))
-//     indexes.forEach((headingIndex, index) => {
-//         let start = headingIndex;
-//         let end = indexes[index + 1];
-//         if (end > allChildren.length) {
-//             end = allChildren.length - 1;
-//         }
-
-//         //filter out any that include "Placeholder" for now
-//         let content = allChildren.slice(start + 1, end).map((obj) => obj?.outerHTML); //an array of elements
-//         content = content.filter((elHTML) => !elHTML.toLowerCase().includes("placeholder"));
-
-//         //get the id of the heading-2 to act as the key
-//         let sectionKey = allChildren[start]?.getAttribute("id");
-
-//         if (content.length > 0 && sectionKey !== undefined) {
-//             sections.push([sectionKey, content]);
-//         }
-//     });
-//     // This should be an object with the key being the "id" of the heading, and the value being an array of each element between it and the next header
-//     let sectionsObject = Object.fromEntries(sections);
-
-//     let contentSection = html.querySelector(".tab-section#selected-character");
-//     contentSection.querySelector(".header").prepend(title);
-
-//     // let combinedContent = sectionsObject[sectionKey].map((el) => el).join();
-//     for (let sectionKey in sectionsObject) {
-//         //sectionsObject[sectionKey] is an array of html elements
-//         sectionsObject[sectionKey].forEach((el) => {
-//             if (sectionKey && sectionKey !== "undefined") {
-//                 tabsData.item.tabs[sectionKey] = {
-//                     id: sectionKey,
-//                     label: sectionKey,
-//                 };
-//             }
-//             let charPropertySection = contentSection.querySelector(`#${sectionKey}`);
-//             if (charPropertySection) charPropertySection.insertAdjacentHTML("beforeend", el);
-//             else {
-//                 if (sectionKey) {
-//                     let newTab = document.createElement("button");
-//                     charPropertySection = document.createElement("section");
-//                     newTab.dataset.tab = sectionKey;
-//                     newTab.dataset.tabType = "item";
-//                     newTab.textContent = sectionKey;
-//                     charPropertySection.setAttribute("id", sectionKey);
-//                     $(charPropertySection).addClass("content flex-col flex-wrap");
-//                     charPropertySection.insertAdjacentHTML("beforeend", el);
-//                     contentSection.querySelector(".tabs-container").append(newTab);
-//                     contentSection.querySelector(".content-wrapper").append(charPropertySection);
-//                 }
-//             }
-//         });
-//     }
-
-//     //#TODO: put this back in later
-//     // relationshipCards.forEach((card) => {
-//     //     contentSection.querySelector("footer").append(card);
-//     // });
-// }

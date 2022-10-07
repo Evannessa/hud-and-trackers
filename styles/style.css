@@ -307,11 +307,11 @@ fieldset.toggle-button-group label:last-of-type {
   opacity: var(--journal-fade, 50%);
 }
 
-.padding-small {
+.padding-small, #CharacterPopout .tab-section#selected-character .header .featured-image .floating-title {
   padding: 0.25rem 0.5rem;
 }
 
-.padding-medium {
+.padding-medium, #CharacterPopout .tab-section#selected-character .header, #CharacterPopout .tab-section#current-location header {
   padding: 0.5rem 1rem;
 }
 
@@ -914,6 +914,7 @@ button.icon-button {
   min-height: 200px;
   background: hsla(249deg, 39%, 23%, 0.541);
   --accent-color: $color-rich-accent-3;
+  --bg-color-translucent: hsla(260, 91%, 17%, 0.471);
   min-height: 25vh;
   min-width: 30vw;
   /* Composition */
@@ -987,6 +988,7 @@ button.icon-button {
 #CharacterPopout .display-section {
   max-height: 100%;
   display: flex;
+  background-color: var(--bg-color-translucent);
 }
 #CharacterPopout img {
   max-height: 200px;
@@ -1051,7 +1053,7 @@ button.icon-button {
 #CharacterPopout h2,
 #CharacterPopout h3,
 #CharacterPopout a {
-  font-size: 1rem !important;
+  font-size: 1rem;
 }
 #CharacterPopout header {
   position: relative;
@@ -1065,6 +1067,7 @@ button.icon-button {
   padding: 0.5rem;
 }
 #CharacterPopout .content-wrapper {
+  background-color: var(--bg-color-translucent);
   width: 100%;
   max-height: 100%;
   padding: 0.5rem;
@@ -1090,6 +1093,8 @@ button.icon-button {
   width: 100%;
 }
 #CharacterPopout .tab-section {
+  --accent-color: hsl(337, 100%, 51%);
+  --bg-color: hsla(257, 94%, 13%, 0.541);
   display: grid;
   grid-template-columns: 20% 10% 70%;
   grid-template-rows: 100%;
@@ -1102,8 +1107,6 @@ button.icon-button {
 }
 #CharacterPopout .tab-section .main {
   padding: 1rem;
-  grid-column: 3/4;
-  grid-row: 1;
   -webkit-backdrop-filter: blur(8px);
           backdrop-filter: blur(8px);
 }
@@ -1151,9 +1154,9 @@ button.icon-button {
   grid-row: 2/3;
 }
 #CharacterPopout .tab-section#selected-character, #CharacterPopout .tab-section#current-location {
-  grid-template-columns: 30% minmax(0, 1fr);
+  grid-template-columns: 100%;
   gap: 0;
-  grid-template-rows: 15% minmax(0, 1fr);
+  grid-template-rows: 100%;
 }
 #CharacterPopout .tab-section#selected-character main,
 #CharacterPopout .tab-section#selected-character main .content-wrapper,
@@ -1167,27 +1170,40 @@ button.icon-button {
 }
 #CharacterPopout .tab-section#selected-character .main, #CharacterPopout .tab-section#current-location .main {
   grid-row: 2/3;
-  grid-column: 2/3;
   max-height: 100%;
 }
 #CharacterPopout .tab-section#selected-character .main .content, #CharacterPopout .tab-section#current-location .main .content {
   overflow-y: auto;
 }
-#CharacterPopout .tab-section#selected-character .tabs-container {
+#CharacterPopout .tab-section#selected-character {
+  grid-template-columns: 70% 30%;
+  grid-template-rows: 100%;
+  min-width: 100%;
+}
+#CharacterPopout .tab-section#selected-character .header {
   grid-row: 1/2;
   grid-column: 2/3;
+  align-items: center;
 }
-#CharacterPopout .tab-section#selected-character header {
-  grid-row: 1/3;
+#CharacterPopout .tab-section#selected-character .header .featured-image {
+  height: -webkit-fit-content !important;
+  height: -moz-fit-content !important;
+  height: fit-content !important;
 }
-#CharacterPopout .tab-section#current-location {
-  --accent-color: hsl(337, 100%, 51%);
-  --bg-color: hsla(257, 94%, 13%, 0.541);
-  grid-template-columns: 1rem minmax(0, 1fr);
-  grid-template-rows: 5% minmax(0, 1fr);
-  position: relative;
+#CharacterPopout .tab-section#selected-character .header .featured-image img {
+  transform: translate(-20px, -15px) scale(1.25);
 }
-#CharacterPopout .tab-section#current-location .tabs-container {
+#CharacterPopout .tab-section#selected-character .header .featured-image .floating-title {
+  white-space: nowrap;
+  transform: translate(-10px, 20px) scale(1.25);
+}
+#CharacterPopout .tab-section#selected-character .main {
+  grid-row: 1/2;
+  grid-column: 1/2;
+  margin-left: 24px;
+  margin-top: 15px;
+}
+#CharacterPopout .tab-section#current-location .tabs-container, #CharacterPopout .tab-section#selected-character .tabs-container {
   background-color: var(--bg-color);
   position: absolute;
   right: 100%;
@@ -1197,13 +1213,18 @@ button.icon-button {
   grid-column: 1/2;
   transition: transform 120ms ease-out;
 }
-#CharacterPopout .tab-section#current-location .tabs-container .wrapper {
+#CharacterPopout .tab-section#current-location .tabs-container .wrapper, #CharacterPopout .tab-section#selected-character .tabs-container .wrapper {
   gap: 0.15rem;
   overflow-y: scroll;
   font-size: small;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
-#CharacterPopout .tab-section#current-location .tabs-container button[data-tab-type=location] {
+#CharacterPopout .tab-section#current-location .tabs-container button[data-tab-type=location],
+#CharacterPopout .tab-section#current-location .tabs-container button[data-tab-type=character], #CharacterPopout .tab-section#selected-character .tabs-container button[data-tab-type=location],
+#CharacterPopout .tab-section#selected-character .tabs-container button[data-tab-type=character] {
   max-width: unset;
   width: 100%;
   text-align: left;
@@ -1211,11 +1232,13 @@ button.icon-button {
   border: 2px solid transparent;
   transition: color 150ms ease-out, border-bottom-color 150ms ease-out;
 }
-#CharacterPopout .tab-section#current-location .tabs-container button[data-tab-type=location].active {
+#CharacterPopout .tab-section#current-location .tabs-container button[data-tab-type=location].active,
+#CharacterPopout .tab-section#current-location .tabs-container button[data-tab-type=character].active, #CharacterPopout .tab-section#selected-character .tabs-container button[data-tab-type=location].active,
+#CharacterPopout .tab-section#selected-character .tabs-container button[data-tab-type=character].active {
   color: var(--accent-color);
   border-bottom-color: var(--accent-color);
 }
-#CharacterPopout .tab-section#current-location .tabs-container [data-action=expandTabs] {
+#CharacterPopout .tab-section#current-location .tabs-container [data-action=expandTabs], #CharacterPopout .tab-section#selected-character .tabs-container [data-action=expandTabs] {
   background-color: var(--bg-color);
   -webkit-backdrop-filter: blur(8px);
           backdrop-filter: blur(8px);
@@ -1226,30 +1249,86 @@ button.icon-button {
   border-radius: unset;
   border-right: 2px solid var(--accent-color);
 }
-#CharacterPopout .tab-section#current-location .tabs-container [data-action=expandTabs]:focus {
+#CharacterPopout .tab-section#current-location .tabs-container [data-action=expandTabs]:focus, #CharacterPopout .tab-section#selected-character .tabs-container [data-action=expandTabs]:focus {
   color: var(--accent-color);
   background-color: unset;
 }
-#CharacterPopout .tab-section#current-location .tabs-container.expanded {
+#CharacterPopout .tab-section#current-location .tabs-container.expanded, #CharacterPopout .tab-section#selected-character .tabs-container.expanded {
   transform: translateX(100%);
   transition: transform 120ms ease-in;
 }
+#CharacterPopout .tab-section#current-location .content, #CharacterPopout .tab-section#selected-character .content {
+  align-items: center;
+  justify-content: center;
+}
+#CharacterPopout .tab-section#current-location .content .subtitle, #CharacterPopout .tab-section#selected-character .content .subtitle {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#CharacterPopout .tab-section#current-location .content h2,
+#CharacterPopout .tab-section#current-location .content h3,
+#CharacterPopout .tab-section#current-location .content h4, #CharacterPopout .tab-section#selected-character .content h2,
+#CharacterPopout .tab-section#selected-character .content h3,
+#CharacterPopout .tab-section#selected-character .content h4 {
+  text-align: center;
+}
+#CharacterPopout .tab-section#current-location .content h2, #CharacterPopout .tab-section#selected-character .content h2 {
+  margin: unset;
+}
+#CharacterPopout .tab-section#current-location .content p, #CharacterPopout .tab-section#selected-character .content p {
+  flex-direction: column;
+  max-width: 55ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+#CharacterPopout .tab-section#current-location .content img, #CharacterPopout .tab-section#selected-character .content img {
+  border-radius: 5px;
+  margin-right: auto;
+  margin-left: auto;
+  transform: scale(1);
+  transition: transform 150ms ease-in-out;
+}
+#CharacterPopout .tab-section#current-location .content img:hover, #CharacterPopout .tab-section#current-location .content img:focus, #CharacterPopout .tab-section#current-location .content img:focus-within, #CharacterPopout .tab-section#selected-character .content img:hover, #CharacterPopout .tab-section#selected-character .content img:focus, #CharacterPopout .tab-section#selected-character .content img:focus-within {
+  cursor: pointer;
+  transform: scale(1.15);
+}
+#CharacterPopout .tab-section#current-location .content a, #CharacterPopout .tab-section#selected-character .content a {
+  cursor: pointer;
+}
+#CharacterPopout .tab-section#current-location {
+  grid-template-columns: 100%;
+  grid-template-rows: 10% minmax(0, 1fr);
+  position: relative;
+}
 #CharacterPopout .tab-section#current-location header {
-  grid-column: 2/3;
   grid-row: 1/2;
+  grid-column: 1/2;
 }
 #CharacterPopout .tab-section#current-location header h1 {
   font-size: small;
   margin: unset;
   padding: unset;
 }
-#CharacterPopout .tab-section#current-location main {
-  padding: unset;
+#CharacterPopout .tab-section#current-location .main {
   padding-inline: 1rem;
+  grid-row: 2/3;
+  grid-column: 1/2;
+  padding-left: 24px;
+}
+#CharacterPopout .tab-section#current-location .content {
+  align-items: center;
+  justify-content: center;
+}
+#CharacterPopout .tab-section#current-location .content h2 {
+  margin: unset;
 }
 #CharacterPopout .tab-section#current-location .content p {
   display: flex;
   flex-direction: column;
+  max-width: 55ch;
+  margin-left: auto;
+  margin-right: auto;
 }
 #CharacterPopout .tab-section#current-location .content img {
   border-radius: 5px;

@@ -119,9 +119,12 @@ export class CharacterPopout extends Application {
         activeSection.addClass("visible");
         activeButton.addClass("active");
     }
-    async activateDefaultTab($html, globalTabID) {
+    async activateDefaultTab($html, globalTabID, innerTabID = "") {
         const defaultTabGlobal = $html.find(`[data-tab='${globalTabID}']`)[0];
         await this.syntheticClick(defaultTabGlobal);
+        if (innerTabID) {
+            const defaultTabInner = $html.find(`[data-tab='${innerTabID}']`)[0];
+        }
     }
 
     async activateListeners(html) {
@@ -135,7 +138,7 @@ export class CharacterPopout extends Application {
             async (event) => await this._handleAction(event, "tabClick", this)
         );
         html.off("click", ".card").on("click", ".card", async (event) => {
-            let el = event.currentTarget;
+            const el = event.currentTarget;
 
             if (el.closest("#all-characters")) {
                 await this._handleAction(event, "addToScene", this);
@@ -143,7 +146,7 @@ export class CharacterPopout extends Application {
                 await this._handleAction(event, "linkLocation", this);
             } else if (el.closest("#characters-in-scene")) {
                 await this._handleAction(event, "selectCharacter", this);
-            } else if (event.currentTarget.closest("#linked-locations")) {
+            } else if (el.closest("#linked-locations")) {
                 await this._handleAction(event, "selectLocation", this);
             }
         });
@@ -159,7 +162,7 @@ export class CharacterPopout extends Application {
             async (event) => await this._handleAction(event, "sendToTile", this)
         );
         this.hideTabs(html);
-        await this.activateDefaultTab(html, "linked-locations");
+        await this.activateDefaultTab(html, "selected-character");
     }
     dragHandler(html) {
         let ancestorElement = html[0].closest(".window-app");
@@ -232,10 +235,8 @@ export class CharacterPopout extends Application {
             app[propertyName] = url;
             //set it in our settings
             let urls = await HelperFunctions.getSettingValue("currentURLs");
-            console.log("%cCharacterPopout.js line:202 urls", "color: #26bfa5;", urls);
             urls[propertyName] = url;
             await HelperFunctions.setSettingValue("currentURLs", urls);
-            console.log("%cCharacterPopout.js line:202 urls", "color: #26bfa5;", urls);
 
             //change the tab to reflect the name of the selected character or location
             const ourTab = app.element[0].querySelector(`[data-tab='${dataSelector}']`);
@@ -251,6 +252,11 @@ export class CharacterPopout extends Application {
             let tabId = event.currentTarget.dataset.tab;
             await this.setTab(tabId, tabType, event, app.element);
         } else if (actionType === "sendToTile") {
+            //we only want the image clicks to work on the other tabs, not these two
+            const wrongTabs = currentTarget[0].closest("#all-characters") || currentTarget[0].closest("#all-locations");
+            if (wrongTabs) {
+                return;
+            }
             let name = "Wiki Display Journal";
             let wikiDisplayJournal = game.journal.getName(name);
             let createData = {
