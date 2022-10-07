@@ -50,7 +50,8 @@
         "gotoSymbolStack.currentStackPosition": 0,
         "gotoSymbolStack.maxStackPosition": 0,
         "gotoSymbolStack.filePositionInfo": [],
-        "vim.statusBarColors.commandlineinprogress": ""
+        "vim.statusBarColors.commandlineinprogress": "",
+        "todoist.projectId": 2297717335
     },
     "extensions": {
         "recommendations": []

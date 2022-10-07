@@ -35,16 +35,20 @@
                         </div>
                     {{/if}}
                 </div>
+                {{#if (eq this.id "current-location")}}{{/if}}
                 <section class="tabs-container flex-row flex-wrap" id="character-tabs">
-                    {{#if (eq this.id "selected-character")}}
-                        {{#each @root.character.tabs}}
-                            <button data-tab="{{this.id}}" data-tab-type="character">{{this.label}}</button>
-                        {{/each}}
-                    {{else}}
-                        {{#each @root.location.tabs}}
-                            <button data-tab="{{this.id}}" data-tab-type="location">{{this.label}}</button>
-                        {{/each}}
-                    {{/if}}
+                    <div class="wrapper">
+                        {{#if (eq this.id "selected-character")}}
+                            {{#each @root.character.tabs}}
+                                <button data-tab="{{this.id}}" data-tab-type="character">{{this.label}}</button>
+                            {{/each}}
+                        {{else}}
+                            {{#each @root.location.tabs}}
+                                <button data-tab="{{this.id}}" data-tab-type="location">{{this.label}}</button>
+                            {{/each}}
+                        {{/if}}
+                    </div>
+                    <button data-action="expandTabs"> <i class="fas fa-caret-right"></i> </button>
                 </section>
 
             </section>

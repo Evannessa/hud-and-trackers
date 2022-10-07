@@ -1,4 +1,103 @@
 export const moduleName = "hud-and-trackers";
+
+export class HelperFunctions {
+    static MODULE_ID = "hud-and-trackers";
+
+    /**
+     * pass in a string and capitalize each word in the string
+     * @param {String} string - the string whose words we want to capitalize
+     * @param {String} delimiter - a delimiter separating each word
+     * @returns A string with each word capitalized and the same delimiters
+     */
+    static capitalizeEachWord(string, delimiter = " ", replaceWith = "") {
+        let sentenceArray;
+        let capitalizedString;
+
+        if (!delimiter) {
+            // if the delimiter is an empty string, split it by capital letters, as if camelCase
+            sentenceArray = string.split(/(?=[A-Z])/).map((s) => s.toLowerCase());
+            capitalizedString = sentenceArray.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(" ");
+        } else {
+            sentenceArray = string.split(delimiter);
+
+            capitalizedString = sentenceArray
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(replaceWith ? replaceWith : delimiter);
+        }
+        return capitalizedString;
+    }
+    static async getSettingValue(settingName, nestedKey = "") {
+        let settingData = await game.settings.get(HelperFunctions.MODULE_ID, settingName);
+        if (settingData !== undefined && settingData !== null) {
+            if (nestedKey) {
+                let nestedSettingData = getProperty(settingData, nestedKey);
+
+                return nestedSettingData;
+            }
+            return settingData;
+        } else {
+            console.error("Cannot find setting with name " + settingName);
+        }
+    }
+    static async setFlagValue(document, flagName, updateData, nestedKey = "") {
+        await document.setFlag(MODULE_ID, flagName, updateData);
+    }
+    /**
+     * Get the value of a document's flag
+     * @param {Object} document - the document whose flags we want to set (Scene, Actor, Item, etc)
+     * @param {String} flagName - the name of the flag
+     * @param {String} nestedKey - a string of nested properties separated by dot notation that we want to set
+     * @param {*} returnIfEmpty - a value to return if the flag is undefined
+     * @returns
+     */
+    static async getFlagValue(document, flagName, nestedKey = "", returnIfEmpty = []) {
+        let flagData = await document.getFlag(MODULE_ID, flagName);
+        if (!flagData) {
+            flagData = returnIfEmpty;
+        }
+        return flagData;
+    }
+
+    /**
+     *  Sets a value, using the "flattenObject" and "expandObject" utilities to reach a nested property
+     * @param {String} settingName - the name of the setting
+     * @param {*} updateData - the value you want to set a property to
+     * @param {String} nestedKey - a string of dot-separated values to refer to a nested property
+     */
+    static async setSettingValue(settingName, updateData, nestedKey = "", isFormData = false) {
+        if (isFormData) {
+            let currentSettingData = game.settings.get(HelperFunctions.MODULE_ID, settingName);
+            updateData = expandObject(updateData); //get expanded object version of formdata keys, which were strings in dot notation previously
+            updateData = mergeObject(currentSettingData, updateData);
+            // let updated = await game.settings.set(HelperFunctions.MODULE_ID, settingName, currentSettingData);
+            // console.warn(updated);
+        }
+        if (nestedKey) {
+            let settingData = game.settings.get(HelperFunctions.MODULE_ID, settingName);
+            setProperty(settingData, nestedKey, updateData);
+            await game.settings.set(HelperFunctions.MODULE_ID, settingName, settingData);
+        } else {
+            await game.settings.set(HelperFunctions.MODULE_ID, settingName, updateData);
+        }
+    }
+
+    static async createDialog(title, templatePath, data) {
+        const options = {
+            width: 600,
+            // height: 250,
+            id: "JTCS-custom-dialog",
+        };
+        let renderedHTML = await renderTemplate(templatePath, data);
+        let d = new Dialog(
+            {
+                title: title,
+                content: renderedHTML,
+                buttons: data.buttons,
+            },
+            options
+        ).render(true);
+    }
+}
 export function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
     var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
     return {
@@ -6,6 +105,7 @@ export function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight
         height: srcHeight * ratio,
     };
 }
+
 export function selectMyCharacter() {
     let actor = getActorFromUser(game.user);
     let tokenDoc = getSceneTokenFromActor(actor);

@@ -1,5 +1,5 @@
 "use strict";
-import { setInvisibleHeader, handleDrag, addDragHandle } from "../helper-functions.js";
+import { setInvisibleHeader, handleDrag, addDragHandle, HelperFunctions } from "../helper-functions.js";
 const MODULE_ID = "hud-and-trackers";
 import { InSceneCharacterManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
 import * as ProcessWikiData from "../classes/ProcessWikiData.js";
@@ -39,9 +39,10 @@ export class CharacterPopout extends Application {
         return mergeObject(super.defaultOptions, {
             classes: ["form"],
             popOut: true,
-            height: 200,
-            // resizable: true,
-            minimizeable: true,
+            height: 300,
+            width: 600,
+            resizable: false,
+            // minimizeable: true,
             top: "100%",
             template: `modules/${MODULE_ID}/templates/CharacterPopout.hbs`,
             id: "CharacterPopout",
@@ -51,6 +52,9 @@ export class CharacterPopout extends Application {
 
     async getData() {
         let { tabsData, clanTags, locationTags } = ProcessWikiData;
+        const { currentCharacterUrl, currentLocationUrl } = await HelperFunctions.getSettingValue("currentURLs");
+        if (!this.currentCharacterUrl) this.currentCharacterUrl = currentCharacterUrl;
+        if (!this.currentLocationUrl) this.currentLocationUrl = currentLocationUrl;
 
         let ourData = {
             ...tabsData,
@@ -60,10 +64,21 @@ export class CharacterPopout extends Application {
             currentLocationUrl: this.currentLocationUrl,
         };
         this.tabsData = ourData;
+
+        this.setLabelText(ourData, "current-location", this.currentLocationUrl);
+        this.setLabelText(ourData, "selected-character", this.currentCharacterUrl);
+
         return ourData;
     }
+    setLabelText(object, property, variable) {
+        const value = variable
+            ? HelperFunctions.capitalizeEachWord(variable, "-", " ")
+            : getProperty(object, `global.tabs.${property}.label`);
+
+        console.log("%cCharacterPopout.js line:78 value", "color: #26bfa5;", object);
+        setProperty(object, `global.tabs.${property}.label`, value);
+    }
     async setTab(tabId, tabType, event, appElement) {
-        console.log("Our tabs data is", this.tabsData, "Tab type is", tabType);
         const sectionData = this.tabsData[tabType].tabs[tabId];
         if (sectionData.hasOwnProperty("callback")) {
             let isFetched = sectionData.hasOwnProperty("isFetched") && sectionData.isFetched === true;
@@ -177,7 +192,9 @@ export class CharacterPopout extends Application {
             return;
         }
         if (actionType === "expand") {
-            app.element[0].closest("#CharacterPopout").classList.toggle("expanded");
+            if (currentTarget[0].dataset.action === "expandTabs")
+                currentTarget[0].closest(".tabs-container").classList.toggle("expanded");
+            else app.element[0].closest("#CharacterPopout").classList.toggle("expanded");
         }
         if (actionType === "addToScene" || actionType === "linkLocation") {
             //if the card is an "all characters" card, add it to the "charactersInScene"
@@ -194,6 +211,12 @@ export class CharacterPopout extends Application {
 
             //set the selected character on the app's object
             app[propertyName] = url;
+            //set it in our settings
+            let urls = await HelperFunctions.getSettingValue("currentURLs");
+            console.log("%cCharacterPopout.js line:202 urls", "color: #26bfa5;", urls);
+            urls[propertyName] = url;
+            await HelperFunctions.setSettingValue("currentURLs", urls);
+            console.log("%cCharacterPopout.js line:202 urls", "color: #26bfa5;", urls);
 
             //change the tab to reflect the name of the selected character or location
             const ourTab = app.element[0].querySelector(`[data-tab='${dataSelector}']`);
@@ -203,7 +226,6 @@ export class CharacterPopout extends Application {
             ourTab.classList.remove("hidden");
 
             //reset the "isFetched" so new data can be fetched
-            console.log(this.tabsData.global.tabs[dataSelector]);
             this.tabsData.global.tabs[dataSelector].isFetched = false;
         } else if (actionType === "tabClick") {
             let tabType = currentTarget.data().tabType;
@@ -224,11 +246,11 @@ export class CharacterPopout extends Application {
                 _id: wikiDisplayJournal.id,
                 content: currentTarget[0].outerHTML,
             };
-            // console.log(updateData);
-            // JournalEntry.update(updateData);
-            wikiDisplayJournal.update(updateData);
-            // let templatePath = game.JTCS.templates["share-link-partial"]
-            // game.JTCS.utils.createDialog("Share Image", templatePath, )
+            await wikiDisplayJournal.update(updateData);
+            if (!wikiDisplayJournal.sheet.rendered) {
+                wikiDisplayJournal.sheet.render(true);
+            }
+            // await game.scenes.viewed.tiles.contents[0].update({object: {zIndex:500}})
         }
     }
 }

@@ -2,6 +2,15 @@ import CombatHud from "./combat-hud.js";
 import * as HelperFunctions from "./helper-functions.js";
 
 export default function registerSettings() {
+    game.settings.register("hud-and-trackers", "currentURLs", {
+        scope: "client",
+        config: false,
+        type: Object,
+        default: {
+            currentCharacterUrl: "",
+            currentLocationUrl: "",
+        },
+    });
     game.settings.register("hud-and-trackers", "characterImagePath", {
         scope: "world",
         config: true,

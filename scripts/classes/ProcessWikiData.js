@@ -31,7 +31,6 @@ export const tabsData = {
                 // isFetched: false,
                 callback: async (event, html) => {
                     let characters = await CharacterManager.getCharactersInScene();
-                    console.log("Our characters in scene are", characters);
                     populateSelectedCharacters(characters, html);
                 },
             },
@@ -308,7 +307,6 @@ export async function getSelectedEntityData(
     const content = convertAnchorsAndImages(dummyElement, wikiSiteSelector).convertedElement;
     // dummyElement = convertedDummyData.element;
 
-    console.log(title, content);
     // let relationships = anchorTags.filter((element) => element.closest(".card"));
     // let relationshipCards = relationships.map((a) => a.closest(".card"));
 
@@ -350,6 +348,7 @@ export async function getSelectedEntityData(
     contentSection.querySelector(".header").prepend(title);
 
     // let combinedContent = sectionsObject[sectionKey].map((el) => el).join();
+    console.log(sectionsObject);
     for (let sectionKey in sectionsObject) {
         //sectionsObject[sectionKey] is an array of html elements
         sectionsObject[sectionKey].forEach((el) => {
@@ -367,7 +366,12 @@ export async function getSelectedEntityData(
                     charPropertySection = document.createElement("section");
                     newTab.dataset.tab = sectionKey;
                     newTab.dataset.tabType = tabDataKey;
-                    newTab.textContent = sectionKey;
+                    //clean up the "key" for display
+                    let cleanKey = sectionKey
+                        .replaceAll(/-+/g, " ")
+                        .replace("site", "(Site)")
+                        .replace("area", "[Area]");
+                    newTab.textContent = cleanKey;
                     charPropertySection.setAttribute("id", sectionKey);
                     $(charPropertySection).addClass("content flex-col flex-wrap");
                     charPropertySection.insertAdjacentHTML("beforeend", el);
