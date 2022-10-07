@@ -38,7 +38,7 @@
     top: 100% !important;
     min-height: 200px;
     background: hsla(249, 39%, 23%, 0.541);
-    backdrop-filter: blur(8px);
+    --accent-color: $color-rich-accent-3;
     .drag-handle {
         top: unset;
         bottom: 100%;
@@ -60,6 +60,8 @@
         .card {
             display: flex !important;
             padding: 0.25rem 0.5rem;
+            cursor: pointer;
+            color: var(--accent-color);
             &-img__wrapper {
                 display: none;
             }
@@ -217,6 +219,7 @@
             padding: 1rem;
             grid-column: 3/4;
             grid-row: 1;
+            backdrop-filter: blur(8px);
         }
         &#characters-in-scene,
         &#all-characters,
@@ -384,6 +387,17 @@
                 border-radius: 5px;
                 margin-right: auto;
                 margin-left: auto;
+                transform: scale(1);
+                transition: transform 150ms ease-in-out;
+                &:hover,
+                &:focus,
+                &:focus-within {
+                    cursor: pointer;
+                    transform: scale(1.15);
+                }
+            }
+            .content a {
+                cursor: pointer;
             }
         }
         &#all-characters,
@@ -448,6 +462,7 @@
         &#all-locations {
             display: flex;
             flex-direction: column;
+            min-width: 100%;
             header {
                 display: none;
             }

@@ -183,6 +183,19 @@ export async function fetchLocationData($html) {
                 )
         );
 }
+
+/**
+ * This wll be for getting metadata for the Clocks, roll-tables, etc.
+ * Levels and token creation as well?
+ */
+export async function getEntityMetadata() {
+    //metadata attributes
+    // Table name and ID ("Store table name/id")
+    // clocks -- maximum and current amount for each ability (yaml object?)
+    // mire clock -
+    // level -- the character level = to their clock
+    //create token from character image
+}
 export async function fetchCharacterData($html) {
     const html = $html[0];
     await clearCurrentEntityData(html, "#selected-character");
@@ -348,7 +361,6 @@ export async function getSelectedEntityData(
     contentSection.querySelector(".header").prepend(title);
 
     // let combinedContent = sectionsObject[sectionKey].map((el) => el).join();
-    console.log(sectionsObject);
     for (let sectionKey in sectionsObject) {
         //sectionsObject[sectionKey] is an array of html elements
         sectionsObject[sectionKey].forEach((el) => {
@@ -371,6 +383,7 @@ export async function getSelectedEntityData(
                         .replaceAll(/-+/g, " ")
                         .replace("site", "(Site)")
                         .replace("area", "[Area]");
+                    cleanKey = game.JTCS.utils.manager.capitalizeEachWord(cleanKey);
                     newTab.textContent = cleanKey;
                     charPropertySection.setAttribute("id", sectionKey);
                     $(charPropertySection).addClass("content flex-col flex-wrap");

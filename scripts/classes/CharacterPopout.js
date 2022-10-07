@@ -1,5 +1,5 @@
 "use strict";
-import { setInvisibleHeader, handleDrag, addDragHandle, HelperFunctions } from "../helper-functions.js";
+import { setInvisibleHeader, handleDrag, addDragHandle, HelperFunctions, uniqBy } from "../helper-functions.js";
 const MODULE_ID = "hud-and-trackers";
 import { InSceneCharacterManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
 import * as ProcessWikiData from "../classes/ProcessWikiData.js";
@@ -136,7 +136,6 @@ export class CharacterPopout extends Application {
         );
         html.off("click", ".card").on("click", ".card", async (event) => {
             let el = event.currentTarget;
-            console.log("Cards are being clicked");
 
             if (el.closest("#all-characters")) {
                 await this._handleAction(event, "addToScene", this);
@@ -192,9 +191,29 @@ export class CharacterPopout extends Application {
             return;
         }
         if (actionType === "expand") {
-            if (currentTarget[0].dataset.action === "expandTabs")
+            const ancestor = app.element[0].closest("#CharacterPopout");
+            if (currentTarget[0].dataset.action === "expandTabs") {
+                const tabsContainer = currentTarget[0].closest(".tabs-container");
                 currentTarget[0].closest(".tabs-container").classList.toggle("expanded");
-            else app.element[0].closest("#CharacterPopout").classList.toggle("expanded");
+
+                const icon = currentTarget[0].querySelector("i");
+                if (tabsContainer.classList.contains("expanded")) {
+                    $(icon).removeClass("fa-caret-right").addClass("fa-caret-left");
+                    $(ancestor).on("click", ".main, .header", (newEvent) => {
+                        if (newEvent.target !== event.target) {
+                            //if we clicked outside the side-drawer
+                            if (!newEvent.target.closest(".tabs-container")) {
+                                tabsContainer.classList.toggle("expanded");
+                                $(icon).removeClass("fa-caret-left").addClass("fa-caret-right");
+                                $(ancestor).off("click", ".main, .header");
+                            }
+                        }
+                    });
+                } else {
+                    $(icon).removeClass("fa-caret-left").addClass("fa-caret-right");
+                    $(ancestor).off("click", ".main, .header");
+                }
+            } else app.element[0].closest("#CharacterPopout").classList.toggle("expanded");
         }
         if (actionType === "addToScene" || actionType === "linkLocation") {
             //if the card is an "all characters" card, add it to the "charactersInScene"

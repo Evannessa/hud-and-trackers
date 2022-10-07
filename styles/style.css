@@ -913,8 +913,7 @@ button.icon-button {
   top: 100% !important;
   min-height: 200px;
   background: hsla(249deg, 39%, 23%, 0.541);
-  -webkit-backdrop-filter: blur(8px);
-          backdrop-filter: blur(8px);
+  --accent-color: $color-rich-accent-3;
   min-height: 25vh;
   min-width: 30vw;
   /* Composition */
@@ -951,6 +950,8 @@ button.icon-button {
 #CharacterPopout #all-locations .card {
   display: flex !important;
   padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  color: var(--accent-color);
 }
 #CharacterPopout #linked-locations .card-img__wrapper,
 #CharacterPopout #all-locations .card-img__wrapper {
@@ -1103,6 +1104,8 @@ button.icon-button {
   padding: 1rem;
   grid-column: 3/4;
   grid-row: 1;
+  -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
 }
 #CharacterPopout .tab-section#characters-in-scene .main, #CharacterPopout .tab-section#all-characters .main, #CharacterPopout .tab-section#all-locations .main, #CharacterPopout .tab-section#linked-locations .main {
   display: flex;
@@ -1252,6 +1255,15 @@ button.icon-button {
   border-radius: 5px;
   margin-right: auto;
   margin-left: auto;
+  transform: scale(1);
+  transition: transform 150ms ease-in-out;
+}
+#CharacterPopout .tab-section#current-location .content img:hover, #CharacterPopout .tab-section#current-location .content img:focus, #CharacterPopout .tab-section#current-location .content img:focus-within {
+  cursor: pointer;
+  transform: scale(1.15);
+}
+#CharacterPopout .tab-section#current-location .content a {
+  cursor: pointer;
 }
 #CharacterPopout .tab-section#all-characters, #CharacterPopout .tab-section#all-locations {
   grid-template-columns: 1fr;
@@ -1291,6 +1303,7 @@ button.icon-button {
 #CharacterPopout .tab-section#characters-in-scene, #CharacterPopout .tab-section#linked-locations, #CharacterPopout .tab-section#all-locations {
   display: flex;
   flex-direction: column;
+  min-width: 100%;
 }
 #CharacterPopout .tab-section#characters-in-scene header, #CharacterPopout .tab-section#linked-locations header, #CharacterPopout .tab-section#all-locations header {
   display: none;
