@@ -7,6 +7,9 @@
         </nav>
         {{#each tabs}}
             <section class="tab-section" id="{{this.id}}">
+                {{#if (eq this.id "selected-character")}}
+                    <h1></h1>
+                {{/if}}
                 <header class="header flex-row flex-wrap">
                     {{#if (eq this.id "all-characters")}}
                         {{#with @root.clans}}

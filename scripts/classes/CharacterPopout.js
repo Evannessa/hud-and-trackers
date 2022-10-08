@@ -1,4 +1,5 @@
 "use strict";
+import { popoutActions } from "./PopoutActions.js";
 import { setInvisibleHeader, handleDrag, addDragHandle, HelperFunctions, uniqBy } from "../helper-functions.js";
 const MODULE_ID = "hud-and-trackers";
 import { InSceneCharacterManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
@@ -51,8 +52,18 @@ export class CharacterPopout extends Application {
     }
 
     async getData() {
-        let { tabsData, clanTags, locationTags } = ProcessWikiData;
-        const { currentCharacterUrl, currentLocationUrl } = await HelperFunctions.getSettingValue("currentURLs");
+        const { tabsData, clanTags, locationTags } = ProcessWikiData;
+        const currentScene = game.scenes.viewed;
+
+        // const { currentCharacterUrl, currentLocationUrl } = await HelperFunctions.getSettingValue("currentURLs");
+        const { currentCharacterUrl, currentLocationUrl } = await HelperFunctions.getFlagValue(
+            currentScene,
+            "currentURLs",
+            {
+                currentCharacterUrl: "",
+                currentLocationUrl: "",
+            }
+        );
         if (!this.currentCharacterUrl) this.currentCharacterUrl = currentCharacterUrl;
         if (!this.currentLocationUrl) this.currentLocationUrl = currentLocationUrl;
 
@@ -185,6 +196,13 @@ export class CharacterPopout extends Application {
                 await this._handleAction(event, "selectLocation", this);
             }
         });
+        html.off("contextmenu", ".card").on("contextmenu", ".card", async (event) => {
+            if (el.closest("#characters-in-scene")) {
+                await popoutActions.card["removeFromScene"].onRightClick(event, (options = { app: this }));
+            } else if (el.closest("#linked-locations")) {
+                await popoutActions.card["unlinkLocation"].onRightClick(event, (options = { app: this }));
+            }
+        });
 
         html.off("click", "[data-action]").on(
             "click",
@@ -269,9 +287,14 @@ export class CharacterPopout extends Application {
             //set the selected character on the app's object
             app[propertyName] = url;
             //set it in our settings
-            let urls = await HelperFunctions.getSettingValue("currentURLs");
+            // let urls = await HelperFunctions.getSettingValue("currentURLs");
+            let urls = await HelperFunctions.getFlagValue(game.scenes.viewed, "currentURLs", "", {
+                currentCharacterUrl: "",
+                currentLocationUrl: "",
+            });
             urls[propertyName] = url;
-            await HelperFunctions.setSettingValue("currentURLs", urls);
+            await HelperFunctions.setFlagValue(game.scenes.viewed, "currentURLs", urls);
+            // await HelperFunctions.setSettingValue("currentURLs", urls);
 
             //change the tab to reflect the name of the selected character or location
             const ourTab = app.element[0].querySelector(`[data-tab='${dataSelector}']`);

@@ -1,4 +1,5 @@
 export const moduleName = "hud-and-trackers";
+export const MODULE_ID = "hud-and-trackers";
 
 export class HelperFunctions {
     static MODULE_ID = "hud-and-trackers";
