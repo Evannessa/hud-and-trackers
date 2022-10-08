@@ -80,6 +80,22 @@ export class CharacterPopout extends Application {
     }
     async setTab(tabId, tabType, event, appElement) {
         const sectionData = this.tabsData[tabType].tabs[tabId];
+        if (tabType === "location" || tabType === "character") {
+            let parentSection = appElement[0].querySelector(`.content#${tabId}`).closest(".tab-section");
+            let cleanId = tabId;
+            cleanId = game.JTCS.utils.manager.capitalizeEachWord(
+                cleanId
+                    .replaceAll(/-+/g, " ")
+                    .replace("site", "(Site)")
+                    .replace("area", "[Area]")
+                    .replace("region", "Region - ")
+            );
+            let title = parentSection.querySelector("h1");
+            let subtitle = title.querySelector("span");
+            if (subtitle) subtitle.textContent = cleanId;
+            else title.insertAdjacentHTML("beforeend", `<span>${cleanId}</span>`);
+            // console.log(event.currentTarget, appElement[0].querySelector(`.content#${tabId}`)?.querySelector("h1"));
+        }
         if (sectionData.hasOwnProperty("callback")) {
             const isFetched = sectionData.hasOwnProperty("isFetched") && sectionData.isFetched === true;
             //if it doesn't have an isFetched property, or it's set to false

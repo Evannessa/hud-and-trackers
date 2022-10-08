@@ -391,7 +391,8 @@ export async function getSelectedEntityData(
                     newTab.textContent = cleanKey;
                     charPropertySection.setAttribute("id", sectionKey);
                     $(charPropertySection).addClass("content");
-                    charPropertySection.insertAdjacentHTML("afterbegin", `<h2 class="subtitle">${cleanKey}</h2>`);
+                    // console.log(contentSection);
+                    // contentSection.insertAdjacentHTML("afterbegin", `<h2 class="subtitle">${cleanKey}</h2>`);
                     charPropertySection.insertAdjacentHTML("beforeend", el);
                     contentSection.querySelector(".tabs-container .wrapper")?.append(newTab);
                     contentSection.querySelector(".content-wrapper")?.append(charPropertySection);
@@ -400,6 +401,5 @@ export async function getSelectedEntityData(
         });
     }
     let buttons = contentSection.querySelectorAll(".tabs-container .wrapper button");
-    console.log("%cProcessWikiData.js line:403 buttons", "color: #26bfa5;", buttons);
     buttons[0].click();
 }
