@@ -94,6 +94,7 @@
         right: 100%;
         max-width: fit-content;
         background-color: transparent;
+        align-items: flex-end;
         z-index: -1;
     }
     .is-hidden {
@@ -125,12 +126,14 @@
         &[data-tab-type="global"] {
             border-top-right-radius: 0px;
             border-bottom-right-radius: 0px;
-            --wiki-bg-color: hsl(337, 100%, 51%);
-            --wiki-active-color: hsl(349, 73%, 63%);
+            backdrop-filter: blur(8px);
+            width: fit-content;
+            --wiki-bg-color: hsla(337, 100%, 51%, 0.702);
+            --wiki-active-color: hsla(349, 73%, 63%, 0.68);
             @each $type in $locationTypes {
                 &[data-tab="#{$type}"] {
-                    --wiki-bg-color: hsl(192, 100%, 41%);
-                    --wiki-active-color: hsl(192, 93%, 53%);
+                    --wiki-bg-color: hsla(192, 100%, 41%, 0.598);
+                    --wiki-active-color: hsla(192, 93%, 53%, 0.517);
                 }
             }
         }

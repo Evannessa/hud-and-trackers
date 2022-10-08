@@ -81,7 +81,7 @@ export class CharacterPopout extends Application {
     async setTab(tabId, tabType, event, appElement) {
         const sectionData = this.tabsData[tabType].tabs[tabId];
         if (sectionData.hasOwnProperty("callback")) {
-            let isFetched = sectionData.hasOwnProperty("isFetched") && sectionData.isFetched === true;
+            const isFetched = sectionData.hasOwnProperty("isFetched") && sectionData.isFetched === true;
             //if it doesn't have an isFetched property, or it's set to false
             if (!isFetched) {
                 await sectionData.callback(event, appElement);
@@ -89,6 +89,16 @@ export class CharacterPopout extends Application {
                     //if it's false (triple === will make sure it's false, not just undefined)
                     //set it to true
                     sectionData.isFetched = true;
+                }
+            } else {
+                // it's already fetched, we want to set the default tab
+                if (tabType === "global") {
+                    const defaultButton = Array.from(
+                        appElement.find(`#${tabId}`)[0].querySelectorAll(".tabs-container button")
+                    )[0];
+                    // defaultButton.click();
+
+                    // defaultSection.classList.add("visible");
                 }
             }
         }
@@ -100,16 +110,25 @@ export class CharacterPopout extends Application {
     async toggleStyles(activeID, activeType, html) {
         const appElement = html;
         //for dash to camelCase and vise versa
-        let sectionSelector = ".content";
-        if (activeType === "global") sectionSelector = ".tab-section";
+        const closestTabSectionToContentSection = html[0].querySelector(`#${activeID}`).closest(".tab-section");
+        const id = closestTabSectionToContentSection.getAttribute("id");
+        // console.log(
+        //     "%cCharacterPopout.js line:114 closestTabSectionToContentSection",
+        //     "color: #26bfa5;",
+        //     closestTabSectionToContentSection,
+        //     id
+        // );
 
-        // console.log(sectionSelector, tabType, tabId);
+        let sectionSelector;
+        if (activeType === "global") sectionSelector = ".tab-section";
+        else sectionSelector = `.tab-section#${id} .content`; //only clear this current section, no others
 
         //hide other sections of this type, and remove active styles on button
         const hideSections = appElement.find(sectionSelector);
         const deactivateTabs = appElement.find(`[data-tab-type=${activeType}]`);
 
         hideSections.removeClass("visible");
+
         deactivateTabs.removeClass("active");
 
         //make the section w/ the id visible and add active to the button

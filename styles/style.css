@@ -980,6 +980,7 @@ button.icon-button {
   max-width: -moz-fit-content;
   max-width: fit-content;
   background-color: transparent;
+  align-items: flex-end;
   z-index: -1;
 }
 #CharacterPopout .is-hidden {
@@ -1027,20 +1028,25 @@ button.icon-button {
 #CharacterPopout button[data-tab-type=global] {
   border-top-right-radius: 0px;
   border-bottom-right-radius: 0px;
-  --wiki-bg-color: hsl(337, 100%, 51%);
-  --wiki-active-color: hsl(349, 73%, 63%);
+  -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  --wiki-bg-color: hsla(337, 100%, 51%, 0.702);
+  --wiki-active-color: hsla(349, 73%, 63%, 0.68);
 }
 #CharacterPopout button[data-tab-type=global][data-tab=current-location] {
-  --wiki-bg-color: hsl(192, 100%, 41%);
-  --wiki-active-color: hsl(192, 93%, 53%);
+  --wiki-bg-color: hsla(192, 100%, 41%, 0.598);
+  --wiki-active-color: hsla(192, 93%, 53%, 0.517);
 }
 #CharacterPopout button[data-tab-type=global][data-tab=all-locations] {
-  --wiki-bg-color: hsl(192, 100%, 41%);
-  --wiki-active-color: hsl(192, 93%, 53%);
+  --wiki-bg-color: hsla(192, 100%, 41%, 0.598);
+  --wiki-active-color: hsla(192, 93%, 53%, 0.517);
 }
 #CharacterPopout button[data-tab-type=global][data-tab=linked-locations] {
-  --wiki-bg-color: hsl(192, 100%, 41%);
-  --wiki-active-color: hsl(192, 93%, 53%);
+  --wiki-bg-color: hsla(192, 100%, 41%, 0.598);
+  --wiki-active-color: hsla(192, 93%, 53%, 0.517);
 }
 #CharacterPopout button[data-tab] {
   max-height: 2rem;
