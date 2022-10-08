@@ -2,7 +2,7 @@
 import { popoutActions } from "./PopoutActions.js";
 import { setInvisibleHeader, handleDrag, addDragHandle, HelperFunctions, uniqBy } from "../helper-functions.js";
 const MODULE_ID = "hud-and-trackers";
-import { InSceneCharacterManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
+import { InSceneEntityManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
 import * as ProcessWikiData from "../classes/ProcessWikiData.js";
 import { LocationsManager } from "./LocationsManager.js";
 Hooks.on("ready", async () => {
@@ -27,7 +27,7 @@ export class CharacterPopout extends Application {
         let clickedCard = event.currentTarget;
         let url = clickedCard.querySelector(".internal-link").getAttribute("href");
         url = url.split("/").pop();
-        await CharacterManager.addCharacterToScene({ cardHTML: clickedCard.outerHTML, url });
+        await CharacterManager.addEntityToScene({ cardHTML: clickedCard.outerHTML, url });
     }
 
     async linkLocationToScene(event, app) {
@@ -86,7 +86,6 @@ export class CharacterPopout extends Application {
             ? HelperFunctions.capitalizeEachWord(variable, "-", " ")
             : getProperty(object, `global.tabs.${property}.label`);
 
-        console.log("%cCharacterPopout.js line:78 value", "color: #26bfa5;", object);
         setProperty(object, `global.tabs.${property}.label`, value);
     }
     async setTab(tabId, tabType, event, appElement) {
@@ -187,9 +186,11 @@ export class CharacterPopout extends Application {
             const el = event.currentTarget;
 
             if (el.closest("#all-characters")) {
-                await this._handleAction(event, "addToScene", this);
+                await popoutActions.card["addCharacterToScene"].onClick(event);
+                // await this._handleAction(event, "addToScene", this);
             } else if (el.closest("#all-locations")) {
-                await this._handleAction(event, "linkLocation", this);
+                await popoutActions.card["linkLocationToScene"].onClick(event);
+                // await this._handleAction(event, "linkLocation", this);
             } else if (el.closest("#characters-in-scene")) {
                 await this._handleAction(event, "selectCharacter", this);
             } else if (el.closest("#linked-locations")) {
@@ -197,10 +198,11 @@ export class CharacterPopout extends Application {
             }
         });
         html.off("contextmenu", ".card").on("contextmenu", ".card", async (event) => {
+            const el = event.currentTarget;
             if (el.closest("#characters-in-scene")) {
-                await popoutActions.card["removeFromScene"].onRightClick(event, (options = { app: this }));
+                await popoutActions.card["removeFromScene"].onRightClick(event, { app: this });
             } else if (el.closest("#linked-locations")) {
-                await popoutActions.card["unlinkLocation"].onRightClick(event, (options = { app: this }));
+                await popoutActions.card["unlinkLocation"].onRightClick(event, { app: this });
             }
         });
 

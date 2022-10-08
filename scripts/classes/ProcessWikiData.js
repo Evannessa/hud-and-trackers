@@ -1,4 +1,4 @@
-import { InSceneCharacterManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
+import { InSceneEntityManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
 import { LocationsManager } from "../classes/LocationsManager.js";
 let baseURL = "https://classy-bavarois-433634.netlify.app/";
 let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-locations";
@@ -31,7 +31,7 @@ export const tabsData = {
                 label: "Scene NPCs",
                 // isFetched: false,
                 callback: async (event, html) => {
-                    let characters = await CharacterManager.getCharactersInScene();
+                    let characters = await CharacterManager.getEntitiesInScene();
                     populateSelectedCharacters(characters, html);
                 },
             },
@@ -301,7 +301,7 @@ export async function getAllCharacters(data, html) {
 
 export async function clearCurrentEntityData(html, selector = "") {
     console.log("Clearing entity data", html, selector);
-    let contentSection = html.querySelector(`.tab-section${selector}`);
+    console.log($(`${selector} section.content`));
     $(`${selector} .tabs-container .wrapper`).empty();
     $(`${selector} header`).empty();
     $(`${selector} section.content`).empty();
@@ -374,8 +374,32 @@ export async function getSelectedEntityData(
                 };
             }
             let charPropertySection = contentSection.querySelector(`#${sectionKey}`);
-            if (charPropertySection) charPropertySection.insertAdjacentHTML("beforeend", el);
-            else {
+            if (charPropertySection) {
+                charPropertySection.insertAdjacentHTML("beforeend", el);
+                console.log(
+                    "%cProcessWikiData.js line:377 charPropertySection",
+                    "color: #26bfa5;",
+                    charPropertySection
+                );
+                const existingTab = contentSection.querySelector(
+                    `.tabs-container .wrapper button[data-tab='${sectionKey}']`
+                );
+                if (!existingTab) {
+                    let newTab = document.createElement("button");
+                    charPropertySection = document.createElement("section");
+                    newTab.dataset.tab = sectionKey;
+                    newTab.dataset.tabType = tabDataKey;
+                    //clean up the "key" for display
+                    let cleanKey = sectionKey
+                        .replaceAll(/-+/g, " ")
+                        .replace("site", "(Site)")
+                        .replace("area", "[Area]")
+                        .replace("region", "Region - ");
+                    cleanKey = game.JTCS.utils.manager.capitalizeEachWord(cleanKey);
+                    newTab.textContent = cleanKey;
+                    contentSection.querySelector(".tabs-container .wrapper")?.append(newTab);
+                }
+            } else {
                 if (sectionKey) {
                     let newTab = document.createElement("button");
                     charPropertySection = document.createElement("section");
