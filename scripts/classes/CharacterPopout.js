@@ -86,7 +86,7 @@ export class CharacterPopout extends Application {
             ? HelperFunctions.capitalizeEachWord(variable, "-", " ")
             : getProperty(object, `global.tabs.${property}.label`);
 
-        setProperty(object, `global.tabs.${property}.label`, value);
+        setProperty(object, `global.tabs.${property}.label`, decodeURIComponent(value));
     }
     async setTab(tabId, tabType, event, appElement) {
         const sectionData = this.tabsData[tabType].tabs[tabId];
@@ -300,7 +300,8 @@ export class CharacterPopout extends Application {
 
             //change the tab to reflect the name of the selected character or location
             const ourTab = app.element[0].querySelector(`[data-tab='${dataSelector}']`);
-            ourTab.textContent = entityName;
+            console.log(entityName, decodeURI(entityName), decodeURIComponent(entityName));
+            ourTab.textContent = decodeURIComponent(entityName);
 
             //show the tab
             ourTab.classList.remove("hidden");

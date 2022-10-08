@@ -395,7 +395,7 @@
                 z-index: 10;
                 .wrapper {
                     gap: 0.15rem;
-                    overflow-y: scroll;
+                    overflow-y: auto;
                     font-size: small;
                     overflow-x: hidden;
                     display: flex;

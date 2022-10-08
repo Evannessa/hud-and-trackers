@@ -331,22 +331,31 @@ export async function getSelectedEntityData(
     headings = Array.from(headings);
     // console.log("Page content is", content.children, "headings are", headings);
 
-    //get the index of the heading
-    let indexes = headings.map((heading) => {
-        return allChildren.indexOf(heading);
-    });
+    //get the index of the heading in the list of all children (this way we can get what's between each of them)
+    let indexes = headings
+        .map((heading) => {
+            return allChildren.indexOf(heading);
+        })
+        .filter((index) => index !== -1);
     let sections = [];
 
     // get all the sections (each element between a header of the level we designated (2))
     indexes.forEach((headingIndex, index) => {
         let start = headingIndex;
         let end = indexes[index + 1];
-        if (end > allChildren.length) {
-            end = allChildren.length - 1;
+        // if (end > allChildren.length) {
+        //     console.log("Does this ever happen?");
+        //     end = allChildren.length - 1;
+        // }
+        if (index + 1 >= indexes.length) {
+            //Remember that slice doesn't include the end, so end needs to be larger than the array
+            end = allChildren.length;
         }
 
+        //an array of elements
+        let content = allChildren.slice(start + 1, end).map((obj) => obj?.outerHTML);
+
         //filter out any that include "Placeholder" for now
-        let content = allChildren.slice(start + 1, end).map((obj) => obj?.outerHTML); //an array of elements
         content = content.filter((elHTML) => !elHTML.toLowerCase().includes("placeholder"));
 
         //get the id of the heading-2 to act as the key
@@ -376,11 +385,7 @@ export async function getSelectedEntityData(
             let charPropertySection = contentSection.querySelector(`#${sectionKey}`);
             if (charPropertySection) {
                 charPropertySection.insertAdjacentHTML("beforeend", el);
-                console.log(
-                    "%cProcessWikiData.js line:377 charPropertySection",
-                    "color: #26bfa5;",
-                    charPropertySection
-                );
+
                 const existingTab = contentSection.querySelector(
                     `.tabs-container .wrapper button[data-tab='${sectionKey}']`
                 );

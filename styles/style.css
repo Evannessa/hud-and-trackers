@@ -3424,7 +3424,7 @@ button.icon-button {
 }
 #CharacterPopout .tab-section#current-location .tabs-container .wrapper, #CharacterPopout .tab-section#selected-character .tabs-container .wrapper {
   gap: 0.15rem;
-  overflow-y: scroll;
+  overflow-y: auto;
   font-size: small;
   overflow-x: hidden;
   display: flex;
