@@ -1,3 +1,5 @@
+import { socket } from "./classes/sockets.js";
+
 export const moduleName = "hud-and-trackers";
 export const MODULE_ID = "hud-and-trackers";
 
@@ -41,7 +43,11 @@ export class HelperFunctions {
         }
     }
     static async setFlagValue(document, flagName, updateData, nestedKey = "") {
-        await document.setFlag(MODULE_ID, flagName, updateData);
+        if (game.user.isGM) {
+            await document.setFlag(MODULE_ID, flagName, updateData);
+        } else {
+            socket.executeAsGM("setFlagValue", document, flagName, updateData);
+        }
     }
     /**
      * Get the value of a document's flag

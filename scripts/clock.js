@@ -2,11 +2,11 @@
 import { ClockConfig } from "./ClockConfig.js";
 import { ClockDisplay } from "./ClockDisplay.js";
 import { ClockHelpers } from "./ClockHelpers.js";
+import { socket } from "./classes/sockets.js";
 var clockHelpers;
 ClockHelpers().then((value) => (clockHelpers = value));
 //Because ClockHelpers is an async function, we have to do this to get its value
 import * as HelperFunctions from "./helper-functions.js";
-let socket;
 
 Hooks.on("quenchReady", (quench) => {
     quench.registerBatch(
@@ -30,7 +30,7 @@ Hooks.on("quenchReady", (quench) => {
 
 // also register socket to share clock data
 Hooks.once("socketlib.ready", () => {
-    socket = socketlib.registerModule("hud-and-trackers");
+    if (!socket) socket = socketlib.registerModule("hud-and-trackers");
     socket.register("renderNewClockFromData", renderNewClockFromData);
     socket.register("refreshClockDependentItems", refreshClockDependentItems);
     // socket.register("updateSetting", updateSetting);

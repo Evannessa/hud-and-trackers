@@ -5,6 +5,7 @@ const MODULE_ID = "hud-and-trackers";
 import { InSceneEntityManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
 import * as ProcessWikiData from "../classes/ProcessWikiData.js";
 import { LocationsManager } from "./LocationsManager.js";
+import { socket } from "./sockets.js";
 Hooks.on("ready", async () => {
     let { processClanNames, processLocations } = ProcessWikiData;
     await processClanNames();
@@ -295,7 +296,9 @@ export class CharacterPopout extends Application {
                 currentLocationUrl: "",
             });
             urls[propertyName] = url;
-            await HelperFunctions.setFlagValue(game.scenes.viewed, "currentURLs", urls);
+            if (game.user.isGM) {
+                await HelperFunctions.setFlagValue(game.scenes.viewed, "currentURLs", urls);
+            }
             // await HelperFunctions.setSettingValue("currentURLs", urls);
 
             //change the tab to reflect the name of the selected character or location
