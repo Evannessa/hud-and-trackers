@@ -8521,7 +8521,7 @@ button.img-button.framed:before {
 .app-child .window-content .showClocks,
 .app-child .clock-container .showClocks {
   position: absolute;
-  right: -4.7rem;
+  left: 100%;
   top: 45%;
   border-radius: 5px 5px 0 0;
   font-size: 1.12rem;
@@ -8531,7 +8531,8 @@ button.img-button.framed:before {
   width: min-content;
   text-align: left;
   background-color: none;
-  transform: rotate(90deg);
+  transform: translateY(-50%) rotate(90deg);
+  transform-origin: bottom left;
   text-orientation: mixed;
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.5);
@@ -8540,7 +8541,7 @@ button.img-button.framed:before {
 #clock-display .clock-container .showClocks:hover,
 .app-child .window-content .showClocks:hover,
 .app-child .clock-container .showClocks:hover {
-  background-color: #4776E6;
+  background-color: #4776e6;
 }
 #clock-display .window-content .contentWrapper,
 #clock-display .clock-container .contentWrapper,
@@ -8777,7 +8778,7 @@ button.img-button.framed:before {
   position: absolute;
   background-color: white;
   border-radius: 50%;
-  background-image: linear-gradient(180deg, #211F1F, black);
+  background-image: linear-gradient(180deg, #211f1f, black);
   width: 100%;
   height: 100%;
   top: 0;

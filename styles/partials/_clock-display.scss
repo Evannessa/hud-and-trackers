@@ -1,700 +1,658 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap");
 
 #clock-display,
-#clock-display>.window-content,
-#clock-display .window-content>form {
-	background-color: transparent;
+#clock-display > .window-content,
+#clock-display .window-content > form {
+    background-color: transparent;
 }
 
-#clock-display .window-content>form>section {
-	background-color: rgba(19, 22, 26, 0.603);
+#clock-display .window-content > form > section {
+    background-color: rgba(19, 22, 26, 0.603);
 }
 
 #clock-display,
 .app-child {
-	box-sizing: border-box;
-	max-height: 50vh;
-	font-size: 10px;
-	width: max-content !important;
-	width: -moz-max-content !important;
-	height: fit-content;
-	position: fixed;
-	top: 50vh !important;
-	transform: translateX(-100%);
-	transition: transform 0.25s cubic-bezier(0.4, 0.0, 1, 1);
-
-	&.no-transition * {
-		transition: none !important;
-	}
-
-
-
-	@import '_chip_checkbox.scss';
-
-	.window-header {
-		display: none;
-	}
-
-	&.expanded {
-		transform: translateX(0%);
-		transition: transform 0.25s cubic-bezier(0.0, 0.0, 0.2, 1);
-	}
-
-	.window-content,
-	.clock-container {
-
-		.glass {
-
-			background-color: $glass;
-			border-top: 2px solid $glass-rim;
-			border-right: 1.5px solid $glass-rim;
-			border-bottom: 1px solid rgba($glass-rim, 0.25);
-			border-left: 1px solid rgba($glass-rim, 0.25);
-			border-radius: 5px;
-
-			&-faint {
-				background-color: $glass-faint;
-			}
-
-			&__btn {
-				background-color: transparent;
-			}
-		}
-
-		border-radius: 0 10px 10px 0;
-		overflow-x: visible;
-		overflow-y: visible;
-		display: flex;
-		flex-direction: column;
-		justify-content: stretch;
-		flex-wrap: wrap;
-		background-color: $glass-faint;
-		border-top: 1px solid $glass-rim;
-		border-right: 1px solid $glass-rim;
-		min-height: 10em;
-		position: relative;
-		width: fit-content;
-		transition: width 0.2s ease;
-
-		@supports((-webkit-backdrop-filter: blur()) or (backdrop-filter: blur())) {
-			-webkit-backdrop-filter: blur(2px);
-			backdrop-filter: blur(2px);
-		}
-
-		@include glassBlur;
-
-		.categoryFilter {
-			display: flex;
-
-			input {
-				+label {
-					margin-left: 0.25rem;
-				}
-			}
-
-			margin-bottom: 0.5rem;
-		}
-
-		.clockCategory__wrapper {
-			display: flex;
-			// grid-template-columns: auto auto auto;
-			max-height: 40vh;
-
-			.clockCategory {
-				// padding: 0.5rem 0.5rem 0.5rem 0.5rem;
-				min-height: 380px;
-				width: fit-content;
-				max-height: inherit;
-
-				display: flex;
-				border-radius: 0;
-				position: relative;
-				// transition: background-color 150ms;
-
-				&.open {
-					// background: linear-gradient(to right, transparent, #4776E6);
-					// background-color: saturate(adjust-hue($glass, 40%), 20%);
-					// transition: background-color 150ms;
-				}
-
-				// background-image: url("/modules/hud-and-trackers/images/Aurora-Lights.jpg");
-				// background-size: cover;
-
-
-				+.clockCategory {
-					// padding-left: 0.5rem;
-					margin-left: 0.25rem;
-					// border-left: 1px solid rgba(255, 255, 255, 0.486);
-				}
-
-				&:first-child,
-				&:first-child::before {
-					border-top-left-radius: 5px;
-					border-bottom-left-radius: 5px;
-				}
-
-
-
-				&:last-child,
-				&:last-child::before {
-					border-top-right-radius: 5px;
-					border-bottom-right-radius: 5px;
-
-					>button.open {
-						border-top-right-radius: unset !important;
-						border-bottom-right-radius: unset !important;
-					}
-				}
-
-
-				&__inner {
-					padding: 0.5rem 0rem;
-					margin-left: 0.25rem;
-					// margin-right: 0.25rem;
-					// transform: scale(1, 1);
-					transform: translate(0px, 0px);
-					transition: transform 0.5s ease-out;
-					position: relative;
-					overflow: hidden;
-					display: grid;
-					grid-auto-flow: column;
-					grid-template-rows: repeat(4, min-content);
-					min-width: 160px; //todo: maybe don't use pixel values
-					max-height: inherit;
-					// box-shadow: inset 0px 0px 20px 6px rgb(26 27 53 / 41%);
-					transition: max-width 250ms cubic-bezier(0.4, 0.0, 0.2, 1), min-width 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
-
-					&.no-transition {
-						transition: none;
-					}
-
-					&.is-hidden {
-						max-width: 0;
-						min-width: 0;
-					}
-
-					&.is-visible {
-						max-width: var(--expanded, 70px);
-						min-width: var(--expanded, 70px);
-					}
-
-					.empty {
-						padding: 1rem;
-						font-size: 2em;
-						width: 30ch;
-						text-align: center;
-					}
-
-					.addClock.actionButton {
-						padding: 0;
-						margin: 0;
-						text-align: center;
-						position: absolute;
-						bottom: 0.5rem;
-						right: 0.5rem;
-						display: flex;
-						justify-content: center;
-						align-items: center;
-						width: 3rem;
-						height: 3rem;
-						border-radius: 50%;
-						font-size: 1.5rem;
-						transform: translateY(0px);
-						background-color: var(--primary-base-color);
-						box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-						transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
-						@import 'tooltip';
-
-						i {
-							margin-right: 0;
-						}
-
-						&:hover {
-							background-color: var(--primary-color-400);
-							// box-shadow: var(--shadow-none);
-							box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-							transform: translateY(-3px);
-						}
-					}
-
-					&.hidden {
-						position: absolute;
-						transform: translate(-999px, 0px);
-						// width: 0;
-						// height: 0;
-						transition: transform 0.5s ease-out;
-						overflow: hidden;
-
-					}
-
-
-
-				}
-
-				&__btn {
-					width: 2rem;
-					@import 'tooltip';
-					position: relative;
-					transition: all 100ms ease-out;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					color: white;
-					padding: 0;
-					font-family: 'Fredoka One', cursive;
-					border-radius: inherit;
-
-
-
-					&.open {
-
-						.accordionBtn__text {
-							span {
-								display: inline-block;
-								transform: rotate(180deg);
-							}
-						}
-
-						// background-color: rgba(255, 255, 255, 0.123);
-						// color: darken($intellect, 0%);
-					}
-
-					.accordionBtn__text {
-						display: block;
-						transform: scale(1) rotate(270deg);
-						width: fit-content;
-						// width: -moz-max-content;
-						height: fit-content;
-						// height: -moz-max-content;
-						text-align: center;
-						transform: origin(0 0);
-						text-transform: uppercase;
-						white-space: nowrap;
-						transition: transform 150ms ease-out;
-
-						span {
-							margin-left: 1rem;
-						}
-
-
-					}
-
-					&:hover {
-						color: darken($intellect, 10%);
-
-						span {
-							transform: scale(1.15) rotate(270deg);
-						}
-					}
-
-					&__title {
-						font-weight: bold;
-						font-size: 1.5em;
-					}
-				}
-			}
-		}
-
-		.clockName {
-			flex: 0;
-		}
-
-		form.clockApp {
-
-			padding: 0.5em 0.5em;
-			border-radius: 5px;
-			// background-image: linear-gradient(to bottom right, #2A2A28, #1F1D1F);
-			margin-bottom: 0.5rem;
-			margin-right: 0.25rem;
-			transform: translateY(0px);
-			// box-shadow: var(--shadow-inset-top), var(--shadow-inset-bottom);
-			// box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-			transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			// box-shadow: var(--shadow-elevation-low);
-			// transition: all 150ms ease-in;
-
-			&:hover {
-				// box-shadow: none;
-				box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-				background-color: rgba(107, 110, 133, 0.342);
-				transform: translateY(-3px);
-				cursor: pointer;
-
-			}
-		}
-
-		position: relative;
-
-		.showClocks {
-			position: absolute;
-			right: -4.7rem;
-			// right: ;
-			top: 45%;
-			border-radius: 5px 5px 0 0;
-			font-size: 1.12rem;
-			white-space: nowrap;
-			width: min-content;
-			text-align: left;
-			background-color: none;
-			transform: rotate(90deg);
-			text-orientation: mixed;
-			text-align: center;
-			border: 1px solid rgba(255, 255, 255, 0.5);
-			// box-shadow: var(--shadow-elevation-high);
-
-
-
-			&:hover {
-				background-color: #4776E6;
-			}
-		}
-
-
-		.contentWrapper {
-			display: grid;
-			width: min-content;
-			grid-template-columns: min-content;
-			grid-template-rows: 0.5em 1fr max-content;
-
-			.frameWrapper,
-			.clockWrapper {
-				width: min-content;
-				grid-row: 2;
-				grid-column: 1;
-			}
-		}
-
-
-
-		.headerWrapper {
-			display: flex;
-			flex: content;
-			justify-content: space-around;
-			align-items: flex-start;
-			margin: 0.15em 0.25em;
-			position: relative;
-			width: 100%;
-
-			h3 {
-				white-space: nowrap;
-				margin: 0;
-				font-family: 'Fredoka One', cursive;
-			}
-
-			@at-root .clockCategory {
-				&.sharedClocks {
-					.userBadge {
-						position: absolute;
-						top: 0;
-						right: 0;
-						width: 1.5em;
-						height: 1.5em;
-						border-radius: 50%;
-						background-color: var(--primary-base-color);
-						color: black;
-						font-weight: bold;
-						display: flex;
-						justify-content: center;
-						align-items: center;
-
-						span {
-							display: inline-block;
-							text-align: center;
-						}
-					}
-				}
-
-				&:not(.sharedClocks) {
-					.userBadge {
-						display: none;
-					}
-				}
-			}
-
-		}
-
-		.waypointWrapper {
-			// grid-column: 1;
-			// grid-row: 1;
-			display: flex;
-			z-index: 20;
-			justify-content: space-around;
-
-			.waypoint {
-				// border-right: 3px solid black;
-				width: 5em;
-				text-align: right;
-
-				&Label {
-					position: relative;
-					transform: translateX(-5px);
-					padding-right: 0.5em;
-
-					&::after {
-						content: '';
-						position: absolute;
-						border-top: 7px solid #f5f5f576;
-						border-left: 7px solid transparent;
-						border-right: 7px solid transparent;
-						bottom: 0;
-						transform: translateX(5px);
-					}
-				}
-			}
-		}
-
-		.breakLabelWrapper {
-			grid-column: 1;
-			grid-row: 3;
-			padding-top: 0.5em;
-			display: flex;
-			display: none;
-			flex-direction: row;
-			justify-content: space-evenly;
-			text-align: center;
-
-			.breakLabel {
-				width: 5em;
-				max-width: 5em;
-				// min-width: 5em;
-				// max-width: 5em;
-				overflow: hidden;
-				overflow-wrap: break-word;
-			}
-		}
-
-
-		.clockWrapper {
-
-
-			display: flex;
-			flex-direction: row;
-			border-radius: 12px;
-			overflow: hidden;
-			position: relative;
-			background-position: right;
-
-
-
-
-			.innerWrapper {
-				display: flex;
-				flex-direction: row;
-
-				+.innerWrapper {
-					margin: 1em;
-				}
-			}
-
-
-			.clockSection {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				position: relative;
-				cursor: pointer;
-				width: 5em;
-				height: 5em;
-				// background-color: #b9a9a9;
-				background-color: transparent;
-				// mix-blend-mode: multiply;
-				box-shadow: rgb(50 50 93 / 25%) 0px -20px 19px 0px inset, rgb(0 0 0 / 53%) -2px 8px 13px 0px inset;
-				// box-shadow: #1719214d 3px 3px 6px 0px inset, rgb(60 60 73 / 32%) -3px -3px 6px 1px inset;
-				// hsl(230deg 17% 11%) 3px 3px 6px 0px inset, hsl(240deg 10% 26% / 60%) -3px -3px 6px 1px inset;
-				// background-color: #2c2e2f;
-				// box-shadow: rgb(29, 29, 29) 3px 3px 6px 0px inset, rgba(92, 92, 92, 0.5) -3px -3px 6px 1px inset;
-
-				&[data-break] {
-					position: relative;
-					margin-right: 5px;
-					border-top-right-radius: 8px;
-					border-bottom-right-radius: 8px;
-
-					&+.clockSection {
-						border-top-left-radius: 8px;
-						border-bottom-left-radius: 8px;
-					}
-
-					&:last-child {
-						margin-right: 0;
-					}
-				}
-
-				.label {
-					color: white;
-					font-weight: bold;
-					z-index: 200;
-				}
-
-				&.filled {
-					box-shadow: none;
-					box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
-					// box-shadow: rgb(50 50 93 / 25%) 0px 20px 20px -20px, rgb(0 0 0 / 30%) 1px 20px 20px 0px, rgb(10 37 64 / 35%) -5px -6px 6px 2px inset;
-					// background-color: transparent;
-					// mix-blend-mode: multiply;
-
-					.label {
-						color: black;
-					}
-
-					&:hover {
-						background-position: right center;
-						/* change the direction of the change here */
-						color: #fff;
-						text-decoration: none;
-					}
-				}
-
-
-			}
-
-			&__circles.clockWrapper {
-				.clockSection {
-					border-radius: 50%;
-					width: 2rem;
-					height: 2rem;
-					position: relative;
-
-					&.filled {
-						&:before {
-							content: "";
-							position: absolute;
-							background-color: white;
-							border-radius: 50%;
-							background-image: linear-gradient(180deg, #211F1F, black);
-							width: 100%;
-							height: 100%;
-							top: 0;
-							z-index: 10;
-							left: 0;
-						}
-
-						&:after {
-							content: "";
-							position: absolute;
-							background-image: inherit;
-							background-size: inherit;
-							background-position: inherit;
-							/* mix-blend-mode: multiply; */
-							border-radius: 50%;
-							/* background-image: linear-gradient(180deg, var(--tui-black1), #3c3c3c); */
-							width: 100%;
-							height: 100%;
-							/* height: 110%; */
-							clip-path: circle(35%);
-							z-index: 11;
-
-						}
-					}
-
-					&[data-break],
-					&+.clockSection {
-						border-top-left-radius: 0;
-						border-bottom-left-radius: 0;
-						border-radius: 50%;
-					}
-				}
-
-
-			}
-
-			&__squares.clockWrapper {
-				overflow: visible;
-
-				.clockSection {
-					border-radius: 5px;
-					width: 2rem;
-					height: 2rem;
-
-
-					&:before {
-						content: "";
-						background: inherit;
-						width: 100%;
-						height: 100%;
-						filter: blur(3px);
-						z-index: 5;
-					}
-
-					&[data-break]:not(:last-child) {
-						&:after {
-							content: '';
-							width: 7px;
-							border-bottom: 1px solid white;
-							position: absolute;
-							top: 50%;
-							left: 100%;
-						}
-					}
-
-					&[data-break],
-					&+.clockSection {
-						border-top-left-radius: 5px;
-						border-bottom-left-radius: 5px;
-					}
-
-					+.clockSection {
-						margin-left: 2px;
-					}
-
-					&.filled {
-
-						border: 1px solid rgb(255, 255, 255);
-					}
-
-					&:first-child {
-						// border-top-left-radius: 0;
-					}
-
-					&:last-child {
-						border-top-left-radius: 0;
-					}
-				}
-			}
-
-			background-clip: padding-box;
-			-webkit-background-clip:padding-box;
-
-		}
-
-
-	}
+    box-sizing: border-box;
+    max-height: 50vh;
+    font-size: 10px;
+    width: max-content !important;
+    width: -moz-max-content !important;
+    height: fit-content;
+    position: fixed;
+    top: 50vh !important;
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 1, 1);
+
+    &.no-transition * {
+        transition: none !important;
+    }
+
+    @import "_chip_checkbox.scss";
+
+    .window-header {
+        display: none;
+    }
+
+    &.expanded {
+        transform: translateX(0%);
+        transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    .window-content,
+    .clock-container {
+        .glass {
+            background-color: $glass;
+            border-top: 2px solid $glass-rim;
+            border-right: 1.5px solid $glass-rim;
+            border-bottom: 1px solid rgba($glass-rim, 0.25);
+            border-left: 1px solid rgba($glass-rim, 0.25);
+            border-radius: 5px;
+
+            &-faint {
+                background-color: $glass-faint;
+            }
+
+            &__btn {
+                background-color: transparent;
+            }
+        }
+
+        border-radius: 0 10px 10px 0;
+        overflow-x: visible;
+        overflow-y: visible;
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+        flex-wrap: wrap;
+        background-color: $glass-faint;
+        border-top: 1px solid $glass-rim;
+        border-right: 1px solid $glass-rim;
+        min-height: 10em;
+        position: relative;
+        width: fit-content;
+        transition: width 0.2s ease;
+
+        @supports ((-webkit-backdrop-filter: blur()) or (backdrop-filter: blur())) {
+            -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
+        }
+
+        @include glassBlur;
+
+        .categoryFilter {
+            display: flex;
+
+            input {
+                + label {
+                    margin-left: 0.25rem;
+                }
+            }
+
+            margin-bottom: 0.5rem;
+        }
+
+        .clockCategory__wrapper {
+            display: flex;
+            // grid-template-columns: auto auto auto;
+            max-height: 40vh;
+
+            .clockCategory {
+                // padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+                min-height: 380px;
+                width: fit-content;
+                max-height: inherit;
+
+                display: flex;
+                border-radius: 0;
+                position: relative;
+                // transition: background-color 150ms;
+
+                &.open {
+                    // background: linear-gradient(to right, transparent, #4776E6);
+                    // background-color: saturate(adjust-hue($glass, 40%), 20%);
+                    // transition: background-color 150ms;
+                }
+
+                // background-image: url("/modules/hud-and-trackers/images/Aurora-Lights.jpg");
+                // background-size: cover;
+
+                + .clockCategory {
+                    // padding-left: 0.5rem;
+                    margin-left: 0.25rem;
+                    // border-left: 1px solid rgba(255, 255, 255, 0.486);
+                }
+
+                &:first-child,
+                &:first-child::before {
+                    border-top-left-radius: 5px;
+                    border-bottom-left-radius: 5px;
+                }
+
+                &:last-child,
+                &:last-child::before {
+                    border-top-right-radius: 5px;
+                    border-bottom-right-radius: 5px;
+
+                    > button.open {
+                        border-top-right-radius: unset !important;
+                        border-bottom-right-radius: unset !important;
+                    }
+                }
+
+                &__inner {
+                    padding: 0.5rem 0rem;
+                    margin-left: 0.25rem;
+                    // margin-right: 0.25rem;
+                    // transform: scale(1, 1);
+                    transform: translate(0px, 0px);
+                    transition: transform 0.5s ease-out;
+                    position: relative;
+                    overflow: hidden;
+                    display: grid;
+                    grid-auto-flow: column;
+                    grid-template-rows: repeat(4, min-content);
+                    min-width: 160px; //todo: maybe don't use pixel values
+                    max-height: inherit;
+                    // box-shadow: inset 0px 0px 20px 6px rgb(26 27 53 / 41%);
+                    transition: max-width 250ms cubic-bezier(0.4, 0, 0.2, 1),
+                        min-width 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+                    &.no-transition {
+                        transition: none;
+                    }
+
+                    &.is-hidden {
+                        max-width: 0;
+                        min-width: 0;
+                    }
+
+                    &.is-visible {
+                        max-width: var(--expanded, 70px);
+                        min-width: var(--expanded, 70px);
+                    }
+
+                    .empty {
+                        padding: 1rem;
+                        font-size: 2em;
+                        width: 30ch;
+                        text-align: center;
+                    }
+
+                    .addClock.actionButton {
+                        padding: 0;
+                        margin: 0;
+                        text-align: center;
+                        position: absolute;
+                        bottom: 0.5rem;
+                        right: 0.5rem;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 3rem;
+                        height: 3rem;
+                        border-radius: 50%;
+                        font-size: 1.5rem;
+                        transform: translateY(0px);
+                        background-color: var(--primary-base-color);
+                        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+                        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                        @import "tooltip";
+
+                        i {
+                            margin-right: 0;
+                        }
+
+                        &:hover {
+                            background-color: var(--primary-color-400);
+                            // box-shadow: var(--shadow-none);
+                            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+                            transform: translateY(-3px);
+                        }
+                    }
+
+                    &.hidden {
+                        position: absolute;
+                        transform: translate(-999px, 0px);
+                        // width: 0;
+                        // height: 0;
+                        transition: transform 0.5s ease-out;
+                        overflow: hidden;
+                    }
+                }
+
+                &__btn {
+                    width: 2rem;
+                    @import "tooltip";
+                    position: relative;
+                    transition: all 100ms ease-out;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    padding: 0;
+                    font-family: "Fredoka One", cursive;
+                    border-radius: inherit;
+
+                    &.open {
+                        .accordionBtn__text {
+                            span {
+                                display: inline-block;
+                                transform: rotate(180deg);
+                            }
+                        }
+
+                        // background-color: rgba(255, 255, 255, 0.123);
+                        // color: darken($intellect, 0%);
+                    }
+
+                    .accordionBtn__text {
+                        display: block;
+                        transform: scale(1) rotate(270deg);
+                        width: fit-content;
+                        // width: -moz-max-content;
+                        height: fit-content;
+                        // height: -moz-max-content;
+                        text-align: center;
+                        transform: origin(0 0);
+                        text-transform: uppercase;
+                        white-space: nowrap;
+                        transition: transform 150ms ease-out;
+
+                        span {
+                            margin-left: 1rem;
+                        }
+                    }
+
+                    &:hover {
+                        color: darken($intellect, 10%);
+
+                        span {
+                            transform: scale(1.15) rotate(270deg);
+                        }
+                    }
+
+                    &__title {
+                        font-weight: bold;
+                        font-size: 1.5em;
+                    }
+                }
+            }
+        }
+
+        .clockName {
+            flex: 0;
+        }
+
+        form.clockApp {
+            padding: 0.5em 0.5em;
+            border-radius: 5px;
+            // background-image: linear-gradient(to bottom right, #2A2A28, #1F1D1F);
+            margin-bottom: 0.5rem;
+            margin-right: 0.25rem;
+            transform: translateY(0px);
+            // box-shadow: var(--shadow-inset-top), var(--shadow-inset-bottom);
+            // box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            // box-shadow: var(--shadow-elevation-low);
+            // transition: all 150ms ease-in;
+
+            &:hover {
+                // box-shadow: none;
+                box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+                background-color: rgba(107, 110, 133, 0.342);
+                transform: translateY(-3px);
+                cursor: pointer;
+            }
+        }
+
+        position: relative;
+
+        .showClocks {
+            position: absolute;
+            left: 100%;
+            top: 45%;
+            border-radius: 5px 5px 0 0;
+            font-size: 1.12rem;
+            white-space: nowrap;
+            width: -webkit-min-content;
+            width: -moz-min-content;
+            width: min-content;
+            text-align: left;
+            background-color: none;
+            transform: translateY(-50%) rotate(90deg);
+            transform-origin: bottom left;
+            text-orientation: mixed;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+
+            &:hover {
+                background-color: #4776e6;
+            }
+        }
+
+        .contentWrapper {
+            display: grid;
+            width: min-content;
+            grid-template-columns: min-content;
+            grid-template-rows: 0.5em 1fr max-content;
+
+            .frameWrapper,
+            .clockWrapper {
+                width: min-content;
+                grid-row: 2;
+                grid-column: 1;
+            }
+        }
+
+        .headerWrapper {
+            display: flex;
+            flex: content;
+            justify-content: space-around;
+            align-items: flex-start;
+            margin: 0.15em 0.25em;
+            position: relative;
+            width: 100%;
+
+            h3 {
+                white-space: nowrap;
+                margin: 0;
+                font-family: "Fredoka One", cursive;
+            }
+
+            @at-root .clockCategory {
+                &.sharedClocks {
+                    .userBadge {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        width: 1.5em;
+                        height: 1.5em;
+                        border-radius: 50%;
+                        background-color: var(--primary-base-color);
+                        color: black;
+                        font-weight: bold;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+
+                        span {
+                            display: inline-block;
+                            text-align: center;
+                        }
+                    }
+                }
+
+                &:not(.sharedClocks) {
+                    .userBadge {
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        .waypointWrapper {
+            // grid-column: 1;
+            // grid-row: 1;
+            display: flex;
+            z-index: 20;
+            justify-content: space-around;
+
+            .waypoint {
+                // border-right: 3px solid black;
+                width: 5em;
+                text-align: right;
+
+                &Label {
+                    position: relative;
+                    transform: translateX(-5px);
+                    padding-right: 0.5em;
+
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        border-top: 7px solid #f5f5f576;
+                        border-left: 7px solid transparent;
+                        border-right: 7px solid transparent;
+                        bottom: 0;
+                        transform: translateX(5px);
+                    }
+                }
+            }
+        }
+
+        .breakLabelWrapper {
+            grid-column: 1;
+            grid-row: 3;
+            padding-top: 0.5em;
+            display: flex;
+            display: none;
+            flex-direction: row;
+            justify-content: space-evenly;
+            text-align: center;
+
+            .breakLabel {
+                width: 5em;
+                max-width: 5em;
+                // min-width: 5em;
+                // max-width: 5em;
+                overflow: hidden;
+                overflow-wrap: break-word;
+            }
+        }
+
+        .clockWrapper {
+            display: flex;
+            flex-direction: row;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            background-position: right;
+
+            .innerWrapper {
+                display: flex;
+                flex-direction: row;
+
+                + .innerWrapper {
+                    margin: 1em;
+                }
+            }
+
+            .clockSection {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                cursor: pointer;
+                width: 5em;
+                height: 5em;
+                // background-color: #b9a9a9;
+                background-color: transparent;
+                // mix-blend-mode: multiply;
+                box-shadow: rgb(50 50 93 / 25%) 0px -20px 19px 0px inset, rgb(0 0 0 / 53%) -2px 8px 13px 0px inset;
+                // box-shadow: #1719214d 3px 3px 6px 0px inset, rgb(60 60 73 / 32%) -3px -3px 6px 1px inset;
+                // hsl(230deg 17% 11%) 3px 3px 6px 0px inset, hsl(240deg 10% 26% / 60%) -3px -3px 6px 1px inset;
+                // background-color: #2c2e2f;
+                // box-shadow: rgb(29, 29, 29) 3px 3px 6px 0px inset, rgba(92, 92, 92, 0.5) -3px -3px 6px 1px inset;
+
+                &[data-break] {
+                    position: relative;
+                    margin-right: 5px;
+                    border-top-right-radius: 8px;
+                    border-bottom-right-radius: 8px;
+
+                    & + .clockSection {
+                        border-top-left-radius: 8px;
+                        border-bottom-left-radius: 8px;
+                    }
+
+                    &:last-child {
+                        margin-right: 0;
+                    }
+                }
+
+                .label {
+                    color: white;
+                    font-weight: bold;
+                    z-index: 200;
+                }
+
+                &.filled {
+                    box-shadow: none;
+                    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+                        rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+                    // box-shadow: rgb(50 50 93 / 25%) 0px 20px 20px -20px, rgb(0 0 0 / 30%) 1px 20px 20px 0px, rgb(10 37 64 / 35%) -5px -6px 6px 2px inset;
+                    // background-color: transparent;
+                    // mix-blend-mode: multiply;
+
+                    .label {
+                        color: black;
+                    }
+
+                    &:hover {
+                        background-position: right center;
+                        /* change the direction of the change here */
+                        color: #fff;
+                        text-decoration: none;
+                    }
+                }
+            }
+
+            &__circles.clockWrapper {
+                .clockSection {
+                    border-radius: 50%;
+                    width: 2rem;
+                    height: 2rem;
+                    position: relative;
+
+                    &.filled {
+                        &:before {
+                            content: "";
+                            position: absolute;
+                            background-color: white;
+                            border-radius: 50%;
+                            background-image: linear-gradient(180deg, #211f1f, black);
+                            width: 100%;
+                            height: 100%;
+                            top: 0;
+                            z-index: 10;
+                            left: 0;
+                        }
+
+                        &:after {
+                            content: "";
+                            position: absolute;
+                            background-image: inherit;
+                            background-size: inherit;
+                            background-position: inherit;
+                            /* mix-blend-mode: multiply; */
+                            border-radius: 50%;
+                            /* background-image: linear-gradient(180deg, var(--tui-black1), #3c3c3c); */
+                            width: 100%;
+                            height: 100%;
+                            /* height: 110%; */
+                            clip-path: circle(35%);
+                            z-index: 11;
+                        }
+                    }
+
+                    &[data-break],
+                    & + .clockSection {
+                        border-top-left-radius: 0;
+                        border-bottom-left-radius: 0;
+                        border-radius: 50%;
+                    }
+                }
+            }
+
+            &__squares.clockWrapper {
+                overflow: visible;
+
+                .clockSection {
+                    border-radius: 5px;
+                    width: 2rem;
+                    height: 2rem;
+
+                    &:before {
+                        content: "";
+                        background: inherit;
+                        width: 100%;
+                        height: 100%;
+                        filter: blur(3px);
+                        z-index: 5;
+                    }
+
+                    &[data-break]:not(:last-child) {
+                        &:after {
+                            content: "";
+                            width: 7px;
+                            border-bottom: 1px solid white;
+                            position: absolute;
+                            top: 50%;
+                            left: 100%;
+                        }
+                    }
+
+                    &[data-break],
+                    & + .clockSection {
+                        border-top-left-radius: 5px;
+                        border-bottom-left-radius: 5px;
+                    }
+
+                    + .clockSection {
+                        margin-left: 2px;
+                    }
+
+                    &.filled {
+                        border: 1px solid rgb(255, 255, 255);
+                    }
+
+                    &:first-child {
+                        // border-top-left-radius: 0;
+                    }
+
+                    &:last-child {
+                        border-top-left-radius: 0;
+                    }
+                }
+            }
+
+            background-clip: padding-box;
+            -webkit-background-clip: padding-box;
+        }
+    }
 }
 
-
-
 .app-child {
-	display: block;
-	position: absolute;
-	z-index: -10;
-	top: 10% !important;
-	transform: translateX(0);
-	right: 0;
+    display: block;
+    position: absolute;
+    z-index: -10;
+    top: 10% !important;
+    transform: translateX(0);
+    right: 0;
 
-	&.expanded {
-		transform: translateX(100%);
-	}
+    &.expanded {
+        transform: translateX(100%);
+    }
 
-	.clock-container {
-		// box-shadow: var(--shadow-elevation-high);
-		box-shadow: $shadow;
-	}
+    .clock-container {
+        // box-shadow: var(--shadow-elevation-high);
+        box-shadow: $shadow;
+    }
 }
 
 .window-app {
-	&.sheet {
-		&.minimized {
-			.app-child {
-				display: none;
-				// min-height: max-content;
-				// top: 0;
-				// padding: 0.1rem;
-
-			}
-		}
-	}
+    &.sheet {
+        &.minimized {
+            .app-child {
+                display: none;
+                // min-height: max-content;
+                // top: 0;
+                // padding: 0.1rem;
+            }
+        }
+    }
 }
