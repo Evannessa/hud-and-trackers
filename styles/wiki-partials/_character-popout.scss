@@ -1,8 +1,10 @@
 @use "colors" as *;
 @use "variables" as *;
 @use "utilities" as *;
+@use "scene-displays" as *;
 // @use "cards" as *;
 @import url("https://fonts.googleapis.com/css2?family=Carter+One&display=swap");
+
 #CharacterPopout {
     /* #region  Global and Type Selectors */
     $color-primary: hsl(201, 83%, 53%);
@@ -107,10 +109,11 @@
         background-color: var(--bg-color-translucent);
     }
     img {
-        max-height: 200px;
+        // max-height: 200px;
         // max-width: 480px;
-        max-width: 20%;
-        object-fit: cover;
+        // max-width: 20%;
+        max-height: 200px;
+        object-fit: contain;
     }
     button {
         // padding: unset;
@@ -205,6 +208,9 @@
         // height: 100%;
         max-height: 100%;
         // grid-template-rows: 1fr 1fr;
+        .card {
+            max-width: 30%;
+        }
         header {
             grid-column: 1/2;
             grid-row: 1;
@@ -380,6 +386,13 @@
                 grid-column: 1/2;
                 margin-left: 24px;
                 margin-top: 15px;
+                .content {
+                    p,
+                    h2,
+                    h3 {
+                        text-align: left;
+                    }
+                }
             }
         }
         &#current-location,
@@ -465,6 +478,7 @@
                 p {
                     // display: flex;
                     flex-direction: column;
+                    flex-wrap: wrap;
                     max-width: 55ch;
                     margin-left: auto;
                     margin-right: auto;
@@ -481,6 +495,9 @@
                     &:focus-within {
                         cursor: pointer;
                         transform: scale(1.15);
+                    }
+                    + img {
+                        float: left;
                     }
                 }
                 a {
@@ -542,8 +559,8 @@
                     margin: unset;
                 }
                 p {
-                    display: flex;
-                    flex-direction: column;
+                    // display: flex;
+                    // flex-direction: column;
                     max-width: 55ch;
                     margin-left: auto;
                     margin-right: auto;
@@ -708,7 +725,7 @@
     }
     h3 {
         font-family: "Carter One", cursive !important;
-        margin-bottom: 3rem;
+        // margin-bottom: 3rem;
     }
 
     button {
@@ -770,7 +787,8 @@
 
     h3 {
         --color-h3: hsl(234, 56%, 58%);
-        margin-bottom: 1rem;
+        // margin-bottom: 1rem;
+        margin-top: 1rem;
         font-weight: 400;
         color: var(--color-h3);
         text-shadow: hsla(234, 56%, 58%, 0.647) 0px 0px 3px, hsla(234, 56%, 58%, 0.569) 0px 0px 5px;

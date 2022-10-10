@@ -7,6 +7,7 @@ function extractUrlFromCard(event) {
     url = url.split("/").pop();
     return { url, clickedCard };
 }
+
 export const popoutActions = {
     card: {
         removeFromScene: {
@@ -38,5 +39,7 @@ export const popoutActions = {
                 // await LocationsManager.linkLocationToScene({ cardHTML: clickedCard.outerHTML, url });
             },
         },
+        addCharacterToken: {},
+        addSceneDisplay: {},
     },
 };

@@ -2,10 +2,15 @@
 import { popoutActions } from "./PopoutActions.js";
 import { setInvisibleHeader, handleDrag, addDragHandle, HelperFunctions, uniqBy } from "../helper-functions.js";
 const MODULE_ID = "hud-and-trackers";
-import { InSceneEntityManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
+import { InSceneEntityManager as CharacterManager, InSceneEntityManager } from "../classes/InSceneCharacterManager.js";
 import * as ProcessWikiData from "../classes/ProcessWikiData.js";
 import { LocationsManager } from "./LocationsManager.js";
 import { socket } from "./sockets.js";
+Hooks.on("renderHeadsUpDisplay", (app, html, data) => {
+    html[0].style.zIndex = 70;
+    html.append(`<div id="characterDisplay"></div>`);
+});
+
 Hooks.on("ready", async () => {
     let { processClanNames, processLocations } = ProcessWikiData;
     await processClanNames();
@@ -13,11 +18,56 @@ Hooks.on("ready", async () => {
     if (!game.characterPopout) {
         game.characterPopout = new CharacterPopout().render(true);
     }
+    createDisplayHUDs();
 });
-Hooks.on("renderCharacterPopout", (app, html) => {
+Hooks.on("renderCharacterPopout", async (app, html) => {
     setInvisibleHeader(html, true);
-});
 
+    addCharactersToSceneHUD();
+});
+async function createDisplayHUDs() {
+    $(document.documentElement.querySelector("#ui-middle")).append("<div id='characterDisplay'></div>");
+    $(document.documentElement.querySelector("#ui-middle")).append(
+        `<div id='characterSpotlight' class='JTCS-hidden'>
+            <img src="" alt="spotlight image"/>
+        </div>`
+    );
+}
+
+async function addCharactersToSceneHUD() {
+    const characters = await InSceneEntityManager.getEntitiesInScene(game.scenes.viewed, "charactersInScene");
+    const characterDisplay = document.documentElement.querySelector("#ui-middle").querySelector("#characterDisplay");
+    const characterSpotlight = document.documentElement
+        .querySelector("#ui-middle")
+        .querySelector("#characterSpotlight");
+    const characterImages = characters.map((char) => {
+        const ourElement = stringToElement(char.cardHTML);
+        return ourElement.querySelector("img.card-img"); //.getAttribute("src");
+    });
+    characterImages.forEach((element) => {
+        const $element = $(element);
+        const src = $element.attr("src");
+        const classList = $element.attr("class");
+        characterDisplay.append(stringToElement(`<img src=${src} width="25%" height="auto"/>`));
+        const appended = characterDisplay.querySelector(`img[src='${src}']`);
+        $(appended).addClass(classList);
+        $(appended)
+            .on("mouseenter", (event) => {
+                characterSpotlight.querySelector("img").setAttribute("src", src);
+                characterSpotlight.classList.remove("JTCS-hidden");
+            })
+            .on("mouseleave", (event) => {
+                characterSpotlight.querySelector("img").setAttribute("src", "");
+                characterSpotlight.classList.add("JTCS-hidden");
+            });
+    });
+}
+function stringToElement(html) {
+    var template = document.createElement("template");
+    html = html.trim(); // Never return a text node of whitespace as the result
+    template.innerHTML = html;
+    return template.content.firstChild; //.querySelector("img.card-img").getAttribute("src");
+}
 export class CharacterPopout extends Application {
     constructor(data = {}) {
         super();
@@ -138,13 +188,8 @@ export class CharacterPopout extends Application {
         const appElement = html;
         //for dash to camelCase and vise versa
         const closestTabSectionToContentSection = html[0].querySelector(`#${activeID}`).closest(".tab-section");
+        console.log(closestTabSectionToContentSection);
         const id = closestTabSectionToContentSection.getAttribute("id");
-        // console.log(
-        //     "%cCharacterPopout.js line:114 closestTabSectionToContentSection",
-        //     "color: #26bfa5;",
-        //     closestTabSectionToContentSection,
-        //     id
-        // );
 
         let sectionSelector;
         if (activeType === "global") sectionSelector = ".tab-section";
@@ -160,6 +205,7 @@ export class CharacterPopout extends Application {
 
         //make the section w/ the id visible and add active to the button
         const activeSection = appElement.find(`#${activeID}`);
+        console.log(activeID, activeSection);
         const activeButton = appElement.find(`[data-tab="${activeID}"]`);
 
         activeSection.addClass("visible");
@@ -296,9 +342,7 @@ export class CharacterPopout extends Application {
                 currentLocationUrl: "",
             });
             urls[propertyName] = url;
-            if (game.user.isGM) {
-                await HelperFunctions.setFlagValue(game.scenes.viewed, "currentURLs", urls);
-            }
+            await HelperFunctions.setFlagValue(game.scenes.viewed, "currentURLs", urls);
             // await HelperFunctions.setSettingValue("currentURLs", urls);
 
             //change the tab to reflect the name of the selected character or location
@@ -316,11 +360,24 @@ export class CharacterPopout extends Application {
             let tabId = event.currentTarget.dataset.tab;
             await this.setTab(tabId, tabType, event, app.element);
         } else if (actionType === "sendToTile") {
+            if (!game.user.isGM) {
+                let src = currentTarget.attr("src");
+                const ip = new ImagePopout(src, {
+                    title: "My Featured Image",
+                    //   uuid: game.actors.getName("My Hero").uuid
+                });
+
+                // Display the image popout
+                ip.render(true);
+                //popout image and return?
+                return;
+            }
             //we only want the image clicks to work on the other tabs, not these two
             const wrongTabs = currentTarget[0].closest("#all-characters") || currentTarget[0].closest("#all-locations");
             if (wrongTabs) {
                 return;
             }
+
             let name = "Wiki Display Journal";
             let wikiDisplayJournal = game.journal.getName(name);
             let createData = {

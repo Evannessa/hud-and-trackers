@@ -3074,6 +3074,152 @@ button.icon-button {
   border-bottom-right-radius: 0;
 }
 
+#characterDisplay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  max-width: 25%;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 100%;
+}
+
+#characterDisplay img {
+  pointer-events: auto;
+  grid-column: 1/2;
+  grid-row: 1/2;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  width: 4rem;
+  height: 4rem;
+  border: 2px solid white;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.26);
+  cursor: pointer;
+  transition: transform 130ms ease-in-out;
+}
+
+#characterDisplay img:nth-child(1) {
+  transform: translateX(50px) scale(1);
+}
+
+#characterDisplay img:nth-child(1):hover {
+  transform: translateX(50px) scale(1.2);
+  z-index: 100;
+}
+
+#characterDisplay img:nth-child(2) {
+  transform: translateX(100px) scale(1);
+}
+
+#characterDisplay img:nth-child(2):hover {
+  transform: translateX(100px) scale(1.2);
+  z-index: 100;
+}
+
+#characterDisplay img:nth-child(3) {
+  transform: translateX(150px) scale(1);
+}
+
+#characterDisplay img:nth-child(3):hover {
+  transform: translateX(150px) scale(1.2);
+  z-index: 100;
+}
+
+#characterDisplay img:nth-child(4) {
+  transform: translateX(200px) scale(1);
+}
+
+#characterDisplay img:nth-child(4):hover {
+  transform: translateX(200px) scale(1.2);
+  z-index: 100;
+}
+
+#characterDisplay img:nth-child(5) {
+  transform: translateX(250px) scale(1);
+}
+
+#characterDisplay img:nth-child(5):hover {
+  transform: translateX(250px) scale(1.2);
+  z-index: 100;
+}
+
+#characterDisplay img:nth-child(6) {
+  transform: translateX(300px) scale(1);
+}
+
+#characterDisplay img:nth-child(6):hover {
+  transform: translateX(300px) scale(1.2);
+  z-index: 100;
+}
+
+#characterDisplay img:nth-child(7) {
+  transform: translateX(350px) scale(1);
+}
+
+#characterDisplay img:nth-child(7):hover {
+  transform: translateX(350px) scale(1.2);
+  z-index: 100;
+}
+
+#characterDisplay img:nth-child(8) {
+  transform: translateX(400px) scale(1);
+}
+
+#characterDisplay img:nth-child(8):hover {
+  transform: translateX(400px) scale(1.2);
+  z-index: 100;
+}
+
+#characterDisplay img.image-top {
+  -o-object-position: top;
+     object-position: top;
+}
+
+#characterDisplay img.image-left {
+  -o-object-position: left;
+     object-position: left;
+}
+
+#characterDisplay img.image-center {
+  -o-object-position: center;
+     object-position: center;
+}
+
+#characterDisplay img.image-right {
+  -o-object-position: right;
+     object-position: right;
+}
+
+#characterDisplay img.image-bottom {
+  -o-object-position: bottom;
+     object-position: bottom;
+}
+
+#characterSpotlight {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  max-height: 25vh;
+  outline: 2px solid pink;
+}
+
+#characterSpotlight img {
+  max-height: inherit;
+}
+
+.JTCS-hidden {
+  transform: scale(0);
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+}
+
 #CharacterPopout {
   /* #region  Global and Type Selectors */
   position: fixed;
@@ -3146,9 +3292,8 @@ button.icon-button {
 }
 #CharacterPopout img {
   max-height: 200px;
-  max-width: 20%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 #CharacterPopout button[data-tab-type=character] {
   --wiki-bg-color: transparent;
@@ -3255,6 +3400,9 @@ button.icon-button {
   grid-template-rows: 100%;
   gap: 1rem;
   max-height: 100%;
+}
+#CharacterPopout .tab-section .card {
+  max-width: 30%;
 }
 #CharacterPopout .tab-section header {
   grid-column: 1/2;
@@ -3411,6 +3559,11 @@ button.icon-button {
   margin-left: 24px;
   margin-top: 15px;
 }
+#CharacterPopout .tab-section#selected-character .main .content p,
+#CharacterPopout .tab-section#selected-character .main .content h2,
+#CharacterPopout .tab-section#selected-character .main .content h3 {
+  text-align: left;
+}
 #CharacterPopout .tab-section#current-location .tabs-container, #CharacterPopout .tab-section#selected-character .tabs-container {
   background-color: var(--bg-color);
   position: absolute;
@@ -3489,6 +3642,7 @@ button.icon-button {
 }
 #CharacterPopout .tab-section#current-location .content p, #CharacterPopout .tab-section#selected-character .content p {
   flex-direction: column;
+  flex-wrap: wrap;
   max-width: 55ch;
   margin-left: auto;
   margin-right: auto;
@@ -3503,6 +3657,9 @@ button.icon-button {
 #CharacterPopout .tab-section#current-location .content img:hover, #CharacterPopout .tab-section#current-location .content img:focus, #CharacterPopout .tab-section#current-location .content img:focus-within, #CharacterPopout .tab-section#selected-character .content img:hover, #CharacterPopout .tab-section#selected-character .content img:focus, #CharacterPopout .tab-section#selected-character .content img:focus-within {
   cursor: pointer;
   transform: scale(1.15);
+}
+#CharacterPopout .tab-section#current-location .content img + img, #CharacterPopout .tab-section#selected-character .content img + img {
+  float: left;
 }
 #CharacterPopout .tab-section#current-location .content a, #CharacterPopout .tab-section#selected-character .content a {
   cursor: pointer;
@@ -3546,8 +3703,6 @@ button.icon-button {
   margin: unset;
 }
 #CharacterPopout .tab-section#current-location .content p {
-  display: flex;
-  flex-direction: column;
   max-width: 55ch;
   margin-left: auto;
   margin-right: auto;
@@ -3668,7 +3823,6 @@ button.icon-button {
 }
 #CharacterPopout h3 {
   font-family: "Carter One", cursive !important;
-  margin-bottom: 3rem;
 }
 #CharacterPopout button {
   border-top-color: none;
@@ -3719,7 +3873,7 @@ button.icon-button {
 }
 #CharacterPopout h3 {
   --color-h3: hsl(234, 56%, 58%);
-  margin-bottom: 1rem;
+  margin-top: 1rem;
   font-weight: 400;
   color: var(--color-h3);
   text-shadow: hsla(234deg, 56%, 58%, 0.647) 0px 0px 3px, hsla(234deg, 56%, 58%, 0.569) 0px 0px 5px;

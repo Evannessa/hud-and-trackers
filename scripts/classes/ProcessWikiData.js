@@ -300,8 +300,6 @@ export async function getAllCharacters(data, html) {
 }
 
 export async function clearCurrentEntityData(html, selector = "") {
-    console.log("Clearing entity data", html, selector);
-    console.log($(`${selector} section.content`));
     $(`${selector} .tabs-container .wrapper`).empty();
     $(`${selector} header`).empty();
     $(`${selector} section.content`).empty();
@@ -332,26 +330,15 @@ export async function getSelectedEntityData(
     // console.log("Page content is", content.children, "headings are", headings);
 
     //get the index of the heading in the list of all children (this way we can get what's between each of them)
-    let indexes = headings
+    let headingIndices = headings
         .map((heading) => {
             return allChildren.indexOf(heading);
         })
         .filter((index) => index !== -1);
+    console.log("headingIndices", headingIndices);
     let sections = [];
 
-    // get all the sections (each element between a header of the level we designated (2))
-    indexes.forEach((headingIndex, index) => {
-        let start = headingIndex;
-        let end = indexes[index + 1];
-        // if (end > allChildren.length) {
-        //     console.log("Does this ever happen?");
-        //     end = allChildren.length - 1;
-        // }
-        if (index + 1 >= indexes.length) {
-            //Remember that slice doesn't include the end, so end needs to be larger than the array
-            end = allChildren.length;
-        }
-
+    function sliceContent(start, end) {
         //an array of elements
         let content = allChildren.slice(start + 1, end).map((obj) => obj?.outerHTML);
 
@@ -360,14 +347,45 @@ export async function getSelectedEntityData(
 
         //get the id of the heading-2 to act as the key
         let sectionKey = allChildren[start]?.getAttribute("id");
+        if (start === 0) {
+            sectionKey = "overview";
+        }
 
         if (content.length > 0 && sectionKey !== undefined) {
             sections.push([sectionKey, content]);
         }
+    }
+    if (headingIndices[0] !== 0) {
+        //if our first index where we find our heading isn't 0, it means
+        //some content comes before that index in our array
+        sliceContent(0, headingIndices[0]);
+    }
+    // get all the sections (each element between a header of the level we designated (2))
+    headingIndices.forEach((headingIndex, index) => {
+        let start = headingIndex;
+        let end = headingIndices[index + 1];
+
+        if (index + 1 >= headingIndices.length) {
+            //Remember that slice doesn't include the end, so end needs to be larger than the array
+            end = allChildren.length;
+        }
+        sliceContent(start, end);
+
+        // //an array of elements
+        // let content = allChildren.slice(start + 1, end).map((obj) => obj?.outerHTML);
+
+        // //filter out any that include "Placeholder" for now
+        // content = content.filter((elHTML) => !elHTML.toLowerCase().includes("placeholder"));
+
+        // //get the id of the heading-2 to act as the key
+        // let sectionKey = allChildren[start]?.getAttribute("id");
+
+        // if (content.length > 0 && sectionKey !== undefined) {
+        //     sections.push([sectionKey, content]);
+        // }
     });
     // This should be an object with the key being the "id" of the heading, and the value being an array of each element between it and the next header
     let sectionsObject = Object.fromEntries(sections);
-    // console.log("Sections object is", sectionsObject);
 
     let contentSection = html.querySelector(`.tab-section${appSelector}`);
     contentSection.querySelector(".header").prepend(title);
@@ -376,23 +394,24 @@ export async function getSelectedEntityData(
     for (let sectionKey in sectionsObject) {
         //sectionsObject[sectionKey] is an array of html elements
         sectionsObject[sectionKey].forEach((el) => {
+            const uniqueKey = sectionKey + "-" + tabDataKey;
             if (sectionKey && sectionKey !== "undefined") {
-                tabsData[tabDataKey].tabs[sectionKey] = {
-                    id: sectionKey,
+                tabsData[tabDataKey].tabs[uniqueKey] = {
+                    id: uniqueKey,
                     label: sectionKey,
                 };
             }
-            let charPropertySection = contentSection.querySelector(`#${sectionKey}`);
+            let charPropertySection = contentSection.querySelector(`section#${uniqueKey}`);
             if (charPropertySection) {
                 charPropertySection.insertAdjacentHTML("beforeend", el);
 
                 const existingTab = contentSection.querySelector(
-                    `.tabs-container .wrapper button[data-tab='${sectionKey}']`
+                    `.tabs-container .wrapper button[data-tab='${uniqueKey}']`
                 );
                 if (!existingTab) {
                     let newTab = document.createElement("button");
                     charPropertySection = document.createElement("section");
-                    newTab.dataset.tab = sectionKey;
+                    newTab.dataset.tab = uniqueKey;
                     newTab.dataset.tabType = tabDataKey;
                     //clean up the "key" for display
                     let cleanKey = sectionKey
@@ -408,7 +427,7 @@ export async function getSelectedEntityData(
                 if (sectionKey) {
                     let newTab = document.createElement("button");
                     charPropertySection = document.createElement("section");
-                    newTab.dataset.tab = sectionKey;
+                    newTab.dataset.tab = uniqueKey;
                     newTab.dataset.tabType = tabDataKey;
                     //clean up the "key" for display
                     let cleanKey = sectionKey
@@ -418,10 +437,8 @@ export async function getSelectedEntityData(
                         .replace("region", "Region - ");
                     cleanKey = game.JTCS.utils.manager.capitalizeEachWord(cleanKey);
                     newTab.textContent = cleanKey;
-                    charPropertySection.setAttribute("id", sectionKey);
+                    charPropertySection.setAttribute("id", uniqueKey);
                     $(charPropertySection).addClass("content");
-                    // console.log(contentSection);
-                    // contentSection.insertAdjacentHTML("afterbegin", `<h2 class="subtitle">${cleanKey}</h2>`);
                     charPropertySection.insertAdjacentHTML("beforeend", el);
                     contentSection.querySelector(".tabs-container .wrapper")?.append(newTab);
                     contentSection.querySelector(".content-wrapper")?.append(charPropertySection);
