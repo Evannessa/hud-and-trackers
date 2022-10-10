@@ -5,7 +5,7 @@ const MODULE_ID = "hud-and-trackers";
 import { InSceneEntityManager as CharacterManager, InSceneEntityManager } from "../classes/InSceneCharacterManager.js";
 import * as ProcessWikiData from "../classes/ProcessWikiData.js";
 import { LocationsManager } from "./LocationsManager.js";
-import { socket } from "./sockets.js";
+import { updateTokenImage } from "../helper-functions.js";
 Hooks.on("renderHeadsUpDisplay", (app, html, data) => {
     html[0].style.zIndex = 70;
     html.append(`<div id="characterDisplay"></div>`);
@@ -59,6 +59,14 @@ async function addCharactersToSceneHUD() {
             .on("mouseleave", (event) => {
                 characterSpotlight.querySelector("img").setAttribute("src", "");
                 characterSpotlight.classList.add("JTCS-hidden");
+            })
+            .on("click", async (event) => {
+                if (game.user.isGM) {
+                    //create token
+                    await updateTokenImage(src);
+                } else {
+                    //TODO: Create image popout
+                }
             });
     });
 }

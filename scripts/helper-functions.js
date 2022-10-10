@@ -355,8 +355,21 @@ export function checkIfSceneHasToken(actorId, tokenId, sceneId) {
 export async function getType(actor) {
     return actor.type;
 }
+
+export async function createTokenFromImage(img) {
+    if (tokenData.length == 0) {
+        return;
+    }
+
+    let tokenDataArray = tokenData.map((data, index) => {
+        let td = duplicate(data);
+        td.x = Math.round(localPosition.x) + index * 100;
+        td.y = Math.round(localPosition.y);
+        return td;
+    });
+    await game.scenes.viewed.createEmbeddedDocuments("Token", tokenDataArray); // await Token.create(tk);
+}
 export async function createTokenFromTokenData(tokenData, localPosition) {
-    console.log("Token data", tokenData);
     if (tokenData.length == 0) {
         return;
     }
@@ -397,6 +410,17 @@ export async function createTokenFromActor(ourActor, scene) {
     let tokenObject = tokenDoc[0]._object;
     return tokenObject;
 }
+
+export async function updateTokenImage(src, ourActor, ourScene) {
+    if (!ourActor) ourActor = game.actors.getName("Blank");
+    if (!ourScene) ourScene = game.scenes.viewed;
+    console.log("%chelper-functions.js line:417 ourActor", "color: #26bfa5;", ourActor);
+
+    const token = await createTokenFromActor(ourActor, ourScene);
+
+    await ourScene.updateEmbeddedDocuments("Token", [{ _id: token.id, img: src }]);
+}
+
 //https://stackoverflow.com/questions/6860853/generate-random-string-for-div-id/6860916
 export function generateId() {
     var S4 = function () {

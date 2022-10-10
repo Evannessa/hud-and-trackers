@@ -626,10 +626,10 @@ Hooks.on("canvasInit", (canvas) => {
 });
 
 Hooks.on("createToken", (tokenDoc, data, id) => {
-    game.combatHud.app.render(true);
+    game.combatHud?.app?.render(true);
 });
 Hooks.on("deleteToken", (tokenDoc, data, id) => {
-    game.combatHud.app.render(true);
+    game.combatHud?.app?.render(true);
 });
 
 Hooks.on("renderCombatHud", async (app, newHtml) => {
