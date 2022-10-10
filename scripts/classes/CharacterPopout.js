@@ -5,7 +5,7 @@ const MODULE_ID = "hud-and-trackers";
 import { InSceneEntityManager as CharacterManager, InSceneEntityManager } from "../classes/InSceneCharacterManager.js";
 import * as ProcessWikiData from "../classes/ProcessWikiData.js";
 import { LocationsManager } from "./LocationsManager.js";
-import { updateTokenImage } from "../helper-functions.js";
+import { tokenFromExternalData } from "../helper-functions.js";
 Hooks.on("renderHeadsUpDisplay", (app, html, data) => {
     html[0].style.zIndex = 70;
     html.append(`<div id="characterDisplay"></div>`);
@@ -42,13 +42,18 @@ async function addCharactersToSceneHUD() {
         .querySelector("#characterSpotlight");
     const characterImages = characters.map((char) => {
         const ourElement = stringToElement(char.cardHTML);
-        return ourElement.querySelector("img.card-img"); //.getAttribute("src");
+        console.log("%cCharacterPopout.js line:45 ourElement", "color: #26bfa5;", ourElement);
+        const img = ourElement.querySelector("img.card-img");
+        img.setAttribute("dataName", ourElement.querySelector("a").textContent);
+        return img; //.getAttribute("src");
     });
     characterImages.forEach((element) => {
         const $element = $(element);
         const src = $element.attr("src");
         const classList = $element.attr("class");
-        characterDisplay.append(stringToElement(`<img src=${src} width="25%" height="auto"/>`));
+        let name = $element.attr("dataName");
+        name = game.JTCS.utils.manager.capitalizeEachWord(name);
+        characterDisplay.append(stringToElement(`<img src=${src} width="25%" data-name='${name}' height="auto"/>`));
         const appended = characterDisplay.querySelector(`img[src='${src}']`);
         $(appended).addClass(classList);
         $(appended)
@@ -63,7 +68,8 @@ async function addCharactersToSceneHUD() {
             .on("click", async (event) => {
                 if (game.user.isGM) {
                     //create token
-                    await updateTokenImage(src);
+                    await tokenFromExternalData("", "", { src, name });
+                    //TODO: - add some way to configure clocks here as well
                 } else {
                     //TODO: Create image popout
                 }

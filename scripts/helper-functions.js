@@ -411,14 +411,32 @@ export async function createTokenFromActor(ourActor, scene) {
     return tokenObject;
 }
 
-export async function updateTokenImage(src, ourActor, ourScene) {
+/**
+ *
+ * @param {String} src - image source
+ * @param {Actor} ourActor - actor object
+ * @param {Scene} ourScene - secene object
+ * @param {Object} options - extra options to configure
+ * @param {String} options.name - the name of the token from the data
+ * @param {String} options.src - the src of the token from the data
+ */
+export async function tokenFromExternalData(ourActor, ourScene, options = {}) {
+    const { src, name } = options;
     if (!ourActor) ourActor = game.actors.getName("Blank");
     if (!ourScene) ourScene = game.scenes.viewed;
     console.log("%chelper-functions.js line:417 ourActor", "color: #26bfa5;", ourActor);
 
     const token = await createTokenFromActor(ourActor, ourScene);
-
-    await ourScene.updateEmbeddedDocuments("Token", [{ _id: token.id, img: src }]);
+    await ourScene.updateEmbeddedDocuments("Token", [
+        {
+            _id: token.id,
+            img: src,
+            name: name,
+            actor: {
+                img: src,
+            },
+        },
+    ]);
 }
 
 //https://stackoverflow.com/questions/6860853/generate-random-string-for-div-id/6860916
