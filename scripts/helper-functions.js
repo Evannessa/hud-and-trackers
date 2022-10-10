@@ -432,6 +432,8 @@ export async function tokenFromExternalData(ourActor, ourScene, options = {}) {
             _id: token.id,
             img: src,
             name: name,
+            displayName: CONST.TOKEN_DISPLAY_MODES.ALWAYS,
+            displayBars: CONST.TOKEN_DISPLAY_MODES.OWNER,
             actor: {
                 img: src,
             },
