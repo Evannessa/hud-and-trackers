@@ -150,6 +150,8 @@ export class CharacterPopout extends Application {
                     .replace("site", "(Site)")
                     .replace("area", "[Area]")
                     .replace("region", "Region - ")
+                    .replace("character", "")
+                    .replace("location", "")
             );
             let title = parentSection.querySelector("h1");
             let subtitle = title.querySelector("span");
