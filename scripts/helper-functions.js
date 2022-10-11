@@ -5,8 +5,23 @@ export const MODULE_ID = "hud-and-trackers";
 
 export class HelperFunctions {
     static MODULE_ID = "hud-and-trackers";
+    static stringToElement(html) {
+        var template = document.createElement("template");
+        html = html.trim(); // Never return a text node of whitespace as the result
+        template.innerHTML = html;
+        return template.content.firstChild; //.querySelector("img.card-img").getAttribute("src");
+    }
+    static createImagePopout(src, title = "Featured Image") {
+        const ip = new ImagePopout(src, {
+            title: title,
+        });
 
+        // Display the image popout
+        ip.render(true);
+    }
+    static image;
     /**
+     * }
      * pass in a string and capitalize each word in the string
      * @param {String} string - the string whose words we want to capitalize
      * @param {String} delimiter - a delimiter separating each word
@@ -424,7 +439,6 @@ export async function tokenFromExternalData(ourActor, ourScene, options = {}) {
     const { src, name } = options;
     if (!ourActor) ourActor = game.actors.getName("Blank");
     if (!ourScene) ourScene = game.scenes.viewed;
-    console.log("%chelper-functions.js line:417 ourActor", "color: #26bfa5;", ourActor);
 
     const token = await createTokenFromActor(ourActor, ourScene);
     await ourScene.updateEmbeddedDocuments("Token", [
@@ -432,6 +446,8 @@ export async function tokenFromExternalData(ourActor, ourScene, options = {}) {
             _id: token.id,
             img: src,
             name: name,
+            x: ourScene.dimensions.sceneWidth / 2,
+            y: ourScene.dimensions.sceneHeight / 2,
             displayName: CONST.TOKEN_DISPLAY_MODES.ALWAYS,
             displayBars: CONST.TOKEN_DISPLAY_MODES.OWNER,
             actor: {

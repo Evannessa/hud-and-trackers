@@ -35,14 +35,14 @@ async function createDisplayHUDs() {
 }
 
 async function addCharactersToSceneHUD() {
+    const stringToElement = HelperFunctions.stringToElement;
     const characters = await InSceneEntityManager.getEntitiesInScene(game.scenes.viewed, "charactersInScene");
     const characterDisplay = document.documentElement.querySelector("#ui-middle").querySelector("#characterDisplay");
     const characterSpotlight = document.documentElement
         .querySelector("#ui-middle")
         .querySelector("#characterSpotlight");
     const characterImages = characters.map((char) => {
-        const ourElement = stringToElement(char.cardHTML);
-        console.log("%cCharacterPopout.js line:45 ourElement", "color: #26bfa5;", ourElement);
+        const ourElement = HelperFunctions.stringToElement(char.cardHTML);
         const img = ourElement.querySelector("img.card-img");
         img.setAttribute("dataName", ourElement.querySelector("a").textContent);
         return img; //.getAttribute("src");
@@ -53,7 +53,9 @@ async function addCharactersToSceneHUD() {
         const classList = $element.attr("class");
         let name = $element.attr("dataName");
         name = game.JTCS.utils.manager.capitalizeEachWord(name);
-        characterDisplay.append(stringToElement(`<img src=${src} width="25%" data-name='${name}' height="auto"/>`));
+        characterDisplay.append(
+            HelperFunctions.stringToElement(`<img src=${src} width="25%" data-name='${name}' height="auto"/>`)
+        );
         const appended = characterDisplay.querySelector(`img[src='${src}']`);
         $(appended).addClass(classList);
         $(appended)
@@ -71,17 +73,13 @@ async function addCharactersToSceneHUD() {
                     await tokenFromExternalData("", "", { src, name });
                     //TODO: - add some way to configure clocks here as well
                 } else {
+                    HelperFunctions.createImagePopout(src, name);
                     //TODO: Create image popout
                 }
             });
     });
 }
-function stringToElement(html) {
-    var template = document.createElement("template");
-    html = html.trim(); // Never return a text node of whitespace as the result
-    template.innerHTML = html;
-    return template.content.firstChild; //.querySelector("img.card-img").getAttribute("src");
-}
+
 export class CharacterPopout extends Application {
     constructor(data = {}) {
         super();
@@ -378,13 +376,8 @@ export class CharacterPopout extends Application {
         } else if (actionType === "sendToTile") {
             if (!game.user.isGM) {
                 let src = currentTarget.attr("src");
-                const ip = new ImagePopout(src, {
-                    title: "My Featured Image",
-                    //   uuid: game.actors.getName("My Hero").uuid
-                });
+                HelperFunctions.createImagePopout(src, title);
 
-                // Display the image popout
-                ip.render(true);
                 //popout image and return?
                 return;
             }

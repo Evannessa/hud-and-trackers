@@ -1,5 +1,6 @@
 import { InSceneEntityManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
 import { LocationsManager } from "../classes/LocationsManager.js";
+import { HelperFunctions } from "../helper-functions.js";
 let baseURL = "https://classy-bavarois-433634.netlify.app/";
 let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-locations";
 let characterDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-characters";
@@ -316,6 +317,7 @@ export async function getSelectedEntityData(
     let dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
     const title = convertAnchorsAndImages(dummyElement, titleSelector).convertedElement;
+    let propsAndVibes = checkForMetadata(tabDataKey, dummyElement);
     // let anchorTags = dummyElement.querySelectorAll("a");
 
     const content = convertAnchorsAndImages(dummyElement, wikiSiteSelector).convertedElement;
@@ -327,7 +329,6 @@ export async function getSelectedEntityData(
     let allChildren = Array.from(content.children);
     let headings = dummyElement.querySelectorAll(`content h${headingLevel}`);
     headings = Array.from(headings);
-    // console.log("Page content is", content.children, "headings are", headings);
 
     //get the index of the heading in the list of all children (this way we can get what's between each of them)
     let headingIndices = headings
@@ -335,7 +336,6 @@ export async function getSelectedEntityData(
             return allChildren.indexOf(heading);
         })
         .filter((index) => index !== -1);
-    console.log("headingIndices", headingIndices);
     let sections = [];
 
     function sliceContent(start, end) {
@@ -370,20 +370,11 @@ export async function getSelectedEntityData(
             end = allChildren.length;
         }
         sliceContent(start, end);
-
-        // //an array of elements
-        // let content = allChildren.slice(start + 1, end).map((obj) => obj?.outerHTML);
-
-        // //filter out any that include "Placeholder" for now
-        // content = content.filter((elHTML) => !elHTML.toLowerCase().includes("placeholder"));
-
-        // //get the id of the heading-2 to act as the key
-        // let sectionKey = allChildren[start]?.getAttribute("id");
-
-        // if (content.length > 0 && sectionKey !== undefined) {
-        //     sections.push([sectionKey, content]);
-        // }
     });
+    if (propsAndVibes.length > 0) {
+        console.log(propsAndVibes);
+        sections.push(["props-and-vibes", propsAndVibes]);
+    }
     // This should be an object with the key being the "id" of the heading, and the value being an array of each element between it and the next header
     let sectionsObject = Object.fromEntries(sections);
 
@@ -439,7 +430,11 @@ export async function getSelectedEntityData(
                     newTab.textContent = cleanKey;
                     charPropertySection.setAttribute("id", uniqueKey);
                     $(charPropertySection).addClass("content");
-                    charPropertySection.insertAdjacentHTML("beforeend", el);
+                    if (typeof el === "string") {
+                        charPropertySection.insertAdjacentHTML("beforeend", el);
+                    } else {
+                        charPropertySection.append(el);
+                    }
                     contentSection.querySelector(".tabs-container .wrapper")?.append(newTab);
                     contentSection.querySelector(".content-wrapper")?.append(charPropertySection);
                 }
@@ -448,4 +443,25 @@ export async function getSelectedEntityData(
     }
     let buttons = contentSection.querySelectorAll(".tabs-container .wrapper button");
     buttons[0].click();
+}
+function createRollButton(tableName) {
+    return HelperFunctions.stringToElement(`<button data-roll-table='${tableName}'>${tableName}</button>`);
+}
+
+function checkForMetadata(tabDataKey, dummyElement) {
+    let propsVibesUtilities = [];
+    if (tabDataKey === "location") {
+        const data = $(dummyElement.querySelector("content content")).data(); //.rollTable;
+        if (data.rollTable) {
+            let button = createRollButton(data.rollTable);
+            // $(button).attr(data);
+            // console.log("%cProcessWikiData.js line:456 data", "color: #26bfa5;", $(button));
+            $(button).on("click", (event) => {
+                const rollTable = game.tables.getName(data.rollTable);
+                rollTable.draw();
+            });
+            propsVibesUtilities.push($(button)[0]);
+        }
+    }
+    return propsVibesUtilities;
 }
