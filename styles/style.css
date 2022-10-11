@@ -3246,6 +3246,15 @@ button.icon-button {
 #CharacterPopout .card a {
   pointer-events: none;
 }
+#CharacterPopout #all-locations {
+  display: flex;
+  flex-direction: row;
+}
+#CharacterPopout #all-locations #individual-locations,
+#CharacterPopout #all-locations #location-lists {
+  max-width: 50%;
+  max-height: 100%;
+}
 #CharacterPopout #linked-locations .card,
 #CharacterPopout #all-locations .card {
   display: flex !important;
@@ -3640,7 +3649,9 @@ button.icon-button {
 #CharacterPopout .tab-section#current-location .content h2, #CharacterPopout .tab-section#selected-character .content h2 {
   margin: unset;
 }
-#CharacterPopout .tab-section#current-location .content p, #CharacterPopout .tab-section#selected-character .content p {
+#CharacterPopout .tab-section#current-location .content p,
+#CharacterPopout .tab-section#current-location .content ul, #CharacterPopout .tab-section#selected-character .content p,
+#CharacterPopout .tab-section#selected-character .content ul {
   flex-direction: column;
   flex-wrap: wrap;
   max-width: 55ch;

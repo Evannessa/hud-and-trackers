@@ -1,6 +1,8 @@
-import { InSceneEntityManager as CharacterManager } from "../classes/InSceneCharacterManager.js";
+import { InSceneEntityManager as CharacterManager, InSceneEntityManager } from "../classes/InSceneCharacterManager.js";
 import { LocationsManager } from "../classes/LocationsManager.js";
+import { ClockConfig } from "../ClockConfig.js";
 import { HelperFunctions } from "../helper-functions.js";
+import { extractUrlFromCard } from "./PopoutActions.js";
 let baseURL = "https://classy-bavarois-433634.netlify.app/";
 let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-locations";
 let characterDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-characters";
@@ -131,23 +133,54 @@ export async function fetchAllLocations($html) {
 export async function getAllLocations(data, html) {
     const dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
-    console.log("Location dummy is", dummyElement);
-    let anchorTags = Array.from(dummyElement.querySelector("main").querySelectorAll("a"));
-    // let anchorTags = locationsAnchors.map((a) => a.textContent);
 
-    // let { anchorTags } = convertAnchorsAndImages(dummyElement, "content");
-    let locationsContainer = html.querySelector(".tab-section#all-locations .main");
-    anchorTags.forEach((data) => {
-        let card = document.createElement("div");
-        card.classList.add("card");
-        let imgWrapper = document.createElement("div");
-        imgWrapper.classList.add("card-img__wrapper");
-        let content = document.createElement("div");
-        content.classList.add("card__content");
-        card.append(imgWrapper);
-        card.append(content);
-        content.insertAdjacentElement("afterbegin", data);
-        locationsContainer.append(card);
+    const singleLocationLinks = Array.from(
+        dummyElement.querySelector("main #individual-locations").querySelectorAll("a")
+    );
+
+    const locationListLinks = Array.from(dummyElement.querySelector("main #location-lists").querySelectorAll("a"));
+
+    const allLocationsContainer = html.querySelector(".tab-section#all-locations .main");
+
+    const locationListsContainer = HelperFunctions.stringToElement(
+        `<section class="flex-row flex-wrap scroll-y" id='location-lists'>
+        </section>`
+    );
+    const singleLocationsContainer = HelperFunctions.stringToElement(
+        `<section class="flex-row flex-wrap scroll-y" id='individual-locations'>
+        </section>`
+    );
+
+    function createCard(data, container, cardType) {
+        let card = HelperFunctions.stringToElement(
+            `<div class="card ${cardType}">
+                <div class="card-img__wrapper"></div>
+                <div class="card__content">
+
+                </div>
+            </div>`
+        );
+        // card.querySelector("card-img__wrapper")
+        card.querySelector(".card__content").insertAdjacentElement("afterbegin", data);
+        //    let card = document.createElement("div");
+        // card.classList.add("card");
+        // let imgWrapper = document.createElement("div");
+        // imgWrapper.classList.add("card-img__wrapper");
+        // let content = document.createElement("div");
+        // content.classList.add("card__content");
+        // card.append(imgWrapper);
+        // card.append(content);
+        // content.insertAdjacentElement("afterbegin", data);
+        container.append(card);
+        return container;
+    }
+
+    locationListLinks.forEach((data) => {
+        allLocationsContainer.append(createCard(data, locationListsContainer, "location-list"));
+    });
+
+    singleLocationLinks.forEach((data) => {
+        allLocationsContainer.append(createCard(data, singleLocationsContainer, "individual-location"));
     });
 }
 
@@ -160,7 +193,57 @@ export async function fetchAllCharacters($html) {
         .then((response) => response.text())
         .then(async (data) => await getAllCharacters(data, html));
 }
+export async function fetchAllEntities($html, url, selector) {
+    const html = $html[0];
+    fetch(url)
+        .then((response) => response.text())
+        .then(async (data) => await processAnchorTags(data, html, selector));
+}
+export async function getUrlsFromURL($html, url) {
+    const html = $html[0];
+    url = baseURL + url;
+    fetch(url)
+        .then((response) => response.text())
+        .then(async (data) => await getAnchorTags(data, html));
+}
+export async function getAnchorTags(data, html, selector = "all-locations") {
+    const dummyElement = document.createElement("div");
+    dummyElement.insertAdjacentHTML("beforeend", data);
+    // console.log(dummyElement);
+    let { anchorTags, cards } = convertAnchorsAndImages(dummyElement, ".wrapper");
+    let subURLs = anchorTags.map((el) => el.getAttribute("href").replace("/", ""));
+    let allLocationElements = Array.from(
+        html.querySelector(`#${selector}`).querySelectorAll(".card.individual-location")
+    );
+    let allLocationCards = {};
+    for (let cardData of allLocationElements) {
+        let { card, url } = extractUrlFromCard("", cardData);
+        allLocationCards[url] = { cardHTML: card.outerHTML, url };
+    }
+    // allLocationCards.map((cardData) => {
+    //     let { card, url } = extractUrlFromCard("", cardData);
+    //     return { [url]: { cardHTML: card.outerHTML, url } };
+    // });
+    console.log("%cProcessWikiData.js line:220 allLocationCards", "color: #26bfa5;", allLocationCards);
 
+    if (allLocationCards) {
+        let byUrl = Object.keys(allLocationCards); //game.characterPopout.allLo
+        console.log("%cProcessWikiData.js line:231 subLocations", "color: #26bfa5;", subURLs);
+        subURLs = subURLs
+            .filter((url) => byUrl.includes(url))
+            .map((url) => {
+                return allLocationCards[url];
+            });
+    } else {
+        console.log("All locations doesn't exist");
+    }
+    subURLs.forEach(async (urlData) => {
+        // console.log(urlData);
+        await InSceneEntityManager.addEntityToScene(urlData, game.scenes.viewed, "location");
+        //TODO: decide whether you want to have it replace the current entities, maybe w/ a prompt?
+        // InSceneEntityManager.setEntitiesInScene()
+    });
+}
 export async function fetchLocationData($html) {
     const html = $html[0];
     await clearCurrentEntityData(html, "#current-location");
@@ -186,18 +269,6 @@ export async function fetchLocationData($html) {
         );
 }
 
-/**
- * This wll be for getting metadata for the Clocks, roll-tables, etc.
- * Levels and token creation as well?
- */
-export async function getEntityMetadata() {
-    //metadata attributes
-    // Table name and ID ("Store table name/id")
-    // clocks -- maximum and current amount for each ability (yaml object?)
-    // mire clock -
-    // level -- the character level = to their clock
-    //create token from character image
-}
 export async function fetchCharacterData($html) {
     const html = $html[0];
     await clearCurrentEntityData(html, "#selected-character");
@@ -211,6 +282,42 @@ export async function fetchCharacterData($html) {
         .then(
             async (data) => await getSelectedEntityData(data, html, "#selected-character", "content article content")
         );
+}
+function sortItems(itemList) {}
+export async function processAnchorTags(data, html, selector) {
+    const dummyElement = document.createElement("div");
+    dummyElement.insertAdjacentHTML("beforeend", data);
+    let { anchorTags, cards } = convertAnchorsAndImages(dummyElement, ".card-container");
+    let items = sortItems(cards);
+
+    let globalSection = html.querySelector(`.tab-section${selector}`);
+    let appContainer = globalSection.querySelector(".main");
+
+    function createSection(key) {
+        let section = HelperFunctions.stringToElement(
+            `<section class="content" id="${key}">
+
+        </section>
+        `
+        );
+        appContainer.append(section);
+        items[key].forEach((dataItem) => {
+            section.append(dataItem);
+        });
+    }
+    for (let key in items) {
+        createSection(key);
+    }
+
+    //activate the default tab
+    let defaultKey = Object.keys(items)[0];
+
+    if (key === defaultKey) {
+        section.classList.add("visible");
+        // html.querySelector(`[data-tab='${clanKey}']`).classList.add("active");
+    }
+    let buttons = globalSection.querySelectorAll(".tabs-container .wrapper button");
+    buttons[0].click();
 }
 
 export function convertAnchorsAndImages(convertedElement, selector = "") {
@@ -266,7 +373,6 @@ export function sortCharacters(characterDataArray) {
     });
     return characterItems;
 }
-
 export async function getAllCharacters(data, html) {
     const dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
@@ -276,12 +382,12 @@ export async function getAllCharacters(data, html) {
 
     let items = sortCharacters(characterData);
 
+    let clanContainer = html.querySelector(".tab-section#all-characters .main");
     let urls = {};
     for (let clanKey in items) {
         let updatedData = items[clanKey].map((card) => card.querySelector("a").textContent);
         urls[clanKey] = updatedData;
     }
-    let clanContainer = html.querySelector(".tab-section#all-characters .main");
     //add the cards to the all-characters tab section
     for (let clanKey in items) {
         let clanSection = document.createElement("section");
@@ -316,7 +422,11 @@ export async function getSelectedEntityData(
 ) {
     let dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
+    console.log(dummyElement);
+
     const title = convertAnchorsAndImages(dummyElement, titleSelector).convertedElement;
+
+    //any extra metadata that can be mechanized by the module
     let propsAndVibes = checkForMetadata(tabDataKey, dummyElement);
     // let anchorTags = dummyElement.querySelectorAll("a");
 
@@ -447,21 +557,49 @@ export async function getSelectedEntityData(
 function createRollButton(tableName) {
     return HelperFunctions.stringToElement(`<button data-roll-table='${tableName}'>${tableName}</button>`);
 }
+function createLevelInput(value) {
+    return HelperFunctions.stringToElement(`<input type="number" min="1" max="10" value=${value}/>`);
+}
+
+function createClock(value) {}
 
 function checkForMetadata(tabDataKey, dummyElement) {
     let propsVibesUtilities = [];
+    switch (tabDataKey) {
+        case "location":
+            const locationData = $(dummyElement.querySelector("content content")).data(); //.rollTable;
+            if (locationData?.rollTable) {
+                let button = createRollButton(locationData.rollTable);
+                // $(button).attr(data);
+                // console.log("%cProcessWikiData.js line:456 data", "color: #26bfa5;", $(button));
+                $(button).on("click", (event) => {
+                    const rollTable = game.tables.getName(locationData.rollTable);
+                    rollTable.draw();
+                });
+                propsVibesUtilities.push($(button)[0]);
+            }
+            break;
+        case "character":
+            let mechanicsSection = [];
+            const characterData = $(dummyElement.querySelector("content content")).data(); //.rollTable;
+            let { level, clockValue } = characterData;
+            if (level) {
+                level = characterData.level;
+            } else {
+                level = 4;
+            }
+            mechanicsSection.push(createLevelInput(level));
+            if (clockValue) {
+                new ClockConfig({}).render(true);
+                //
+                //
+            }
+
+            break;
+        default:
+            break;
+    }
     if (tabDataKey === "location") {
-        const data = $(dummyElement.querySelector("content content")).data(); //.rollTable;
-        if (data.rollTable) {
-            let button = createRollButton(data.rollTable);
-            // $(button).attr(data);
-            // console.log("%cProcessWikiData.js line:456 data", "color: #26bfa5;", $(button));
-            $(button).on("click", (event) => {
-                const rollTable = game.tables.getName(data.rollTable);
-                rollTable.draw();
-            });
-            propsVibesUtilities.push($(button)[0]);
-        }
     }
     return propsVibesUtilities;
 }

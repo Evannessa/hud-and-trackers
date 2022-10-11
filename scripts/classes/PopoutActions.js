@@ -1,11 +1,12 @@
 import { HelperFunctions as HF } from "../helper-functions.js";
 import { InSceneEntityManager as EntityManager } from "./InSceneCharacterManager.js";
+import { fetchAllEntities, getUrlsFromURL } from "./ProcessWikiData.js";
 
-function extractUrlFromCard(event) {
-    const clickedCard = event.currentTarget;
-    let url = clickedCard.querySelector(".internal-link").getAttribute("href");
+export function extractUrlFromCard(event, card) {
+    if (!card) card = event.currentTarget;
+    let url = card.querySelector(".internal-link").getAttribute("href");
     url = url.split("/").pop();
-    return { url, clickedCard };
+    return { url, card };
 }
 
 export const popoutActions = {
@@ -36,10 +37,20 @@ export const popoutActions = {
             onClick: async (event, app) => {
                 const { url, clickedCard } = extractUrlFromCard(event);
                 await EntityManager.addEntityToScene({ cardHTML: clickedCard.outerHTML, url }, "", "location");
-                // await LocationsManager.linkLocationToScene({ cardHTML: clickedCard.outerHTML, url });
             },
         },
         addCharacterToken: {},
         addSceneDisplay: {},
+        linkSubLocations: {
+            onClick: async (event, options = {}) => {
+                const { url, clickedCard } = extractUrlFromCard(event);
+                const { html } = options;
+                console.log("%cPopoutActions.js line:48 url", "color: #26bfa5;", url);
+                await getUrlsFromURL(html, url);
+                // await fetchAllEntities(html, url, )
+                //add sub locations
+                //1.
+            },
+        },
     },
 };

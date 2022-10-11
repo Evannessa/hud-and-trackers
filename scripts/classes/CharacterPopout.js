@@ -35,7 +35,6 @@ async function createDisplayHUDs() {
 }
 
 async function addCharactersToSceneHUD() {
-    const stringToElement = HelperFunctions.stringToElement;
     const characters = await InSceneEntityManager.getEntitiesInScene(game.scenes.viewed, "charactersInScene");
     const characterDisplay = document.documentElement.querySelector("#ui-middle").querySelector("#characterDisplay");
     const characterSpotlight = document.documentElement
@@ -202,7 +201,6 @@ export class CharacterPopout extends Application {
         const appElement = html;
         //for dash to camelCase and vise versa
         const closestTabSectionToContentSection = html[0].querySelector(`#${activeID}`).closest(".tab-section");
-        console.log(closestTabSectionToContentSection);
         const id = closestTabSectionToContentSection.getAttribute("id");
 
         let sectionSelector;
@@ -250,7 +248,11 @@ export class CharacterPopout extends Application {
                 await popoutActions.card["addCharacterToScene"].onClick(event);
                 // await this._handleAction(event, "addToScene", this);
             } else if (el.closest("#all-locations")) {
-                await popoutActions.card["linkLocationToScene"].onClick(event);
+                if ($(el).hasClass("location-list")) {
+                    await popoutActions.card["linkSubLocations"].onClick(event, { html });
+                } else if ($(el).hasClass("individual-location, html")) {
+                    await popoutActions.card["linkLocationToScene"].onClick(event, { html });
+                }
                 // await this._handleAction(event, "linkLocation", this);
             } else if (el.closest("#characters-in-scene")) {
                 await this._handleAction(event, "selectCharacter", this);

@@ -1,10 +1,53 @@
 "use strict";
 import * as HelperFunctions from "./helper-functions.js";
 import { Section, Clock, updateClock } from "./clock.js";
-
+// {
+//     "name": "boop",
+//     "sectionCount": 3,
+//     "breaks": [],
+//     "showWaypoints": false,
+//     "startFilled": false,
+//     "gradient": "purple",
+//     "sectionMap": {
+//         "xsnjsvqgdff8o83o": {
+//             "id": "xsnjsvqgdff8o83o",
+//             "label": "",
+//             "filled": true
+//         },
+//         "r7x01mlro93by19t": {
+//             "id": "r7x01mlro93by19t",
+//             "label": "",
+//             "filled": true
+//         },
+//         "wnhuaxq276prnoa1": {
+//             "id": "wnhuaxq276prnoa1",
+//             "label": "",
+//             "filled": false
+//         }
+//     },
+//     "filledSections": 2,
+//     "breakLabels": {},
+//     "waypoints": {},
+//     "linkedEntities": {
+//         "TgDkOmX8rdeX2ag8": {
+//             "name": "Aron",
+//             "entity": "Actor"
+//         }
+//     },
+//     "shared": false,
+//     "creator": "xjKGzWFbtOifTl9H",
+//     "ourId": "8fuvyy7ihvb5m5tw"
+// }
 /** This will be the configuration for the clock itself. */
-
+//
 export class ClockConfig extends FormApplication {
+    /**
+     * Configure a new clock object, or update one
+     * @param {Object} clockData - the clock data
+     * @param {String} clockData.name - the clock's name
+     * @param {Number} clockData.sectionCount - the number of sections the clock has
+     * @param {Boolean} clone - whether or not to clone the clock we're updating
+     */
     constructor(clockData = {}, clone = false) {
         super(clockData);
         //cloning the clockData here so it doesn't affect the original object

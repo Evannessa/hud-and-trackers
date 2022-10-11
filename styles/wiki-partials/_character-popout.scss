@@ -59,6 +59,15 @@
             pointer-events: none;
         }
     }
+    #all-locations {
+        display: flex;
+        flex-direction: row;
+        #individual-locations,
+        #location-lists {
+            max-width: 50%;
+            max-height: 100%;
+        }
+    }
     #linked-locations,
     #all-locations {
         .card {
@@ -475,7 +484,8 @@
                 h2 {
                     margin: unset;
                 }
-                p {
+                p,
+                ul {
                     // display: flex;
                     flex-direction: column;
                     flex-wrap: wrap;
