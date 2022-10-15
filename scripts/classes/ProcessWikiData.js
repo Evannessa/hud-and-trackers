@@ -203,6 +203,7 @@ export async function getUrlsFromURL($html, url) {
     const html = $html[0];
     url = baseURL + url;
     fetch(url)
+        .catch((error) => console.log(error))
         .then((response) => response.text())
         .then(async (data) => await getAnchorTags(data, html));
 }
@@ -224,11 +225,9 @@ export async function getAnchorTags(data, html, selector = "all-locations") {
     //     let { card, url } = extractUrlFromCard("", cardData);
     //     return { [url]: { cardHTML: card.outerHTML, url } };
     // });
-    console.log("%cProcessWikiData.js line:220 allLocationCards", "color: #26bfa5;", allLocationCards);
 
     if (allLocationCards) {
         let byUrl = Object.keys(allLocationCards); //game.characterPopout.allLo
-        console.log("%cProcessWikiData.js line:231 subLocations", "color: #26bfa5;", subURLs);
         subURLs = subURLs
             .filter((url) => byUrl.includes(url))
             .map((url) => {
@@ -238,7 +237,7 @@ export async function getAnchorTags(data, html, selector = "all-locations") {
         console.log("All locations doesn't exist");
     }
     subURLs.forEach(async (urlData) => {
-        // console.log(urlData);
+        console.log(urlData);
         await InSceneEntityManager.addEntityToScene(urlData, game.scenes.viewed, "location");
         //TODO: decide whether you want to have it replace the current entities, maybe w/ a prompt?
         // InSceneEntityManager.setEntitiesInScene()
@@ -570,11 +569,18 @@ function checkForMetadata(tabDataKey, dummyElement) {
             const locationData = $(dummyElement.querySelector("content content")).data(); //.rollTable;
             if (locationData?.rollTable) {
                 let button = createRollButton(locationData.rollTable);
-                // $(button).attr(data);
-                // console.log("%cProcessWikiData.js line:456 data", "color: #26bfa5;", $(button));
                 $(button).on("click", (event) => {
                     const rollTable = game.tables.getName(locationData.rollTable);
                     rollTable.draw();
+                });
+                propsVibesUtilities.push($(button)[0]);
+            }
+            if (locationData?.macro) {
+                let button = createRollButton(locationData.macro);
+                $(button).on("click", (event) => {
+                    const macro = game.macros.getName(locationData.macro);
+                    macro.execute();
+                    // rollTable.draw();
                 });
                 propsVibesUtilities.push($(button)[0]);
             }

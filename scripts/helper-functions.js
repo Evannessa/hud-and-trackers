@@ -438,6 +438,7 @@ export async function createTokenFromActor(ourActor, scene) {
 export async function tokenFromExternalData(ourActor, ourScene, options = {}) {
     const { src, name } = options;
     if (!ourActor) ourActor = game.actors.getName("Blank");
+    if (!ourActor) await Actor.create({ name: "Blank", type: "Token" });
     if (!ourScene) ourScene = game.scenes.viewed;
 
     const token = await createTokenFromActor(ourActor, ourScene);

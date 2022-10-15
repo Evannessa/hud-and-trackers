@@ -8,7 +8,8 @@ import { LocationsManager } from "./LocationsManager.js";
 import { CharacterSpotlightHUD as CSH } from "./CharacterSpotlightHUD.js";
 Hooks.on("renderHeadsUpDisplay", (app, html, data) => {
     html[0].style.zIndex = 70;
-    html.append(`<div id="characterDisplay"></div>`);
+    // html.append(`<div id="characterDisplay"></div>`);
+    // html.append(`<div id="characterSpotlight"></div>`);
 });
 
 Hooks.on("ready", async () => {
@@ -23,6 +24,7 @@ Hooks.on("ready", async () => {
 Hooks.on("renderCharacterPopout", async (app, html) => {
     setInvisibleHeader(html, true);
 
+    html.find(".window-content").append("<div id='characterDisplay'></div>");
     CSH.addCharactersToSceneHUD();
 });
 
@@ -197,7 +199,7 @@ export class CharacterPopout extends Application {
             } else if (el.closest("#all-locations")) {
                 if ($(el).hasClass("location-list")) {
                     await popoutActions.card["linkSubLocations"].onClick(event, { html });
-                } else if ($(el).hasClass("individual-location, html")) {
+                } else if ($(el).hasClass("individual-location")) {
                     await popoutActions.card["linkLocationToScene"].onClick(event, { html });
                 }
                 // await this._handleAction(event, "linkLocation", this);

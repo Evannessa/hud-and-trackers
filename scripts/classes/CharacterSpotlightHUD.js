@@ -1,20 +1,24 @@
 import { HelperFunctions, tokenFromExternalData } from "../helper-functions.js";
 import { InSceneEntityManager as CharacterManager, InSceneEntityManager } from "../classes/InSceneCharacterManager.js";
+Hooks.on("renderSidebarTab", async (app, html) => {
+    html[0].style.position = "relative";
+});
 export class CharacterSpotlightHUD {
     static async createDisplayHUDs() {
-        $(document.documentElement.querySelector("#ui-middle")).append("<div id='characterDisplay'></div>");
-        $(document.documentElement.querySelector("#ui-middle")).append(
+        let parentElement = $(document.documentElement.querySelector("#ui-middle"));
+        parentElement.append(
             `<div id='characterSpotlight' class='JTCS-hidden'>
             <img src="" alt="spotlight image"/>
         </div>`
         );
     }
 
-    static async addCharactersToSceneHUD() {
+    static async addCharactersToSceneHUD(ancestorId = "#ui-middle") {
         const characters = await InSceneEntityManager.getEntitiesInScene(game.scenes.viewed, "charactersInScene");
         const characterDisplay = document.documentElement
-            .querySelector("#ui-middle")
+            .querySelector("#CharacterPopout")
             .querySelector("#characterDisplay");
+        game.characterDisplay = characterDisplay;
         const characterSpotlight = document.documentElement
             .querySelector("#ui-middle")
             .querySelector("#characterSpotlight");
@@ -43,7 +47,7 @@ export class CharacterSpotlightHUD {
             );
             const appended = characterDisplay.querySelector(`img[src='${src}']`);
             $(appended).addClass(classList);
-            CharacterSpotlightHUD.activateListeners(appended, src, name);
+            CharacterSpotlightHUD.activateListeners(appended, src, name, characterSpotlight);
         });
     }
     static createElement(element) {
@@ -61,7 +65,7 @@ export class CharacterSpotlightHUD {
             name,
         };
     }
-    static activateListeners(appended, src, name) {
+    static activateListeners(appended, src, name, characterSpotlight) {
         $(appended)
             .on("mouseenter", (event) => {
                 characterSpotlight.querySelector("img").setAttribute("src", src);
@@ -77,7 +81,12 @@ export class CharacterSpotlightHUD {
                     await tokenFromExternalData("", "", { src, name });
                     //TODO: - add some way to configure clocks here as well
                 } else {
-                    HelperFunctions.createImagePopout(src, name);
+                    if (event.ctrlKey) {
+                        //TODO: find card with character name
+                        // game.characterPopout.element.find(${})
+                    } else {
+                        HelperFunctions.createImagePopout(src, name);
+                    }
                 }
             });
     }

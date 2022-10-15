@@ -81,6 +81,7 @@
             }
         }
     }
+
     &.expanded {
         transform: translateY(-100%);
         transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1);
