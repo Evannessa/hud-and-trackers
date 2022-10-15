@@ -3254,6 +3254,7 @@ button.icon-button {
 #CharacterPopout #all-locations #location-lists {
   max-width: 50%;
   max-height: 100%;
+  flex: 1;
 }
 #CharacterPopout #linked-locations .card,
 #CharacterPopout #all-locations .card {

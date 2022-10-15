@@ -14,7 +14,7 @@ export const popoutActions = {
         removeFromScene: {
             onRightClick: async (event, options) => {
                 // const { app } = options;
-                const { url, clickedCard } = extractUrlFromCard(event);
+                const { url, card: clickedCard } = extractUrlFromCard(event);
                 await EntityManager.removeEntityFromScene({ cardHTML: clickedCard.outerHTML, url }, "", "character");
                 clickedCard.remove();
             },
@@ -22,20 +22,20 @@ export const popoutActions = {
         unlinkLocation: {
             onRightClick: async (event, options) => {
                 // const { app } = options;
-                const { url, clickedCard } = extractUrlFromCard(event);
+                const { url, card: clickedCard } = extractUrlFromCard(event);
                 await EntityManager.removeEntityFromScene({ cardHTML: clickedCard.outerHTML, url }, "", "location");
                 clickedCard.remove();
             },
         },
         addCharacterToScene: {
             onClick: async (event, options = {}) => {
-                const { url, clickedCard } = extractUrlFromCard(event);
+                const { url, card: clickedCard } = extractUrlFromCard(event);
                 await EntityManager.addEntityToScene({ cardHTML: clickedCard.outerHTML, url }, "", "character");
             },
         },
         linkLocationToScene: {
             onClick: async (event, app) => {
-                const { url, clickedCard } = extractUrlFromCard(event);
+                const { url, card: clickedCard } = extractUrlFromCard(event);
                 await EntityManager.addEntityToScene({ cardHTML: clickedCard.outerHTML, url }, "", "location");
             },
         },
