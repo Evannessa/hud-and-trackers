@@ -96,7 +96,14 @@ export class CharacterPopout extends Application {
 
         return ourData;
     }
+    /**
+     * set the name of the labels
+     * @param {Object} object - the tabs data object
+     * @param {String} property - the name of the property whose tab label we want to set
+     * @param {*} variable - the variable name
+     */
     setLabelText(object, property, variable) {
+        console.log("Setting label text", property, variable);
         const value = variable
             ? HelperFunctions.capitalizeEachWord(variable, "-", " ")
             : getProperty(object, `global.tabs.${property}.label`);
@@ -264,6 +271,7 @@ export class CharacterPopout extends Application {
      * @param {String} actionType - the type of action
      */
     async selectCharacterOrLocation(url, entityName, actionType, app) {
+        console.log(url, entityName);
         //if the card is an "add to scene" card, choose it as the selected character or scene
         //we'll want to get the url of the selected character
 
@@ -284,7 +292,6 @@ export class CharacterPopout extends Application {
 
         //change the tab to reflect the name of the selected character or location
         const ourTab = app.element[0].querySelector(`[data-tab='${dataSelector}']`);
-        console.log(entityName, decodeURI(entityName), decodeURIComponent(entityName));
         ourTab.textContent = decodeURIComponent(entityName);
 
         //show the tab

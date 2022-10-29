@@ -87,7 +87,7 @@ export class CharacterSpotlightHUD {
             .on("click", async (event) => {
                 if (event.ctrlKey || event.metaKey) {
                     //select character
-                    let url = appended.dataset.url;
+                    let url = appended.dataset.url.split("/").pop();
                     await game.characterPopout.selectCharacterOrLocation(
                         url,
                         name,
@@ -97,6 +97,7 @@ export class CharacterSpotlightHUD {
                     let selectedCharacterTab = game.characterPopout.element[0].querySelector(
                         "[data-tab='selected-character']"
                     );
+                    //if it's already active, click it again to reset the data to the new character
                     if (selectedCharacterTab.classList.contains("active")) {
                         selectedCharacterTab.click();
                     }
