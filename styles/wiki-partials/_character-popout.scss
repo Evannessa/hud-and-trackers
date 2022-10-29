@@ -43,6 +43,30 @@
     background: hsla(249, 39%, 23%, 0.541);
     --accent-color: $color-rich-accent-3;
     --bg-color-translucent: hsla(260, 91%, 17%, 0.471);
+
+    li {
+        font-weight: 800;
+        padding-inline: 0.5em;
+        letter-spacing: 0.5ch;
+        line-height: 1.5;
+        li {
+            font-weight: 400;
+            color: white;
+            li {
+                color: white;
+                font-style: italic;
+                font-weight: 300;
+            }
+        }
+        ul {
+            color: white;
+            margin-left: 1rem !important;
+        }
+        + li {
+            margin-bottom: 0.5rem;
+        }
+    }
+
     .drag-handle {
         top: unset;
         bottom: 100%;
