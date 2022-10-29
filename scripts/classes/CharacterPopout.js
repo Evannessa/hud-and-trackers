@@ -27,6 +27,10 @@ Hooks.on("renderCharacterPopout", async (app, html) => {
     html.find(".window-content").append("<div id='characterDisplay'></div>");
     CSH.addCharactersToSceneHUD();
 });
+Hooks.on("sceneCharactersUpdated", async () => {
+    CSH.clearSceneHUD();
+    CSH.addCharactersToSceneHUD();
+});
 
 export class CharacterPopout extends Application {
     constructor(data = {}) {
@@ -34,14 +38,14 @@ export class CharacterPopout extends Application {
         this.tabsData = data;
     }
 
-    async addCharacterToScene(event, app) {
+    async addCharacterToScene(event) {
         let clickedCard = event.currentTarget;
         let url = clickedCard.querySelector(".internal-link").getAttribute("href");
         url = url.split("/").pop();
         await CharacterManager.addEntityToScene({ cardHTML: clickedCard.outerHTML, url });
     }
 
-    async linkLocationToScene(event, app) {
+    async linkLocationToScene(event) {
         let clickedCard = event.currentTarget;
         let url = clickedCard.querySelector(".internal-link").getAttribute("href");
         url = url.split("/").pop();
@@ -253,6 +257,42 @@ export class CharacterPopout extends Application {
             $html.find("[data-tab='all-characters']").addClass("hidden");
         }
     }
+    /**
+     * Select a character or location, and make it the "current" one
+     * @param {String} url - the character's url
+     * @param {String} entityName - the name of the entity
+     * @param {String} actionType - the type of action
+     */
+    async selectCharacterOrLocation(url, entityName, actionType, app) {
+        //if the card is an "add to scene" card, choose it as the selected character or scene
+        //we'll want to get the url of the selected character
+
+        let propertyName = actionType === "selectCharacter" ? "currentCharacterUrl" : "currentLocationUrl";
+        let dataSelector = actionType === "selectCharacter" ? "selected-character" : "current-location";
+
+        //set the selected character on the app's object
+        app[propertyName] = url;
+        //set it in our settings
+        // let urls = await HelperFunctions.getSettingValue("currentURLs");
+        let urls = await HelperFunctions.getFlagValue(game.scenes.viewed, "currentURLs", "", {
+            currentCharacterUrl: "",
+            currentLocationUrl: "",
+        });
+        urls[propertyName] = url;
+        await HelperFunctions.setFlagValue(game.scenes.viewed, "currentURLs", urls);
+        // await HelperFunctions.setSettingValue("currentURLs", urls);
+
+        //change the tab to reflect the name of the selected character or location
+        const ourTab = app.element[0].querySelector(`[data-tab='${dataSelector}']`);
+        console.log(entityName, decodeURI(entityName), decodeURIComponent(entityName));
+        ourTab.textContent = decodeURIComponent(entityName);
+
+        //show the tab
+        ourTab.classList.remove("hidden");
+
+        //reset the "isFetched" so new data can be fetched
+        this.tabsData.global.tabs[dataSelector].isFetched = false;
+    }
 
     async _handleAction(event, actionType, app) {
         event.preventDefault();
@@ -295,31 +335,34 @@ export class CharacterPopout extends Application {
             let link = currentTarget[0].querySelector(".internal-link");
             let url = link.getAttribute("href").split("/").pop();
             let entityName = link.innerText;
-            let propertyName = actionType === "selectCharacter" ? "currentCharacterUrl" : "currentLocationUrl";
-            let dataSelector = actionType === "selectCharacter" ? "selected-character" : "current-location";
 
-            //set the selected character on the app's object
-            app[propertyName] = url;
-            //set it in our settings
-            // let urls = await HelperFunctions.getSettingValue("currentURLs");
-            let urls = await HelperFunctions.getFlagValue(game.scenes.viewed, "currentURLs", "", {
-                currentCharacterUrl: "",
-                currentLocationUrl: "",
-            });
-            urls[propertyName] = url;
-            await HelperFunctions.setFlagValue(game.scenes.viewed, "currentURLs", urls);
-            // await HelperFunctions.setSettingValue("currentURLs", urls);
+            await this.selectCharacterOrLocation(url, entityName, actionType, app);
 
-            //change the tab to reflect the name of the selected character or location
-            const ourTab = app.element[0].querySelector(`[data-tab='${dataSelector}']`);
-            console.log(entityName, decodeURI(entityName), decodeURIComponent(entityName));
-            ourTab.textContent = decodeURIComponent(entityName);
+            // let propertyName = actionType === "selectCharacter" ? "currentCharacterUrl" : "currentLocationUrl";
+            // let dataSelector = actionType === "selectCharacter" ? "selected-character" : "current-location";
 
-            //show the tab
-            ourTab.classList.remove("hidden");
+            // //set the selected character on the app's object
+            // app[propertyName] = url;
+            // //set it in our settings
+            // // let urls = await HelperFunctions.getSettingValue("currentURLs");
+            // let urls = await HelperFunctions.getFlagValue(game.scenes.viewed, "currentURLs", "", {
+            //     currentCharacterUrl: "",
+            //     currentLocationUrl: "",
+            // });
+            // urls[propertyName] = url;
+            // await HelperFunctions.setFlagValue(game.scenes.viewed, "currentURLs", urls);
+            // // await HelperFunctions.setSettingValue("currentURLs", urls);
 
-            //reset the "isFetched" so new data can be fetched
-            this.tabsData.global.tabs[dataSelector].isFetched = false;
+            // //change the tab to reflect the name of the selected character or location
+            // const ourTab = app.element[0].querySelector(`[data-tab='${dataSelector}']`);
+            // console.log(entityName, decodeURI(entityName), decodeURIComponent(entityName));
+            // ourTab.textContent = decodeURIComponent(entityName);
+
+            // //show the tab
+            // ourTab.classList.remove("hidden");
+
+            // //reset the "isFetched" so new data can be fetched
+            // this.tabsData.global.tabs[dataSelector].isFetched = false;
         } else if (actionType === "tabClick") {
             let tabType = currentTarget.data().tabType;
             let tabId = event.currentTarget.dataset.tab;

@@ -13,6 +13,12 @@ export class CharacterSpotlightHUD {
         );
     }
 
+    static async clearSceneHUD() {
+        const characterDisplay = document.documentElement
+            .querySelector("#CharacterPopout")
+            .querySelector("#characterDisplay");
+        $(characterDisplay).empty();
+    }
     static async addCharactersToSceneHUD(ancestorId = "#ui-middle") {
         const characters = await InSceneEntityManager.getEntitiesInScene(game.scenes.viewed, "charactersInScene");
         const characterDisplay = document.documentElement
@@ -28,6 +34,7 @@ export class CharacterSpotlightHUD {
                 const img = ourElement.querySelector("img.card-img");
                 if (img) {
                     img.setAttribute("dataName", ourElement.querySelector("a").textContent);
+                    img.setAttribute("dataURL", ourElement.querySelector("a").getAttribute("href"));
                 }
                 return img; //.getAttribute("src");
             })
@@ -55,10 +62,12 @@ export class CharacterSpotlightHUD {
         const src = $element.attr("src");
         const classList = $element.attr("class");
         let name = $element.attr("dataName");
+        let url = $element.attr("dataURL");
+
         name = game.JTCS.utils.manager.capitalizeEachWord(name);
         return {
             createdElement: HelperFunctions.stringToElement(
-                `<img src=${src} width="25%" data-name='${name}' data-title='${name}' height="auto"/>`
+                `<img src=${src} width="25%" data-name='${name}' data-url='${url}' title='${name}' height="auto"/>`
             ),
             classList,
             src,
@@ -76,15 +85,22 @@ export class CharacterSpotlightHUD {
                 characterSpotlight.classList.add("JTCS-hidden");
             })
             .on("click", async (event) => {
-                if (game.user.isGM) {
-                    //create token
-                    await tokenFromExternalData("", "", { src, name });
-                    //TODO: - add some way to configure clocks here as well
+                if (event.ctrlKey || event.metaKey) {
+                    //select character
+                    let url = appended.dataset.url;
+                    console.log(appended.dataset, url);
+                    await game.characterPopout.selectCharacterOrLocation(
+                        url,
+                        name,
+                        "selectCharacter",
+                        game.characterPopout
+                    );
                 } else {
-                    if (event.ctrlKey) {
-                        //TODO: find card with character name
-                        // game.characterPopout.element.find(${})
+                    if (game.user.isGM) {
+                        //create token
+                        await tokenFromExternalData("", "", { src, name });
                     } else {
+                        //show image in popout
                         HelperFunctions.createImagePopout(src, name);
                     }
                 }

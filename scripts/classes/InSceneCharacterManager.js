@@ -56,5 +56,8 @@ export class InSceneEntityManager {
     static async setEntitiesInScene(currentScene, entitiesInScene, flagName = "charactersInScene") {
         if (!currentScene) currentScene = game.scenes.viewed;
         await currentScene.setFlag("hud-and-trackers", flagName, entitiesInScene);
+        if (flagName === "charactersInScene") {
+            Hooks.callAll("sceneCharactersUpdated", currentScene);
+        }
     }
 }
