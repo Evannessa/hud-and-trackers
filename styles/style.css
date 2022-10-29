@@ -3894,7 +3894,7 @@ button.icon-button {
 }
 #CharacterPopout .tab-section#all-characters, #CharacterPopout .tab-section#all-locations {
   grid-template-columns: 1fr;
-  grid-template-rows: 20% 1fr;
+  grid-template-rows: 1fr;
 }
 #CharacterPopout .tab-section#all-characters header, #CharacterPopout .tab-section#all-locations header {
   grid-column: 1;

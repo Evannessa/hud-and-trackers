@@ -88,13 +88,18 @@ export class CharacterSpotlightHUD {
                 if (event.ctrlKey || event.metaKey) {
                     //select character
                     let url = appended.dataset.url;
-                    console.log(appended.dataset, url);
                     await game.characterPopout.selectCharacterOrLocation(
                         url,
                         name,
                         "selectCharacter",
                         game.characterPopout
                     );
+                    let selectedCharacterTab = game.characterPopout.element[0].querySelector(
+                        "[data-tab='selected-character']"
+                    );
+                    if (selectedCharacterTab.classList.contains("active")) {
+                        selectedCharacterTab.click();
+                    }
                 } else {
                     if (game.user.isGM) {
                         //create token

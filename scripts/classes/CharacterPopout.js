@@ -13,9 +13,9 @@ Hooks.on("renderHeadsUpDisplay", (app, html, data) => {
 });
 
 Hooks.on("ready", async () => {
-    let { processClanNames, processLocations } = ProcessWikiData;
-    await processClanNames();
-    await processLocations();
+    // let { processClanNames, processLocations } = ProcessWikiData;
+    // await processClanNames();
+    // await processLocations();
     if (!game.characterPopout) {
         game.characterPopout = new CharacterPopout().render(true);
     }

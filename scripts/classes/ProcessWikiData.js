@@ -8,18 +8,18 @@ let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-lo
 let characterDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-characters";
 export let clanTags;
 export let locationTags;
-fetch("/Idyllwild/Test JSON Data/tags.json")
-    .then((response) => {
-        return response.json();
-    })
-    .then((data) => {
-        clanTags = data.filter((tags) => {
-            return tags.tag.includes("clans/");
-        });
-        locationTags = data.filter((tags) => {
-            return tags.tag.includes("category/location");
-        });
-    });
+// fetch("/Idyllwild/Test JSON Data/tags.json")
+//     .then((response) => {
+//         return response.json();
+//     })
+//     .then((data) => {
+//         clanTags = data.filter((tags) => {
+//             return tags.tag.includes("clans/");
+//         });
+//         locationTags = data.filter((tags) => {
+//             return tags.tag.includes("category/location");
+//         });
+//     });
 export const tabsData = {
     global: {
         tabs: {
@@ -372,7 +372,27 @@ export function sortCharacters(characterDataArray) {
     });
     return characterItems;
 }
+
 export async function getAllCharacters(data, html) {
+    const dummyElement = document.createElement("div");
+    dummyElement.insertAdjacentHTML("beforeend", data);
+    let { convertedElement } = convertAnchorsAndImages(dummyElement, ".gallery-section");
+    let clanContainer = html.querySelector(".tab-section#all-characters .main");
+    clanContainer.append(convertedElement);
+    // let filterSection = dummyElement.querySelector(".filter-section");
+    // let search = dummyElement.querySelector("#search");
+    // console.log(filterSection, search);
+    // clanContainer.prepend(filterSection);
+    // clanContainer.prepend(search);
+    // let { cards } = convertAnchorsAndImages(dummyElement, ".card-container");
+
+    // let characterData = cards.map((data) => data);
+
+    // characterData.forEach((card) => {
+    //     clanContainer.append(card);
+    // });
+}
+export async function _getAllCharacters(data, html) {
     const dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
     let { anchorTags, cards } = convertAnchorsAndImages(dummyElement, ".card-container");
