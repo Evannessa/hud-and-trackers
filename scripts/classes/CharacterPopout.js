@@ -271,7 +271,6 @@ export class CharacterPopout extends Application {
      * @param {String} actionType - the type of action
      */
     async selectCharacterOrLocation(url, entityName, actionType, app) {
-        console.log(url, entityName);
         //if the card is an "add to scene" card, choose it as the selected character or scene
         //we'll want to get the url of the selected character
 
@@ -382,7 +381,8 @@ export class CharacterPopout extends Application {
                 //popout image and return?
                 return;
             }
-            if (currentTarget.closest("#characterDisplay")) {
+            if (currentTarget[0].parentNode.getAttribute("id") === "characterDisplay") {
+                console.log("Character display is parent; returning");
                 return;
             }
             //we only want the image clicks to work on the other tabs, not these two

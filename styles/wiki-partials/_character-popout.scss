@@ -43,6 +43,25 @@
     background: hsla(249, 39%, 23%, 0.541);
     --accent-color: $color-rich-accent-3;
     --bg-color-translucent: hsla(260, 91%, 17%, 0.471);
+    #selected-character,
+    #current-location {
+        img {
+            object-fit: contain;
+            outline: 2px double $color-rich-accent-4;
+            outline-offset: -1rem;
+            transition: all 200ms ease-in;
+            @media (min-width: 1000px) {
+                max-width: 100%;
+                max-height: 100%;
+                // transform: scale(1.12) translate(-2rem);
+                &:hover {
+                    filter: sepia(30%);
+                    outline-offset: 0rem;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
 
     li {
         font-weight: 800;
@@ -524,13 +543,14 @@
                     border-radius: 5px;
                     margin-right: auto;
                     margin-left: auto;
-                    transform: scale(1);
-                    transition: transform 150ms ease-in-out;
+                    // transform: scale(1);
+                    // transition: transform 150ms ease-in-out;
                     &:hover,
                     &:focus,
                     &:focus-within {
+                        filter: sepia(30%);
+                        outline-offset: 0rem;
                         cursor: pointer;
-                        transform: scale(1.15);
                     }
                     + img {
                         float: left;
@@ -606,13 +626,15 @@
                     border-radius: 5px;
                     margin-right: auto;
                     margin-left: auto;
-                    transform: scale(1);
-                    transition: transform 150ms ease-in-out;
+                    // transform: scale(1);
+                    // transition: transform 150ms ease-in-out;
                     &:hover,
                     &:focus,
                     &:focus-within {
                         cursor: pointer;
-                        transform: scale(1.15);
+                        filter: sepia(30%);
+                        outline-offset: 0rem;
+                        cursor: pointer;
                     }
                 }
                 a {

@@ -42,7 +42,9 @@ export const tabsData = {
                 id: "all-characters",
                 label: "All Characters",
                 isFetched: false,
-                callback: async (event, html) => await fetchAllCharacters(html),
+                callback: async (event, html) => {
+                    await fetchAllCharacters(html);
+                },
             },
             "current-location": {
                 id: "current-location",

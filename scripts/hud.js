@@ -1,4 +1,5 @@
 "use strict";
+import { HudActions } from "./hud-actions.js";
 
 import * as ClockApp from "./clock.js";
 import registerSettings from "./settings.js";
@@ -6,6 +7,22 @@ import { ClockViewer } from "./ClockViewer.js";
 import { ClockConfig } from "./ClockConfig.js";
 import * as PartyOverview from "./party-overview.js";
 import * as HelperFunctions from "./helper-functions.js";
+
+const hudUtils = {
+    ambientRoll: {
+        name: "Ambient Roll",
+        onClick: () => {
+            //TODO: Render ambient roll thing
+            console.log("rendering ambient roll");
+        },
+    },
+    partyOverview: {
+        name: "Party Overview",
+        onClick: () => {
+            //TODO: render party overview thing
+        },
+    },
+};
 
 Hooks.on("renderHotbar", async (hotbar, html, data) => {
     let defaultHotbar = html;
@@ -359,7 +376,7 @@ export class Hud extends Application {
         this.isGM = game.user.isGM;
         this.ourToken = object;
         this.ourActor = this.ourToken.actor; //this.getActor(this.ourToken);
-        this.tabTypes = ["attacks", "cyphers", "artifacts"];
+        this.tabTypes = ["attacks", "cyphers", "artifacts", "utilities"];
         if (this.ourActor.type === "PC") {
             let pcExclusiveTypes = ["abilities", "skills"];
             this.tabTypes = [...this.tabTypes, ...pcExclusiveTypes];
@@ -369,6 +386,7 @@ export class Hud extends Application {
         this.skills = this.getStuffFromSheet(this.ourActor, "skill");
         this.cyphers = this.getStuffFromSheet(this.ourActor, "cypher");
         this.artifacts = this.getStuffFromSheet(this.ourActor, "artifact");
+        this.utilities = Object.values(hudUtils);
         if (!this.ourActor.getFlag("hud-and-trackers", "showTab")) {
             this.showTab = "abilities";
         } else {
@@ -445,6 +463,7 @@ export class Hud extends Application {
             abilities: this.abilities,
             cyphers: this.cyphers,
             artifacts: this.artifacts,
+            utilities: this.utilities,
         };
         let currentItemArray = allItems[this.showTab];
         let currentPinnedItemsArray = this.pinnedItems[this.showTab];
@@ -667,6 +686,24 @@ export class Hud extends Application {
         }
     }
 
+    async handleActions(event, actionType = "clickAction") {
+        const currentTarget = event.currentTarget;
+        const propertyString = currentTarget.dataset.propertyString;
+        let propertyName = "onClick";
+        switch (actionType) {
+            case "hoverAction":
+                propertyName = "onHover";
+            case "changeAction":
+                propertyName = "onChange";
+            default:
+                propertyName = "onClick";
+        }
+        const sectionData = HudActions[propertyString];
+        if (sectionData.hasOwnProperty(propertyName)) {
+            await sectionData[propertyName](event, appElement);
+        }
+    }
+
     rollAllInOne(foundItem, actor) {
         itemRollMacro(actor, foundItem.id, "", "", "", "", "", "", "", "", "", "", "", "", false);
     }
@@ -681,6 +718,7 @@ export class Hud extends Application {
         });
         return items.sort().map((item) => this.organizeData(item));
     }
+
     organizeData(item) {
         let name = item.data.name;
         let id = item.data._id;
