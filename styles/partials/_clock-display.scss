@@ -67,9 +67,12 @@
         background-color: $glass-faint;
         border-top: 1px solid $glass-rim;
         border-right: 1px solid $glass-rim;
-        min-height: 10em;
+        // min-height: 2;
+        min-height: 35vh;
+        max-height: 40vh;
         position: relative;
         width: fit-content;
+
         transition: width 0.2s ease;
 
         @supports ((-webkit-backdrop-filter: blur()) or (backdrop-filter: blur())) {
@@ -94,13 +97,16 @@
         .clockCategory__wrapper {
             display: flex;
             // grid-template-columns: auto auto auto;
+            min-height: 20vh;
+            max-height: 40vh;
             max-height: 40vh;
 
             .clockCategory {
                 // padding: 0.5rem 0.5rem 0.5rem 0.5rem;
-                min-height: 380px;
+                min-height: 20vh;
+                max-height: 40vh;
                 width: fit-content;
-                max-height: inherit;
+                // max-height: inherit;
 
                 display: flex;
                 border-radius: 0;
