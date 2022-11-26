@@ -46,7 +46,8 @@
         "./scripts/helper-hud.js",
         "./scripts/classes/CharacterPopout.js",
         "./scripts/classes/ProcessWikiData.js",
-        ".scripts/hooks.js"
+        "./scripts/hooks.js",
+        "./scripts/debug-mode.js"
     ],
     "styles": ["styles/style.css"],
     "dependencies": [],
