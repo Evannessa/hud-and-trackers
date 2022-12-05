@@ -19,6 +19,27 @@ export class HelperFunctions {
         // Display the image popout
         ip.render(true);
     }
+
+    static async createIFrameJournal(iframe) {
+        let name = "Map Display Journal";
+        let wikiDisplayJournal = game.journal.getName(name);
+        let createData = {
+            name: name,
+        };
+        if (!wikiDisplayJournal) {
+            wikiDisplayJournal = await JournalEntry.create(createData, {});
+        }
+
+        let updateData = {
+            _id: wikiDisplayJournal.id,
+            content: iframe,
+        };
+        await wikiDisplayJournal.update(updateData);
+        if (!wikiDisplayJournal.sheet.rendered) {
+            wikiDisplayJournal.sheet.render(true);
+        }
+    }
+
     static image;
     /**
      * }

@@ -90,12 +90,13 @@ export const popoutActions = {
         },
         displayMapFrame: {
             onClick: async (event, options = {}) => {
-                const { url, card: clickedCard } = extractUrlFromCard(event);
-                const { html } = options;
-                const allLocationsContainer = html[0].querySelector(".tab-section#current-location .main");
+                const { url } = extractUrlFromCard(event);
+                // const { html } = options;
+                // const allLocationsContainer = html[0].querySelector(".tab-section#current-location .main");
                 const baseURL = "https://fastidious-smakager-702620.netlify.app/";
-                const iframe = HF.stringToElement(`<iframe src='${baseURL}${url}'></iframe>`);
-                allLocationsContainer.appendChild(iframe);
+                const iframe = `<iframe class="map-display-frame" src='${baseURL}${url}'></iframe>`;
+                // allLocationsContainer.appendChild(iframe);
+                HF.createIFrameJournal(iframe);
             },
         },
     },
