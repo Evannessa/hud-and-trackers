@@ -89,8 +89,9 @@ export const popoutActions = {
             },
         },
         displayMapFrame: {
-            onClick: async (event, options = {}) => {
-                const { url } = extractUrlFromCard(event);
+            onClick: async (event, mapUrl = "") => {
+                let url = mapUrl;
+                if (!url) url = extractUrlFromCard(event).url;
                 // const { html } = options;
                 // const allLocationsContainer = html[0].querySelector(".tab-section#current-location .main");
                 const baseURL = "https://fastidious-smakager-702620.netlify.app/";

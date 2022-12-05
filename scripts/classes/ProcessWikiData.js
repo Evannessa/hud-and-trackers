@@ -3,10 +3,10 @@ import Search from "./Search.js";
 import { LocationsManager } from "../classes/LocationsManager.js";
 import { ClockConfig } from "../ClockConfig.js";
 import { HelperFunctions } from "../helper-functions.js";
-import { extractUrlFromCard } from "./PopoutActions.js";
+import { extractUrlFromCard, popoutActions } from "./PopoutActions.js";
 // let baseURL = "https://classy-bavarois-433634.netlify.app/";
 // let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-locations";
-let locationsDatabaseURL = "https://fastidious-smakager-702620.netlify.app/starshead-map";
+let locationsDatabaseURL = "https://fastidious-smakager-702620.netlify.app/search-locations";
 // let baseURLNoTrail = "https://classy-bavarois-433634.netlify.app";
 let baseURL = "https://fastidious-smakager-702620.netlify.app/";
 let baseURLNoTrail = "https://fastidious-smakager-702620.netlify.app";
@@ -124,13 +124,13 @@ export async function processLocations() {
 
 export async function fetchAllLocations($html) {
     const html = $html[0];
-    fetch(`${locationMapDataBaseURL}${locationBaseNames[0]}`)
-        // fetch(locationsDatabaseURL)
-        // .then((response) => response.text())
-        .then((response) => response.json())
+    // fetch(`${locationMapDataBaseURL}${locationBaseNames[0]}`)
+    fetch(locationsDatabaseURL)
+        .then((response) => response.text())
+        // .then((response) => response.json())
         .then(async (data) => await getAllLocations(data, html));
 }
-export async function getAllLocations(data, html) {
+export async function _getAllLocations(data, html) {
     // const dummyElement = document.createElement("div");
     // dummyElement.insertAdjacentHTML("beforeend", data);
     let locations = data.sheets[0].lines.filter((line) => line.type === "global");
@@ -175,7 +175,7 @@ export async function getAllLocations(data, html) {
     });
 }
 
-export async function _getAllLocations(data, html) {
+export async function getAllLocations(data, html) {
     const dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
 
@@ -183,14 +183,14 @@ export async function _getAllLocations(data, html) {
         dummyElement.querySelector("main #individual-locations").querySelectorAll("a")
     );
 
-    const locationListLinks = Array.from(dummyElement.querySelector("main #location-lists").querySelectorAll("a"));
+    // const locationListLinks = Array.from(dummyElement.querySelector("main #location-lists").querySelectorAll("a"));
 
     const allLocationsContainer = html.querySelector(".tab-section#all-locations .main");
 
-    const locationListsContainer = HelperFunctions.stringToElement(
-        `<section class="flex-row flex-wrap scroll-y" id='location-lists'>
-        </section>`
-    );
+    // const locationListsContainer = HelperFunctions.stringToElement(
+    //     `<section class="flex-row flex-wrap scroll-y" id='location-lists'>
+    //     </section>`
+    // );
     const singleLocationsContainer = HelperFunctions.stringToElement(
         `<section class="flex-row flex-wrap scroll-y" id='individual-locations'>
         </section>`
@@ -220,9 +220,9 @@ export async function _getAllLocations(data, html) {
         return container;
     }
 
-    locationListLinks.forEach((data) => {
-        allLocationsContainer.append(createCard(data, locationListsContainer, "location-list"));
-    });
+    // locationListLinks.forEach((data) => {
+    //     allLocationsContainer.append(createCard(data, locationListsContainer, "location-list"));
+    // });
 
     singleLocationLinks.forEach((data) => {
         allLocationsContainer.append(createCard(data, singleLocationsContainer, "individual-location"));
@@ -646,6 +646,14 @@ function checkForMetadata(tabDataKey, dummyElement) {
                     // rollTable.draw();
                 });
                 propsVibesUtilities.push($(button)[0]);
+            }
+            console.log(locationData);
+            if (locationData?.mapUrl) {
+                const mapButton = createRollButton(locationData.mapUrl);
+                $(mapButton).on("click", (event) => {
+                    popoutActions.card.displayMapFrame.onClick(event, locationData.mapUrl);
+                });
+                propsVibesUtilities.push($(mapButton)[0]);
             }
             break;
         case "character":
