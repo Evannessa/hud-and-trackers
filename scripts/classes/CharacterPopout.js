@@ -49,6 +49,7 @@ export class CharacterPopout extends Application {
     async linkLocationToScene(event) {
         let clickedCard = event.currentTarget;
         let url = clickedCard.querySelector(".internal-link").getAttribute("href");
+        console.log(event, url);
         url = url.split("/").pop();
         await LocationsManager.linkLocationToScene({ cardHTML: clickedCard.outerHTML, url });
     }
@@ -209,6 +210,7 @@ export class CharacterPopout extends Application {
                 await popoutActions.card["addCharacterToScene"].onClick(event);
                 // await this._handleAction(event, "addToScene", this);
             } else if (el.closest("#all-locations")) {
+                console.log("All locations?", el);
                 if ($(el).hasClass("location-list")) {
                     await popoutActions.card["linkSubLocations"].onClick(event, { html });
                 } else if ($(el).hasClass("individual-location")) {

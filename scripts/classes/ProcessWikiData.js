@@ -5,12 +5,15 @@ import { ClockConfig } from "../ClockConfig.js";
 import { HelperFunctions } from "../helper-functions.js";
 import { extractUrlFromCard } from "./PopoutActions.js";
 // let baseURL = "https://classy-bavarois-433634.netlify.app/";
-let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-locations";
+// let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-locations";
+let locationsDatabaseURL = "https://fastidious-smakager-702620.netlify.app/starshead-map";
 // let baseURLNoTrail = "https://classy-bavarois-433634.netlify.app";
 let baseURL = "https://fastidious-smakager-702620.netlify.app/";
 let baseURLNoTrail = "https://fastidious-smakager-702620.netlify.app";
 // let characterDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-characters";
 let characterDatabaseURL = "https://fastidious-smakager-702620.netlify.app/search-characters";
+let locationMapDataBaseURL = "https://fastidious-smakager-702620.netlify.app/assets/data/";
+let locationBaseNames = ["StarsheadIsland.dpo"];
 export let clanTags;
 export let locationTags;
 
@@ -121,12 +124,61 @@ export async function processLocations() {
 
 export async function fetchAllLocations($html) {
     const html = $html[0];
-    fetch(locationsDatabaseURL)
-        .then((response) => response.text())
+    fetch(`${locationMapDataBaseURL}${locationBaseNames[0]}`)
+        // fetch(locationsDatabaseURL)
+        // .then((response) => response.text())
+        .then((response) => response.json())
         .then(async (data) => await getAllLocations(data, html));
 }
-
 export async function getAllLocations(data, html) {
+    // const dummyElement = document.createElement("div");
+    // dummyElement.insertAdjacentHTML("beforeend", data);
+    let locations = data.sheets[0].lines.filter((line) => line.type === "global");
+    let locationCards = locations
+        .map((location) => {
+            const imgPath = encodeURIComponent(location.imageData.mainImage.split("\\").pop()).replace(/'/g, "%27");
+            function returnTags(tags) {
+                if (tags) {
+                    return `<p>${tags}</p>`;
+                } else {
+                    return "";
+                }
+            }
+            return `
+        <div class="card individual-location" data-card-type="location">
+            <img class="card-img" src='${baseURL}assets/locations/${imgPath}'/>
+            <p><a class="internal-link" href="/starshead-map">${location.id}</a></p>
+            ${returnTags(location.tags)}
+        </div>
+        `;
+        })
+        .map((string) => HelperFunctions.stringToElement(string));
+    const fragment = document.createDocumentFragment();
+    locationCards.forEach((card) => fragment.appendChild(card));
+    const allLocationsContainer = html.querySelector(".tab-section#all-locations .main");
+    // allLocationsContainer.append(convertedElement);
+    // img.textContent = JSON.stringify(data.sheets[0].lines);
+    allLocationsContainer.appendChild(fragment);
+    return;
+    // let { convertedElement } = convertAnchorsAndImages(dummyElement, ".wrapper");
+    let convertedElement = HelperFunctions.stringToElement(`<iframe src='${locationsDatabaseURL}'></iframe>`);
+    // console.log(Array.from(convertedElement.contentWindow.document.body.querySelectorAll("button")));
+
+    convertedElement.addEventListener("load", () => {
+        let iFrameBody;
+        if (convertedElement.contentDocument) {
+            // FF
+            iFrameBody = convertedElement.contentDocument.getElementsByTagName("body")[0];
+        } else if (convertedElement.contentWindow) {
+            // IE
+            iFrameBody = convertedElement.contentWindow.document.getElementsByTagName("body")[0];
+        }
+
+        console.log(iFrameBody, iFrameBody.querySelectorAll("button"));
+    });
+}
+
+export async function _getAllLocations(data, html) {
     const dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
 
