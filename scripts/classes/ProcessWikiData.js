@@ -156,12 +156,9 @@ export async function getAllLocations(data, html) {
     const fragment = document.createDocumentFragment();
     locationCards.forEach((card) => fragment.appendChild(card));
     const allLocationsContainer = html.querySelector(".tab-section#all-locations .main");
-    // allLocationsContainer.append(convertedElement);
-    // img.textContent = JSON.stringify(data.sheets[0].lines);
     allLocationsContainer.appendChild(fragment);
     return;
     // let { convertedElement } = convertAnchorsAndImages(dummyElement, ".wrapper");
-    let convertedElement = HelperFunctions.stringToElement(`<iframe src='${locationsDatabaseURL}'></iframe>`);
     // console.log(Array.from(convertedElement.contentWindow.document.body.querySelectorAll("button")));
 
     convertedElement.addEventListener("load", () => {
@@ -488,7 +485,6 @@ export async function getSelectedEntityData(
 ) {
     let dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
-    console.log(dummyElement);
 
     const title = convertAnchorsAndImages(dummyElement, titleSelector).convertedElement;
 

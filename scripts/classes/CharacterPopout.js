@@ -345,6 +345,9 @@ export class CharacterPopout extends Application {
             let url = link.getAttribute("href").split("/").pop();
             let entityName = link.innerText;
 
+            if (actionType === "selectLocation") {
+                popoutActions["card"].displayMapFrame.onClick(event, { html: app.element });
+            }
             await this.selectCharacterOrLocation(url, entityName, actionType, app);
 
             // let propertyName = actionType === "selectCharacter" ? "currentCharacterUrl" : "currentLocationUrl";

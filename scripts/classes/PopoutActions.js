@@ -88,5 +88,15 @@ export const popoutActions = {
                 //1.
             },
         },
+        displayMapFrame: {
+            onClick: async (event, options = {}) => {
+                const { url, card: clickedCard } = extractUrlFromCard(event);
+                const { html } = options;
+                const allLocationsContainer = html[0].querySelector(".tab-section#current-location .main");
+                const baseURL = "https://fastidious-smakager-702620.netlify.app/";
+                const iframe = HF.stringToElement(`<iframe src='${baseURL}${url}'></iframe>`);
+                allLocationsContainer.appendChild(iframe);
+            },
+        },
     },
 };
