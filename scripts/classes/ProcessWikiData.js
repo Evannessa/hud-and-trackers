@@ -655,6 +655,13 @@ function checkForMetadata(tabDataKey, dummyElement) {
                 });
                 propsVibesUtilities.push($(mapButton)[0]);
             }
+            if (locationData?.mapData) {
+                const mapButton = createRollButton(locationData.mapData);
+                $(mapButton).on("click", (event) => {
+                    popoutActions.utilityButton.showSublocations.onClick(event, locationData.mapData);
+                });
+                propsVibesUtilities.push($(mapButton)[0]);
+            }
             break;
         case "character":
             let mechanicsSection = [];

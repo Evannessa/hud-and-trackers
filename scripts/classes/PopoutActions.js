@@ -93,11 +93,48 @@ export const popoutActions = {
                 let url = mapUrl;
                 if (!url) url = extractUrlFromCard(event).url;
                 // const { html } = options;
-                // const allLocationsContainer = html[0].querySelector(".tab-section#current-location .main");
+                let html = game.characterPopout.element;
+                const allLocationsContainer = html[0].querySelector(
+                    ".tab-section#current-location #props-and-vibes-location"
+                );
                 const baseURL = "https://fastidious-smakager-702620.netlify.app/";
-                const iframe = `<iframe class="map-display-frame" src='${baseURL}${url}'></iframe>`;
-                // allLocationsContainer.appendChild(iframe);
-                HF.createIFrameJournal(iframe);
+                const iframe = `<iframe class="map-display-frame" allow="clipboard-read; clipboard-write" src='${baseURL}${url}'></iframe>`;
+                let newIframe = HF.stringToElement(iframe);
+                allLocationsContainer.appendChild(newIframe);
+                // HF.createIFrameJournal(iframe);
+            },
+        },
+    },
+    utilityButtons: {
+        showSublocations: {
+            onClick: async (event, data) => {
+                let locations = data.sheets[0].lines.filter((line) => line.type === "global");
+                let locationCards = locations
+                    .map((location) => {
+                        const imgPath = encodeURIComponent(location.imageData.mainImage.split("\\").pop()).replace(
+                            /'/g,
+                            "%27"
+                        );
+                        function returnTags(tags) {
+                            if (tags) {
+                                return `<p>${tags}</p>`;
+                            } else {
+                                return "";
+                            }
+                        }
+                        return `
+        <div class="card individual-location" data-card-type="location">
+            <img class="card-img" src='${baseURL}assets/locations/${imgPath}'/>
+            <p><a class="internal-link" href="/starshead-map">${location.id}</a></p>
+            ${returnTags(location.tags)}
+        </div>
+        `;
+                    })
+                    .map((string) => HelperFunctions.stringToElement(string));
+                const fragment = document.createDocumentFragment();
+                locationCards.forEach((card) => fragment.appendChild(card));
+                const allLocationsContainer = html.querySelector(".tab-section#all-locations .main");
+                allLocationsContainer.appendChild(fragment);
             },
         },
     },
