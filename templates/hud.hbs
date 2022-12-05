@@ -5,7 +5,6 @@
 		{{#each tabTypes}}
 			<section class="ability-wrapper hover-reveal-up">
 				{{#if (eq @root.showTab this)}}
-						{{log @root.showTab "vs" this}}
 					<div class="hud-item-wrapper hover-reveal-up-child | shadow-base" data-layout="column" data-overflow="scroll" data-type="{{this}}">
 						<div class="pinnedDiv">
 						{{#each @root.pinnedItems}}
@@ -18,7 +17,7 @@
 					</div>
 
 				{{/if}}
-				{{> "modules/hud-and-trackers/templates/hud-partials/button-partial.hbs"}} 
+				{{> "modules/hud-and-trackers/templates/hud-partials/button-partial.hbs"}}
 			</section>
 		{{/each}}
 </div>

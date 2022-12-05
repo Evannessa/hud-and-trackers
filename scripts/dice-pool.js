@@ -68,7 +68,7 @@ Hooks.on("closeApplication", (app, html) => {
 /**
  * Define your class that extends FormApplication
  */
-class PromptAmbientRoll extends FormApplication {
+export class PromptAmbientRoll extends FormApplication {
     constructor() {
         setUserRollMode("blindroll");
         super();

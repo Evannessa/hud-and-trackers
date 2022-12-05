@@ -1,275 +1,280 @@
 @import "../variables";
 
 .flavor-text {
-	font-size: 14px !important;
+    font-size: 14px !important;
 
-	hr,
-	.hr-chat {
-		opacity: 50%;
-		margin-top: 5px;
-		margin-bottom: 5px;
-	}
+    hr,
+    .hr-chat {
+        opacity: 50%;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
 
-	.ambient-div {
-		background-color: $jet;
-		border-radius: 10px;
-		padding: 0.45rem;
+    .ambient-div {
+        background-color: $jet;
+        border-radius: 10px;
+        padding: 0.45rem;
 
-		.ambientResult {
-			font-weight: bold;
-			color: black;
-			background-color: gray;
-			border: 1px solid black;
-			border-radius: 5px;
-			padding: 0 5px;
-		}
+        .ambientResult {
+            font-weight: bold;
+            color: black;
+            background-color: gray;
+            border: 1px solid black;
+            border-radius: 5px;
+            padding: 0 5px;
+        }
 
-		span {
-			&.boonSpan {
-				color: turquoise;
+        span {
+            &.boonSpan {
+                color: turquoise;
 
-				.boonBane {
-					color: black;
-					background-color: turquoise;
-				}
-			}
+                .boonBane {
+                    color: black;
+                    background-color: turquoise;
+                }
+            }
 
-			&.baneSpan {
-				color: $low;
+            &.baneSpan {
+                color: $low;
 
-				.boonBane {
-					color: black;
-					background-color: $low;
-				}
+                .boonBane {
+                    color: black;
+                    background-color: $low;
+                }
+            }
 
-			}
-
-			&.boonBane {
-				font-weight: bold;
-				border: 1px solid black;
-				border-radius: 5px;
-				padding: 0 5px;
-			}
-		}
-	}
-
-
+            &.boonBane {
+                font-weight: bold;
+                border: 1px solid black;
+                border-radius: 5px;
+                padding: 0 5px;
+            }
+        }
+    }
 }
 
 //ambient dice pool
 #ambient-dice-pool {
+    form {
+        > div + div {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1.5rem 0;
+            // margin-top: 1.5rem;
+        }
+    }
 
-	form {
-		>div+div {
-			border-top: 1px solid rgba(255, 255, 255, 0.2);
-			padding: 1.5rem 0;
-			// margin-top: 1.5rem;
-		}
-	}
+    .footerButtonWrapper,
+    .diceDiv {
+        padding: 1rem 0.5rem;
 
-	.footerButtonWrapper,
-	.diceDiv {
-		padding: 1rem 0.5rem;
+        input[type="text"] {
+            width: 40%;
+            margin: 1rem 0.5rem;
+            padding: 1rem 0.5rem;
+            border-bottom: 2px solid $intellect;
 
-		input[type=text] {
-			width: 40%;
-			margin: 1rem 0.5rem;
-			padding: 1rem 0.5rem;
-			border-bottom: 2px solid $intellect;
+            &:hover,
+            &:focus {
+                background-color: $jet-5;
+            }
+        }
+    }
 
-			&:hover,
-			&:focus {
-				background-color: $jet-5;
-			}
-		}
-	}
+    .boonDiv,
+    .baneDiv {
+        padding: 1rem 0.5rem;
+    }
 
-	.boonDiv,
-	.baneDiv {
-		padding: 1rem 0.5rem;
-	}
+    .footerButtonWrapper {
+        display: flex;
+        justify-content: flex-end;
 
-	.footerButtonWrapper {
-		display: flex;
-		justify-content: flex-end;
+        button {
+            width: fit-content;
+            width: -moz-max-content;
 
-		button {
-			width: fit-content;
-			width: -moz-max-content;
+            &.rollBnBButtons {
+                background-color: transparent;
+                color: scale-color($intellect, $saturation: 30%);
+                font-size: 1rem;
+                text-transform: uppercase;
+            }
+        }
+    }
 
-			&.rollBnBButtons {
-				background-color: transparent;
-				color: scale-color($intellect, $saturation: 30%);
-				font-size: 1rem;
-				text-transform: uppercase;
-			}
-		}
+    .boonButtons {
+        --numColor: turquoise;
+    }
 
+    .baneButtons {
+        --numColor: #fe4a49;
+    }
 
-	}
+    .boonButtons,
+    .baneButtons {
+        display: flex;
+        flex-direction: row;
+        padding: 1rem 0.5rem;
 
-	.boonButtons {
-		--numColor: turquoise;
-	}
+        .wrapper {
+            position: relative;
+            width: fit-content;
+            height: fit-content;
 
-	.baneButtons {
-		--numColor: #fe4a49;
-	}
+            button[data-number] {
+                position: relative;
+                width: max-content;
 
-	.boonButtons,
-	.baneButtons {
-		display: flex;
-		flex-direction: row;
-		padding: 1rem 0.5rem;
+                + button {
+                    margin-right: 0.5rem;
+                }
 
-		.wrapper {
-			position: relative;
-			width: fit-content;
-			height: fit-content;
+                .displayNumber {
+                    display: inline-block;
+                    position: absolute;
+                    background-color: var(--numColor);
 
-
-
-			button[data-number] {
-				position: relative;
-				width: max-content;
-
-				+button {
-					margin-right: 0.5rem;
-				}
-
-				.displayNumber {
-					display: inline-block;
-					position: absolute;
-					background-color: var(--numColor);
-
-					color: black;
-					text-align: center;
-					// padding: 0.25rem 0.1rem;
-					display: flex;
-					left: 0;
-					right: 0;
-					align-items: center;
-					justify-content: center;
-					max-height: 18px;
-					bottom: calc(100% - 2px);
-					border-radius: 4px 4px 0 0;
-					width: 100%;
-				}
-
-
-			}
-		}
-
-	}
-
+                    color: black;
+                    text-align: center;
+                    // padding: 0.25rem 0.1rem;
+                    display: flex;
+                    left: 0;
+                    right: 0;
+                    align-items: center;
+                    justify-content: center;
+                    max-height: 18px;
+                    bottom: calc(100% - 2px);
+                    border-radius: 4px 4px 0 0;
+                    width: 100%;
+                }
+            }
+        }
+    }
 }
 
 #ambient-prompt {
-	display: flex;
-	flex-direction: column;
-	width: max-content;
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    .window-content form > div {
+        display: grid;
+        grid-template-columns: 30% 70%;
+    }
 
-	* {
-		overflow: visible;
-	}
+    * {
+        overflow: visible;
+    }
 
-	[data-action] {
-		position: relative;
-		white-space: nowrap;
+    [data-action] {
+        position: relative;
+        white-space: nowrap;
 
+        .tooltip {
+            display: none;
+            position: absolute;
+            opacity: 0%;
+            font-size: unset;
+            text-transform: none;
+            white-space: normal;
+            min-width: 20ch;
+            color: white;
+            background-color: rgb(61, 62, 82);
+            border-radius: 5px;
+            left: 0;
+            top: calc(100% + 5px);
+            // margin-left: 28px;
+            /* moves the tooltip to the right */
+            // margin-top: 15px;
+            /* moves it down */
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
 
+        &:hover {
+            .tooltip {
+                display: block;
+                opacity: 100%;
+            }
+        }
+    }
 
-		.tooltip {
+    li + li {
+        margin-top: 1.25rem;
+    }
 
+    div,
+    ol {
+        padding: 0.5rem 0.2rem;
+    }
+    ol {
+        padding-inline: unset;
+    }
 
-			display: none;
-			position: absolute;
-			opacity: 0%;
-			font-size: unset;
-			text-transform: none;
-			white-space: normal;
-			min-width: 20ch;
-			color: white;
-			background-color: rgb(61, 62, 82);
-			border-radius: 5px;
-			left: 0;
-			top: calc(100% + 5px);
-			// margin-left: 28px;
-			/* moves the tooltip to the right */
-			// margin-top: 15px;
-			/* moves it down */
-			z-index: 1000;
-			transition: opacity 0.5s;
-		}
+    hr {
+        opacity: 0.24;
+        margin-bottom: 2em;
+    }
 
-		&:hover {
-			.tooltip {
-				display: block;
-				opacity: 100%;
+    // @for $i from 0 through 4 {
+    // 	.btn-#{$i} {
+    // 		background-color: mix($low, $speed, $i*20);
+    // 	}
+    // }
+    .utilityAction {
+        grid-column: 1/2;
+        display: flex;
+        flex-direction: column;
+        border-radius: 8px;
+        background-color: rgb(61, 62, 82);
+        button {
+            font-size: x-small;
+            background-color: $jet-5;
+        }
+    }
 
-			}
-		}
-	}
+    ol {
+        grid-column: 2/3;
+    }
 
-	li+li {
-		margin-top: 0.25rem;
-	}
+    .primaryAction {
+        display: flex;
+        justify-content: flex-end;
 
-	div {
-		padding: 0.5rem 0.2rem;
-	}
+        .addBnB {
+            background-color: transparent;
+            text-transform: uppercase;
+            color: saturate($intellect, 30%);
+            // background-color: $intellect;
+            // color: black;
+            font-size: 1rem;
+            width: 50%;
+        }
+    }
+    .secondaryAction {
+        display: flex;
+        button {
+            background-color: $intellect;
+            color: black;
+        }
+    }
+    .secondaryAction,
+    .utilityAction {
+        gap: 0.5em;
+        button {
+            // border: 1px solid rgba(255, 255, 255, 0.441);
+            // width: 75%;
+            border-radius: 80px;
 
-	hr {
-		opacity: 0.24;
-	}
+            transition: 0.25s;
 
-	// @for $i from 0 through 4 {
-	// 	.btn-#{$i} {
-	// 		background-color: mix($low, $speed, $i*20);
-	// 	}
-	// }
+            &:hover,
+            &:focus {
+                box-shadow: inset -5.5em 0 0 0 $intellect, inset 5.5em 0 0 0 $intellect;
+            }
 
-	.primaryAction {
-		display: flex;
-		justify-content: flex-end;
-
-		.addBnB {
-			background-color: transparent;
-			text-transform: uppercase;
-			color: saturate($intellect, 30%);
-			// background-color: $intellect;
-			// color: black;
-			font-size: 1.0rem;
-			width: 50%;
-
-
-		}
-	}
-
-	.secondaryAction {
-		display: flex;
-
-
-		button {
-			// border: 1px solid rgba(255, 255, 255, 0.441);
-			width: 75%;
-			border-radius: 80px;
-			background-color: $jet-5;
-
-			transition: 0.25s;
-
-			&:hover,
-			&:focus {
-				box-shadow:
-					inset -5.5em 0 0 0 $intellect,
-					inset 5.5em 0 0 0 $intellect;
-			}
-
-			+button {
-				margin-right: 0.2rem;
-			}
-		}
-	}
-
-
+            + button {
+                margin-right: 0.2rem;
+            }
+        }
+    }
 }

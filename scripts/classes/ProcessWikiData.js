@@ -1,25 +1,19 @@
 import { InSceneEntityManager as CharacterManager, InSceneEntityManager } from "../classes/InSceneCharacterManager.js";
+import Search from "./Search.js";
 import { LocationsManager } from "../classes/LocationsManager.js";
 import { ClockConfig } from "../ClockConfig.js";
 import { HelperFunctions } from "../helper-functions.js";
 import { extractUrlFromCard } from "./PopoutActions.js";
-let baseURL = "https://classy-bavarois-433634.netlify.app/";
+// let baseURL = "https://classy-bavarois-433634.netlify.app/";
 let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-locations";
-let characterDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-characters";
+// let baseURLNoTrail = "https://classy-bavarois-433634.netlify.app";
+let baseURL = "https://fastidious-smakager-702620.netlify.app/";
+let baseURLNoTrail = "https://fastidious-smakager-702620.netlify.app";
+// let characterDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-characters";
+let characterDatabaseURL = "https://fastidious-smakager-702620.netlify.app/search-characters";
 export let clanTags;
 export let locationTags;
-// fetch("/Idyllwild/Test JSON Data/tags.json")
-//     .then((response) => {
-//         return response.json();
-//     })
-//     .then((data) => {
-//         clanTags = data.filter((tags) => {
-//             return tags.tag.includes("clans/");
-//         });
-//         locationTags = data.filter((tags) => {
-//             return tags.tag.includes("category/location");
-//         });
-//     });
+
 export const tabsData = {
     global: {
         tabs: {
@@ -330,7 +324,8 @@ export function convertAnchorsAndImages(convertedElement, selector = "") {
         let oldHref = a.getAttribute("href");
         if (oldHref.includes("https")) {
             // console.log("Internal link?", a);
-            let newHref = `https://classy-bavarois-433634.netlify.app${oldHref}`;
+            let newHref = `${baseURLNoTrail}${oldHref}`;
+            // let newHref = `https://classy-bavarois-433634.netlify.app${oldHref}`;
             a.setAttribute("href", newHref);
         }
     });
@@ -342,7 +337,7 @@ export function convertAnchorsAndImages(convertedElement, selector = "") {
         if (!src.includes("https")) {
             //only re-append internal images -- external ones should have https
             let oldSrc = img.getAttribute("src").trim();
-            let newSrc = `https://classy-bavarois-433634.netlify.app${oldSrc}`;
+            let newSrc = `${baseURLNoTrail}${oldSrc}`;
             img.setAttribute("src", newSrc);
         }
     });
@@ -381,18 +376,16 @@ export async function getAllCharacters(data, html) {
     let { convertedElement } = convertAnchorsAndImages(dummyElement, ".gallery-section");
     let clanContainer = html.querySelector(".tab-section#all-characters .main");
     clanContainer.append(convertedElement);
-    // let filterSection = dummyElement.querySelector(".filter-section");
-    // let search = dummyElement.querySelector("#search");
-    // console.log(filterSection, search);
-    // clanContainer.prepend(filterSection);
-    // clanContainer.prepend(search);
-    // let { cards } = convertAnchorsAndImages(dummyElement, ".card-container");
-
-    // let characterData = cards.map((data) => data);
-
-    // characterData.forEach((card) => {
-    //     clanContainer.append(card);
-    // });
+    const search = new Search();
+    let searchData = {
+        searchBox: convertedElement.querySelector("#search-box"),
+        filterSpans: Array.from(convertedElement.querySelectorAll(".filter-span")),
+        searchableElements: Array.from(convertedElement.querySelectorAll(".card")),
+        activeFilterList: convertedElement.querySelector(".active-filters"),
+    };
+    search.initializeSearchElements(searchData);
+    const { searchBox } = searchData;
+    searchBox.addEventListener("input", (event) => search.filterSearch());
 }
 export async function _getAllCharacters(data, html) {
     const dummyElement = document.createElement("div");

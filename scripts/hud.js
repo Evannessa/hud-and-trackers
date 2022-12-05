@@ -1,5 +1,6 @@
 "use strict";
 import { HudActions } from "./hud-actions.js";
+import { PromptAmbientRoll, AmbientDicePool } from "./dice-pool.js";
 
 import * as ClockApp from "./clock.js";
 import registerSettings from "./settings.js";
@@ -10,13 +11,16 @@ import * as HelperFunctions from "./helper-functions.js";
 
 const hudUtils = {
     ambientRoll: {
+        id: "ambientRoll",
         name: "Ambient Roll",
         onClick: () => {
+            new PromptAmbientRoll().render(true);
             //TODO: Render ambient roll thing
             console.log("rendering ambient roll");
         },
     },
     partyOverview: {
+        id: "partyOverview",
         name: "Party Overview",
         onClick: () => {
             //TODO: render party overview thing
@@ -627,11 +631,17 @@ export class Hud extends Application {
                 if (actor.data.type == "PC") {
                     hudItem.addEventListener("click", (event) => {
                         event.preventDefault();
-                        let item = actor.data.items.find((i) => i.id === event.currentTarget.id);
-                        if (event.altKey) {
-                            item.sheet.render(true);
+                        let el = event.currentTarget;
+                        let parent = event.currentTarget.parentNode;
+                        if (parent.dataset.type === "utilities") {
+                            hudUtils[el.id].onClick();
                         } else {
-                            this.rollAllInOne(item, actor);
+                            let item = actor.data.items.find((i) => i.id === event.currentTarget.id);
+                            if (event.altKey) {
+                                item.sheet.render(true);
+                            } else {
+                                this.rollAllInOne(item, actor);
+                            }
                         }
                     });
                 } else if (actor.data.type == "NPC") {
