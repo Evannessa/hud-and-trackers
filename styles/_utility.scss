@@ -390,6 +390,13 @@ button.img-button {
 .justify-self-right {
     margin-left: auto;
 }
+.grid-auto-rows {
+    display: grid;
+    grid-auto-rows: max-content;
+    grid-template-columns: repeat(4, minmax(0, 25%));
+    gap: 0.5rem;
+}
+
 .flex-row {
     display: flex;
     flex-direction: row;

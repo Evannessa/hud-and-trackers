@@ -15,15 +15,13 @@ const hudUtils = {
         name: "Ambient Roll",
         onClick: () => {
             new PromptAmbientRoll().render(true);
-            //TODO: Render ambient roll thing
-            console.log("rendering ambient roll");
         },
     },
     partyOverview: {
         id: "partyOverview",
         name: "Party Overview",
         onClick: () => {
-            //TODO: render party overview thing
+            new PartyOverview().render(true);
         },
     },
 };

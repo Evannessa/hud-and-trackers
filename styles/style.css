@@ -1127,9 +1127,6 @@ button.icon-button {
   background-color: #2b2452;
   border-radius: 8px;
   border: none;
-  padding: 0.25rem;
-  padding-left: 0.75rem;
-  margin-bottom: 1rem;
 }
 #CharacterPopout .is-hidden {
   transform: scale(0);
@@ -3422,7 +3419,6 @@ button.icon-button {
 #CharacterPopout li {
   font-weight: 800;
   padding-inline: 0.5em;
-  letter-spacing: 0.5ch;
   line-height: 1.5;
 }
 #CharacterPopout li li {
@@ -3458,10 +3454,9 @@ button.icon-button {
   display: flex;
   flex-direction: row;
 }
-#CharacterPopout #all-locations #individual-locations,
-#CharacterPopout #all-locations #location-lists {
-  max-width: 50%;
-  max-height: 100%;
+#CharacterPopout #all-locations #individual-locations {
+  width: 100%;
+  height: 100%;
   flex: 1;
 }
 #CharacterPopout #linked-locations .card,
@@ -3677,9 +3672,7 @@ button.icon-button {
   height: -moz-fit-content;
   height: fit-content;
   width: unset;
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
+  width: 100%;
   display: grid;
   grid-template-columns: 30% 1fr;
   grid-template-rows: 3rem;
@@ -3829,13 +3822,14 @@ button.icon-button {
   transition: transform 120ms ease-out;
 }
 #CharacterPopout .tab-section#current-location .tabs-container .wrapper, #CharacterPopout .tab-section#selected-character .tabs-container .wrapper {
-  gap: 0.15rem;
+  padding-block: 25%;
+  gap: 0.5rem;
   overflow-y: auto;
   font-size: small;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   -webkit-backdrop-filter: blur(8px);
           backdrop-filter: blur(8px);
 }
@@ -4128,6 +4122,7 @@ button.icon-button {
 #CharacterPopout h3 {
   --color-h3: hsl(234, 56%, 58%);
   margin-top: 1rem;
+  margin-bottom: 0.5rem;
   font-weight: 400;
   color: var(--color-h3);
   text-shadow: hsla(234deg, 56%, 58%, 0.647) 0px 0px 3px, hsla(234deg, 56%, 58%, 0.569) 0px 0px 5px;
@@ -4137,6 +4132,7 @@ button.icon-button {
   flex-direction: column;
   position: relative;
   overflow-y: hidden;
+  overflow-x: hidden;
   max-height: 100vh;
   height: 100%;
   width: 100%;
@@ -4146,6 +4142,8 @@ button.icon-button {
   overflow-y: auto;
   max-height: 100vh;
   border-radius: 8px;
+  padding-inline: 0.5rem;
+  padding-bottom: 1rem;
   display: grid;
   grid-auto-rows: -webkit-max-content;
   grid-auto-rows: max-content;
@@ -4223,7 +4221,11 @@ button.icon-button {
   border-color: transparent;
   background: linear-gradient(45deg, var(--color-primary-base), var(--color-accent-base));
 }
+#CharacterPopout .active-filters {
+  display: none;
+}
 #CharacterPopout .filter-section {
+  display: none;
   font-size: 1rem;
   display: flex;
   flex-wrap: wrap;
@@ -4321,7 +4323,7 @@ button.icon-button {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   border: none;
-  border-bottom: 2px solid var(--color-accent-base);
+  border-bottom: 2px solid var(--color-accent-base, cornflowerblue);
   transition: border-color 200ms ease-in;
 }
 #CharacterPopout .input-wrapper label.outer-label {
@@ -4330,8 +4332,8 @@ button.icon-button {
 #CharacterPopout .input-wrapper #search-box {
   width: 100%;
   height: 100%;
-  padding: var(--space-2);
-  padding-left: var(--space-3);
+  padding: var(--space-2, 0.5rem);
+  padding-left: var(--space-3, 0.75rem);
   background-color: transparent;
   border: none;
   color: var(--color-accent-base);
@@ -6123,7 +6125,7 @@ button.icon-button {
 #tokenHud {
   --color-attacks: hsl(12, 76%, 61%);
   --color-skills: hsl(204, 100%, 50%);
-  --color-abilities: hsla(33, 100%, 53%, 1);
+  --color-abilities: hsla(33, 100%, 53%, 0.8);
   --color-cyphers: hsl(178, 99%, 50%);
   --color-artifacts: hsl(260, 60%, 62%);
   display: flex;
@@ -7904,6 +7906,14 @@ button.img-button.framed:before {
 
 .justify-self-right {
   margin-left: auto;
+}
+
+.grid-auto-rows {
+  display: grid;
+  grid-auto-rows: -webkit-max-content;
+  grid-auto-rows: max-content;
+  grid-template-columns: repeat(4, minmax(0, 25%));
+  gap: 0.5rem;
 }
 
 .flex-row {

@@ -183,16 +183,10 @@ export async function getAllLocations(data, html) {
         dummyElement.querySelector("main #individual-locations").querySelectorAll("a")
     );
 
-    // const locationListLinks = Array.from(dummyElement.querySelector("main #location-lists").querySelectorAll("a"));
-
     const allLocationsContainer = html.querySelector(".tab-section#all-locations .main");
 
-    // const locationListsContainer = HelperFunctions.stringToElement(
-    //     `<section class="flex-row flex-wrap scroll-y" id='location-lists'>
-    //     </section>`
-    // );
     const singleLocationsContainer = HelperFunctions.stringToElement(
-        `<section class="flex-row flex-wrap scroll-y" id='individual-locations'>
+        `<section class="grid-auto-rows padding-medium scroll-y" id='individual-locations'>
         </section>`
     );
 
