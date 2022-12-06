@@ -26,8 +26,8 @@ $jet-5: hsla(240, 10%, 22%, 1);
 // $glass: rgba(135, 130, 163, 0.527);
 // $glass-rim: rgba(178, 174, 202, 0.685);
 
-$glass: #202028c4;
-$glass-faint: #20202829;
+$glass: hsla(240, 18%, 20%, 0.788);
+$glass-faint: hsla(240, 18%, 20%, 0.161);
 $glass-rim: rgba(91, 91, 112, 0.568);
 $black1: var(--palette-app-background, var(--tui-black1));
 $black1L: var(--palette-app-background-light, var(--tui-black1L));

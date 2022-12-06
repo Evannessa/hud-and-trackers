@@ -99,7 +99,8 @@
 
     button {
         color: var(--text-color);
-        background-color: var(--bg-color);
+        background-color: var(--color-glass-blur-dark);
+        backdrop-filter: blur(12px);
         border: none;
         font-family: "roboto";
         font-weight: 500;
@@ -109,12 +110,14 @@
         }
 
         &:hover:not(.image-button) {
-            background: var(--bg-color);
+            background-color: var(--color-glass-blur-dark);
+            // background: var(--bg-color);
             box-shadow: none;
         }
 
         &:focus:not(.image-button) {
-            background: var(--bg-color);
+            background-color: var(--color-glass-blur-dark);
+            // background: var(--bg-color);
         }
     }
 

@@ -1,6 +1,5 @@
 export const MODULE_ID = "hud-and-trackers";
 import { CharacterPopout } from "./classes/CharacterPopout.js";
-import { SlideshowConfig } from "./SlideshowConfig.js";
 
 Hooks.once("devModeReady", ({ registerPackageDebugFlag }) => {
     registerPackageDebugFlag(MODULE_ID);

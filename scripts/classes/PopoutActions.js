@@ -1,4 +1,5 @@
 import { HelperFunctions as HF } from "../helper-functions.js";
+import { IFrameDisplay } from "./IFrameDisplay.js";
 import { CharacterPopout } from "./CharacterPopout.js";
 import { InSceneEntityManager as EntityManager } from "./InSceneCharacterManager.js";
 import { fetchAllEntities, getUrlsFromURL } from "./ProcessWikiData.js";
@@ -37,7 +38,6 @@ export const popoutActions = {
         linkLocationToScene: {
             onClick: async (event, app) => {
                 const { url, card: clickedCard } = extractUrlFromCard(event);
-                console.log("Eeeeh?");
                 await EntityManager.addEntityToScene({ cardHTML: clickedCard.outerHTML, url }, "", "location");
             },
         },
@@ -98,9 +98,11 @@ export const popoutActions = {
                     ".tab-section#current-location #props-and-vibes-location"
                 );
                 const baseURL = "https://fastidious-smakager-702620.netlify.app/";
-                const iframe = `<iframe class="map-display-frame" allow="clipboard-read; clipboard-write" src='${baseURL}${url}'></iframe>`;
-                let newIframe = HF.stringToElement(iframe);
-                allLocationsContainer.appendChild(newIframe);
+                let iframeSrc = `${baseURL}${url}`;
+                let iframeDisplay = new IFrameDisplay({ src: iframeSrc }).render(true);
+                // let newIframe = HF.stringToElement(iframe);
+
+                // allLocationsContainer.appendChild(newIframe);
                 // HF.createIFrameJournal(iframe);
             },
         },
