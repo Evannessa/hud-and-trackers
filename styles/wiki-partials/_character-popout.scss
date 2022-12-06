@@ -116,12 +116,6 @@
             height: 100%;
             flex: 1;
         }
-        // #individual-locations,
-        // #location-lists {
-        //     max-width: 50%;
-        //     max-height: 100%;
-        //     flex: 1;
-        // }
     }
     #linked-locations,
     #all-locations {
@@ -130,9 +124,6 @@
             padding: 0.25rem 0.5rem;
             cursor: pointer;
             color: var(--accent-color);
-            &-img__wrapper {
-                display: none;
-            }
         }
     }
 

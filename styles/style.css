@@ -3466,10 +3466,6 @@ button.icon-button {
   cursor: pointer;
   color: var(--accent-color);
 }
-#CharacterPopout #linked-locations .card-img__wrapper,
-#CharacterPopout #all-locations .card-img__wrapper {
-  display: none;
-}
 #CharacterPopout.expanded {
   transform: translateY(-100%);
   transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1);

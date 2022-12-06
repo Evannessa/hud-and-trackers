@@ -130,13 +130,14 @@ export async function fetchAllLocations($html) {
         // .then((response) => response.json())
         .then(async (data) => await getAllLocations(data, html));
 }
-export async function _getAllLocations(data, html) {
-    // const dummyElement = document.createElement("div");
-    // dummyElement.insertAdjacentHTML("beforeend", data);
-    let locations = data.sheets[0].lines.filter((line) => line.type === "global");
+export async function convertLocationCards(locations, html) {
     let locationCards = locations
         .map((location) => {
-            const imgPath = encodeURIComponent(location.imageData.mainImage.split("\\").pop()).replace(/'/g, "%27");
+            let mainImage = location.querySelector("img").getAttribute("src");
+            let anchorText = location.id || location.querySelector("a").textContent;
+            console.log("Our anchor", location.querySelector("a"));
+            let anchorHref = location.querySelector("a").getAttribute("href") || "/starshead-map";
+            const imgPath = encodeURIComponent(mainImage.split("\\").pop()).replace(/'/g, "%27");
             function returnTags(tags) {
                 if (tags) {
                     return `<p>${tags}</p>`;
@@ -146,8 +147,8 @@ export async function _getAllLocations(data, html) {
             }
             return `
         <div class="card individual-location" data-card-type="location">
-            <img class="card-img" src='${baseURL}assets/locations/${imgPath}'/>
-            <p><a class="internal-link" href="/starshead-map">${location.id}</a></p>
+            <img class="card-img" src='${baseURL}${imgPath}'/>
+            <p><a class="internal-link" href="${anchorHref}">${anchorText}</a></p>
             ${returnTags(location.tags)}
         </div>
         `;
@@ -157,70 +158,22 @@ export async function _getAllLocations(data, html) {
     locationCards.forEach((card) => fragment.appendChild(card));
     const allLocationsContainer = html.querySelector(".tab-section#all-locations .main");
     allLocationsContainer.appendChild(fragment);
-    return;
-    // let { convertedElement } = convertAnchorsAndImages(dummyElement, ".wrapper");
-    // console.log(Array.from(convertedElement.contentWindow.document.body.querySelectorAll("button")));
-
-    convertedElement.addEventListener("load", () => {
-        let iFrameBody;
-        if (convertedElement.contentDocument) {
-            // FF
-            iFrameBody = convertedElement.contentDocument.getElementsByTagName("body")[0];
-        } else if (convertedElement.contentWindow) {
-            // IE
-            iFrameBody = convertedElement.contentWindow.document.getElementsByTagName("body")[0];
-        }
-
-        console.log(iFrameBody, iFrameBody.querySelectorAll("button"));
-    });
 }
 
 export async function getAllLocations(data, html) {
     const dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
 
-    const singleLocationLinks = Array.from(
-        dummyElement.querySelector("main #individual-locations").querySelectorAll("a")
+    let singleLocationLinks = Array.from(
+        dummyElement.querySelector("main #individual-locations").querySelectorAll(".card")
     );
 
-    const allLocationsContainer = html.querySelector(".tab-section#all-locations .main");
+    convertLocationCards(singleLocationLinks, html);
 
-    const singleLocationsContainer = HelperFunctions.stringToElement(
-        `<section class="grid-auto-rows padding-medium scroll-y" id='individual-locations'>
-        </section>`
-    );
-
-    function createCard(data, container, cardType) {
-        let card = HelperFunctions.stringToElement(
-            `<div class="card ${cardType}">
-                <div class="card-img__wrapper"></div>
-                <div class="card__content">
-
-                </div>
-            </div>`
-        );
-        // card.querySelector("card-img__wrapper")
-        card.querySelector(".card__content").insertAdjacentElement("afterbegin", data);
-        //    let card = document.createElement("div");
-        // card.classList.add("card");
-        // let imgWrapper = document.createElement("div");
-        // imgWrapper.classList.add("card-img__wrapper");
-        // let content = document.createElement("div");
-        // content.classList.add("card__content");
-        // card.append(imgWrapper);
-        // card.append(content);
-        // content.insertAdjacentElement("afterbegin", data);
-        container.append(card);
-        return container;
-    }
-
-    // locationListLinks.forEach((data) => {
-    //     allLocationsContainer.append(createCard(data, locationListsContainer, "location-list"));
+    // const allLocationsContainer = html.querySelector(".tab-section#all-locations .main");
+    // singleLocationLinks.forEach((data) => {
+    //     allLocationsContainer.append(data);
     // });
-
-    singleLocationLinks.forEach((data) => {
-        allLocationsContainer.append(createCard(data, singleLocationsContainer, "individual-location"));
-    });
 }
 
 /**
