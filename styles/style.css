@@ -3376,6 +3376,17 @@ button.icon-button {
   border: 0;
 }
 
+.iframe-display {
+  background: transparent;
+  -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
+}
+.iframe-display .window-content {
+  background: transparent;
+  display: grid;
+  place-content: center;
+}
+
 .map-display-frame {
   border: unset;
   width: 80vw;
@@ -3383,7 +3394,6 @@ button.icon-button {
 }
 
 #CharacterPopout {
-  /* #region  Global and Type Selectors */
   position: fixed;
   transform: translateY(0%);
   transition: transform 0.25s cubic-bezier(0.4, 0, 1, 1);
@@ -3450,6 +3460,16 @@ button.icon-button {
 #CharacterPopout .card a {
   pointer-events: none;
 }
+#CharacterPopout #maps-and-utilities-location button {
+  background: transparent;
+  border: 1px solid cornflowerblue;
+  color: cornflowerblue;
+  transition: color 150ms ease-in-out, border-color 150ms ease-in-out;
+}
+#CharacterPopout #maps-and-utilities-location button:hover {
+  color: hsl(337deg, 100%, 51%);
+  border-color: hsl(337deg, 100%, 51%);
+}
 #CharacterPopout #all-locations {
   display: flex;
   flex-direction: row;
@@ -3465,6 +3485,10 @@ button.icon-button {
   padding: 0.25rem 0.5rem;
   cursor: pointer;
   color: var(--accent-color);
+}
+#CharacterPopout #linked-locations #character-tabs,
+#CharacterPopout #all-locations #character-tabs {
+  display: none;
 }
 #CharacterPopout.expanded {
   transform: translateY(-100%);

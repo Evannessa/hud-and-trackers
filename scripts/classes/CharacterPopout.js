@@ -9,14 +9,9 @@ import { LocationsManager } from "./LocationsManager.js";
 import { CharacterSpotlightHUD as CSH } from "./CharacterSpotlightHUD.js";
 Hooks.on("renderHeadsUpDisplay", (app, html, data) => {
     html[0].style.zIndex = 70;
-    // html.append(`<div id="characterDisplay"></div>`);
-    // html.append(`<div id="characterSpotlight"></div>`);
 });
 
 Hooks.on("ready", async () => {
-    // let { processClanNames, processLocations } = ProcessWikiData;
-    // await processClanNames();
-    // await processLocations();
     if (!game.characterPopout) {
         game.characterPopout = new CharacterPopout().render(true);
     }
@@ -345,36 +340,7 @@ export class CharacterPopout extends Application {
             let url = link.getAttribute("href").split("/").pop();
             let entityName = link.innerText;
 
-            if (actionType === "selectLocation") {
-                popoutActions["card"].displayMapFrame.onClick(event, { html: app.element });
-            }
             await this.selectCharacterOrLocation(url, entityName, actionType, app);
-
-            // let propertyName = actionType === "selectCharacter" ? "currentCharacterUrl" : "currentLocationUrl";
-            // let dataSelector = actionType === "selectCharacter" ? "selected-character" : "current-location";
-
-            // //set the selected character on the app's object
-            // app[propertyName] = url;
-            // //set it in our settings
-            // // let urls = await HelperFunctions.getSettingValue("currentURLs");
-            // let urls = await HelperFunctions.getFlagValue(game.scenes.viewed, "currentURLs", "", {
-            //     currentCharacterUrl: "",
-            //     currentLocationUrl: "",
-            // });
-            // urls[propertyName] = url;
-            // await HelperFunctions.setFlagValue(game.scenes.viewed, "currentURLs", urls);
-            // // await HelperFunctions.setSettingValue("currentURLs", urls);
-
-            // //change the tab to reflect the name of the selected character or location
-            // const ourTab = app.element[0].querySelector(`[data-tab='${dataSelector}']`);
-            // console.log(entityName, decodeURI(entityName), decodeURIComponent(entityName));
-            // ourTab.textContent = decodeURIComponent(entityName);
-
-            // //show the tab
-            // ourTab.classList.remove("hidden");
-
-            // //reset the "isFetched" so new data can be fetched
-            // this.tabsData.global.tabs[dataSelector].isFetched = false;
         } else if (actionType === "tabClick") {
             let tabType = currentTarget.data().tabType;
             let tabId = event.currentTarget.dataset.tab;
@@ -415,7 +381,6 @@ export class CharacterPopout extends Application {
             if (!wikiDisplayJournal.sheet.rendered) {
                 wikiDisplayJournal.sheet.render(true);
             }
-            // await game.scenes.viewed.tiles.contents[0].update({object: {zIndex:500}})
         }
     }
 }

@@ -135,7 +135,6 @@ export async function convertLocationCards(locations, html) {
         .map((location) => {
             let mainImage = location.querySelector("img").getAttribute("src");
             let anchorText = location.id || location.querySelector("a").textContent;
-            console.log("Our anchor", location.querySelector("a"));
             let anchorHref = location.querySelector("a").getAttribute("href") || "/starshead-map";
             const imgPath = encodeURIComponent(mainImage.split("\\").pop()).replace(/'/g, "%27");
             function returnTags(tags) {
@@ -491,8 +490,7 @@ export async function getSelectedEntityData(
         sliceContent(start, end);
     });
     if (propsAndVibes.length > 0) {
-        console.log(propsAndVibes);
-        sections.push(["props-and-vibes", propsAndVibes]);
+        sections.push(["maps-and-utilities", propsAndVibes]);
     }
     // This should be an object with the key being the "id" of the heading, and the value being an array of each element between it and the next header
     let sectionsObject = Object.fromEntries(sections);
@@ -564,7 +562,9 @@ export async function getSelectedEntityData(
     buttons[0].click();
 }
 function createRollButton(tableName) {
-    return HelperFunctions.stringToElement(`<button data-roll-table='${tableName}'>${tableName}</button>`);
+    return HelperFunctions.stringToElement(
+        `<button data-roll-table='${tableName}'>${HelperFunctions.capitalizeEachWord(tableName, "-", " ")}</button>`
+    );
 }
 function createLevelInput(value) {
     return HelperFunctions.stringToElement(`<input type="number" min="1" max="10" value=${value}/>`);
@@ -594,7 +594,6 @@ function checkForMetadata(tabDataKey, dummyElement) {
                 });
                 propsVibesUtilities.push($(button)[0]);
             }
-            console.log(locationData);
             if (locationData?.mapUrl) {
                 const mapButton = createRollButton(locationData.mapUrl);
                 $(mapButton).on("click", (event) => {
@@ -602,13 +601,13 @@ function checkForMetadata(tabDataKey, dummyElement) {
                 });
                 propsVibesUtilities.push($(mapButton)[0]);
             }
-            if (locationData?.mapData) {
-                const mapButton = createRollButton(locationData.mapData);
-                $(mapButton).on("click", (event) => {
-                    popoutActions.utilityButton.showSublocations.onClick(event, locationData.mapData);
-                });
-                propsVibesUtilities.push($(mapButton)[0]);
-            }
+            // if (locationData?.mapData) {
+            //     const mapButton = createRollButton(locationData.mapData);
+            //     $(mapButton).on("click", (event) => {
+            //         popoutActions.utilityButton.showSublocations.onClick(event, locationData.mapData);
+            //     });
+            //     propsVibesUtilities.push($(mapButton)[0]);
+            // }
             break;
         case "character":
             let mechanicsSection = [];

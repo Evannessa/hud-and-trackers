@@ -9,7 +9,7 @@ export class IFrameDisplay extends Application {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["form"],
+            classes: ["form", "iframe-display"],
             popOut: true,
             resizable: true,
             minimizeable: true,
