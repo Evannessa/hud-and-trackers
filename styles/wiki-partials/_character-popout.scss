@@ -13,6 +13,9 @@
         place-content: center;
     }
 }
+.iframe-wrapper {
+    gap: var(--space-3);
+}
 .map-display-frame {
     border: unset;
     width: 80vw;
@@ -53,9 +56,11 @@
     transition: transform 0.25s cubic-bezier(0.4, 0, 1, 1);
     top: 100% !important;
     min-height: 200px;
-    background: hsla(249, 39%, 23%, 0.541);
+    background: hsla(256, 23%, 13%, 0.541);
+    // background: hsla(249, 39%, 23%, 0.541);
     --accent-color: $color-rich-accent-3;
-    --bg-color-translucent: hsla(260, 91%, 17%, 0.471);
+    --bg-color-translucent: hsla(256, 83%, 13%, 0.441);
+    // --bg-color-translucent: hsla(260, 91%, 17%, 0.471);
     #selected-character,
     #current-location {
         img {
@@ -483,7 +488,7 @@
                     }
                     .floating-title {
                         @extend .padding-small;
-                        @extend .secondary-text-shadow;
+                        @extend .primary-text-shadow;
                         white-space: nowrap;
                         transform: translate(-10px, 20px) scale(1.25);
                         position: absolute;

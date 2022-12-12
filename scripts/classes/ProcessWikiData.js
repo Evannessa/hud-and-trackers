@@ -605,30 +605,74 @@ function checkForMetadata(tabDataKey, dummyElement) {
     switch (tabDataKey) {
         case "location":
             const locationData = $(dummyElement.querySelector("content content")).data(); //.rollTable;
-            if (locationData?.rollTable) {
-                let button = createButton(locationData.rollTable, "data-roll-table");
-                $(button).on("click", (event) => {
-                    const rollTable = game.tables.getName(locationData.rollTable);
-                    rollTable.draw();
-                });
-                propsVibesUtilities.push($(button)[0]);
-            }
-            if (locationData?.macro) {
-                let button = createButton(locationData.macro);
-                $(button).on("click", () => {
-                    const macro = game.macros.getName(locationData.macro);
-                    macro.execute();
-                    // rollTable.draw();
-                });
-                propsVibesUtilities.push($(button)[0]);
-            }
-            if (locationData?.mapUrl) {
-                const mapButton = createButton(locationData.mapUrl);
-                $(mapButton).on("click", (event) => {
-                    popoutActions.card.displayMapFrame.onClick(event, locationData.mapUrl);
-                });
-                propsVibesUtilities.push($(mapButton)[0]);
-            }
+            const attributeObject = {
+                rolltable: {
+                    sectionTitle: "Roll Tables",
+                    dataAttribute: "data-roll-table",
+                    handler: () => {
+                        const rollTable = game.tables.getName(locationData.rollTable);
+                        rollTable.draw();
+                    },
+                },
+                macro: {
+                    sectionTitle: "Macros",
+                    handler: () => {
+                        const macro = game.macros.getName(locationData.macro);
+                        macro.execute();
+                    },
+                },
+                mapUrl: {
+                    sectionTitle: "Maps",
+                    handler: (event) => {
+                        popoutActions.card.displayMapFrame.onClick(event, locationData.mapUrl);
+                    },
+                },
+            };
+            Object.keys(attributeObject).forEach((key) => {
+                if (locationData && locationData[key]) {
+                    const data = attributeObject[key].dataAttribute;
+                    const handler = attributeObject[key].handler;
+                    const sectionTitle = attributeObject[key].sectionTitle;
+                    const button = createButton(locationData[key], data || "");
+                    const utilitySection = HelperFunctions.createElement("div", "utility-section");
+                    const utilitySectionTitle = HelperFunctions.createElement(
+                        "h3",
+                        "utility-section-title",
+                        sectionTitle
+                    );
+                    const children = [utilitySectionTitle, $(button)[0]];
+                    const fragment = HelperFunctions.buildDocumentFragment(utilitySection, children);
+                    $(button).on("click", (event) => {
+                        handler(event);
+                    });
+                    // propsVibesUtilities.push($(button)[0]);
+                    propsVibesUtilities.push(fragment);
+                }
+            });
+            // if (locationData?.rollTable) {
+            //     let button = createButton(locationData.rollTable, "data-roll-table");
+            //     $(button).on("click", () => {
+            //         const rollTable = game.tables.getName(locationData.rollTable);
+            //         rollTable.draw();
+            //     });
+            //     propsVibesUtilities.push($(button)[0]);
+            // }
+            // if (locationData?.macro) {
+            //     let button = createButton(locationData.macro);
+            //     $(button).on("click", () => {
+            //         const macro = game.macros.getName(locationData.macro);
+            //         macro.execute();
+            //         // rollTable.draw();
+            //     });
+            //     propsVibesUtilities.push($(button)[0]);
+            // }
+            // if (locationData?.mapUrl) {
+            //     const mapButton = createButton(locationData.mapUrl);
+            //     $(mapButton).on("click", (event) => {
+            //         popoutActions.card.displayMapFrame.onClick(event, locationData.mapUrl);
+            //     });
+            //     propsVibesUtilities.push($(mapButton)[0]);
+            // }
             // if (locationData?.mapData) {
             //     const mapButton = createRollButton(locationData.mapData);
             //     $(mapButton).on("click", (event) => {

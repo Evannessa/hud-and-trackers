@@ -1012,13 +1012,13 @@ button.icon-button {
 #CharacterPopout .primary-text {
   color: hsl(337deg, 100%, 51%);
 }
-#CharacterPopout .primary-text-shadow, #CharacterPopout .tab-section#current-location header h1 span, #CharacterPopout .tab-section#selected-character h1 {
+#CharacterPopout .primary-text-shadow, #CharacterPopout .tab-section#current-location header h1 span, #CharacterPopout .tab-section#selected-character .header .featured-image .floating-title, #CharacterPopout .tab-section#selected-character h1 {
   text-shadow: rgba(255, 5, 101, 0.5411764706) 0px 0px 3px, rgba(255, 5, 101, 0.6392156863) 0px 0px 5px;
 }
 #CharacterPopout .secondary-text {
   color: #5a66d0;
 }
-#CharacterPopout .secondary-text-shadow, #CharacterPopout .tab-section#current-location header h1, #CharacterPopout .tab-section#selected-character .header .featured-image .floating-title {
+#CharacterPopout .secondary-text-shadow, #CharacterPopout .tab-section#current-location header h1 {
   text-shadow: rgba(88, 100, 208, 0.6470588235) 0px 0px 3px, rgba(88, 100, 208, 0.568627451) 0px 0px 5px;
 }
 #CharacterPopout h1 {
@@ -1113,7 +1113,8 @@ button.icon-button {
 #CharacterPopout ul.chip-list li,
 #CharacterPopout ol.chip-list li {
   color: var(--color-neutral-lightest);
-  background-color: var(--color-wiki-accent-2-600);
+  background-color: var(--color-wiki-accent-2-700);
+  background: linear-gradient(45deg, var(--color-wiki-accent-2-700), var(--color-wiki-primary-base));
   font-size: medium;
   font-weight: 600;
   margin: unset;
@@ -3421,6 +3422,10 @@ button.icon-button {
   place-content: center;
 }
 
+.iframe-wrapper {
+  gap: var(--space-3);
+}
+
 .map-display-frame {
   border: unset;
   width: 80vw;
@@ -3433,9 +3438,9 @@ button.icon-button {
   transition: transform 0.25s cubic-bezier(0.4, 0, 1, 1);
   top: 100% !important;
   min-height: 200px;
-  background: hsla(249deg, 39%, 23%, 0.541);
+  background: hsla(256deg, 23%, 13%, 0.541);
   --accent-color: $color-rich-accent-3;
-  --bg-color-translucent: hsla(260, 91%, 17%, 0.471);
+  --bg-color-translucent: hsla(256, 83%, 13%, 0.441);
   min-height: 25vh;
   min-width: 30vw;
 }
@@ -4162,14 +4167,14 @@ button.icon-button {
 #CharacterPopout .primary-text {
   color: hsl(337deg, 100%, 51%);
 }
-#CharacterPopout .primary-text-shadow, #CharacterPopout .tab-section#selected-character h1, #CharacterPopout .tab-section#current-location header h1 span {
+#CharacterPopout .primary-text-shadow, #CharacterPopout .tab-section#selected-character h1, #CharacterPopout .tab-section#selected-character .header .featured-image .floating-title, #CharacterPopout .tab-section#current-location header h1 span {
   text-shadow: rgba(255, 5, 101, 0.5411764706) 0px 0px 3px, rgba(255, 5, 101, 0.6392156863) 0px 0px 5px;
   color: hsl(337deg, 100%, 51%);
 }
 #CharacterPopout .secondary-text {
   color: #5a66d0;
 }
-#CharacterPopout .secondary-text-shadow, #CharacterPopout .tab-section#selected-character .header .featured-image .floating-title, #CharacterPopout .tab-section#current-location header h1 {
+#CharacterPopout .secondary-text-shadow, #CharacterPopout .tab-section#current-location header h1 {
   color: #5a66d0;
   text-shadow: rgba(88, 100, 208, 0.6470588235) 0px 0px 3px, rgba(88, 100, 208, 0.568627451) 0px 0px 5px;
 }

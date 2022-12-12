@@ -363,7 +363,8 @@
 
         li {
             color: var(--color-neutral-lightest);
-            background-color: var(--color-wiki-accent-2-600);
+            background-color: var(--color-wiki-accent-2-700);
+            background: linear-gradient(45deg, var(--color-wiki-accent-2-700), var(--color-wiki-primary-base));
             font-size: medium;
             font-weight: 600;
             margin: unset;
