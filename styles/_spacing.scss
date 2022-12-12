@@ -1,6 +1,14 @@
 // #region spacing
 $spaceAmounts: (1, 2, 3, 4, 5, 6, 7, 8, auto);
 
+$spacing: (4px, 8px, 12px, 16px, 24px, 32px, 48px, 64px, 96px, 128px, 192px, 256px, 384px, 512px, 640px, 768px);
+:root {
+    @for $i from 1 through length($list: $spacing) {
+        $space: nth($spacing, $i);
+        --space-#{$i}: #{$space};
+    }
+}
+
 @each $space in $spaceAmounts {
     @if $space==auto {
         .m-#{$space} {

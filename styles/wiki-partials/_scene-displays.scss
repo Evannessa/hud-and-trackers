@@ -7,6 +7,7 @@
         z-index: 1;
         // transition: transform 200ms ease-in-out;
         img {
+            backdrop-filter: blur(12px);
             @for $childIndex from 1 to 9 {
                 &:nth-child(#{$childIndex}) {
                     transform: translateX(unquote(50 * $childIndex + "px")) scale(0.75);
@@ -62,7 +63,7 @@
         object-fit: cover;
         width: 4rem;
         height: 4rem;
-        border: 2px solid white;
+        border: 2px solid var(--color-neutral-darkest);
         box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.26);
         cursor: pointer;
         //stack each subsequent one farther away like overlaid cards

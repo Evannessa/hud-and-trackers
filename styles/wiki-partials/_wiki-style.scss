@@ -352,6 +352,31 @@
     //         object-fit: cover;
     //     }
     // }
+    ul.chip-list,
+    ol.chip-list {
+        display: flex;
+        flex-wrap: wrap;
+        margin: unset;
+        padding: unset;
+        gap: var(--space-3);
+        justify-content: flex-start;
+
+        li {
+            color: var(--color-neutral-lightest);
+            background-color: var(--color-wiki-accent-2-600);
+            font-size: medium;
+            font-weight: 600;
+            margin: unset;
+            padding: unset;
+            list-style-type: none;
+            display: inline-flex;
+            justify-content: space-evenly;
+            height: fit-content;
+            width: fit-content;
+            padding: var(--space-1) var(--space-4);
+            border-radius: 999px;
+        }
+    }
 
     details {
         background-color: #2c254a;
@@ -575,7 +600,7 @@
     }
 
     .badge {
-        display: grid;
+        display: none;
         place-content: center;
         width: 2rem;
         height: 2rem;

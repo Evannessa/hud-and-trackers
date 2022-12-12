@@ -12,14 +12,17 @@
                 {{/if}}
                 <header class="header flex-row flex-wrap">
                     {{#if (eq this.id "all-characters")}}
-                        {{#with @root.clans}}
-                            {{#each tabs}}
-                                <button data-tab={{this.id}} data-tab-type="clans">{{this.label}}</button>
-                            {{/each}}
-                        {{/with}}
-
+                        <h1>All Characters</h1>
                     {{/if}}
-
+                    {{#if (eq this.id "all-locations")}}
+                        <h1>All Locations</h1>
+                    {{/if}}
+                    {{#if (eq this.id "linked-locations")}}
+                        <h1>Inner Locations</h1>
+                    {{/if}}
+                    {{#if (eq this.id "characters-in-scene")}}
+                        <h1>Characters In Scene</h1>
+                    {{/if}}
                 </header>
                 <div class="main flex-row flex-wrap">
 

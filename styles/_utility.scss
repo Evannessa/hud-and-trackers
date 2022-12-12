@@ -16,9 +16,7 @@
     height: 1rem;
     min-height: 1rem;
     max-height: 1rem;
-    background: url("/ui/denim-dark-090.png") repeat;
-    background-blend-mode: screen;
-    background-color: rgba(0, 0, 0, 1);
+    background-color: var(--color-neutral-darkest);
 }
 .draggable {
     cursor: move;

@@ -6,13 +6,15 @@ import { HelperFunctions } from "../helper-functions.js";
 import { extractUrlFromCard, popoutActions } from "./PopoutActions.js";
 // let baseURL = "https://classy-bavarois-433634.netlify.app/";
 // let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-locations";
-let locationsDatabaseURL = "https://fastidious-smakager-702620.netlify.app/search-locations";
+let domain = "fastidious-smakager-702620"; //
+// let domain = "classy-bavarois-433634";
+let locationsDatabaseURL = `https://${domain}.netlify.app/search-locations`;
 // let baseURLNoTrail = "https://classy-bavarois-433634.netlify.app";
-let baseURL = "https://fastidious-smakager-702620.netlify.app/";
-let baseURLNoTrail = "https://fastidious-smakager-702620.netlify.app";
+let baseURL = `https://${domain}.netlify.app/`;
+let baseURLNoTrail = `https://${domain}.netlify.app`;
 // let characterDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-characters";
-let characterDatabaseURL = "https://fastidious-smakager-702620.netlify.app/search-characters";
-let locationMapDataBaseURL = "https://fastidious-smakager-702620.netlify.app/assets/data/";
+let characterDatabaseURL = `https://${domain}.netlify.app/search-characters`;
+let locationMapDataBaseURL = `https://${domain}.netlify.app/assets/data/`;
 let locationBaseNames = ["StarsheadIsland.dpo"];
 export let clanTags;
 export let locationTags;
@@ -259,6 +261,10 @@ export async function fetchLocationData($html) {
         );
 }
 
+/**
+ * Fetch the character data from the wiki, then invoke getSelectedEntityData() to process it
+ * @param {JQuery} $html - jquery object representing app
+ */
 export async function fetchCharacterData($html) {
     const html = $html[0];
     await clearCurrentEntityData(html, "#selected-character");
@@ -310,6 +316,12 @@ export async function processAnchorTags(data, html, selector) {
     buttons[0].click();
 }
 
+/**
+ *  Convert the URLs of anchors and images to have the absolute url of the website, rather than relative pointing to the current server
+ * @param {HTMLElement} convertedElement - the dummy dom element we're converting the anchors and images of
+ * @param {String} selector - any particular selector within the dummy element we're targeting
+ * @returns object with converted images, anchors, and element in general
+ */
 export function convertAnchorsAndImages(convertedElement, selector = "") {
     if (selector) convertedElement = convertedElement.querySelector(selector);
 
@@ -318,9 +330,7 @@ export function convertAnchorsAndImages(convertedElement, selector = "") {
     anchorTags.forEach((a) => {
         let oldHref = a.getAttribute("href");
         if (oldHref.includes("https")) {
-            // console.log("Internal link?", a);
             let newHref = `${baseURLNoTrail}${oldHref}`;
-            // let newHref = `https://classy-bavarois-433634.netlify.app${oldHref}`;
             a.setAttribute("href", newHref);
         }
     });
@@ -365,6 +375,11 @@ export function sortCharacters(characterDataArray) {
     return characterItems;
 }
 
+/**
+ * Get all of the characters from the character database
+ * @param {Object} data - the data retrieved from the web-page
+ * @param {HTMLElement} html - the html element we're appending this data to
+ */
 export async function getAllCharacters(data, html) {
     const dummyElement = document.createElement("div");
     dummyElement.insertAdjacentHTML("beforeend", data);
@@ -382,44 +397,26 @@ export async function getAllCharacters(data, html) {
     const { searchBox } = searchData;
     searchBox.addEventListener("input", (event) => search.filterSearch());
 }
-export async function _getAllCharacters(data, html) {
-    const dummyElement = document.createElement("div");
-    dummyElement.insertAdjacentHTML("beforeend", data);
-    let { anchorTags, cards } = convertAnchorsAndImages(dummyElement, ".card-container");
-
-    let characterData = cards.map((data) => data);
-
-    let items = sortCharacters(characterData);
-
-    let clanContainer = html.querySelector(".tab-section#all-characters .main");
-    let urls = {};
-    for (let clanKey in items) {
-        let updatedData = items[clanKey].map((card) => card.querySelector("a").textContent);
-        urls[clanKey] = updatedData;
-    }
-    //add the cards to the all-characters tab section
-    for (let clanKey in items) {
-        let clanSection = document.createElement("section");
-        clanSection.setAttribute("id", clanKey);
-        clanSection.classList.add("content");
-        clanContainer.append(clanSection);
-        items[clanKey].forEach((charDataItem) => {
-            clanSection.append(charDataItem);
-        });
-        //activate the default tab
-        let defaultKey = "alimoux";
-        if (clanKey === defaultKey) {
-            clanSection.classList.add("visible");
-            html.querySelector(`[data-tab='${clanKey}']`).classList.add("active");
-        }
-    }
-}
-
+/**
+ * Clear any data from a previously loaded entity, including tabs, header, and content
+ * @param {HTMLElement} html - the html element in the popout
+ * @param {String} selector - the selector for the element we want to empty of entity data
+ */
 export async function clearCurrentEntityData(html, selector = "") {
     $(`${selector} .tabs-container .wrapper`).empty();
     $(`${selector} header`).empty();
     $(`${selector} section.content`).empty();
 }
+/**
+ * Get information for an individual entity
+ * @param {Object} data - the html webpage data of the entity in question
+ * @param {HTMLElement} html - the html element of the character popout
+ * @param {String} appSelector - the selector within the app we want to place the generated elements within
+ * @param {String} wikiSiteSelector - the selector on the wiki site we want to select our data from
+ * @param {Integer} headingLevel - the level of headings we want to break into different 'tabs' on the sidebar
+ * @param {String} titleSelector - the selector for the title we want to use for the entity
+ * @param {String} tabDataKey - the key for which tab (charater or location) this entity is populationg
+ */
 export async function getSelectedEntityData(
     data,
     html,
@@ -468,7 +465,8 @@ export async function getSelectedEntityData(
         if (start === 0) {
             sectionKey = "overview";
         }
-
+        if (sectionKey === "traits") {
+        }
         if (content.length > 0 && sectionKey !== undefined) {
             sections.push([sectionKey, content]);
         }
@@ -558,27 +556,57 @@ export async function getSelectedEntityData(
             }
         });
     }
+    postProcess(contentSection);
     let buttons = contentSection.querySelectorAll(".tabs-container .wrapper button");
     buttons[0].click();
 }
-function createRollButton(tableName) {
+
+function postProcess(contentSection) {
+    const chipLists = contentSection.querySelectorAll(".chip-list");
+    chipLists.forEach((chipList) => {
+        const content = chipList.textContent;
+        const chipTextArray = content.split(", ");
+        HelperFunctions.removeChildren(chipList);
+        const ol = HelperFunctions.createElement("ol", ["chip-list"]);
+        const chipElements = chipTextArray.map((text) => {
+            return HelperFunctions.createElement("li", "chip", text);
+        });
+        const fragment = HelperFunctions.buildDocumentFragment(ol, chipElements);
+        chipList.appendChild(fragment);
+    });
+
+    const searchIcon = contentSection.closest(".window-content").querySelector(".material-symbols-outlined");
+    if (searchIcon) {
+        searchIcon.textContent = "";
+        const newIcon = HelperFunctions.createElement("i", "fas, fa-search");
+        searchIcon.appendChild(newIcon);
+    }
+}
+function createButton(buttonName, dataAttribute = "") {
     return HelperFunctions.stringToElement(
-        `<button data-roll-table='${tableName}'>${HelperFunctions.capitalizeEachWord(tableName, "-", " ")}</button>`
+        `<button ${dataAttribute}='${buttonName}'>${HelperFunctions.capitalizeEachWord(buttonName, "-", " ")}</button>`
     );
 }
+
 function createLevelInput(value) {
     return HelperFunctions.stringToElement(`<input type="number" min="1" max="10" value=${value}/>`);
 }
 
 function createClock(value) {}
 
+/**
+ * Create utility buttons to add to our app based on metadata on our pages
+ * @param {String} tabDataKey - which specific tab type (location or character) are we using
+ * @param {HTMLElement} dummyElement - the html element we're searching for this data
+ * @returns buttons converted into an object to add to our app
+ */
 function checkForMetadata(tabDataKey, dummyElement) {
     let propsVibesUtilities = [];
     switch (tabDataKey) {
         case "location":
             const locationData = $(dummyElement.querySelector("content content")).data(); //.rollTable;
             if (locationData?.rollTable) {
-                let button = createRollButton(locationData.rollTable);
+                let button = createButton(locationData.rollTable, "data-roll-table");
                 $(button).on("click", (event) => {
                     const rollTable = game.tables.getName(locationData.rollTable);
                     rollTable.draw();
@@ -586,8 +614,8 @@ function checkForMetadata(tabDataKey, dummyElement) {
                 propsVibesUtilities.push($(button)[0]);
             }
             if (locationData?.macro) {
-                let button = createRollButton(locationData.macro);
-                $(button).on("click", (event) => {
+                let button = createButton(locationData.macro);
+                $(button).on("click", () => {
                     const macro = game.macros.getName(locationData.macro);
                     macro.execute();
                     // rollTable.draw();
@@ -595,7 +623,7 @@ function checkForMetadata(tabDataKey, dummyElement) {
                 propsVibesUtilities.push($(button)[0]);
             }
             if (locationData?.mapUrl) {
-                const mapButton = createRollButton(locationData.mapUrl);
+                const mapButton = createButton(locationData.mapUrl);
                 $(mapButton).on("click", (event) => {
                     popoutActions.card.displayMapFrame.onClick(event, locationData.mapUrl);
                 });
@@ -628,8 +656,6 @@ function checkForMetadata(tabDataKey, dummyElement) {
             break;
         default:
             break;
-    }
-    if (tabDataKey === "location") {
     }
     return propsVibesUtilities;
 }
