@@ -6,8 +6,8 @@ import { HelperFunctions } from "../helper-functions.js";
 import { extractUrlFromCard, popoutActions } from "./PopoutActions.js";
 // let baseURL = "https://classy-bavarois-433634.netlify.app/";
 // let locationsDatabaseURL = "https://classy-bavarois-433634.netlify.app/search-locations";
-let domain = "fastidious-smakager-702620"; //
-// let domain = "classy-bavarois-433634";
+// let domain = "fastidious-smakager-702620"; //
+let domain = "classy-bavarois-433634";
 let locationsDatabaseURL = `https://${domain}.netlify.app/search-locations`;
 // let baseURLNoTrail = "https://classy-bavarois-433634.netlify.app";
 let baseURL = `https://${domain}.netlify.app/`;
