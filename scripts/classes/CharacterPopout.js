@@ -358,7 +358,10 @@ export class CharacterPopout extends Application {
                 return;
             }
             //we only want the image clicks to work on the other tabs, not these two
-            const wrongTabs = currentTarget[0].closest("#all-characters") || currentTarget[0].closest("#all-locations");
+            const wrongTabs =
+                currentTarget[0].closest("#all-characters") ||
+                currentTarget[0].closest("#all-locations") ||
+                currentTarget[0].closest("#linked-locations");
             if (wrongTabs) {
                 return;
             }

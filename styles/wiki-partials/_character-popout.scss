@@ -24,7 +24,7 @@
 
 #CharacterPopout {
     $color-primary: hsl(201, 83%, 53%);
-    $color-secondary: hsl(337, 100%, 51%);
+    $color-secondary: hsl(337, 100%, 61%);
     $color-accent: hsl(250, 66%, 62%);
     $color-magenta: hsl(308, 58%, 29%);
     $color-yellow: hsl(45, 84%, 52%);
@@ -116,6 +116,9 @@
     }
 
     .card {
+        &:hover {
+            cursor: pointer;
+        }
         a {
             pointer-events: none;
         }
@@ -209,17 +212,24 @@
         $charTypes: ("selected-character", "all-characters", "characters-in-scene");
         $locationTypes: ("current-location", "all-locations", "linked-locations");
         &[data-tab-type="global"] {
-            border-top-right-radius: 0px;
-            border-bottom-right-radius: 0px;
+            // border-top-right-radius: 0px;
+            // border-bottom-right-radius: 0px;
             backdrop-filter: blur(8px);
-            width: fit-content;
-            --wiki-bg-color: hsla(337, 100%, 51%, 0.702);
-            --wiki-active-color: hsla(349, 73%, 63%, 0.68);
+            min-width: fit-content;
+
+            --wiki-bg-color: hsla(337, 100%, 51%, 0.2702);
+            --wiki-active-color: hsla(337, 100%, 63%, 0.98);
             @each $type in $locationTypes {
                 &[data-tab="#{$type}"] {
-                    --wiki-bg-color: hsla(192, 100%, 41%, 0.598);
-                    --wiki-active-color: hsla(192, 93%, 53%, 0.517);
+                    --wiki-bg-color: hsla(263, 100%, 41%, 0.26);
+                    --wiki-active-color: hsla(233, 63%, 53%, 0.817);
                 }
+            }
+            transform-origin: center right;
+            transform: translateX(3px);
+            transition: transform 200ms ease-in-out;
+            &:hover {
+                transform: translateX(-1rem);
             }
         }
     }
@@ -230,6 +240,7 @@
         background-color: var(--wiki-bg-color) !important;
         &.active {
             background-color: var(--wiki-active-color) !important;
+            // border: 2px solid var(--wiki-bg-color);
         }
     }
     h2,
@@ -894,7 +905,7 @@
         width: fit-content;
         color: $color-secondary;
         margin-top: 4rem;
-        text-shadow: #ff05658a 0px 0px 3px, #ff0565a3 0px 0px 5px;
+        text-shadow: hsla(337, 94%, 61%, 0.541) 0px 0px 3px, hsla(337, 100%, 61%, 0.639) 0px 0px 5px;
         // text-shadow: $color-secondary 0px 0px 3px, $color-secondary 0px 0px 5px;
 
         > a {

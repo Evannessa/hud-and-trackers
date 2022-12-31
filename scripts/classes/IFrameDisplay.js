@@ -39,6 +39,7 @@ export class IFrameDisplay extends Application {
                 const text = await navigator.clipboard.readText();
                 // game.JTCS.imageUtils.manager.determineDisplayMethod({ url: text, method: "artScene" });
                 game.JTCS.imageUtils.manager.determineDisplayMethod({ url: text, method: "anyScene" });
+                ui.notifications.notify("Map image sent to canvas");
                 //create
                 break;
             case "open":

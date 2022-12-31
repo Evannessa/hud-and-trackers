@@ -168,7 +168,6 @@ export async function getAllLocations(data, html) {
     let singleLocationLinks = Array.from(
         dummyElement.querySelector("main #individual-locations").querySelectorAll(".card")
     );
-
     convertLocationCards(singleLocationLinks, html);
 
     // const allLocationsContainer = html.querySelector(".tab-section#all-locations .main");
