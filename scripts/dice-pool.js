@@ -256,7 +256,6 @@ export class AmbientDicePool extends FormApplication {
         //add strings for the individual rolls for the boons and banes
         let boonBaneResultString = "<span class='boonSpan'> Boons: ";
         ambientRoll.terms.forEach((term) => {
-            console.log(term);
             if (term.number) {
                 boonBaneResultString += "<span class='boonBane'>" + term.number + "</span>";
                 // for (let o of term.results) {
@@ -272,7 +271,7 @@ export class AmbientDicePool extends FormApplication {
         let skillRoll = checkPreviousRolls();
         let ambientResult = ambientRoll._total;
 
-        let flavor = skillRoll.data.flavor;
+        let flavor = skillRoll.flavor;
         flavor += `<div class="ambient-div"><h3 style='font-weight: bold'>Boons & Banes Result</h3>
 		<div style='font-size: 0.85rem; margin-bottom: 0.25rem'>${
             boonString + baneString
@@ -287,8 +286,9 @@ export class AmbientDicePool extends FormApplication {
                 "<div style='font-size: 1rem'><span style='color:turquoise'>Boons win!</span> Triumph or Mercy</div>";
         }
         flavor += `</div>`;
+        console.log(skillRoll);
 
-        skillRoll._roll.toMessage({
+        skillRoll.rolls[0].toMessage({
             flavor: flavor,
         });
     }
