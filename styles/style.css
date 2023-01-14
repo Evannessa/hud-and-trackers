@@ -12639,9 +12639,12 @@ li .hover-controls button {
 #ambient-prompt {
   display: flex;
   flex-direction: column;
-  width: -webkit-max-content;
-  width: -moz-max-content;
-  width: max-content;
+  width: -webkit-max-content !important;
+  width: -moz-max-content !important;
+  width: max-content !important;
+}
+#ambient-prompt li {
+  margin-left: 2rem;
 }
 #ambient-prompt .window-content form > div {
   display: grid;

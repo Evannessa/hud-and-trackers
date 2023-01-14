@@ -155,7 +155,10 @@
 #ambient-prompt {
     display: flex;
     flex-direction: column;
-    width: max-content;
+    width: max-content !important;
+    li {
+        margin-left: 2rem;
+    }
     .window-content form > div {
         display: grid;
         grid-template-columns: 30% 70%;

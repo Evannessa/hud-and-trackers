@@ -81,7 +81,6 @@ export const popoutActions = {
             onClick: async (event, options = {}) => {
                 const { url, card: clickedCard } = extractUrlFromCard(event);
                 const { html } = options;
-                console.log("%cPopoutActions.js line:48 url", "color: #26bfa5;", url);
                 await getUrlsFromURL(html, url);
                 // await fetchAllEntities(html, url, )
                 //add sub locations
