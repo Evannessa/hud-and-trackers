@@ -4,6 +4,7 @@ import { TrackedItem } from "./classes/TrackedItem.js";
 import { TrackerCollection } from "./classes/TrackerCollection.js";
 import { TrackedItemConfig } from "./classes/TrackedItemConfig.js";
 import { ContextMenu } from "./classes/context-menu.js";
+import { OutpostSheet } from "./outpost-sheet.js";
 import registerAllHandlebarHelpers from "./our-handlebar-helpers.js";
 
 var myApp;
@@ -28,11 +29,13 @@ Hooks.once("init", async () => {
         type: Object,
     });
     trackerCollection = new TrackerCollection(game.settings.get("hud-and-trackers", "trackers"));
+
 });
 
 Hooks.once("ready", async () => {
     //TODO: Take this out later
     await game.settings.set("hud-and-trackers", "trackers", {});
+    game.outpostSheet = new OutpostSheet().render(true)
 });
 
 Hooks.on("closeFormApplication", (app) => {
@@ -570,7 +573,7 @@ class TrackerApp extends FormApplication {
 
         if (type == "waypoint") {
             itemTemplate = `
-    		<div class="handle">    
+    		<div class="handle">
 				<h1 class="waypointLabel">${name}</h1>
 				<img class="handleImg" src=${imageSource} alt="">
 			</div>

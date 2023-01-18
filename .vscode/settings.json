@@ -2,5 +2,8 @@
     "prettier.enable": false,
     "cSpell.words": ["blindroll", "falsey", "npcs", "playerlist"],
     "html.format.indentHandlebars": true,
-    "html.format.templating": true
+    "html.format.templating": true,
+    "gotoSymbolStack.currentStackPosition": 0,
+    "gotoSymbolStack.maxStackPosition": 0,
+    "gotoSymbolStack.filePositionInfo": []
 }

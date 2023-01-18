@@ -47,7 +47,8 @@
         "./scripts/classes/CharacterPopout.js",
         "./scripts/classes/ProcessWikiData.js",
         "./scripts/hooks.js",
-        "./scripts/debug-mode.js"
+        "./scripts/debug-mode.js",
+        "./scripts/outpost-sheet.js"
     ],
     "styles": ["styles/style.css"],
     "dependencies": [],
