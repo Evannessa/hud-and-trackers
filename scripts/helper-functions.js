@@ -149,6 +149,85 @@ export class HelperFunctions {
         return flagData;
     }
 
+    static addActionListeners(html, actionsData) {
+
+        const types = {
+            click: {
+                eventName: "click",
+            },
+            hover: {
+                eventName: "mouseenter mouseleave"
+            },
+            change: {
+                eventName: "change"
+            }
+        }
+        for (let type in types) {
+            let { eventName, dataKey } = types[type]
+            if (!dataKey) dataKey = type
+            let string = `[data-${dataKey}-action]`
+            html.on(eventName, string, (event) => {
+                const actionKey = dataKey + "Action"
+                const action = event.currentTarget.dataset[actionKey]
+                HelperFunctions.handleAction(event, dataKey, action, actionsData)
+            })
+        }
+    }
+    /**
+     * handle an action using a data-*-action property on an interactive element
+     * @param {event} event  - the triggered event
+     * @param {String} actionType - the action type (click, hover, blur, etc.)
+     * @param {String} action - the action itself, a key attached to the actionsData object
+     * @param {Object} actionsData - an object representing all the various actions
+     */
+    static handleAction(event, actionType, action, actionsData) {
+        const currentTarget = event.currentTarget;
+        if (actionsData[actionType] && actionsData[actionType][action]) {
+            const actionData = actionsData[actionType][action];
+            if (actionData.hasOwnProperty("handler")) {
+                // const options = { currentTarget };
+                actionData["handler"](event, currentTarget);
+            }
+        }
+    }
+    static async createRoll(diceNumber, flavor, keepHighest = false) {
+        const rollObject = new Roll(`${diceNumber}d6kh`)
+
+        // let rollValue = await rollObject.evaluate({ async: true })
+        // console.log(rollValue)
+        const roll = await rollObject.roll()
+        const string = HelperFunctions.evaluateRollResult(rollObject.total)
+        console.log(roll, string)
+        console.log(rollObject)
+        rollObject.toMessage({
+            flavor: flavor + " | " + string,
+        })
+        return rollObject.total
+    }
+
+    static evaluateRollResult(value) {
+        let string = "Triumph; Acquire or process resources or information with no consequences."
+        console.log("Value is", value)
+        if (value > 3 && value <= 5) {
+            string = `Conflict; Acquire or process the normal amount of resources, but GM may apply negative tag/downside, or mark track on "Consequence" clock relevant to the action`
+        } else if (value <= 3) {
+            string = `Disaster; Receive nothing, receive tainted resources; lose processed resources; GM marks two sections on a 'Consequence Clock', etc.`
+        }
+        return string;
+    }
+    static getMaxOrMin(array = [], which = "max") {
+        let valueArray = array.map((obj) => obj.total)
+        let extreme;
+        let extremeIndex = 0;
+        if (which === "max") {
+            extreme = Math.max(...valueArray)
+            extremeIndex = valueArray.indexOf(extreme)
+        } else {
+            extreme = Math.min(...valueArray)
+            extremeIndex = valueArray.indexOf(extreme)
+        }
+        return array[extremeIndex]
+    }
     /**
      *  Sets a value, using the "flattenObject" and "expandObject" utilities to reach a nested property
      * @param {String} settingName - the name of the setting
@@ -321,7 +400,7 @@ export async function handleDrag(drag) {
 /**
  * Search through all entities
  */
-export async function getEntityFromAll(entityId) {}
+export async function getEntityFromAll(entityId) { }
 
 /**
  *
@@ -622,7 +701,7 @@ function actorsToTokenData(actors) {
     });
 }
 
-function scopePreserver(actors) {}
+function scopePreserver(actors) { }
 
 function cancelClickRequest(callback) {
     canvas.app.stage.removeListener("pointerdown", callback);

@@ -1,11 +1,133 @@
+import { HelperFunctions as HF } from "./helper-functions.js";
+const outpostActions = {
+    click: {
+        addNewOutpost: {
+            handler: (event, currentTarget, options = {}) => {
+
+            }
+        },
+        updateRating: {
+            handler: (event, currentTarget, options = {}) => {
+                const ratingInput = currentTarget
+
+
+            }
+        },
+        rollOne: {
+            handler: async (event, currentTarget, options = {}) => {
+                console.log("Rolling one")
+                const rating = currentTarget.closest(".rating-label").querySelector("input[type='number']")
+                //create dice pool with dice equal to rating
+                let total = await HF.createRoll(rating.value, rating.name)
+
+
+            }
+        },
+        rollEach: {
+            handler: async (event, currentTarget, options = {}) => {
+                console.log("Rolling each")
+                const ratings = Array.from(currentTarget.closest(".ratings-wrapper").querySelectorAll(".rating"))
+                const totals = []
+                for (let rating of ratings) {
+                    if (rating.value >= 3) {
+                        //create a roll for each of these, with relevant output
+                        let total = await HF.createRoll(rating.value, rating.name)
+                        totals.push({ name: rating.name, total: total })
+                    }
+                }
+                let max = HF.getMaxOrMin(totals, "max")
+                let min = HF.getMaxOrMin(totals, "min")
+                console.log("Our totals", totals, max, min)
+
+
+            }
+
+        }
+    }
+}
 Hooks.on("ready", () => {
-    console.log("Hello?")
     game.outpostSheet = new OutpostSheet().render()
 });
+
+const allOutposts = [
+    outpostFactory("one"),
+    outpostFactory("two"),
+    outpostFactory("three"),
+]
+
+function outpostFactory(name) {
+    return {
+        name: name,
+        pointPool: 9,
+        ratings: {
+            comfort: 0,
+            destruction: 0,
+            "defense/support": 3,
+            "data processing/automation": 6,
+            "resource processing": 0,
+        }
+    }
+
+}
+
+const Outpost = {
+    name: "",
+    createNewOutpost: {
+
+    },
+    "pointPool": 9,
+    "comfort": 0,
+    "destruction": 0,
+    "defense/support": 0,
+    "data processing/automation": 0,
+    "resource processing": 0,
+}
+
+
 const downtimeData = {
     locations: {
         "Safe Town": "",
-        "Abyssal Outpost": "",
+        "Abyssal Outpost": {
+            amplifyCardTask: {
+                description: `Creation, Acquisition, Recovery and Discovery Tasks taken on by PCs within an appropriately-specialized outpost while leveraging that outpost's facilities will get more bang for their buck on successes.
+At a rating of 3, they'll Acquire double resources, fill Creation, Discovery or Recovery Clocks with Increased Impact instead of normal (increased impact fills an extra section on each clock), or use fewer resources.
+Commandeering an action like this will replace the normal Active Phase Ratings Roll for that particular rating, and only one PC can do so per downtime.
+but does not replace the potential for a Consequence Roll. You instead risk whatever consequences occur applying to you/your person/your project.`,
+                cost: 1,
+                ratingRequirement: 3,
+                tasks: {
+                    "Creation": `Treat Impact on Ambition Clocks for a crafting projects as massive, while using the facilities of an outpost geared toward Processing (Resources) (Massive Impact fills an entire clock)`,
+                    "Acquisition": `a Hunting or Foraging Roll Result that would net you 1 specimens, will instead net 10 specimens.`,
+                    "Discovery": `Dedicating all of the facility's Processing (Data) powers, a progress clock for your Ambition to translating an Ancient Text might be fully filled on a success.`
+                }
+            },
+            reallocatePoints: {
+                name: "Reallocate Outposts Rating Points",
+                description: `
+                    (Must be taken at END of Downtime)
+                    Reallocate the points in the Outpost's Pools.
+                    Any installations who require a higher rating than the outpost can provide, will be deactivated, and can either be broken down for parts to free up space, reactivated if the rating meets the requirement once again, or, with a high enough Processing (Resources) Rating, be transported to another nearby Outpost.
+Outpost Pool Points cannot be reallocated again until the next Downtime.
+                `,
+                cost: 1,
+            },
+            putOutFires: {
+                name: "Put Out Fires",
+                cost: 1,
+                description: "Spend 1 Task and roll to attempt to reduce one of the Consequence Clocks"
+            },
+            installStation: {
+
+            },
+            jailbreak: {
+                cost: 1,
+                description: `Certain advanced rooms/stations can only be unlocked if the related categories are above a certain ratio.
+You can make a series of rolls to 'Jailbreak' these requirements when installing a new module, needing to meet a difficulty equal to the level of the module. But doing so is difficult and has consequences even on a success.
+Base Consequence: each Jailbroken Installation will add an automatic, unremovable point to the "Downside Tracker" related to its function.
+Each consecutive 'Jailbreak' will add an additional required success, and failures will force a roll on the Numenera Malfunction table.
+`
+            }
+        },
         "Camp": "",
         "During Expedition": ""
     },
@@ -52,7 +174,7 @@ const downtimeData = {
 
 
 
-const phases = {
+export const phases = {
     "Action Phase": `Here, the outpost does the active duties and processes you have geared it toward.
 For each rating greater than or equal to 3, the Outpost will roll a number of dice equal to that rating.
 `,
@@ -61,7 +183,7 @@ For each rating greater than or equal to 3, the Outpost will roll a number of di
     "Reaction Phase": `Here, roll the appropriate rating to see how well the outpost withstands any events, be they environmental or internal, that occur, or defends against any negative attention its processes may have attracted.
 If the outpost has no points in a particular rating, roll 2d6 and take the lowest result.`,
 }
-const outpostData = {
+export const outpostData = {
     "Comfort": {
         value: 0,
         description: `accommodations and entertainment, making the outpost feel like home.
@@ -166,7 +288,7 @@ If a clock ever hits maximum on its own, the GM will not roll, but a relevant en
     }
 }
 
-export class OutpostSheet extends FormApplication {
+export class OutpostSheet extends Application {
     /**
      * Description
      */
@@ -181,7 +303,7 @@ export class OutpostSheet extends FormApplication {
             popOut: true,
             resizable: true,
             minimizeable: true,
-            template: `modules/hud-and-trackers/templates/outpost-sheet.html`,
+            template: `modules/hud-and-trackers/templates/outpost-sheet/outpost-sheet.html`,
             id: 'outpost-sheet',
             title: 'outpost-sheet',
         });
@@ -189,49 +311,26 @@ export class OutpostSheet extends FormApplication {
 
     getData() {
         // Send data to the template
-        return { outpostKeys: Object.keys(outpostData) }
+        return { outposts: allOutposts, clocks: consequenceClocks }
     }
 
     activateListeners(html) {
         super.activateListeners(html);
-        this._handleButtonClick()
-        html.off(click).on(click, [data - action], this._handleButtonClick.bind(this));
-        html.on('mouseenter mouseleave', 'li', this._handleHover.bind(this))
-        this._handleChange();
+        HF.addActionListeners(html, outpostActions)
+        // html.off("click").on("click", "[data-click-action]", (event) => handleAction(event, "clickAction"));
     }
 
-    async _handleChange() {
-        $(`select, input[type='checkbox'], input[type='radio'], input[type='text']`).on(
-            'change',
-            async function (event) {
-                let { value, name, checked, type } = event.currentTarget;
-                let clickedElement = $(event.currentTarget);
-            })
-    }
+    // handleAction(event, actionType = "click") {
+    //     const actionKey = actionType += "Action"
+    //     const action = event.currentTarget.dataset[actionKey]
+    //     event.preventDefault()
+    //     HF.handleAction(event, actionType, action, outpostActions);
 
-    async _handleButtonClick(event) {
-        let clickedElement = $(event.currentTarget);
-        event.stopPropagation();
-        event.preventDefault();
-        let action = clickedElement.data().action;
-        let type = clickedElement.data().type;
-        let name = clickedElement.data().displayName;
+    // }
 
-        switch (action) {
-            case ('add'):
-                //create
-                break;
-            case ('open'):
-                //read
-                break;
-            case ('edit'):
-                //update
-                break;
-            case ('delete'):
-                //delete
-                break;
-        }
-    }
+
+
+
 
     async _updateObject(event, formData) {
         console.log(formData.exampleInput);

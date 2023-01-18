@@ -1,0 +1,35 @@
+.outpost-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+
+    input {
+        color: white;
+
+        &::placeholder {
+            color: white;
+        }
+    }
+}
+
+.individual-outpost {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-neutral-600);
+    border-color: var(--color-neutral-darkest);
+    color: white;
+    padding: 0.75em 1em;
+    border-radius: 12px;
+
+    .ratings-wrapper {
+        display: flex;
+
+        input {
+            color: white;
+
+            &::placeholder {
+                color: white;
+            }
+        }
+    }
+}

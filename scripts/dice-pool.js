@@ -32,7 +32,7 @@ Hooks.on("renderSidebarTab", (app, html) => {
     }
 });
 
-Hooks.on("preCreateChatMessage", (msg, options, userId) => {});
+Hooks.on("preCreateChatMessage", (msg, options, userId) => { });
 Hooks.on("createChatMessage", (data, data1, data2) => {
     // data._element.find(".ambient-div");
 });
@@ -125,7 +125,7 @@ export class PromptAmbientRoll extends FormApplication {
         }
     }
 
-    async _updateObject(event, formData) {}
+    async _updateObject(event, formData) { }
 }
 
 export class AmbientDicePool extends FormApplication {
@@ -273,9 +273,8 @@ export class AmbientDicePool extends FormApplication {
 
         let flavor = skillRoll.flavor;
         flavor += `<div class="ambient-div"><h3 style='font-weight: bold'>Boons & Banes Result</h3>
-		<div style='font-size: 0.85rem; margin-bottom: 0.25rem'>${
-            boonString + baneString
-        }<li style="margin-top: 0.2rem">${boonBaneResultString}</li>
+		<div style='font-size: 0.85rem; margin-bottom: 0.25rem'>${boonString + baneString
+            }<li style="margin-top: 0.2rem">${boonBaneResultString}</li>
 		<li style='margin-top: 0.2rem'><span style='font-weight: bold' class='ambientTotal'>Ambient Roll Total</span>: <span class='ambientResult'>${ambientResult} </span></li></div>`;
 
         if (ambientResult <= 0) {
@@ -286,14 +285,13 @@ export class AmbientDicePool extends FormApplication {
                 "<div style='font-size: 1rem'><span style='color:turquoise'>Boons win!</span> Triumph or Mercy</div>";
         }
         flavor += `</div>`;
-        console.log(skillRoll);
 
         skillRoll.rolls[0].toMessage({
             flavor: flavor,
         });
     }
 
-    async _updateObject(event, formData) {}
+    async _updateObject(event, formData) { }
 }
 
 window.AmbientDicePool = AmbientDicePool;

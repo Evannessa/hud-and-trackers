@@ -5,5 +5,6 @@
     "html.format.templating": true,
     "gotoSymbolStack.currentStackPosition": 0,
     "gotoSymbolStack.maxStackPosition": 0,
-    "gotoSymbolStack.filePositionInfo": []
+    "gotoSymbolStack.filePositionInfo": [],
+ "javascript.preferences.importModuleSpecifierEnding": "js",
 }
