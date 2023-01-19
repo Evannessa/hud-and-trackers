@@ -6,9 +6,57 @@ const outpostActions = {
 
             }
         },
-        updateRating: {
-            handler: (event, currentTarget, options = {}) => {
-                const ratingInput = currentTarget
+        changeRating: {
+            handler: async (event, currentTarget, options = {}) => {
+
+                let ratingName = currentTarget.dataset.name//currentTarget.closest(".wrapper").dataset.name;
+                // let poolName = currentTarget.closest(".wrapper").dataset.poolName;
+                let outpostId = currentTarget.closest(".individual-outpost").getAttribute("id")
+                // let _outpostData = await HF.getSettingValue("outpostData")
+                let outpostData = await HF.getSettingValue("outpostData", `outposts.${outpostId}`)
+                // let poolData = await HF.getSettingValue("outpostData", `outposts.${poolName}`)
+                let changeBy = 1;
+                if (event.which === 3) {
+                    //right mouse button subtract instead
+                    changeBy = -1;
+                }
+
+                let newValue = outpostData.ratings[ratingName].value + changeBy
+                let newPoolValue = outpostData.pointPool - changeBy
+                if (newValue < 0 || newValue > 9 || newPoolValue < 0 || newPoolValue > 9) {
+                    return
+                }
+                let updateData = {
+                    ...outpostData,
+                    pointPool: newPoolValue,
+                    ratings: {
+                        ...outpostData.ratings,
+                        [ratingName]: {
+                            ...outpostData.ratings[ratingName],
+                            value: newValue
+                        }
+                    }
+
+                }
+                await HF.setSettingValue("outpostData", updateData, `outposts.${outpostId}`)
+
+                await game.outpostSheet.render(true)
+                // let ratingInput = currentTarget.previousElementSibling
+                // await HF.setSettingValue("outpostData", updateData)
+
+
+                // let pool = currentTarget.closest(".outpost-container").querySelector("#pointPool")
+                // let poolNumber = pool.value
+                // let result = parseInt(poolNumber) - parseInt(changeBy)
+                // if (result <= 10 && result >= 0) {
+                //     pool.value = pool.value - changeBy //subtract from pool if positive, add if negative
+                // }
+                // let number = ratingInput.value
+                // if (parseInt(number) + parseInt(changeBy) >= 0) {
+                //     ratingInput.value = parseInt(ratingInput.value) + parseInt(changeBy)
+                // }
+                // await HF.setSettingValue("outpostData", updateData)
+
 
 
             }
@@ -43,28 +91,79 @@ const outpostActions = {
             }
 
         }
+    },
+    change: {
+        changePool: {
+            handler: (event, currentTarget, options = {}) => {
+                let pool = currentTarget.closest(".outpost-container").querySelector("#pointPool")
+
+
+            },
+        }
     }
 }
 Hooks.on("ready", () => {
     game.outpostSheet = new OutpostSheet().render()
 });
 
-const allOutposts = [
+export const allOutposts = [
     outpostFactory("one"),
     outpostFactory("two"),
     outpostFactory("three"),
 ]
-
-function outpostFactory(name) {
+const defaultData = {
+    one: {
+        name: "one",
+        pointPool: 9,
+        ratings: {
+            comfort: {
+                value: 0, name: "Comfort"
+            },
+            destruction: { value: 0, name: "Destruction" },
+            defenseSupport: { value: 3, name: "Defense/Support" },
+            dataProcessing: { value: 6, name: "Data Processing & Automation" },
+            resourceProcessing: { value: 0, name: "Resource Processing" },
+        }
+    },
+    two: {
+        name: "two",
+        pointPool: 9,
+        ratings: {
+            comfort: {
+                value: 0, name: "Comfort"
+            },
+            destruction: { value: 0, name: "Destruction" },
+            defenseSupport: { value: 3, name: "Defense/Support" },
+            dataProcessing: { value: 6, name: "Data Processing & Automation" },
+            resourceProcessing: { value: 0, name: "Resource Processing" },
+        }
+    },
+    three: {
+        name: "three",
+        pointPool: 9,
+        ratings: {
+            comfort: {
+                value: 0, name: "Comfort"
+            },
+            destruction: { value: 0, name: "Destruction" },
+            defenseSupport: { value: 3, name: "Defense/Support" },
+            dataProcessing: { value: 6, name: "Data Processing & Automation" },
+            resourceProcessing: { value: 0, name: "Resource Processing" },
+        }
+    },
+}
+export function outpostFactory(name) {
     return {
         name: name,
         pointPool: 9,
         ratings: {
-            comfort: 0,
-            destruction: 0,
-            "defense/support": 3,
-            "data processing/automation": 6,
-            "resource processing": 0,
+            comfort: {
+                value: 0, name: "Comfort"
+            },
+            destruction: { value: 0, name: "Destruction" },
+            defenseSupport: { value: 3, name: "Defense/Support" },
+            dataProcessing: { value: 6, name: "Data Processing & Automation" },
+            resourceProcessing: { value: 0, name: "Resource Processing" },
         }
     }
 
@@ -263,7 +362,7 @@ Transport salvage or specimens to another Outpost, or perhaps back to Copper Gro
 }
 
 const consequenceClocks = {
-    "Instructions": `Whenever an Outpost makes a ratings roll and receives a Conflict (5, 4 as highest result) or a Disaster (3, 2, 1 as highest result), the GM might advance one of the few "Consequence" clocks below.
+    instructions: `Whenever an Outpost makes a ratings roll and receives a Conflict (5, 4 as highest result) or a Disaster (3, 2, 1 as highest result), the GM might advance one of the few "Consequence" clocks below.
    For each clock that has a section marked, the GM will roll a dice pool with a number of dice equal to number of filled segments.
 Whichever roll is highest will influence the event that occurs.
 If a clock ever hits maximum on its own, the GM will not roll, but a relevant encounter will immediately occur.
@@ -309,31 +408,17 @@ export class OutpostSheet extends Application {
         });
     }
 
-    getData() {
+    async getData() {
         // Send data to the template
-        return { outposts: allOutposts, clocks: consequenceClocks }
+        let outposts = await HF.getSettingValue("outpostData", "outposts")
+        return { outposts: Object.values(outposts), clocks: consequenceClocks }
     }
 
     activateListeners(html) {
         super.activateListeners(html);
         HF.addActionListeners(html, outpostActions)
-        // html.off("click").on("click", "[data-click-action]", (event) => handleAction(event, "clickAction"));
     }
 
-    // handleAction(event, actionType = "click") {
-    //     const actionKey = actionType += "Action"
-    //     const action = event.currentTarget.dataset[actionKey]
-    //     event.preventDefault()
-    //     HF.handleAction(event, actionType, action, outpostActions);
 
-    // }
-
-
-
-
-
-    async _updateObject(event, formData) {
-        console.log(formData.exampleInput);
-    }
 }
 

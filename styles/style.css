@@ -4540,6 +4540,7 @@ button.icon-button {
 .outpost-container {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 0.1rem;
 }
 .outpost-container input {
@@ -4558,6 +4559,8 @@ button.icon-button {
 .individual-outpost {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   background-color: var(--color-neutral-600);
   border-color: var(--color-neutral-darkest);
   color: white;
@@ -4566,6 +4569,37 @@ button.icon-button {
 }
 .individual-outpost .ratings-wrapper {
   display: flex;
+  flex-direction: row;
+}
+.individual-outpost .ratings-wrapper button {
+  color: white;
+  border: unset;
+  background-color: var(--color-primary-base);
+  max-width: -webkit-fit-content;
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+}
+.individual-outpost .ratings-wrapper .wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: -webkit-fit-content;
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+  flex-direction: column;
+}
+.individual-outpost .ratings-wrapper .wrapper .displayNumber {
+  flex: 1;
+  background-color: cyan;
+  color: black;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 18px;
+  bottom: calc(100% - 2px);
+  border-radius: 4px 4px 0 0;
+  width: 100%;
 }
 .individual-outpost .ratings-wrapper input {
   color: white;

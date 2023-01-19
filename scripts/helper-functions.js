@@ -153,7 +153,7 @@ export class HelperFunctions {
 
         const types = {
             click: {
-                eventName: "click",
+                eventName: "mousedown",
             },
             hover: {
                 eventName: "mouseenter mouseleave"
@@ -167,6 +167,7 @@ export class HelperFunctions {
             if (!dataKey) dataKey = type
             let string = `[data-${dataKey}-action]`
             html.on(eventName, string, (event) => {
+                console.log(string, dataKey)
                 const actionKey = dataKey + "Action"
                 const action = event.currentTarget.dataset[actionKey]
                 HelperFunctions.handleAction(event, dataKey, action, actionsData)

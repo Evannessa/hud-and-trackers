@@ -1,6 +1,7 @@
 .outpost-container {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 0.1rem;
 
     input {
@@ -15,6 +16,9 @@
 .individual-outpost {
     display: flex;
     flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
     background-color: var(--color-neutral-600);
     border-color: var(--color-neutral-darkest);
     color: white;
@@ -23,6 +27,40 @@
 
     .ratings-wrapper {
         display: flex;
+        flex-direction: row;
+
+        button {
+
+            color: white;
+            border: unset;
+            background-color: var(--color-primary-base);
+            max-width: fit-content;
+        }
+
+        .wrapper {
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: fit-content;
+            flex-direction: column;
+
+            .displayNumber {
+                flex: 1;
+                background-color: cyan;
+                color: black;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                max-height: 18px;
+                bottom: calc(100% - 2px);
+                border-radius: 4px 4px 0 0;
+                width: 100%;
+            }
+        }
+
+        .rating-button {}
 
         input {
             color: white;

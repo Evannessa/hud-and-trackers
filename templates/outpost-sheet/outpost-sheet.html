@@ -20,17 +20,32 @@
         <section class="ratings-wrapper">
           {{#each outpost.ratings as |rating|}}
             <label for="{{@key}}" class="rating-label flex-1">
-              {{@key}}
-              <input
-                data-name="{{@key}}"
-                class="rating"
-                type="number"
-                name="{{@key}}"
-                id="{{@key}}"
-                min="0"
-                max="9"
-                value="{{rating}}"
-              />
+              <div
+                class="wrapper"
+                data-name="{{outpost.name}}.ratings.{{@key}}"
+                data-pool-name="{{outpost.name}}.pointPool"
+              >
+                <input
+                  data-name="{{@key}}"
+                  class="rating displayNumber"
+                  type="number"
+                  name="{{@key}}"
+                  id="{{@key}}"
+                  min="0"
+                  max="9"
+                  value="{{rating.value}}"
+                  disabled
+                  data-change-action="changePool"
+                />
+                <button
+                  type="button"
+                  class="rating-button"
+                  data-click-action="changeRating"
+                  data-name="{{@key}}"
+                >
+                  {{rating.name}}
+                </button>
+              </div>
               <button type="button" data-click-action="rollOne">
                 Roll
               </button>
@@ -44,9 +59,9 @@
           <h3>
             Consequence Clocks
           </h3>
-          <p>
-            {{@root.clocks.instructions}}
-          </p>
+          {{! <p> }}
+          {{!-- {{@root.clocks.instructions}} --}}
+          {{! </p> }}
           <section class="clock-wrapper">
             {{#each @root.clocks.clocks as |clock|}}
               <div>

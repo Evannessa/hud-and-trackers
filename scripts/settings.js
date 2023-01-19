@@ -1,6 +1,6 @@
 import CombatHud from "./combat-hud.js";
 import * as HelperFunctions from "./helper-functions.js";
-import { phases } from "./outpost-sheet.js";
+import { phases, outpostFactory } from "./outpost-sheet.js";
 export default function registerSettings() {
 
     game.settings.register("hud-and-trackers", "outpostData", {
@@ -8,7 +8,11 @@ export default function registerSettings() {
         config: false,
         type: Object,
         default: {
-            ...phases,
+            outposts: {
+                one: outpostFactory("one"),
+                two: outpostFactory("two"),
+                three: outpostFactory("three"),
+            }
         },
     });
     game.settings.register("hud-and-trackers", "currentURLs", {
