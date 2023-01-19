@@ -36,6 +36,28 @@ export default function registerAllHandlebarHelpers() {
             count += block.fn(i);
         return count;
     });
+    Handlebars.registerHelper('ternary', function (test, yes, no) {
+        return test ? yes : no;
+    });
+    // greater than or equal to
+    Handlebars.registerHelper('ge', function (a, b) {
+        var next = arguments[arguments.length - 1];
+        return (a >= b) ? next.fn(this) : next.inverse(this);
+    });
+    // less than or equal to
+    Handlebars.registerHelper('le', function (a, b) {
+        var next = arguments[arguments.length - 1];
+        return (a <= b) ? next.fn(this) : next.inverse(this);
+    });
+    // less than
+    Handlebars.registerHelper('lt', function (a, b) {
+        var next = arguments[arguments.length - 1];
+        return (a < b) ? next.fn(this) : next.inverse(this);
+    });
+    Handlebars.registerHelper('ne', function (a, b) {
+        var next = arguments[arguments.length - 1];
+        return (a !== b) ? next.fn(this) : next.inverse(this);
+    });
 }
 // Handlebars.registerHelper("getCharacterData", (id) => {
 

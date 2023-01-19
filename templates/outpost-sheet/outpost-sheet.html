@@ -15,6 +15,7 @@
             max="9"
             value="{{outpost.pointPool}}"
             disabled
+            class="{{ternary (eq outpost.pointPool 0) "empty" ""}}"
           />
         </label>
         <section class="ratings-wrapper">
@@ -25,6 +26,14 @@
                 data-name="{{outpost.name}}.ratings.{{@key}}"
                 data-pool-name="{{outpost.name}}.pointPool"
               >
+                <button
+                  type="button"
+                  class="rating-button"
+                  data-click-action="changeRating"
+                  data-name="{{@key}}"
+                >
+                  {{rating.name}}
+                </button>
                 <input
                   data-name="{{@key}}"
                   class="rating displayNumber"
@@ -37,28 +46,24 @@
                   disabled
                   data-change-action="changePool"
                 />
-                <button
-                  type="button"
-                  class="rating-button"
-                  data-click-action="changeRating"
-                  data-name="{{@key}}"
-                >
-                  {{rating.name}}
-                </button>
               </div>
-              <button type="button" data-click-action="rollOne" class="roll-button">
-                <i class="fas fa-dice-d20"></i>
-              </button>
-              <div class="points-display">
+              {{! <button type="button" data-click-action="rollOne" class="roll-button"> }}
+              {{! <i class="fas fa-dice-d20"></i> }}
+              {{! </button> }}
+              <div
+                class="points-display"
+                data-click-action="changeRating"
+                data-name="{{@key}}"
+              >
                 <div class="underlay">
-                {{#times 9}}
-                  <span class="point"></span>
-                {{/times}}
+                  {{#times 9}}
+                    <span class="point"></span>
+                  {{/times}}
                 </div>
                 <div class="fill">
-                {{#times rating.value}}
-                  <span class="point"></span>
-                {{/times}}
+                  {{#times rating.value}}
+                    <span class="point"></span>
+                  {{/times}}
                 </div>
               </div>
             </div>

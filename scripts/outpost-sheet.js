@@ -43,22 +43,6 @@ const outpostActions = {
                 await HF.setSettingValue("outpostData", updateData, `outposts.${outpostId}`)
 
                 await game.outpostSheet.render(true)
-                // let ratingInput = currentTarget.previousElementSibling
-                // await HF.setSettingValue("outpostData", updateData)
-
-
-                // let pool = currentTarget.closest(".outpost-container").querySelector("#pointPool")
-                // let poolNumber = pool.value
-                // let result = parseInt(poolNumber) - parseInt(changeBy)
-                // if (result <= 10 && result >= 0) {
-                //     pool.value = pool.value - changeBy //subtract from pool if positive, add if negative
-                // }
-                // let number = ratingInput.value
-                // if (parseInt(number) + parseInt(changeBy) >= 0) {
-                //     ratingInput.value = parseInt(ratingInput.value) + parseInt(changeBy)
-                // }
-                // await HF.setSettingValue("outpostData", updateData)
-
 
 
             }
