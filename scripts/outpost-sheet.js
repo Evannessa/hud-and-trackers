@@ -3,6 +3,8 @@ const outpostActions = {
     click: {
         addNewOutpost: {
             handler: (event, currentTarget, options = {}) => {
+                //add location, link item sheet?
+                //drag-drop
 
             }
         },
@@ -63,10 +65,10 @@ const outpostActions = {
         },
         rollOne: {
             handler: async (event, currentTarget, options = {}) => {
-                console.log("Rolling one")
+                const label = currentTarget.closest(".rating-label").querySelector("button")
                 const rating = currentTarget.closest(".rating-label").querySelector("input[type='number']")
                 //create dice pool with dice equal to rating
-                let total = await HF.createRoll(rating.value, rating.name)
+                let total = await HF.createRoll(rating.value, label.textContent)
 
 
             }
@@ -77,9 +79,10 @@ const outpostActions = {
                 const ratings = Array.from(currentTarget.closest(".ratings-wrapper").querySelectorAll(".rating"))
                 const totals = []
                 for (let rating of ratings) {
+                    const label = rating.closest(".rating-label").querySelector("button")
                     if (rating.value >= 3) {
                         //create a roll for each of these, with relevant output
-                        let total = await HF.createRoll(rating.value, rating.name)
+                        let total = await HF.createRoll(rating.value, label.textContent)
                         totals.push({ name: rating.name, total: total })
                     }
                 }
@@ -405,6 +408,7 @@ export class OutpostSheet extends Application {
             template: `modules/hud-and-trackers/templates/outpost-sheet/outpost-sheet.html`,
             id: 'outpost-sheet',
             title: 'outpost-sheet',
+            dragDrop: [{ dragSelector: ".entity", dropSelector: ".station-wrapper" }],
         });
     }
 
@@ -418,7 +422,51 @@ export class OutpostSheet extends Application {
         super.activateListeners(html);
         HF.addActionListeners(html, outpostActions)
     }
+    async _onDrop(event) {
+        event.preventDefault();
+        let data;
+        try {
+            data = JSON.parse(event.dataTransfer.getData("text/plain"));
+        } catch (err) {
+            return;
+        }
 
+        this.linkEntity(data);
+        //get drop target
+    }
+
+    //link an entity that's dragged onto here
+    async linkEntity(data) {
+        //set this as a flag on the entity
+        let ourEntity;
+        await HelperFunctions.getEntityById(data.type, data.id).then((value) => (ourEntity = value));
+
+        if (ourEntity) {
+            //save the linked entity on our clock
+            //save this entity a linked entity on our clock
+            let entityData = {
+                name: ourEntity.name,
+                entity: ourEntity.documentName,
+            };
+            //get our linked entities, and find the id of this entity, and add the linked entities to this data
+            this.data.linkedEntities[data.id] = entityData;
+
+            this.render(true);
+        }
+    }
+    async unlinkEntity(entityData) {
+        //delete the entity from linkedEntities, and refresh the entity
+        delete this.data.linkedEntities[entityData.id];
+
+        //was accessing "ourId" instead of "id"
+        // refreshSpecificEntity(entityData, this.data.ourId);
+        const keyDeletion = {
+            [`-=${entityData.id}`]: null,
+        };
+        //add the key deletion thing so it'll be deleted properly in the users' saved flags as well
+        this.data.linkedEntities[`-=${entityData.id}`] = null;
+        this.saveAndRenderApp();
+    }
 
 }
 

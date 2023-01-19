@@ -19,7 +19,7 @@
         </label>
         <section class="ratings-wrapper">
           {{#each outpost.ratings as |rating|}}
-            <label for="{{@key}}" class="rating-label flex-1">
+            <div class="rating-label flex-1">
               <div
                 class="wrapper"
                 data-name="{{outpost.name}}.ratings.{{@key}}"
@@ -46,16 +46,28 @@
                   {{rating.name}}
                 </button>
               </div>
-              <button type="button" data-click-action="rollOne">
-                Roll
+              <button type="button" data-click-action="rollOne" class="roll-button">
+                <i class="fas fa-dice-d20"></i>
               </button>
-            </label>
+              <div class="points-display">
+                <div class="underlay">
+                {{#times 9}}
+                  <span class="point"></span>
+                {{/times}}
+                </div>
+                <div class="fill">
+                {{#times rating.value}}
+                  <span class="point"></span>
+                {{/times}}
+                </div>
+              </div>
+            </div>
           {{/each}}
           <button type="button" data-click-action="rollEach">
             Roll Each
           </button>
         </section>
-        <section>
+        <section class="clock-section">
           <h3>
             Consequence Clocks
           </h3>
@@ -71,6 +83,12 @@
               </div>
             {{/each}}
           </section>
+        </section>
+        <section class="station-section">
+          <h3>
+            Installations
+          </h3>
+          <div class="station-wrapper"></div>
         </section>
       </section>
     {{/each}}

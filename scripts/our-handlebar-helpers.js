@@ -30,6 +30,12 @@ export default function registerAllHandlebarHelpers() {
         let equalsAny = array.some((el) => el === stringInput);
         return equalsAny;
     });
+    Handlebars.registerHelper('times', function (n, block) {
+        let count = '';
+        for (var i = 0; i < n; ++i)
+            count += block.fn(i);
+        return count;
+    });
 }
 // Handlebars.registerHelper("getCharacterData", (id) => {
 
