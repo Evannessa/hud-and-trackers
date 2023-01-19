@@ -20,20 +20,20 @@
         </label>
         <section class="ratings-wrapper">
           {{#each outpost.ratings as |rating|}}
-            <div class="rating-label flex-1">
+            <div class="rating-container flex-1">
               <div
                 class="wrapper"
                 data-name="{{outpost.name}}.ratings.{{@key}}"
                 data-pool-name="{{outpost.name}}.pointPool"
               >
-                <button
-                  type="button"
-                  class="rating-button"
+                <label
+                  for="{{@key}}"
+                  class="rating-label"
                   data-click-action="changeRating"
                   data-name="{{@key}}"
                 >
                   {{rating.name}}
-                </button>
+                </label>
                 <input
                   data-name="{{@key}}"
                   class="rating displayNumber"

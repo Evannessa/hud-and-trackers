@@ -39,6 +39,12 @@ export default function registerAllHandlebarHelpers() {
     Handlebars.registerHelper('ternary', function (test, yes, no) {
         return test ? yes : no;
     });
+
+    /**
+     * Helpers below by Makis Tracend
+     * @link https://gist.github.com/tracend/7522125
+     * @author Makis Tracend
+     */
     // greater than or equal to
     Handlebars.registerHelper('ge', function (a, b) {
         var next = arguments[arguments.length - 1];

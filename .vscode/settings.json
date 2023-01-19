@@ -1,6 +1,12 @@
 {
     "prettier.enable": false,
-    "cSpell.words": ["blindroll", "falsey", "npcs", "playerlist"],
+    "cSpell.words": [
+        "blindroll",
+        "falsey",
+        "npcs",
+        "playerlist",
+        "Tracend"
+    ],
     "html.format.indentHandlebars": true,
     "html.format.templating": true,
     "gotoSymbolStack.currentStackPosition": 0,
