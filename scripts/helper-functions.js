@@ -113,6 +113,11 @@ export class HelperFunctions {
         }
         return capitalizedString;
     }
+
+    static async resetSetting(defaultValue) {
+
+
+    }
     static async getSettingValue(settingName, nestedKey = "") {
         let settingData = await game.settings.get(HelperFunctions.MODULE_ID, settingName);
         if (settingData !== undefined && settingData !== null) {

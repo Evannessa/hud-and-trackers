@@ -1,7 +1,7 @@
 <form>
   <section class="outpost-container">
     {{#each outposts as |outpost|}}
-      <section class="individual-outpost" id="{{outpost.name}}">
+      <section class="individual-outpost" id="{{@key}}">
         <h2>
           {{outpost.name}}
         </h2>
@@ -31,6 +31,7 @@
                   class="rating-label"
                   data-click-action="changeRating"
                   data-name="{{@key}}"
+                  data-type="rating"
                 >
                   {{rating.name}}
                 </label>
@@ -54,6 +55,7 @@
                 class="points-display"
                 data-click-action="changeRating"
                 data-name="{{@key}}"
+                data-type="rating"
               >
                 <div class="underlay">
                   {{#times 9}}
@@ -80,11 +82,32 @@
           {{!-- {{@root.clocks.instructions}} --}}
           {{! </p> }}
           <section class="clock-wrapper">
-            {{#each @root.clocks.clocks as |clock|}}
-              <div>
+            {{#each outpost.consequenceClocks as |clock|}}
+              <div class="consequence-clock">
                 <p>
-                  {{@key}}
+                  {{clock.name}}
                 </p>
+                <div
+                  class="points-display"
+                  data-click-action="changeRating"
+                  data-name="{{@key}}"
+                  data-type="clock"
+                >
+                  <div class="underlay">
+                    {{#times 9}}
+                      <span class="point point-symbol">
+                        {{clock.symbol}}
+                      </span>
+                    {{/times}}
+                  </div>
+                  <div class="fill">
+                    {{#times clock.value}}
+                      <span class="point point-symbol">
+                        {{clock.symbol}}
+                      </span>
+                    {{/times}}
+                  </div>
+                </div>
               </div>
             {{/each}}
           </section>

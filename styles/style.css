@@ -4590,6 +4590,11 @@ button.icon-button {
   border-radius: 50%;
   border: 1px solid coral;
 }
+.individual-outpost .points-display .point-symbol {
+  border: none;
+  display: inline-grid;
+  place-content: center;
+}
 .individual-outpost .points-display .underlay {
   grid-row: 1/2;
   grid-column: 1/2;
@@ -4597,12 +4602,21 @@ button.icon-button {
 .individual-outpost .points-display .underlay .point {
   background-color: transparent;
 }
+.individual-outpost .points-display .underlay .point-symbol {
+  filter: grayscale(60%);
+  opacity: 30%;
+  transform-origin: center;
+  transform: scale(0.8);
+}
 .individual-outpost .points-display .fill {
   grid-row: 1/2;
   grid-column: 1/2;
 }
 .individual-outpost .points-display .fill .point {
   background-color: lightcoral;
+}
+.individual-outpost .points-display .fill .point-symbol {
+  background-color: transparent;
 }
 .individual-outpost .ratings-wrapper {
   display: flex;
@@ -4678,6 +4692,23 @@ button.icon-button {
 }
 .individual-outpost .ratings-wrapper input::placeholder {
   color: white;
+}
+.individual-outpost .consequence-clock {
+  display: grid;
+  grid-template-columns: minmax(0, 200px) 1fr;
+  grid-template-rows: 1fr;
+  align-items: center;
+  gap: 1rem;
+}
+.individual-outpost .consequence-clock p {
+  grid-row: 1/2;
+  grid-column: 1/2;
+  justify-self: end;
+  color: var(--color-primary-200);
+}
+.individual-outpost .consequence-clock .points-display {
+  grid-row: 1/2;
+  grid-column: 2/3;
 }
 
 .d-block {

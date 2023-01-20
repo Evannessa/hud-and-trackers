@@ -12,6 +12,7 @@ const outpostActions = {
             handler: async (event, currentTarget, options = {}) => {
 
                 let ratingName = currentTarget.dataset.name//currentTarget.closest(".wrapper").dataset.name;
+                let type = currentTarget.dataset.type
                 // let poolName = currentTarget.closest(".wrapper").dataset.poolName;
                 let outpostId = currentTarget.closest(".individual-outpost").getAttribute("id")
                 // let _outpostData = await HF.getSettingValue("outpostData")
@@ -22,23 +23,38 @@ const outpostActions = {
                     //right mouse button subtract instead
                     changeBy = -1;
                 }
-
-                let newValue = outpostData.ratings[ratingName].value + changeBy
-                let newPoolValue = outpostData.pointPool - changeBy
-                if (newValue < 0 || newValue > 9 || newPoolValue < 0 || newPoolValue > 9) {
-                    return
-                }
-                let updateData = {
-                    ...outpostData,
-                    pointPool: newPoolValue,
-                    ratings: {
-                        ...outpostData.ratings,
-                        [ratingName]: {
-                            ...outpostData.ratings[ratingName],
-                            value: newValue
-                        }
+                let oldValue = type === "rating" ? outpostData.ratings[ratingName].value : outpostData.consequenceClocks[ratingName].value
+                let newValue = oldValue + changeBy
+                let updateData = {}
+                if (type === "rating") {
+                    let newPoolValue = outpostData.pointPool - changeBy
+                    if (newValue < 0 || newValue > 9 || newPoolValue < 0 || newPoolValue > 9) {
+                        return
                     }
+                    updateData = {
+                        ...outpostData,
+                        pointPool: newPoolValue,
+                        ratings: {
+                            ...outpostData.ratings,
+                            [ratingName]: {
+                                ...outpostData.ratings[ratingName],
+                                value: newValue
+                            }
+                        }
 
+                    }
+                } else if (type === "clock") {
+                    updateData = {
+                        ...outpostData,
+                        consequenceClocks: {
+                            ...outpostData.consequenceClocks,
+                            [ratingName]: {
+                                ...outpostData.consequenceClocks[ratingName],
+                                value: newValue
+                            }
+                        }
+
+                    }
                 }
                 await HF.setSettingValue("outpostData", updateData, `outposts.${outpostId}`)
 
@@ -148,9 +164,26 @@ export function outpostFactory(name) {
                 value: 0, name: "Comfort"
             },
             destruction: { value: 0, name: "Destruction" },
-            defenseSupport: { value: 3, name: "Defense/Support" },
-            dataProcessing: { value: 6, name: "Data Processing & Automation" },
+            defenseSupport: { value: 0, name: "Defense/Support" },
+            dataProcessing: { value: 0, name: "Data Processing & Automation" },
             resourceProcessing: { value: 0, name: "Resource Processing" },
+        },
+        consequenceClocks: {
+            pollution: {
+                name: "Tumult/Pollution",
+                value: 3,
+                symbol: "🧪️"
+            },
+            destabilization: {
+                name: "Destabilization/Calamity",
+                value: 2,
+                symbol: "💥"
+            },
+            powerSurge: {
+                name: "Power Surge",
+                value: 4,
+                symbol: "⚡"
+            },
         }
     }
 
@@ -361,15 +394,19 @@ If a clock ever hits maximum on its own, the GM will not roll, but a relevant en
         that may output a lot of noise (machinery running from music), heat (output from machines or information processing),
         fumes, radiation, exhaust, odor, etc., smell (from storing creatures), blood (from slaughtering creatures),
         and attract unwanted attention. (Attracts Creatures/Infestations/Disease)`,
-            value: 0,
+            value: 3,
+            symbol: "🧪️" //"🏭"// ️
+
         },
         "Destabilization/Calamity": {
             description: ` For each Outpost Action taken that used sheer destructive force and energy to destroy or irreversibly alter part of the surrounding environment or the ecosystem within (be it a large group of creatures or a single large creature), add a Bane, representing the havoc and resulting unintended consequences such actions can cause. (Triggers Environmental Hazards)`,
-            value: 0
+            value: 2,
+            symbol: "💥"
         },
         "Power Surge": {
             description: `Triggers station malfunctions, which could lead to things like failed defenses or containment breaches, or loss of data)`,
-            value: 0
+            value: 4,
+            symbol: "⚡"
         },
     }
 }
@@ -399,7 +436,7 @@ export class OutpostSheet extends Application {
     async getData() {
         // Send data to the template
         let outposts = await HF.getSettingValue("outpostData", "outposts")
-        return { outposts: Object.values(outposts), clocks: consequenceClocks }
+        return { outposts: outposts }
     }
 
     activateListeners(html) {
