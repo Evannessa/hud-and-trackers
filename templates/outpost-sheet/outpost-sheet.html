@@ -1,5 +1,28 @@
 <form>
   <section class="outpost-container">
+    <section class="phase-container">
+      <fieldset class="button-group">
+        <legend>
+          Phases
+        </legend>
+        {{#each phases as |phase|}}
+          <span class="">
+            <input
+              class="hidden-input"
+              type="radio"
+              name="{{@key}}"
+              id="{{@key}}"
+              value="{{@key}}"
+              data-change-action="changePhase"
+              {{ternary (eq @root.currentPhase @key) "checked" ""}}
+            />
+            <label for="{{@key}}">
+              {{phase.name}}
+            </label>
+          </span>
+        {{/each}}
+      </fieldset>
+    </section>
     {{#each outposts as |outpost|}}
       <section class="individual-outpost" id="{{@key}}">
         <h2>
@@ -20,7 +43,7 @@
         </label>
         <section class="ratings-wrapper">
           {{#each outpost.ratings as |rating|}}
-            <div class="rating-container flex-1">
+            <div class="rating-container">
               <div
                 class="wrapper"
                 data-name="{{outpost.name}}.ratings.{{@key}}"
@@ -48,9 +71,6 @@
                   data-change-action="changePool"
                 />
               </div>
-              {{! <button type="button" data-click-action="rollOne" class="roll-button"> }}
-              {{! <i class="fas fa-dice-d20"></i> }}
-              {{! </button> }}
               <div
                 class="points-display"
                 data-click-action="changeRating"
@@ -68,49 +88,107 @@
                   {{/times}}
                 </div>
               </div>
+              {{! This is the button for the ActionPhase }}
+              <div class="button-wrapper">
+                  <button
+                    type="button"
+                    class="roll-rating"
+                    data-click-action="rollRating"
+                    data-minimum="1"
+                    {{ternary (eq @root.currentPhase "actionPhase") "" "disabled"}}
+                  >
+                    <i class="fas fa-level-up"></i>
+                  </button>
+                  {{! This is the button for the ReactionPhase }}
+                  <button
+                    type="button"
+                    class="roll-rating"
+                    data-click-action="rollRating"
+                    data-minimum="1"
+                    {{ternary (eq @root.currentPhase "reactionPhase") "" "disabled"
+                    }}
+                  >
+                    <i class="fas fa-shield-alt"></i>
+                  </button>
+              </div>
             </div>
           {{/each}}
-          <button type="button" data-click-action="rollEach">
-            Roll Each
+          <button
+            type="button"
+            data-click-action="rollEach"
+            data-type="rating"
+            {{ternary (eq @root.currentPhase "eventPhase") "disabled" ""}}
+          >
+            Roll All Ratings
           </button>
         </section>
-        <section class="clock-section">
+        <section class="clocks-wrapper ratings-wrapper">
           <h3>
             Consequence Clocks
           </h3>
-          {{! <p> }}
-          {{!-- {{@root.clocks.instructions}} --}}
-          {{! </p> }}
-          <section class="clock-wrapper">
-            {{#each outpost.consequenceClocks as |clock|}}
-              <div class="consequence-clock">
-                <p>
-                  {{clock.name}}
-                </p>
-                <div
-                  class="points-display"
+          {{#each outpost.consequenceClocks as |clock|}}
+            <section class="clock-container rating-container">
+              <div class="consequence-clock wrapper">
+                <label
+                  for="{{@key}}"
+                  class="clock-label"
                   data-click-action="changeRating"
                   data-name="{{@key}}"
                   data-type="clock"
                 >
-                  <div class="underlay">
-                    {{#times 9}}
-                      <span class="point point-symbol">
-                        {{clock.symbol}}
-                      </span>
-                    {{/times}}
-                  </div>
-                  <div class="fill">
-                    {{#times clock.value}}
-                      <span class="point point-symbol">
-                        {{clock.symbol}}
-                      </span>
-                    {{/times}}
-                  </div>
+                  {{clock.name}}
+                </label>
+                <input
+                  data-name="{{@key}}"
+                  class="clock-rating rating displayNumber"
+                  type="number"
+                  name="{{@key}}"
+                  id="{{@key}}"
+                  min="0"
+                  max="9"
+                  value="{{clock.value}}"
+                  disabled
+                />
+              </div>
+              <div
+                class="points-display"
+                data-click-action="changeRating"
+                data-name="{{@key}}"
+                data-type="clock"
+              >
+                <div class="underlay">
+                  {{#times 9}}
+                    <span class="point point-symbol">
+                      {{clock.symbol}}
+                    </span>
+                  {{/times}}
+                </div>
+                <div class="fill">
+                  {{#times clock.value}}
+                    <span class="point point-symbol">
+                      {{clock.symbol}}
+                    </span>
+                  {{/times}}
                 </div>
               </div>
-            {{/each}}
-          </section>
+              <button
+                class="roll-rating"
+                data-click-action="rollRating"
+                type="button"
+                {{ternary (eq @root.currentPhase "eventPhase") "" "disabled"}}
+              >
+                <i class="fas fa-dice-d20"></i>
+              </button>
+            </section>
+          {{/each}}
+          <button
+            type="button"
+            data-click-action="rollEach"
+            data-type="clock"
+            {{ternary (eq @root.currentPhase "eventPhase") "" "disabled"}}
+          >
+            Roll All Consequences
+          </button>
         </section>
         <section class="station-section">
           <h3>

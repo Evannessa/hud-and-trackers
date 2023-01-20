@@ -2,12 +2,36 @@ import CombatHud from "./combat-hud.js";
 import * as HelperFunctions from "./helper-functions.js";
 import { phases, outpostFactory } from "./outpost-sheet.js";
 export default function registerSettings() {
+    game.settings.register("hud-and-trackers", "downtimeData", {
+        scope: "world",
+        config: false,
+        type: Object,
+        default: {
+            downtimeActive: false,
+            actions: {
+                gil: {
 
+                },
+                calyx: {
+
+                },
+                cynah: {
+
+                },
+                suoja: {
+
+                },
+
+
+            }
+        },
+    });
     game.settings.register("hud-and-trackers", "outpostData", {
         scope: "world",
         config: false,
         type: Object,
         default: {
+            currentPhase: 0,
             outposts: {
                 one: outpostFactory("one"),
                 two: outpostFactory("two"),

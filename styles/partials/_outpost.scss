@@ -6,6 +6,19 @@
 
     max-width: 80vw;
 
+    .phase-container fieldset {
+        display: flex;
+        border-radius: 8px;
+        overflow: hidden;
+        width: fit-content;
+        height: fit-content;
+
+        label {
+            border-radius: unset;
+        }
+
+    }
+
     input {
         color: white;
 
@@ -57,6 +70,10 @@
                 display: inline-grid;
                 place-content: center;
             }
+
+            position: relative;
+
+
         }
 
         .underlay {
@@ -88,6 +105,24 @@
                 &-symbol {
 
                     background-color: transparent;
+
+                    &::after {
+                        display: none;
+                    }
+
+
+                }
+
+                &:nth-child(3n)::after {
+                    content: "";
+                    position: absolute;
+                    right: -50%;
+                    transform: translateX(-50%);
+                    width: 50%;
+                    height: 100%;
+                    border-right: 1px solid hsla(226, 83%, 77%, 0.671);
+                    z-index: 10;
+                    pointer-events: none;
                 }
             }
 
@@ -95,14 +130,16 @@
 
     }
 
-    .ratings-wrapper {
+    .ratings-wrapper,
+    .clocks-wrapper {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
         // flex-wrap: wrap;
         gap: 0.5rem;
 
-        .rating-container {
+        .rating-container,
+        .clock-container {
             display: grid;
             // display: flex;
             // justify-content: space-between;
@@ -114,10 +151,7 @@
             justify-content: center;
             justify-items: center;
 
-            .points-display {
-                grid-column: 2/3;
-                grid-row: 1/2;
-            }
+
 
             .wrapper {
                 grid-row: 1/2;
@@ -127,14 +161,31 @@
                 gap: 0.25rem;
             }
 
-            .roll-button {
-                grid-row: 1/2;
+            .points-display {
                 grid-column: 2/3;
+                grid-row: 1/2;
+            }
+
+            .button-wrapper {
+                grid-row: 1/2;
+                grid-column: 3/4;
+                display: flex;
+
+                button {
+                    flex: 1;
+                }
+            }
+
+            .roll-button,
+            .roll-rating {
+                grid-row: 1/2;
+                grid-column: 3/4;
 
             }
         }
 
-        .rating-label {
+        .rating-label,
+        .clock-label {
 
             color: var(--color-primary-200);
             border: unset;
@@ -184,23 +235,23 @@
         }
     }
 
-    .consequence-clock {
-        display: grid;
-        grid-template-columns: minmax(0, 200px) 1fr;
-        grid-template-rows: 1fr;
-        align-items: center;
-        gap: 1rem;
+    // .consequence-clock {
+    //     display: grid;
+    //     grid-template-columns: minmax(0, 200px) 1fr;
+    //     grid-template-rows: 1fr;
+    //     align-items: center;
+    //     gap: 1rem;
 
-        p {
-            grid-row: 1/2;
-            grid-column: 1/2;
-            justify-self: end;
-            color: var(--color-primary-200);
-        }
+    //     p {
+    //         grid-row: 1/2;
+    //         grid-column: 1/2;
+    //         justify-self: end;
+    //         color: var(--color-primary-200);
+    //     }
 
-        .points-display {
-            grid-row: 1/2;
-            grid-column: 2/3;
-        }
-    }
+    //     .points-display {
+    //         grid-row: 1/2;
+    //         grid-column: 2/3;
+    //     }
+    // }
 }

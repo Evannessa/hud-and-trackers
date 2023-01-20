@@ -3,11 +3,19 @@ const outpostActions = {
     click: {
         addNewOutpost: {
             handler: (event, currentTarget, options = {}) => {
-                //add location, link item sheet?
-                //drag-drop
+                outpostFactory("New Outpost")
+
 
             }
         },
+        deleteOutpost: {
+            handler: async (event, currentTarget, options = {}) => {
+
+            }
+
+        },
+
+
         changeRating: {
             handler: async (event, currentTarget, options = {}) => {
 
@@ -25,10 +33,15 @@ const outpostActions = {
                 }
                 let oldValue = type === "rating" ? outpostData.ratings[ratingName].value : outpostData.consequenceClocks[ratingName].value
                 let newValue = oldValue + changeBy
+
+                if (newValue < 0 || newValue > 9) {
+                    return
+                }
                 let updateData = {}
+
                 if (type === "rating") {
                     let newPoolValue = outpostData.pointPool - changeBy
-                    if (newValue < 0 || newValue > 9 || newPoolValue < 0 || newPoolValue > 9) {
+                    if (newPoolValue < 0 || newPoolValue > 9) {
                         return
                     }
                     updateData = {
@@ -44,6 +57,7 @@ const outpostActions = {
 
                     }
                 } else if (type === "clock") {
+
                     updateData = {
                         ...outpostData,
                         consequenceClocks: {
@@ -63,32 +77,45 @@ const outpostActions = {
 
             }
         },
-        rollOne: {
+        rollRating: {
             handler: async (event, currentTarget, options = {}) => {
-                const label = currentTarget.closest(".rating-label").querySelector("button")
-                const rating = currentTarget.closest(".rating-label").querySelector("input[type='number']")
-                //create dice pool with dice equal to rating
+                const label = currentTarget.closest(".rating-container").querySelector("label")
+                const rating = currentTarget.closest(".rating-container").querySelector("input[type='number']")
                 let total = await HF.createRoll(rating.value, label.textContent)
+
 
 
             }
         },
         rollEach: {
             handler: async (event, currentTarget, options = {}) => {
-                console.log("Rolling each")
+                const OM = OutpostManager
                 const ratings = Array.from(currentTarget.closest(".ratings-wrapper").querySelectorAll(".rating"))
-                const totals = []
-                for (let rating of ratings) {
-                    const label = rating.closest(".rating-label").querySelector("button")
-                    if (rating.value >= 3) {
-                        //create a roll for each of these, with relevant output
-                        let total = await HF.createRoll(rating.value, label.textContent)
-                        totals.push({ name: rating.name, total: total })
-                    }
+                console.log(ratings)
+                let minimumValue = 3, findHighest = false;
+                if (currentTarget.dataset.type === "clock") {
+                    minimumValue = 1
+                    findHighest = true
                 }
-                let max = HF.getMaxOrMin(totals, "max")
-                let min = HF.getMaxOrMin(totals, "min")
-                console.log("Our totals", totals, max, min)
+
+                const totals = await OM.rollRatings(ratings, minimumValue, findHighest)
+                console.log(totals)
+                if (totals.max) {
+                    //TODO: Create private message to GM with maximum roll
+                }
+                // for (let rating of ratings) {
+                //     const label = rating.closest(".wrapper").querySelector("label")
+                //     if (rating.value >= 3) {
+                //         //create a roll for each of these, with relevant output
+                //         let total = await HF.createRoll(rating.value, label.textContent)
+                //         totals.push({ name: rating.name, total: total })
+                //     }
+                // }
+
+                // let max = HF.getMaxOrMin(totals, "max")
+                // let min = HF.getMaxOrMin(totals, "min")
+                // console.log("Our totals", totals, max, min)
+
 
 
             }
@@ -96,6 +123,15 @@ const outpostActions = {
         }
     },
     change: {
+        changePhase: {
+            handler: async (event, currentTarget, options = {}) => {
+                if (currentTarget.checked) {
+                    await HF.setSettingValue("outpostData", currentTarget.value, `currentPhase`)
+                    await game.outpostSheet.render(true)
+                }
+
+            }
+        },
         changePool: {
             handler: (event, currentTarget, options = {}) => {
                 let pool = currentTarget.closest(".outpost-container").querySelector("#pointPool")
@@ -107,8 +143,56 @@ const outpostActions = {
 }
 Hooks.on("ready", () => {
     game.outpostSheet = new OutpostSheet().render()
+    game.outpostManager = OutpostManager
 });
 
+class OutpostManager {
+
+
+    /**
+     * Create dice pool with dice = to point in each rating & roll
+     * @param {Array} ratingElements - an array of rating elements
+     * @param {int} minimumValue - the minimal value in a rating for which we will roll
+     * @param {boolean} findHighest - return highest roll
+     */
+    static async rollRatings(ratingElements, minimumValue = 3, findHighest = false) {
+        const totals = []
+        for (let rating of ratingElements) {
+            const label = rating.closest(".wrapper").querySelector("label")
+            if (rating.value >= minimumValue) {
+                //create a roll for each of these, with relevant output
+                // let total = await HF.createRoll(rating.value, label.textContent)
+                let total = await OutpostManager.rollRating(rating.value, label.textContent)
+                totals.push({ name: rating.name, total: total })
+            }
+        }
+        let object = { totals }
+        if (findHighest) {
+            let max = HF.getMaxOrMin(totals, "max")
+            object = { ...object, max }
+        }
+        return object
+    }
+    static async rollRating(value, flavor = "") {
+        let total = await HF.createRoll(value, flavor)
+        return total;
+    }
+    static async createNewOutpost() {
+        const innerData = outpostFactory("New Outpost")
+        const newID = foundry.utils.randomID()
+        const outposts = await HF.getSettingValue("outpostData", "outposts")
+        const updateData = {
+            ...outposts,
+            [newID]: innerData
+        }
+        await HF.setSettingValue("outpostData", updateData, "outposts")
+    }
+    static async deleteOutpost(id) {
+        const outposts = await HF.getSettingValue("outpostData", "outposts")
+        delete outposts[id]
+        await HF.setSettingValue("outpostData", outposts, "outposts")
+    }
+}
 export const allOutposts = [
     outpostFactory("one"),
     outpostFactory("two"),
@@ -171,17 +255,17 @@ export function outpostFactory(name) {
         consequenceClocks: {
             pollution: {
                 name: "Tumult/Pollution",
-                value: 3,
+                value: 0,
                 symbol: "🧪️"
             },
             destabilization: {
                 name: "Destabilization/Calamity",
-                value: 2,
+                value: 0,
                 symbol: "💥"
             },
             powerSurge: {
                 name: "Power Surge",
-                value: 4,
+                value: 0,
                 symbol: "⚡"
             },
         }
@@ -294,13 +378,37 @@ Each consecutive 'Jailbreak' will add an additional required success, and failur
 
 
 export const phases = {
-    "Action Phase": `Here, the outpost does the active duties and processes you have geared it toward.
+    actionPhase: {
+        name: "Action Phase", description: `Here, the outpost does the active duties and processes you have geared it toward.
 For each rating greater than or equal to 3, the Outpost will roll a number of dice equal to that rating.
-`,
-    "Event Phase": `The Event Phase represents the Abyss reacting to your Outpost's presence,
+`},
+    eventPhase: {
+        name: "Event Phase", description: `The Event Phase represents the Abyss reacting to your Outpost's presence,
     or your Outpost reacting to the strangeness of the Abyss.`,
-    "Reaction Phase": `Here, roll the appropriate rating to see how well the outpost withstands any events, be they environmental or internal, that occur, or defends against any negative attention its processes may have attracted.
+    },
+    reactionPhase: {
+        name: "Reaction Phase", description: `Here, roll the appropriate rating to see how well the outpost withstands any events, be they environmental or internal, that occur, or defends against any negative attention its processes may have attracted.
 If the outpost has no points in a particular rating, roll 2d6 and take the lowest result.`,
+    }
+}
+const tooltipText = {
+    rollConsequences: {
+        actionPhase: `Consequences can only be rolled during the event phase. Current phase is 'Action'.`,
+        eventPhase: `Roll consequences to determine what event will occur`,
+        reactionPhase: `Consequences can only be rolled during the event phase. Current phase is 'Reaction'.`,
+    },
+    rollAllRatings: {
+        actionPhase: ``,
+        eventPhase: `Ratings cannot be rolled during the Event Phase.`,
+        reactionPhase: `Roll a single rating in reaction to an Event that occurred.`,
+    },
+    rollSingleRating: {
+        actionPhase: `Utilize this Outpost's specialization to manually aid in a downtime action`,
+        eventPhase: `Ratings cannot be rolled during the Event Phase.`,
+        reactionPhase: `Roll a single rating in reaction to an Event that occurred.`,
+    }
+
+
 }
 export const outpostData = {
     "Comfort": {
@@ -411,6 +519,47 @@ If a clock ever hits maximum on its own, the GM will not roll, but a relevant en
     }
 }
 
+const downtimeActions = {
+    click: {
+        toggleDowntimeActive: {
+            handler: async (event, currentTarget, options = {}) => {
+                let active = await HF.getSettingValue("downtimeData", "downtimeActive")
+                active = !active
+                await HF.setSettingValue("downtimeData", active, "downtimeActive")
+            }
+
+
+        }
+    }
+
+}
+export class DowntimeSheet extends Application {
+    constructor(data) {
+        this.data = data
+    }
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            classes: ['form'],
+            popOut: true,
+            resizable: true,
+            minimizeable: true,
+            width: "600",
+            template: `modules/hud-and-trackers/templates/outpost-sheet/downtime-sheet.html`,
+            id: 'downtime-sheet',
+            title: 'Downtime Sheet',
+        });
+    }
+    async getData() {
+        // Send data to the template
+        let { downtimeActive, actions } = await HF.getSettingValue("downtimeData")
+        return { downtimeActive }
+
+    }
+    activateListeners(html) {
+        super.activateListeners(html);
+        HF.addActionListeners(html, downtimeActions)
+    }
+}
 export class OutpostSheet extends Application {
     /**
      * Description
@@ -426,6 +575,7 @@ export class OutpostSheet extends Application {
             popOut: true,
             resizable: true,
             minimizeable: true,
+            width: "600",
             template: `modules/hud-and-trackers/templates/outpost-sheet/outpost-sheet.html`,
             id: 'outpost-sheet',
             title: 'outpost-sheet',
@@ -435,8 +585,10 @@ export class OutpostSheet extends Application {
 
     async getData() {
         // Send data to the template
-        let outposts = await HF.getSettingValue("outpostData", "outposts")
-        return { outposts: outposts }
+        let { outposts, currentPhase } = await HF.getSettingValue("outpostData")
+        // let outposts = await HF.getSettingValue("outpostData", "outposts")
+        if (!currentPhase) currentPhase = "actionPhase"
+        return { outposts: outposts, phases: phases, currentPhase: currentPhase, isGM: game.user.isGM }
     }
 
     activateListeners(html) {

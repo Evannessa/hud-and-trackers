@@ -198,13 +198,8 @@ export class HelperFunctions {
     }
     static async createRoll(diceNumber, flavor, keepHighest = false) {
         const rollObject = new Roll(`${diceNumber}d6kh`)
-
-        // let rollValue = await rollObject.evaluate({ async: true })
-        // console.log(rollValue)
         const roll = await rollObject.roll()
         const string = HelperFunctions.evaluateRollResult(rollObject.total)
-        console.log(roll, string)
-        console.log(rollObject)
         rollObject.toMessage({
             flavor: flavor + " | " + string,
         })

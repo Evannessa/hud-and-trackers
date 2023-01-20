@@ -1,0 +1,56 @@
+   <section class="ratings-wrapper">
+          {{#each outpost.ratings as |rating|}}
+            <div class="rating-container">
+              <div
+                class="wrapper"
+                data-name="{{outpost.name}}.ratings.{{@key}}"
+                data-pool-name="{{outpost.name}}.pointPool"
+              >
+                <label
+                  for="{{@key}}"
+                  class="rating-label"
+                  data-click-action="changeRating"
+                  data-name="{{@key}}"
+                  data-type="rating"
+                >
+                  {{rating.name}}
+                </label>
+                <input
+                  data-name="{{@key}}"
+                  class="rating displayNumber"
+                  type="number"
+                  name="{{@key}}"
+                  id="{{@key}}"
+                  min="0"
+                  max="9"
+                  value="{{rating.value}}"
+                  disabled
+                  data-change-action="changePool"
+                />
+              </div>
+              {{! <button type="button" data-click-action="rollOne" class="roll-button"> }}
+              {{! <i class="fas fa-dice-d20"></i> }}
+              {{! </button> }}
+              <div
+                class="points-display"
+                data-click-action="changeRating"
+                data-name="{{@key}}"
+                data-type="rating"
+              >
+                <div class="underlay">
+                  {{#times 9}}
+                    <span class="point"></span>
+                  {{/times}}
+                </div>
+                <div class="fill">
+                  {{#times rating.value}}
+                    <span class="point"></span>
+                  {{/times}}
+                </div>
+              </div>
+            </div>
+          {{/each}}
+          <button type="button" data-click-action="rollEach">
+            Roll Each
+          </button>
+        </section>
