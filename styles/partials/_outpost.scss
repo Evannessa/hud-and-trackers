@@ -42,7 +42,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.1rem;
+    gap: 0.5rem;
 
     max-width: 80vw;
 
@@ -55,6 +55,7 @@
 
         label {
             border-radius: unset;
+            border: unset !important;
         }
 
     }
@@ -117,11 +118,17 @@
         border-radius: 8px;
         width: 100%;
 
+        &[open] {
+            ul {
+                opacity: 0%;
+                pointer-events: none;
+            }
+        }
+
         summary {
             list-style-type: armenian;
             display: flex;
-            font-size: 1.5rem;
-
+            font-size: 1rem;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
             background-color: var(--color-neutral-700);
@@ -130,8 +137,10 @@
             align-items: center;
             width: 100%;
             cursor: pointer;
+            padding: 0.5rem 0.45rem;
 
             ul {
+                opacity: 100%;
                 margin: unset;
                 display: inline-flex;
                 gap: 0.5rem;
@@ -140,6 +149,15 @@
             ul li {
                 list-style-type: none;
                 font-size: 1rem;
+                filter: grayscale(50%);
+
+                &:hover {
+                    outline: 1px solid var(--color-primary-400);
+                    outline-offset: 3px;
+                    border-radius: 5px;
+                    color: var(--color-neutral-400) !important;
+                    filter: grayscale(0%);
+                }
             }
 
 
@@ -265,6 +283,12 @@
             align-items: center;
             justify-content: center;
             justify-items: center;
+            border-radius: 5px;
+
+            &:hover {
+                outline: 1px solid var(--color-primary-400);
+                outline-offset: 2px;
+            }
 
 
 
@@ -301,7 +325,7 @@
 
         .rating-label,
         .clock-label {
-
+            font-size: smaller;
             color: var(--color-primary-200);
             border: unset;
             white-space: nowrap;

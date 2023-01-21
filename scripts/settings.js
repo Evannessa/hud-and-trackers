@@ -39,6 +39,16 @@ export default function registerSettings() {
             }
         },
     });
+    game.settings.register("hud-and-trackers", "outpostUIState", {
+        scope: "client",
+        config: false,
+        type: Object,
+        default: {
+            collapsibles: {
+
+            }
+        },
+    });
     game.settings.register("hud-and-trackers", "currentURLs", {
         scope: "client",
         config: false,

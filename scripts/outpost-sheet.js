@@ -1,6 +1,14 @@
 import { HelperFunctions as HF } from "./helper-functions.js";
+
 const outpostActions = {
     click: {
+        saveState: {
+            handler: async (event, currentTarget, options = {}) => {
+
+                await saveOpenState()
+
+            }
+        },
         addNewOutpost: {
             handler: (event, currentTarget, options = {}) => {
                 outpostFactory("New Outpost")
@@ -80,7 +88,8 @@ const outpostActions = {
                 }
                 await HF.setSettingValue("outpostData", updateData, `outposts.${outpostId}`)
 
-                await game.outpostSheet.render(true)
+                refreshOutpostSheet()
+                // await game.outpostSheet.render(true)
 
 
             }
@@ -143,7 +152,8 @@ const outpostActions = {
             handler: async (event, currentTarget, options = {}) => {
                 if (currentTarget.checked) {
                     await HF.setSettingValue("outpostData", currentTarget.value, `currentPhase`)
-                    await game.outpostSheet.render(true)
+                    refreshOutpostSheet()
+                    // await game.outpostSheet.render(true)
                 }
 
             }
@@ -153,7 +163,8 @@ const outpostActions = {
                 let outpostID = currentTarget.closest(".individual-outpost").getAttribute("id")
                 let sheetID = currentTarget.value
                 await HF.setSettingValue("outpostData", sheetID, `outposts.${outpostID}.linkedActorID`)
-                await game.outpostSheet.render(true)
+                refreshOutpostSheet()
+                // await game.outpostSheet.render(true)
 
 
 
@@ -168,16 +179,37 @@ const outpostActions = {
 
             },
         }
+    },
+    toggle: {
+        saveState: {
+            handler: async (event, currentTarget, options = {}) => {
+                const id = currentTarget.dataset.id
+                const isOpen = currentTarget.open
+                console.log("Toggling", isOpen)
+                // await HF.setSettingValue("outpostUIState", , "collapsibles.${id}")
+
+            }
+        }
     }
 }
 Hooks.on("ready", async () => {
     game.outpostSheet = new OutpostSheet()
     await game.outpostSheet.render()
     game.outpostManager = OutpostManager
-
     // game.downtimeSheet = new DowntimeSheet()
     // await game.downtimeSheet.render(true)
 });
+let socket;
+
+//FIXME: refactor this  to be handled in a "Manager" class
+Hooks.once("socketlib.ready", () => {
+    // socket = socketlib.registerModule("hud-and-trackers");
+    // socket.register("refreshClockDependentItems", refreshClockDependentItems);
+    socket = socketlib.registerModule("hud-and-trackers");
+
+    socket.register("renderOutpostSheet", renderOutpostSheet);
+});
+
 
 class OutpostManager {
 
@@ -664,6 +696,8 @@ export class OutpostSheet extends Application {
     async getData() {
         // Send data to the template
         let { outposts, currentPhase } = await HF.getSettingValue("outpostData")
+
+        let collapsibleStates = await HF.getSettingValue("outpostUIState", "collapsibles")
         // let outposts = await HF.getSettingValue("outpostData", "outposts")
         for (let key in outposts) {
             const linkedActorID = outposts[key].linkedActorID
@@ -672,58 +706,39 @@ export class OutpostSheet extends Application {
 
         let outpostSheets = game.folders.getName("Outposts").contents
         if (!currentPhase) currentPhase = "actionPhase"
-        return { outposts: outposts, phases: phases, currentPhase: currentPhase, isGM: game.user.isGM, outpostSheets: outpostSheets, ratingIcons: ratingIcons }
+        return { outposts: outposts, phases: phases, currentPhase: currentPhase, isGM: game.user.isGM, outpostSheets: outpostSheets, ratingIcons: ratingIcons, collapsibleStates: collapsibleStates }
     }
 
-    activateListeners(html) {
+    async activateListeners(html) {
         super.activateListeners(html);
-        HF.addActionListeners(html, outpostActions)
-    }
-    async _onDrop(event) {
-        event.preventDefault();
-        let data;
-        try {
-            data = JSON.parse(event.dataTransfer.getData("text/plain"));
-        } catch (err) {
-            return;
-        }
+        await HF.addActionListeners(html, outpostActions)
 
-        this.linkEntity(data);
-        //get drop target
     }
 
-    //link an entity that's dragged onto here
-    async linkEntity(data) {
-        //set this as a flag on the entity
-        let ourEntity;
-        await HelperFunctions.getEntityById(data.type, data.id).then((value) => (ourEntity = value));
 
-        if (ourEntity) {
-            //save the linked entity on our clock
-            //save this entity a linked entity on our clock
-            let entityData = {
-                name: ourEntity.name,
-                entity: ourEntity.documentName,
-            };
-            //get our linked entities, and find the id of this entity, and add the linked entities to this data
-            this.data.linkedEntities[data.id] = entityData;
 
-            this.render(true);
-        }
-    }
-    async unlinkEntity(entityData) {
-        //delete the entity from linkedEntities, and refresh the entity
-        delete this.data.linkedEntities[entityData.id];
 
-        //was accessing "ourId" instead of "id"
-        // refreshSpecificEntity(entityData, this.data.ourId);
-        const keyDeletion = {
-            [`-=${entityData.id}`]: null,
-        };
-        //add the key deletion thing so it'll be deleted properly in the users' saved flags as well
-        this.data.linkedEntities[`-=${entityData.id}`] = null;
-        this.saveAndRenderApp();
-    }
+}
 
+async function saveOpenState() {
+    let collapsibles;
+    if (game.outpostSheet && game.outpostSheet.rendered) collapsibles = Array.from(game.outpostSheet.element[0].querySelectorAll("details"))
+
+    let map = Object.fromEntries(collapsibles.map((el) => { return [el.dataset.id, el.open] }))
+
+    collapsibles.forEach((col => console.log(col.open)))
+    await HF.setSettingValue("outpostUIState", map, "collapsibles")
+
+
+}
+async function renderOutpostSheet() {
+    await saveOpenState()
+    if (game.outpostSheet) await game.outpostSheet.render(true)
+}
+
+async function refreshOutpostSheet() {
+    await renderOutpostSheet()
+    console.log("Sheet updated")
+    await socket.executeForOthers("renderOutpostSheet", "");
 }
 

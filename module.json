@@ -1,19 +1,17 @@
 {
     "id": "hud-and-trackers",
-    "name": "hud-and-trackers",
     "title": "HUD and Trackers",
     "description": "An attempt to make tracking stuff easier for me.",
-    "version": "1.6.0",
-    "minimumCoreVersion": 9,
-    "compatibleCoreVersion": "10.120",
+    "version": "1.6.1",
     "compatibility": {
-        "minimum": 9,
+        "minimum": "9",
         "verified": "10.120",
-        "maximum": 10
+        "maximum": "10"
     },
     "authors": [
         {
-            "name": "Eva"
+            "name": "Eva",
+            "flags": {}
         }
     ],
     "packs": [
@@ -21,40 +19,43 @@
             "name": "macros",
             "label": "HUD and Trackers",
             "path": "/packs/macros.db",
-            "entity": "Macro"
+            "type": "Macro",
+            "private": false,
+            "flags": {}
         },
         {
             "name": "premade-scenes",
             "label": "HUD and Trackers Premade Display Scenes",
-            "path": "./packs/hat-premade-display-scenes.db",
-            "entity": "Scene"
+            "path": "packs/hat-premade-display-scenes.db",
+            "type": "Scene",
+            "private": false,
+            "flags": {}
         }
     ],
     "scripts": ["scripts/draggabilly.min.js", "greensock/dist/gsap.min.js"],
     "esmodules": [
-        "./scripts/init.js",
-        "./scripts/hud.js",
-        "./scripts/combat-hud.js",
-        "./scripts/clock.js",
-        "./scripts/party-overview.js",
-        "./scripts/dice-pool.js",
-        "./scripts/custom_playerlist.js",
-        "./scripts/disposition-indicator.js",
-        "./scripts/action-hud.js",
-        "./scripts/journal-tooltips.js",
-        "./scripts/character-scene-display.js",
-        "./scripts/helper-hud.js",
-        "./scripts/classes/CharacterPopout.js",
-        "./scripts/classes/ProcessWikiData.js",
-        "./scripts/hooks.js",
-        "./scripts/debug-mode.js",
-        "./scripts/outpost-sheet.js"
+        "scripts/init.js",
+        "scripts/hud.js",
+        "scripts/combat-hud.js",
+        "scripts/clock.js",
+        "scripts/party-overview.js",
+        "scripts/dice-pool.js",
+        "scripts/custom_playerlist.js",
+        "scripts/disposition-indicator.js",
+        "scripts/action-hud.js",
+        "scripts/journal-tooltips.js",
+        "scripts/character-scene-display.js",
+        "scripts/helper-hud.js",
+        "scripts/classes/CharacterPopout.js",
+        "scripts/classes/ProcessWikiData.js",
+        "scripts/hooks.js",
+        "scripts/debug-mode.js",
+        "scripts/outpost-sheet.js",
+        "scripts/module.js"
     ],
     "styles": ["styles/style.css"],
-    "dependencies": [],
     "url": "https://github.com/EvanesceExotica/hud-and-trackers",
     "manifest": "https://raw.githubusercontent.com/EvanesceExotica/hud-and-trackers/master/module.json",
     "download": "https://github.com/EvanesceExotica/hud-and-trackers/archive/refs/heads/master.zip",
-    "manifestPlusVersion": "1.2.0",
     "socket": true
 }

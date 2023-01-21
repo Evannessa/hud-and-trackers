@@ -154,7 +154,7 @@ export class HelperFunctions {
         return flagData;
     }
 
-    static addActionListeners(html, actionsData) {
+    static async addActionListeners(html, actionsData) {
 
         const types = {
             click: {
@@ -165,17 +165,22 @@ export class HelperFunctions {
             },
             change: {
                 eventName: "change"
-            }
+            },
+            toggle: {
+                eventName: "toggle"
+            },
         }
         for (let type in types) {
             let { eventName, dataKey } = types[type]
             if (!dataKey) dataKey = type
             let string = `[data-${dataKey}-action]`
-            html.on(eventName, string, (event) => {
+            console.log(string, dataKey)
+
+            html.on(eventName, string, async (event) => {
                 console.log(string, dataKey)
                 const actionKey = dataKey + "Action"
                 const action = event.currentTarget.dataset[actionKey]
-                HelperFunctions.handleAction(event, dataKey, action, actionsData)
+                await HelperFunctions.handleAction(event, dataKey, action, actionsData)
             })
         }
     }
@@ -186,7 +191,7 @@ export class HelperFunctions {
      * @param {String} action - the action itself, a key attached to the actionsData object
      * @param {Object} actionsData - an object representing all the various actions
      */
-    static handleAction(event, actionType, action, actionsData) {
+    static async handleAction(event, actionType, action, actionsData) {
         const currentTarget = event.currentTarget;
         if (actionsData[actionType] && actionsData[actionType][action]) {
             const actionData = actionsData[actionType][action];

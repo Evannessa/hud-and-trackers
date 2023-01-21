@@ -65,7 +65,15 @@
           </label>
         </header>
         {{! Rating Values}}
-        <details>
+        <details
+          data-id="{{@key}}RatingCollapsible"
+          data-toggle-action="saveState"
+          {{ternary
+            (lookup @root.collapsibleStates (concat @key "RatingCollapsible"))
+            "open"
+            ""
+          }}
+        >
           <summary>
             ✨Ratings
             <ul>
@@ -167,7 +175,15 @@
           </section>
         </details>
         {{! Consequence Clocks }}
-        <details>
+        <details
+          data-id="{{@key}}clockCollapsible"
+          data-toggle-action="saveState"
+          {{ternary
+            (lookup @root.collapsibleStates (concat @key "clockCollapsible"))
+            "open"
+            ""
+          }}
+        >
           <summary>
             ⏳ Consequence Clocks
             <ul>
@@ -225,14 +241,6 @@
                     {{/times}}
                   </div>
                 </div>
-                <button
-                  class="roll-rating"
-                  data-click-action="rollRating"
-                  type="button"
-                  {{ternary (eq @root.currentPhase "eventPhase") "" "disabled"}}
-                >
-                  <i class="fas fa-dice-d20"></i>
-                </button>
               </section>
             {{/each}}
             <button
