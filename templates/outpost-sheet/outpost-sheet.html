@@ -25,77 +25,117 @@
     </section>
     {{#each outposts as |outpost|}}
       <section class="individual-outpost" id="{{@key}}">
-        <h2>
-          {{outpost.name}}
-        </h2>
-        <label for="pointPool">
-          Point Pool
-          <input
-            type="number"
-            name="pointPool"
-            id="pointPool"
-            min="0"
-            max="9"
-            value="{{outpost.pointPool}}"
-            disabled
-            class="{{ternary (eq outpost.pointPool 0) "empty" ""}}"
-          />
-        </label>
-        <section class="ratings-wrapper">
-          {{#each outpost.ratings as |rating|}}
-            <div class="rating-container">
-              <div
-                class="wrapper"
-                data-name="{{outpost.name}}.ratings.{{@key}}"
-                data-pool-name="{{outpost.name}}.pointPool"
-              >
-                <label
-                  for="{{@key}}"
-                  class="rating-label"
+        <header>
+          <h2>
+            {{outpost.name}}
+          </h2>
+          <div class="station-wrapper">
+            <button
+              type="button"
+              data-click-action="openSheet"
+              data-actor-id="{{outpost.linkedActorSheet.id}}"
+            >
+              Open
+              {{outpost.linkedActorSheet.name}}
+              Actor Sheet
+            </button>
+            <select data-change-action="selectOutpostSheet">
+              <option id="none" value="none">
+                ---
+              </option>
+              {{#each @root.outpostSheets as |outpostSheet|}}
+                <option id="{{outpostSheet.id}}" value="{{outpostSheet.id}}">
+                  {{outpostSheet.name}}
+                </option>
+              {{/each}}
+            </select>
+          </div>
+          <label for="pointPool" class="point-pool-label">
+            Point Pool
+            <input
+              type="number"
+              name="pointPool"
+              id="pointPool"
+              min="0"
+              max="9"
+              value="{{outpost.pointPool}}"
+              disabled
+              class="{{ternary (eq outpost.pointPool 0) "empty" ""}}"
+            />
+          </label>
+        </header>
+        {{! Rating Values}}
+        <details>
+          <summary>
+            ✨Ratings
+            <ul>
+              {{#each outpost.ratings as |rating|}}
+                <li title="{{rating.name}}">
+                  {{lookup @root.ratingIcons @key}}
+                  {{rating.value}}
+                </li>
+              {{/each}}
+            </ul>
+          </summary>
+          <section class="ratings-wrapper">
+            {{#each outpost.ratings as |rating|}}
+              <div class="rating-container">
+                <div
+                  class="wrapper"
+                  data-name="{{outpost.name}}.ratings.{{@key}}"
+                  data-pool-name="{{outpost.name}}.pointPool"
+                >
+                  <label
+                    for="{{@key}}"
+                    class="rating-label"
+                    data-click-action="changeRating"
+                    data-name="{{@key}}"
+                    data-type="rating"
+                  >
+                    {{rating.name}}
+                  </label>
+                  <input
+                    data-name="{{@key}}"
+                    class="rating displayNumber"
+                    type="number"
+                    name="{{@key}}"
+                    id="{{@key}}"
+                    min="0"
+                    max="9"
+                    value="{{rating.value}}"
+                    disabled
+                    data-change-action="changePool"
+                  />
+                </div>
+                <div
+                  class="points-display"
                   data-click-action="changeRating"
                   data-name="{{@key}}"
                   data-type="rating"
                 >
-                  {{rating.name}}
-                </label>
-                <input
-                  data-name="{{@key}}"
-                  class="rating displayNumber"
-                  type="number"
-                  name="{{@key}}"
-                  id="{{@key}}"
-                  min="0"
-                  max="9"
-                  value="{{rating.value}}"
-                  disabled
-                  data-change-action="changePool"
-                />
-              </div>
-              <div
-                class="points-display"
-                data-click-action="changeRating"
-                data-name="{{@key}}"
-                data-type="rating"
-              >
-                <div class="underlay">
-                  {{#times 9}}
-                    <span class="point"></span>
-                  {{/times}}
+                  <div class="underlay">
+                    {{#times 9}}
+                      <span class="point"></span>
+                    {{/times}}
+                  </div>
+                  <div class="fill">
+                    {{#times rating.value}}
+                      <span class="point"></span>
+                    {{/times}}
+                  </div>
                 </div>
-                <div class="fill">
-                  {{#times rating.value}}
-                    <span class="point"></span>
-                  {{/times}}
-                </div>
-              </div>
-              {{! This is the button for the ActionPhase }}
-              <div class="button-wrapper">
+                {{! This is the button for the ActionPhase }}
+                <div class="button-wrapper">
                   <button
                     type="button"
                     class="roll-rating"
                     data-click-action="rollRating"
                     data-minimum="1"
-                    {{ternary (eq @root.currentPhase "actionPhase") "" "disabled"}}
+                    {{ternary
+                      (eq @root.currentPhase "actionPhase")
+                      ""
+                      "disabled"
+                    }}
                   >
                     <i class="fas fa-level-up"></i>
                   </button>
@@ -105,97 +145,106 @@
                     class="roll-rating"
                     data-click-action="rollRating"
                     data-minimum="1"
-                    {{ternary (eq @root.currentPhase "reactionPhase") "" "disabled"
+                    {{ternary
+                      (eq @root.currentPhase "reactionPhase")
+                      ""
+                      "disabled"
                     }}
                   >
                     <i class="fas fa-shield-alt"></i>
                   </button>
+                </div>
               </div>
-            </div>
-          {{/each}}
-          <button
-            type="button"
-            data-click-action="rollEach"
-            data-type="rating"
-            {{ternary (eq @root.currentPhase "eventPhase") "disabled" ""}}
-          >
-            Roll All Ratings
-          </button>
-        </section>
-        <section class="clocks-wrapper ratings-wrapper">
-          <h3>
-            Consequence Clocks
-          </h3>
-          {{#each outpost.consequenceClocks as |clock|}}
-            <section class="clock-container rating-container">
-              <div class="consequence-clock wrapper">
-                <label
-                  for="{{@key}}"
-                  class="clock-label"
+            {{/each}}
+            <button
+              type="button"
+              data-click-action="rollEach"
+              data-type="rating"
+              {{ternary (eq @root.currentPhase "eventPhase") "disabled" ""}}
+            >
+              Roll All Ratings
+            </button>
+          </section>
+        </details>
+        {{! Consequence Clocks }}
+        <details>
+          <summary>
+            ⏳ Consequence Clocks
+            <ul>
+              {{#each outpost.consequenceClocks as |clock|}}
+                <li title="{{clock.name}}">
+                  {{clock.symbol}}
+                  {{clock.value}}
+                </li>
+              {{/each}}
+            </ul>
+          </summary>
+          <section class="clocks-wrapper ratings-wrapper">
+            {{#each outpost.consequenceClocks as |clock|}}
+              <section class="clock-container rating-container">
+                <div class="consequence-clock wrapper">
+                  <label
+                    for="{{@key}}"
+                    class="clock-label"
+                    data-click-action="changeRating"
+                    data-name="{{@key}}"
+                    data-type="clock"
+                  >
+                    {{clock.name}}
+                  </label>
+                  <input
+                    data-name="{{@key}}"
+                    class="clock-rating rating displayNumber"
+                    type="number"
+                    name="{{@key}}"
+                    id="{{@key}}"
+                    min="0"
+                    max="9"
+                    value="{{clock.value}}"
+                    disabled
+                  />
+                </div>
+                <div
+                  class="points-display"
                   data-click-action="changeRating"
                   data-name="{{@key}}"
                   data-type="clock"
                 >
-                  {{clock.name}}
-                </label>
-                <input
-                  data-name="{{@key}}"
-                  class="clock-rating rating displayNumber"
-                  type="number"
-                  name="{{@key}}"
-                  id="{{@key}}"
-                  min="0"
-                  max="9"
-                  value="{{clock.value}}"
-                  disabled
-                />
-              </div>
-              <div
-                class="points-display"
-                data-click-action="changeRating"
-                data-name="{{@key}}"
-                data-type="clock"
-              >
-                <div class="underlay">
-                  {{#times 9}}
-                    <span class="point point-symbol">
-                      {{clock.symbol}}
-                    </span>
-                  {{/times}}
+                  <div class="underlay">
+                    {{#times 9}}
+                      <span class="point point-symbol">
+                        {{clock.symbol}}
+                      </span>
+                    {{/times}}
+                  </div>
+                  <div class="fill">
+                    {{#times clock.value}}
+                      <span class="point point-symbol">
+                        {{clock.symbol}}
+                      </span>
+                    {{/times}}
+                  </div>
                 </div>
-                <div class="fill">
-                  {{#times clock.value}}
-                    <span class="point point-symbol">
-                      {{clock.symbol}}
-                    </span>
-                  {{/times}}
-                </div>
-              </div>
-              <button
-                class="roll-rating"
-                data-click-action="rollRating"
-                type="button"
-                {{ternary (eq @root.currentPhase "eventPhase") "" "disabled"}}
-              >
-                <i class="fas fa-dice-d20"></i>
-              </button>
-            </section>
-          {{/each}}
-          <button
-            type="button"
-            data-click-action="rollEach"
-            data-type="clock"
-            {{ternary (eq @root.currentPhase "eventPhase") "" "disabled"}}
-          >
-            Roll All Consequences
-          </button>
-        </section>
-        <section class="station-section">
-          <h3>
-            Installations
-          </h3>
-          <div class="station-wrapper"></div>
-        </section>
+                <button
+                  class="roll-rating"
+                  data-click-action="rollRating"
+                  type="button"
+                  {{ternary (eq @root.currentPhase "eventPhase") "" "disabled"}}
+                >
+                  <i class="fas fa-dice-d20"></i>
+                </button>
+              </section>
+            {{/each}}
+            <button
+              type="button"
+              data-click-action="rollEach"
+              data-type="clock"
+              {{ternary (eq @root.currentPhase "eventPhase") "" "disabled"}}
+            >
+              Roll All Consequences
+            </button>
+          </section>
+        </details>
       </section>
     {{/each}}
   </section>

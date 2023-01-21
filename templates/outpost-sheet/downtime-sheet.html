@@ -1,9 +1,59 @@
-<form>
-  <button data-type="button" data-action="toggleDowntimeActive">
-    {{#if downtimeActive}}
-      Stop Downtime
-    {{else}}
-      Start Downtime
-    {{/if}}
-  </button>
+<form class="downtime-sheet">
+  <header>
+    <button data-type="button" data-action="toggleDowntimeActive">
+      {{#if downtimeActive}}
+        Stop Downtime
+      {{else}}
+        Start Downtime
+      {{/if}}
+    </button>
+  </header>
+  <main class="character-wrapper">
+    <ul>
+      {{#each PCs as |pc|}}
+        <li class="downtime-card" data-id="{{pc.id}}">
+          <section class="character-info-wrapper">
+            <img src="{{pc.img}}" alt="{{pc.name}}-Avatar" />
+            <h3>
+              {{pc.name}}
+            </h3>
+          </section>
+          <section class="downtime-action-wrapper">
+            {{#times 2}}
+              <fieldset class="button-group">
+                <legend>
+                  Action
+                </legend>
+                {{#each @root.downtimeActions as |action|}}
+                  <div>
+                    <span>
+                      <input
+                        class="hidden-input"
+                        type="radio"
+                        name="{{@key}}"
+                        id="{{@key}}"
+                        value="{{@key}}"
+                        data-change-action="changePhase"
+                        {{ternary (eq @root.currentPhase @key) "checked" ""}}
+                      />
+                      <label for="{{@key}}">
+                        {{@key}}
+                      </label>
+                    </span>
+                    <ul class="floating">
+                      {{#each action as |task|}}
+                        <li>
+                          {{@key}}
+                        </li>
+                      {{/each}}
+                    </ul>
+                  </div>
+                {{/each}}
+              </fieldset>
+            {{/times}}
+          </section>
+        </li>
+      {{/each}}
+    </ul>
+  </main>
 </form>

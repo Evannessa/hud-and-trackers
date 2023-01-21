@@ -1,3 +1,43 @@
+.downtime-sheet {
+    display: flex;
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        li {
+            list-style-type: none;
+            display: flex;
+
+            .character-info-wrapper {
+                display: grid;
+                grid-template-columns: minmax(0, 50px) 1fr;
+                grid-template-rows: 100%;
+                width: 100%;
+
+                img {
+                    grid-row: 1/2;
+                    grid-column: 1/2;
+                }
+
+                h3 {
+                    grid-row: 1/2;
+                    grid-column: 2/3;
+                }
+            }
+
+            .floating {
+                position: absolute;
+                display: flex;
+                flex-direction: column;
+
+                ul {}
+            }
+        }
+    }
+}
+
 .outpost-container {
     display: flex;
     flex-direction: column;
@@ -31,14 +71,87 @@
 .individual-outpost {
     display: flex;
     flex-direction: column;
-
     justify-content: center;
     align-items: center;
-    background-color: var(--color-neutral-600);
+    background-color: var(--color-neutral-darkest);
     border-color: var(--color-neutral-darkest);
     color: white;
     padding: 0.75em 1em;
     border-radius: 12px;
+    gap: 1rem;
+
+    header {
+        width: 100%;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+
+        .station-wrapper {
+            display: flex;
+
+            button {
+                border: unset;
+                border: 1px solid var(--color-primary-300);
+                color: var(--color-primary-300);
+                // background-color: var(--color-primary-300);
+            }
+        }
+    }
+
+    section {
+        border-radius: 5px;
+        background-color: var(--color-neutral-400);
+    }
+
+    label.point-pool-label {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+
+        input {
+            flex: 0;
+        }
+    }
+
+    details {
+        border-radius: 8px;
+        width: 100%;
+
+        summary {
+            list-style-type: armenian;
+            display: flex;
+            font-size: 1.5rem;
+
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            background-color: var(--color-neutral-700);
+            border-bottom: 2px solid var(--color-primary-base);
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            cursor: pointer;
+
+            ul {
+                margin: unset;
+                display: inline-flex;
+                gap: 0.5rem;
+            }
+
+            ul li {
+                list-style-type: none;
+                font-size: 1rem;
+            }
+
+
+        }
+
+
+        :slotted(details) {
+            border-radius: 8px;
+            border: 2px solid var(--color-primary-darkest);
+        }
+
+    }
 
     #pointPool {
         border: 1px solid;
@@ -137,6 +250,8 @@
         align-items: flex-start;
         // flex-wrap: wrap;
         gap: 0.5rem;
+        background-color: var(--color-neutral-700);
+        padding: 1rem;
 
         .rating-container,
         .clock-container {

@@ -196,6 +196,11 @@ export class HelperFunctions {
             }
         }
     }
+
+    static async createChatMessage(data = { content: "<div>Hello World</div>" }) {
+        await ChatMessage.create(data)
+
+    }
     static async createRoll(diceNumber, flavor, keepHighest = false) {
         const rollObject = new Roll(`${diceNumber}d6kh`)
         const roll = await rollObject.roll()

@@ -14,8 +14,16 @@ const outpostActions = {
             }
 
         },
-
-
+        sendChatMessage:
+        {
+            handler: async () => {
+                await HF.createChatMessage(
+                    {
+                        content: "Hello [[RollTable.zKQV3n1BuxQuhKXp]]"
+                    }
+                )
+            }
+        },
         changeRating: {
             handler: async (event, currentTarget, options = {}) => {
 
@@ -102,6 +110,8 @@ const outpostActions = {
                 console.log(totals)
                 if (totals.max) {
                     //TODO: Create private message to GM with maximum roll
+                    let tableText = await OM.getRollTable(totals.max.name)
+                    await OM.sendChatMessage({ content: `${totals.max.name} Rolled Highest. ${tableText}` })
                 }
                 // for (let rating of ratings) {
                 //     const label = rating.closest(".wrapper").querySelector("label")
@@ -120,6 +130,12 @@ const outpostActions = {
 
             }
 
+        },
+        openSheet: {
+            handler: async (event, currentTarget, options = {}) => {
+                const actorId = currentTarget.dataset.actorId
+                await game.actors.get(actorId).sheet.render(true)
+            }
         }
     },
     change: {
@@ -132,6 +148,19 @@ const outpostActions = {
 
             }
         },
+        selectOutpostSheet: {
+            handler: async (event, currentTarget, options = {}) => {
+                let outpostID = currentTarget.closest(".individual-outpost").getAttribute("id")
+                let sheetID = currentTarget.value
+                await HF.setSettingValue("outpostData", sheetID, `outposts.${outpostID}.linkedActorID`)
+                await game.outpostSheet.render(true)
+
+
+
+
+
+            }
+        },
         changePool: {
             handler: (event, currentTarget, options = {}) => {
                 let pool = currentTarget.closest(".outpost-container").querySelector("#pointPool")
@@ -141,9 +170,13 @@ const outpostActions = {
         }
     }
 }
-Hooks.on("ready", () => {
-    game.outpostSheet = new OutpostSheet().render()
+Hooks.on("ready", async () => {
+    game.outpostSheet = new OutpostSheet()
+    await game.outpostSheet.render()
     game.outpostManager = OutpostManager
+
+    // game.downtimeSheet = new DowntimeSheet()
+    // await game.downtimeSheet.render(true)
 });
 
 class OutpostManager {
@@ -191,6 +224,18 @@ class OutpostManager {
         const outposts = await HF.getSettingValue("outpostData", "outposts")
         delete outposts[id]
         await HF.setSettingValue("outpostData", outposts, "outposts")
+    }
+    static async getRollTable(name) {
+        const table = await game.tables.getName(`${name}Encounters`)
+        const id = table.id
+        return `@UUID[RollTable.${id}]{${name} Table}`
+    }
+    static async sendChatMessage(data) {
+        await HF.createChatMessage(
+            {
+                content: data.content
+            }
+        )
     }
 }
 export const allOutposts = [
@@ -245,12 +290,30 @@ export function outpostFactory(name) {
         pointPool: 9,
         ratings: {
             comfort: {
-                value: 0, name: "Comfort"
+                value: 0,
+                name: "Comfort",
+                icon: `<i class="fas fa-loveseat"></i>`
             },
-            destruction: { value: 0, name: "Destruction" },
-            defenseSupport: { value: 0, name: "Defense/Support" },
-            dataProcessing: { value: 0, name: "Data Processing & Automation" },
-            resourceProcessing: { value: 0, name: "Resource Processing" },
+            destruction: {
+                value: 0,
+                name: "Destruction",
+                icon: `<i class="fas fa-raygun"></i>`
+            },
+            defenseSupport: {
+                value: 0,
+                name: "Defense/Support",
+                icon: `<i class="fas fa-shield"></i>`
+            },
+            dataProcessing: {
+                value: 0,
+                name: "Data Processing & Automation",
+                icon: `<i class="fas fa-radar"></i>`
+            },
+            resourceProcessing: {
+                value: 0,
+                name: "Resource Processing",
+                icon: `<i class="fas fa-industry-alt"></i>`
+            },
         },
         consequenceClocks: {
             pollution: {
@@ -268,9 +331,17 @@ export function outpostFactory(name) {
                 value: 0,
                 symbol: "⚡"
             },
-        }
+        },
+        linkedActorID: "",
     }
 
+}
+const ratingIcons = {
+    comfort: "😊",
+    destruction: "💣",
+    defenseSupport: "🛡️",
+    dataProcessing: "🌐",
+    resourceProcessing: "⛏️"
 }
 
 const Outpost = {
@@ -335,7 +406,7 @@ Each consecutive 'Jailbreak' will add an additional required success, and failur
         "During Expedition": ""
     },
     tasks: {
-        "Creation": {
+        creation: {
             crafting: {
                 requires: "2 salvage"
             },
@@ -347,11 +418,12 @@ Each consecutive 'Jailbreak' will add an additional required success, and failur
                 requires: "2 resources"
             }
         },
-        "Acquisition": {
+        acquisition: {
             hunting: {
                 requires: "Nearby area with potential for beasts"
             },
-            "harvesting/foraging": {
+            foraging: {
+                name: "Harvesting/Foraging",
                 requires: "Nearby area with potential for vegetation"
 
             },
@@ -361,7 +433,7 @@ Each consecutive 'Jailbreak' will add an additional required success, and failur
 
             },
         },
-        "Recovery": {
+        recovery: {
             healing: {
 
             },
@@ -372,6 +444,9 @@ Each consecutive 'Jailbreak' will add an additional required success, and failur
 
             }
         },
+        discovery: {
+
+        }
     }
 }
 
@@ -507,7 +582,7 @@ If a clock ever hits maximum on its own, the GM will not roll, but a relevant en
 
         },
         "Destabilization/Calamity": {
-            description: ` For each Outpost Action taken that used sheer destructive force and energy to destroy or irreversibly alter part of the surrounding environment or the ecosystem within (be it a large group of creatures or a single large creature), add a Bane, representing the havoc and resulting unintended consequences such actions can cause. (Triggers Environmental Hazards)`,
+            description: `For each Outpost Action taken that used sheer destructive force and energy to destroy or irreversibly alter part of the surrounding environment or the ecosystem within (be it a large group of creatures or a single large creature), add a tick to the clock representing the havoc and resulting unintended consequences such actions can cause. (Triggers Environmental Hazards)`,
             value: 2,
             symbol: "💥"
         },
@@ -534,7 +609,8 @@ const downtimeActions = {
 
 }
 export class DowntimeSheet extends Application {
-    constructor(data) {
+    constructor(data = {}) {
+        super()
         this.data = data
     }
     static get defaultOptions() {
@@ -543,6 +619,7 @@ export class DowntimeSheet extends Application {
             popOut: true,
             resizable: true,
             minimizeable: true,
+            height: "800",
             width: "600",
             template: `modules/hud-and-trackers/templates/outpost-sheet/downtime-sheet.html`,
             id: 'downtime-sheet',
@@ -552,7 +629,8 @@ export class DowntimeSheet extends Application {
     async getData() {
         // Send data to the template
         let { downtimeActive, actions } = await HF.getSettingValue("downtimeData")
-        return { downtimeActive }
+        let PCs = game.users.contents.map((user) => user.character).filter((character) => character && character.type === "pc")
+        return { downtimeActive, PCs, downtimeActions: downtimeData.tasks }
 
     }
     activateListeners(html) {
@@ -587,8 +665,14 @@ export class OutpostSheet extends Application {
         // Send data to the template
         let { outposts, currentPhase } = await HF.getSettingValue("outpostData")
         // let outposts = await HF.getSettingValue("outpostData", "outposts")
+        for (let key in outposts) {
+            const linkedActorID = outposts[key].linkedActorID
+            outposts[key].linkedActorSheet = game.actors.get(linkedActorID)
+        }
+
+        let outpostSheets = game.folders.getName("Outposts").contents
         if (!currentPhase) currentPhase = "actionPhase"
-        return { outposts: outposts, phases: phases, currentPhase: currentPhase, isGM: game.user.isGM }
+        return { outposts: outposts, phases: phases, currentPhase: currentPhase, isGM: game.user.isGM, outpostSheets: outpostSheets, ratingIcons: ratingIcons }
     }
 
     activateListeners(html) {

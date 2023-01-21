@@ -8,6 +8,11 @@ export default function registerAllHandlebarHelpers() {
         let firstTwo = strInput.substring(0, 2);
         return firstTwo;
     });
+    Handlebars.registerHelper("getFirstNLetters", function (strInput, number) {
+        number = parseInt(number)
+        let firstTwo = strInput.substring(0, number);
+        return firstTwo;
+    });
     Handlebars.registerHelper("getUserData", (userId, prop) => {
         let user = game.users.get(userId);
         return user.data[prop];
