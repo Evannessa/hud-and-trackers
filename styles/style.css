@@ -4615,19 +4615,26 @@ button.icon-button {
   border-radius: 12px;
   gap: 1rem;
 }
+.individual-outpost > h2 {
+  margin-right: auto;
+}
 .individual-outpost header {
   width: 100%;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
 }
 .individual-outpost header .station-wrapper {
   display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 .individual-outpost header .station-wrapper button {
+  font-size: 0.75rem;
   border: unset;
   border: 1px solid var(--color-primary-300);
   color: var(--color-primary-300);
+  white-space: nowrap;
 }
 .individual-outpost section {
   border-radius: 5px;
@@ -4644,6 +4651,9 @@ button.icon-button {
 .individual-outpost details {
   border-radius: 8px;
   width: 100%;
+}
+.individual-outpost details[open] summary {
+  color: var(--color-neutral-400);
 }
 .individual-outpost details[open] ul {
   opacity: 0%;

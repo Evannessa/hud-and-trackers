@@ -35,7 +35,6 @@ Hooks.once("init", async () => {
 Hooks.once("ready", async () => {
     //TODO: Take this out later
     await game.settings.set("hud-and-trackers", "trackers", {});
-    game.outpostSheet = new OutpostSheet().render(true)
 });
 
 Hooks.on("closeFormApplication", (app) => {

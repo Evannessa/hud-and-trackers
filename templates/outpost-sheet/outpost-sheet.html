@@ -25,31 +25,10 @@
     </section>
     {{#each outposts as |outpost|}}
       <section class="individual-outpost" id="{{@key}}">
+        <h2>
+          {{outpost.name}}
+        </h2>
         <header>
-          <h2>
-            {{outpost.name}}
-          </h2>
-          <div class="station-wrapper">
-            <button
-              type="button"
-              data-click-action="openSheet"
-              data-actor-id="{{outpost.linkedActorSheet.id}}"
-            >
-              Open
-              {{outpost.linkedActorSheet.name}}
-              Actor Sheet
-            </button>
-            <select data-change-action="selectOutpostSheet">
-              <option id="none" value="none">
-                ---
-              </option>
-              {{#each @root.outpostSheets as |outpostSheet|}}
-                <option id="{{outpostSheet.id}}" value="{{outpostSheet.id}}">
-                  {{outpostSheet.name}}
-                </option>
-              {{/each}}
-            </select>
-          </div>
           <label for="pointPool" class="point-pool-label">
             Point Pool
             <input
@@ -63,6 +42,24 @@
               class="{{ternary (eq outpost.pointPool 0) "empty" ""}}"
             />
           </label>
+          <div class="station-wrapper">
+            {{#if outpost.linkedActorSheet}}
+              <button
+                type="button"
+                data-click-action="openSheet"
+                data-actor-id="{{outpost.linkedActorSheet.id}}"
+              >
+                Open
+                "
+                {{outpost.linkedActorSheet.name}}
+                "
+                Sheet
+              </button>
+            {{/if}}
+            <button type="button" data-click-action="linkSheet">
+              Link Actor Sheet
+            </button>
+          </div>
         </header>
         {{! Rating Values}}
         <details

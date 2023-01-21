@@ -1,5 +1,13 @@
 import { HelperFunctions as HF } from "./helper-functions.js";
-
+Hooks.on("renderSidebarTab", (app, html) => {
+    if (app.options.id === "chat") {
+        let button = $("<button class='hat-chat-button' style='margin-bottom: 10px'>Outpost Manager</button>");
+        button.click((event) => {
+            game.outpostSheet = new OutpostSheet().render(true);
+        });
+        html.find("#chat-controls").prepend(button);
+    }
+});
 const outpostActions = {
     click: {
         saveState: {
@@ -143,8 +151,39 @@ const outpostActions = {
         openSheet: {
             handler: async (event, currentTarget, options = {}) => {
                 const actorId = currentTarget.dataset.actorId
-                await game.actors.get(actorId).sheet.render(true)
+                await game.actors.get(actorId)?.sheet.render(true)
             }
+        },
+        linkSheet: {
+            handler: async (event, currentTarget) => {
+                const outpostSheets = await game.folders.getName("Outposts")?.contents
+                if (!outpostSheets) {
+                    return;
+                }
+                let outpostId = currentTarget.closest(".individual-outpost").getAttribute("id")
+
+                const data = {
+                    sheets: outpostSheets,
+                    buttons: {
+                        yes: {
+                            icon: '<i class="fas fa-check"></i>',
+                            label: "Save",
+                            callback: async (html) => {
+                                const value = html[0].querySelector("select").value
+                                await HF.setSettingValue("outpostData", value, `outposts.${outpostId}.linkedActorID`)
+                                await refreshOutpostSheet()
+                            },
+                        },
+                        no: {
+                            icon: '<i class="fas fa-times"></i>',
+                            label: "Cancel",
+                        },
+
+                    }
+                }
+                await HF.createDialog("Link Sheet", "/modules/hud-and-trackers/templates/outpost-sheet/link-sheet-dialog.hbs", data)
+            }
+
         }
     },
     change: {
@@ -183,9 +222,9 @@ const outpostActions = {
     toggle: {
         saveState: {
             handler: async (event, currentTarget, options = {}) => {
-                const id = currentTarget.dataset.id
-                const isOpen = currentTarget.open
-                console.log("Toggling", isOpen)
+                // const id = currentTarget.dataset.id
+                // const isOpen = currentTarget.open
+                // console.log("Toggling", isOpen)
                 // await HF.setSettingValue("outpostUIState", , "collapsibles.${id}")
 
             }
@@ -193,8 +232,8 @@ const outpostActions = {
     }
 }
 Hooks.on("ready", async () => {
-    game.outpostSheet = new OutpostSheet()
-    await game.outpostSheet.render()
+    // game.outpostSheet = new OutpostSheet()
+    // await game.outpostSheet.render()
     game.outpostManager = OutpostManager
     // game.downtimeSheet = new DowntimeSheet()
     // await game.downtimeSheet.render(true)
