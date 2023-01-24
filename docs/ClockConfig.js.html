@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ClockConfig.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ClockConfig.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+import * as HelperFunctions from "./helper-functions.js";
+import { Section, Clock, updateClock } from "./clock.js";
+// {
+//     "name": "boop",
+//     "sectionCount": 3,
+//     "breaks": [],
+//     "showWaypoints": false,
+//     "startFilled": false,
+//     "gradient": "purple",
+//     "sectionMap": {
+//         "xsnjsvqgdff8o83o": {
+//             "id": "xsnjsvqgdff8o83o",
+//             "label": "",
+//             "filled": true
+//         },
+//         "r7x01mlro93by19t": {
+//             "id": "r7x01mlro93by19t",
+//             "label": "",
+//             "filled": true
+//         },
+//         "wnhuaxq276prnoa1": {
+//             "id": "wnhuaxq276prnoa1",
+//             "label": "",
+//             "filled": false
+//         }
+//     },
+//     "filledSections": 2,
+//     "breakLabels": {},
+//     "waypoints": {},
+//     "linkedEntities": {
+//         "TgDkOmX8rdeX2ag8": {
+//             "name": "Aron",
+//             "entity": "Actor"
+//         }
+//     },
+//     "shared": false,
+//     "creator": "xjKGzWFbtOifTl9H",
+//     "ourId": "8fuvyy7ihvb5m5tw"
+// }
+/** This will be the configuration for the clock itself. */
+//
+export class ClockConfig extends FormApplication {
+    /**
+     * Configure a new clock object, or update one
+     * @param {Object} clockData - the clock data
+     * @param {String} clockData.name - the clock's name
+     * @param {Number} clockData.sectionCount - the number of sections the clock has
+     * @param {Boolean} clone - whether or not to clone the clock we're updating
+     */
+    constructor(clockData = {}, clone = false) {
+        super(clockData);
+        //cloning the clockData here so it doesn't affect the original object
+        this.data = { ...clockData };
+        this.clone = clone;
+    }
+    getData() {
+        let defaultData = {
+            name: `NewClock`,
+            sectionCount: 3,
+            breaks: "",
+            showWaypoints: false,
+            startFilled: false,
+        };
+        if (Object.keys(this.data).length == 0) {
+            return defaultData;
+        } else {
+            if (this.clone) {
+                this.data.breaks = this.data.breaks.toString();
+                this.data.name = this.data.name + "(copy)";
+                return {
+                    ...this.data,
+                    isClone: this.clone,
+                };
+            }
+            //we're not a clone, but we're changing some of the default data
+            //such as being called from an entity sheet
+            else {
+                return defaultData;
+            }
+        }
+    }
+    async _updateObject(event, formData) {
+        let breaks = formData.breaks.split(",");
+        breaks = breaks.map((ch) => parseInt(ch));
+
+        //! this will return [""] then [NaN] if it doesn't find anything
+        //if we have a number in the breaks array
+        if (!Number.isNaN(breaks[0])) {
+            //set the section count to the sum of all the sections in each group
+            formData.sectionCount = breaks.reduce((previousValue, currentValue) => {
+                return previousValue + currentValue;
+            });
+        } else {
+            //if not, set breaks to []
+            breaks = [];
+        }
+        formData.breaks = breaks;
+
+        //initialize the section map to an empty object, and filledSections to zero, and break labels to empty array
+        //initialize extra values that don't come from the form
+        //!TODO: copy these when clock is cloned
+        //I'm thinking (hoping) this means it'll set it to an empty object if linkedEntities doesn't exist
+        let linkedEntities = (this.data.linkedEntities ||= {});
+        let shared = (this.data.shared ||= false);
+
+        let sectionMap = {};
+        let filledSections = 0;
+        let breakLabels = {};
+        let waypoints = {};
+
+        //loop through and populate the section map with new sections.
+        //if start filled is active, set filledSections to the full amount
+        if (formData.startFilled) {
+            filledSections = formData.sectionCount;
+        }
+        //if we copy the fill
+        //!this will override the above option. Maybe make into a radio button later.
+        if (formData.copyFill) {
+            filledSections = this.data.filledSections;
+        }
+        //if we're not copying the clock, or copying the labels
+        if (!formData.copyLabels) {
+            //generate all sections as section objects to store
+            for (let i = 0; i &lt; formData.sectionCount; i++) {
+                let sectionID = foundry.utils.randomID(); //foundry.utils.randomID()();
+                let sectionData = {
+                    id: sectionID,
+                    label: "",
+                    filled: formData.startFilled,
+                };
+                sectionMap[sectionID] = new Section(sectionData);
+            }
+
+            //populate the break labels with default strings
+            formData.breaks.forEach((el) => {
+                let labelId = foundry.utils.randomID();
+                breakLabels[labelId] = "Input Label";
+
+                let waypointId = foundry.utils.randomID();
+                waypoints[waypointId] = "Waypoint";
+            });
+        } else {
+            //if we are cloning &amp;&amp; copying, just set the values to equal the same
+            sectionMap = this.data.sectionMap;
+            breakLabels = this.data.breakLabels;
+            waypoints = this.data.waypoints;
+        }
+
+        let id = foundry.utils.randomID();
+
+        //TODO: Add functionality to delete original clock
+        // if (formData.deleteOriginal) {
+        //     //delete the property so we don't worry about it
+        //     delete formData.deleteOriginal;
+        // }
+        //get the formData, and then all the extra stuff we had to calculate/generate
+        const newClockData = {
+            ...formData,
+            sectionMap: sectionMap,
+            filledSections: filledSections,
+            breakLabels: breakLabels,
+            waypoints: waypoints,
+            linkedEntities: linkedEntities,
+            shared: shared,
+            creator: game.user.id,
+            ourId: id,
+        };
+
+        //create the clock w/ the new data
+        let newClock = new Clock(newClockData);
+
+        //save the clock's data to the users' flags by id
+        updateClock(newClock.data.ourId, newClockData, game.userId);
+
+        //render new clock
+        newClock.render(true);
+
+        if (game.clockViewer &amp;&amp; game.clockViewer.rendered) {
+            //re-render the clock viewer if it's open
+            game.clockViewer.render(true);
+        }
+        // this.render();
+    }
+
+    _handleButtonClick(event) {
+        // event.preventDefault(); //keep form from submitting?
+        let clickedElement = $(event.currentTarget);
+        let action = clickedElement.data().action;
+        switch (action) {
+            case "cancel": {
+                event.preventDefault();
+                this.close();
+            }
+        }
+    }
+    activateListeners(html) {
+        // html.off("click", ["data-action"]);
+        html.on("click", ["data-action"], this._handleButtonClick.bind(this));
+
+        super.activateListeners(html);
+        let windowContent = html.closest(".window-content");
+        let gradientDivs = windowContent.find(".gradients")[0].children;
+        Array.from(gradientDivs).forEach((element) => {
+            if (element.tagName == "DIV") {
+                element.addEventListener("click", (event) => {
+                    element.querySelector("input").checked = true;
+                });
+            }
+        });
+
+        //if this is a cloned of another clock
+        if (this.clone) {
+            //set the selected gradient to the original's gradient
+            let setGradient = html.find(`[value="${this.data.gradient}"]`);
+            setGradient.prop("checked", true);
+        }
+    }
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            classes: ["form", "hud-and-trackers"],
+            popOut: true,
+            submitOnChange: false,
+            closeOnSubmit: true,
+            template: "modules/hud-and-trackers/templates/clock-config.html",
+            id: "clockConfig",
+            title: "Clock Config",
+            onSubmit: (e) => e.preventDefault(),
+        });
+    }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Clock.html">Clock</a></li><li><a href="ClockApplication.html">ClockApplication</a></li><li><a href="ClockConfig.html">ClockConfig</a></li><li><a href="ClockViewer.html">ClockViewer</a></li><li><a href="CombatHudObject.html">CombatHudObject</a></li><li><a href="FullProfile.html">FullProfile</a></li><li><a href="InnerSceneDisplayConfig.html">InnerSceneDisplayConfig</a></li><li><a href="OutpostSheet_OutpostSheet.html">OutpostSheet</a></li><li><a href="PromptAmbientRoll.html">PromptAmbientRoll</a></li><li><a href="module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#actorsToTokenData">actorsToTokenData</a></li><li><a href="global.html#addCombatant">addCombatant</a></li><li><a href="global.html#addNewButton">addNewButton</a></li><li><a href="global.html#addNewCharacter">addNewCharacter</a></li><li><a href="global.html#addNewTag">addNewTag</a></li><li><a href="global.html#askIfPlayerWantsToAddToken">askIfPlayerWantsToAddToken</a></li><li><a href="global.html#characterFactory">characterFactory</a></li><li><a href="global.html#checkIfSceneHasToken">checkIfSceneHasToken</a></li><li><a href="global.html#colorfulLog">colorfulLog</a></li><li><a href="global.html#convertAllToObjects">convertAllToObjects</a></li><li><a href="global.html#convertArrayIntoObjectById">convertArrayIntoObjectById</a></li><li><a href="global.html#convertToArrayOfIDs">convertToArrayOfIDs</a></li><li><a href="global.html#convertToArrayOfTokens">convertToArrayOfTokens</a></li><li><a href="global.html#createMarkerOnToken">createMarkerOnToken</a></li><li><a href="global.html#createRepTokens">createRepTokens</a></li><li><a href="global.html#createRepresentativeActors">createRepresentativeActors</a></li><li><a href="global.html#createTokenFromActor">createTokenFromActor</a></li><li><a href="global.html#defaultOptions">defaultOptions</a></li><li><a href="global.html#deleteClock">deleteClock</a></li><li><a href="global.html#filterOutDuplicates">filterOutDuplicates</a></li><li><a href="global.html#getAllClocks">getAllClocks</a></li><li><a href="global.html#getAllTags">getAllTags</a></li><li><a href="global.html#getButton">getButton</a></li><li><a href="global.html#getCharacter">getCharacter</a></li><li><a href="global.html#getClocksByUser">getClocksByUser</a></li><li><a href="global.html#getClocksLinkedToEntity">getClocksLinkedToEntity</a></li><li><a href="global.html#getCombatantsWithInitiative">getCombatantsWithInitiative</a></li><li><a href="global.html#getEntityById">getEntityById</a></li><li><a href="global.html#getEntityFromAll">getEntityFromAll</a></li><li><a href="global.html#getGlobalClockDisplayData">getGlobalClockDisplayData</a></li><li><a href="global.html#getImage">getImage</a></li><li><a href="global.html#getRolledInitiative">getRolledInitiative</a></li><li><a href="global.html#getSharedClocks">getSharedClocks</a></li><li><a href="global.html#getTileNameFromFlag">getTileNameFromFlag</a></li><li><a href="global.html#getTokensOfType">getTokensOfType</a></li><li><a href="global.html#makeElementDraggable">makeElementDraggable</a></li><li><a href="global.html#populateSelectData">populateSelectData</a></li><li><a href="global.html#processTagData">processTagData</a></li><li><a href="global.html#reRenderLinkedEntity">reRenderLinkedEntity</a></li><li><a href="global.html#renderNewClockFromData">renderNewClockFromData</a></li><li><a href="global.html#rollNonCombatInitiative">rollNonCombatInitiative</a></li><li><a href="global.html#setDraggable">setDraggable</a></li><li><a href="global.html#setTokenImage">setTokenImage</a></li><li><a href="global.html#showClockDrawer">showClockDrawer</a></li><li><a href="global.html#startCombat">startCombat</a></li><li><a href="global.html#tokenFromExternalData">tokenFromExternalData</a></li><li><a href="global.html#uniqBy">uniqBy</a></li><li><a href="global.html#unlinkClockFromEntity">unlinkClockFromEntity</a></li><li><a href="global.html#updateAndFocusClock">updateAndFocusClock</a></li><li><a href="global.html#updateCharacter">updateCharacter</a></li><li><a href="global.html#updateClock">updateClock</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Sun Jan 22 2023 19:07:23 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

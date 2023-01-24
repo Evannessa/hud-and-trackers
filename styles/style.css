@@ -52,6 +52,11 @@
   --color-info-light: hsl(200deg, 80%, 60%);
 }
 
+#tooltip {
+  text-align: left !important;
+  line-height: 1.8;
+}
+
 .flow > * + * {
   margin-top: var(--flow-space, 1em);
 }
@@ -2245,6 +2250,11 @@ button.icon-button {
   --color-info-dark: hsl(200deg, 100%, 25%);
   --color-info-base: hsl(200deg, 60%, 40%);
   --color-info-light: hsl(200deg, 80%, 60%);
+}
+
+#tooltip {
+  text-align: left !important;
+  line-height: 1.8;
 }
 
 .flow > * + * {
@@ -4568,6 +4578,14 @@ button.icon-button {
   display: flex;
   flex-direction: column;
 }
+#outpost-sheet {
+  background-color: var(--color-neutral-darkest);
+}
+#outpost-sheet .window-content {
+  background: unset;
+  background-color: var(--color-neutral-darkest);
+}
+
 .outpost-container {
   display: flex;
   flex-direction: column;
@@ -4608,15 +4626,23 @@ button.icon-button {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: var(--color-neutral-darkest);
+  background-color: var(--color-neutral-800);
   border-color: var(--color-neutral-darkest);
   color: white;
   padding: 0.75em 1em;
   border-radius: 12px;
   gap: 1rem;
 }
-.individual-outpost > h2 {
+.individual-outpost div.form-group {
   margin-right: auto;
+  border: unset;
+  border-bottom: 1px solid var(--color-primary-200);
+}
+.individual-outpost div.form-group input {
+  border-color: transparent;
+}
+.individual-outpost div.form-group input:hover, .individual-outpost div.form-group input:focus {
+  border-color: var(--color-primary-300);
 }
 .individual-outpost header {
   width: 100%;
@@ -4635,6 +4661,11 @@ button.icon-button {
   border: 1px solid var(--color-primary-300);
   color: var(--color-primary-300);
   white-space: nowrap;
+}
+.individual-outpost header .station-wrapper button:first-of-type {
+  color: var(--color-primary-darkest);
+  background-color: var(--color-primary-300);
+  font-weight: bold;
 }
 .individual-outpost section {
   border-radius: 5px;
@@ -4655,6 +4686,9 @@ button.icon-button {
 .individual-outpost details[open] summary {
   color: var(--color-neutral-400);
 }
+.individual-outpost details[open] summary::after {
+  content: "−";
+}
 .individual-outpost details[open] ul {
   opacity: 0%;
   pointer-events: none;
@@ -4672,6 +4706,9 @@ button.icon-button {
   width: 100%;
   cursor: pointer;
   padding: 0.5rem 0.45rem;
+}
+.individual-outpost details summary::after {
+  content: "＋";
 }
 .individual-outpost details summary ul {
   opacity: 100%;
@@ -4819,6 +4856,12 @@ button.icon-button {
 .individual-outpost .clocks-wrapper .rating-container .button-wrapper button,
 .individual-outpost .clocks-wrapper .clock-container .button-wrapper button {
   flex: 1;
+}
+.individual-outpost .ratings-wrapper .rating-container .button-wrapper button:disabled,
+.individual-outpost .ratings-wrapper .clock-container .button-wrapper button:disabled,
+.individual-outpost .clocks-wrapper .rating-container .button-wrapper button:disabled,
+.individual-outpost .clocks-wrapper .clock-container .button-wrapper button:disabled {
+  opacity: 60%;
 }
 .individual-outpost .ratings-wrapper .rating-container .roll-button,
 .individual-outpost .ratings-wrapper .rating-container .roll-rating,
@@ -5746,7 +5789,8 @@ button.icon-button {
   --color-wiki-accent-2-600: hsl(266deg, 100%, 55%);
   --color-wiki-accent-2-base: hsl(266deg, 100%, 65%);
   --color-wiki-accent-2-400: hsl(266deg, 100%, 75%);
-  --color-neutral-darkest: hsl(240deg, 17%, 20%);
+  --color-neutral-darkest: hsl(240deg, 27%, 10%);
+  --color-neutral-800: hsl(240deg, 24%, 24%);
   --color-neutral-700: hsl(240deg, 17%, 30%);
   --color-neutral-base: hsl(240deg, 12%, 50%);
   --color-neutral-300: hsl(240deg, 17%, 70%);
@@ -10885,7 +10929,8 @@ li .hover-controls button {
   --color-wiki-accent-2-600: hsl(266deg, 100%, 55%);
   --color-wiki-accent-2-base: hsl(266deg, 100%, 65%);
   --color-wiki-accent-2-400: hsl(266deg, 100%, 75%);
-  --color-neutral-darkest: hsl(240deg, 17%, 20%);
+  --color-neutral-darkest: hsl(240deg, 27%, 10%);
+  --color-neutral-800: hsl(240deg, 24%, 24%);
   --color-neutral-700: hsl(240deg, 17%, 30%);
   --color-neutral-base: hsl(240deg, 12%, 50%);
   --color-neutral-300: hsl(240deg, 17%, 70%);
@@ -12333,7 +12378,8 @@ li .hover-controls button {
   --color-wiki-accent-2-600: hsl(266deg, 100%, 55%);
   --color-wiki-accent-2-base: hsl(266deg, 100%, 65%);
   --color-wiki-accent-2-400: hsl(266deg, 100%, 75%);
-  --color-neutral-darkest: hsl(240deg, 17%, 20%);
+  --color-neutral-darkest: hsl(240deg, 27%, 10%);
+  --color-neutral-800: hsl(240deg, 24%, 24%);
   --color-neutral-700: hsl(240deg, 17%, 30%);
   --color-neutral-base: hsl(240deg, 12%, 50%);
   --color-neutral-300: hsl(240deg, 17%, 70%);

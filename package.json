@@ -10,7 +10,8 @@
         "typescript": "^4.9.4"
     },
     "scripts": {
-        "test": "jest"
+        "test": "jest",
+        "doc": "jsdoc -c jsdoc.json"
     },
     "repository": {
         "type": "git",
