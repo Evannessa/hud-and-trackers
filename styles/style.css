@@ -276,10 +276,12 @@ fieldset.toggle-button-group {
   pointer-events: auto;
   display: flex;
   flex-direction: row;
+  justify-content: stretch;
+  align-items: stretch;
   border: none;
   color: currentColor;
   padding: 0rem 0rem;
-  min-width: 50%;
+  min-width: unset;
 }
 
 fieldset.toggle-button-group * {
@@ -289,6 +291,11 @@ fieldset.toggle-button-group * {
 fieldset.toggle-button-group legend {
   background-color: inherit;
   padding: 0.5rem;
+}
+
+fieldset.toggle-button-group label {
+  border-radius: unset;
+  flex: 1;
 }
 
 fieldset.toggle-button-group label:first-of-type {
@@ -2476,10 +2483,12 @@ fieldset.toggle-button-group {
   pointer-events: auto;
   display: flex;
   flex-direction: row;
+  justify-content: stretch;
+  align-items: stretch;
   border: none;
   color: currentColor;
   padding: 0rem 0rem;
-  min-width: 50%;
+  min-width: unset;
 }
 
 fieldset.toggle-button-group * {
@@ -2489,6 +2498,11 @@ fieldset.toggle-button-group * {
 fieldset.toggle-button-group legend {
   background-color: inherit;
   padding: 0.5rem;
+}
+
+fieldset.toggle-button-group label {
+  border-radius: unset;
+  flex: 1;
 }
 
 fieldset.toggle-button-group label:first-of-type {

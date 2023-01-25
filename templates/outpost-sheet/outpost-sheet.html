@@ -1,25 +1,23 @@
 <form>
   <section class="outpost-container">
     <section class="phase-container">
-      <fieldset class="button-group">
+      <fieldset class="button-group toggle-button-group">
         <legend>
           Phases
         </legend>
         {{#each phases as |phase|}}
-          <span class="">
-            <input
-              class="hidden-input"
-              type="radio"
-              name="{{@key}}"
-              id="{{@key}}"
-              value="{{@key}}"
-              data-change-action="changePhase"
-              {{ternary (eq @root.currentPhase @key) "checked" ""}}
-            />
-            <label for="{{@key}}">
-              {{phase.name}}
-            </label>
-          </span>
+          <input
+            class="hidden-input"
+            type="radio"
+            name="{{@key}}"
+            id="{{@key}}"
+            value="{{@key}}"
+            data-change-action="changePhase"
+            {{ternary (eq @root.currentPhase @key) "checked" ""}}
+          />
+          <label for="{{@key}}">
+            {{phase.name}}
+          </label>
         {{/each}}
       </fieldset>
     </section>

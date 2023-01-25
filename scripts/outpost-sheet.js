@@ -1,4 +1,10 @@
 import { HelperFunctions as HF } from "./helper-functions.js";
+import { PhaseHandlerApp } from "./phase-handler.js";
+
+Hooks.on("ready", () => {
+
+    game.phaseHandlerApp = new PhaseHandlerApp().render(true)
+})
 Hooks.on("renderSidebarTab", (app, html) => {
     if (app.options.id === "chat") {
         let button = $("<button class='hat-chat-button' style='margin-bottom: 10px'>Outpost Manager</button>");
@@ -605,7 +611,7 @@ Research knowledge about an unknown illness that is spreading through town/the o
         },
     },
     resourceProcessing: {
-        description: `Tools for processing and containing resources inside the outpost, like workbenches, transports, and appropriate storage.
+        description: `Tools for processing and containing resources inside the outpost, like workbenches, transports, and appropriate storage. ability
         <br/> Roll this to successfully process or contain things like minerals, plant specimens, exotic animals, etc.
         `,
         activePhase: {

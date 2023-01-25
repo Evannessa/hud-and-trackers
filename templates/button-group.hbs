@@ -1,0 +1,12 @@
+   <fieldset class="button-group">
+    {{#each list as |item|}}
+        <span class="">
+            <input class="hidden-input" type="radio" name="{{@key}}" id="{{@key}}"
+            value="{{@key}}"
+              data-change-action="{{@root.changeAction}}"
+              {{ternary (eq @root.current @key) "checked" ""}}
+            >
+            <label for="{{@key}}">{{item.name}}</label>
+        </span>
+    {{/each}}
+    </fieldset>

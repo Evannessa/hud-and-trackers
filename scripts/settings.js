@@ -1,7 +1,16 @@
 import CombatHud from "./combat-hud.js";
 import * as HelperFunctions from "./helper-functions.js";
 import { phases, outpostFactory } from "./outpost-sheet.js";
+const MODULE_ID = "hud-and-trackers"
 export default function registerSettings() {
+    game.settings.register(MODULE_ID, 'gamePhase', {
+        scope: "world",
+        config: false,
+        type: Object,
+        default: {
+            currentPhase: "freeplay"
+        }
+    });
     game.settings.register("hud-and-trackers", "downtimeData", {
         scope: "world",
         config: false,

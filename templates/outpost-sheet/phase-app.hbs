@@ -1,0 +1,23 @@
+<section>
+  <fieldset class="button-group toggle-button-group">
+    {{#each phases as |phase|}}
+      <input
+        class="hidden-input"
+        type="radio"
+        name="{{@key}}"
+        id="{{@key}}"
+        value="{{@key}}"
+        data-change-action="changePhase"
+        {{ternary (eq @root.currentPhase @key) "checked" ""}}
+      />
+      <label for="{{@key}}">
+        {{phase.name}}
+      </label>
+    {{/each}}
+  </fieldset>
+  <section class="content-section">
+    <h2>
+      {{lookup (lookup phases currentPhase) "name"}}
+    </h2>
+  </section>
+</section>

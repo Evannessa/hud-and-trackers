@@ -236,10 +236,18 @@ fieldset.toggle-button-group {
 
     display: flex;
     flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
     border: none;
     color: currentColor;
     padding: 0rem 0rem;
-    min-width: 50%;
+    min-width: unset;
+    // min-width: 50%;
+
+    label {
+        border-radius: unset;
+        flex: 1;
+    }
 
     label:first-of-type {
         border-top-left-radius: 8px;
