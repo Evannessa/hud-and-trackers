@@ -4607,21 +4607,6 @@ button.icon-button {
   gap: 0.5rem;
   max-width: 80vw;
 }
-.outpost-container .phase-container fieldset {
-  display: flex;
-  border-radius: 8px;
-  overflow: hidden;
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
-  height: -webkit-fit-content;
-  height: -moz-fit-content;
-  height: fit-content;
-}
-.outpost-container .phase-container fieldset label {
-  border-radius: unset;
-  border: unset !important;
-}
 .outpost-container input {
   color: white;
 }

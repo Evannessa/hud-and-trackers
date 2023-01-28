@@ -82,3 +82,38 @@ export class PhaseManager {
 
 
 }
+const expeditionTypes = {
+    trek: {
+        name: "Trek",
+        description: "Get From Point A to Point B"
+    },
+    dungeonCrawl: {
+        name: "Dungeon Crawl",
+        description: "Explore caves, monster lairs, etc."
+    },
+    largeScale: {
+        name: "Large Scale Conflict",
+        subTypes: [
+            "Defense",
+            "Siege",
+            "Trial",
+            "Pit Fight",
+            "Sports",
+        ]
+
+    },
+    intrigue: {
+        name: "Intrigue and Investigation",
+        subTypes: [
+            "Infiltrations",
+            "Extractions",
+            "Masquerades",
+            "Hunts",
+            "Chases",
+            "Negotiations"
+        ]
+    }
+
+
+
+}

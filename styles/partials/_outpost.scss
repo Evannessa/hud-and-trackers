@@ -57,19 +57,19 @@
 
     max-width: 80vw;
 
-    .phase-container fieldset {
-        display: flex;
-        border-radius: 8px;
-        overflow: hidden;
-        width: fit-content;
-        height: fit-content;
+    // .phase-container fieldset {
+    //     display: flex;
+    //     border-radius: 8px;
+    //     overflow: hidden;
+    //     width: fit-content;
+    //     height: fit-content;
 
-        label {
-            border-radius: unset;
-            border: unset !important;
-        }
+    //     label {
+    //         border-radius: unset;
+    //         border: unset !important;
+    //     }
 
-    }
+    // }
 
     input {
         color: white;

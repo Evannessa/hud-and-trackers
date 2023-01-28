@@ -3,7 +3,7 @@ import { PhaseHandlerApp } from "./phase-handler.js";
 
 Hooks.on("ready", () => {
 
-    game.phaseHandlerApp = new PhaseHandlerApp().render(true)
+    // game.phaseHandlerApp = new PhaseHandlerApp().render(true)
 })
 Hooks.on("renderSidebarTab", (app, html) => {
     if (app.options.id === "chat") {
