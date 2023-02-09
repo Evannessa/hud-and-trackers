@@ -268,6 +268,12 @@ input[type=radio].hidden-input:checked + label .tooltip {
   transition: opacity 150ms ease-out backdrop-filter 150ms ease-out;
 }
 
+a.content-link,
+a.inline-roll {
+  background: hsl(240deg, 49%, 44%);
+  border: none;
+}
+
 fieldset.toggle-button-group {
   max-width: -webkit-fit-content;
   max-width: -moz-fit-content;
@@ -2473,6 +2479,12 @@ input[type=radio].hidden-input:checked + label .tooltip {
   transform-origin: bottom center;
   opacity: 0;
   transition: opacity 150ms ease-out backdrop-filter 150ms ease-out;
+}
+
+a.content-link,
+a.inline-roll {
+  background: hsl(240deg, 49%, 44%);
+  border: none;
 }
 
 fieldset.toggle-button-group {
@@ -8897,6 +8909,9 @@ button.img-button.framed:before {
 .clockHud .window-content .clockName {
   flex: 0;
 }
+.clockHud .window-content .clockDescription {
+  max-width: 45ch;
+}
 .clockHud .window-content .contentWrapper {
   display: grid;
   width: -webkit-max-content;
@@ -8906,6 +8921,8 @@ button.img-button.framed:before {
   grid-template-columns: max-content;
   grid-template-rows: 2rem 1fr -webkit-max-content;
   grid-template-rows: 2rem 1fr max-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 .clockHud .window-content .contentWrapper .frameWrapper,
 .clockHud .window-content .contentWrapper .clockWrapper {
@@ -9084,6 +9101,24 @@ button.img-button.framed:before {
   flex: 0;
 }
 
+#clockConfig {
+  max-width: 500px;
+}
+#clockConfig .flexcol {
+  display: flex;
+  gap: 0.5rem;
+}
+#clockConfig .form-group__wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  row-gap: 0.5rem;
+  -moz-column-gap: 0.25rem;
+       column-gap: 0.25rem;
+}
+#clockConfig .form-group__wrapper.vertical {
+  grid-template-columns: unset;
+  grid-template-rows: 1rem 1fr;
+}
 #clockConfig .form-group {
   display: flex;
   flex-direction: column;
@@ -9094,8 +9129,17 @@ button.img-button.framed:before {
   border-radius: 5px;
   padding: 0.5rem 0.5rem;
 }
+#clockConfig .form-group .input-and-label-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+#clockConfig .form-group .hint {
+  flex: unset;
+}
 #clockConfig .form-group label {
   color: #8597c5;
+  vertical-align: middle;
 }
 #clockConfig .form-group label.delete {
   color: rgba(233, 65, 65, 0.841);
@@ -9107,10 +9151,11 @@ button.img-button.framed:before {
   background-color: #35456d;
 }
 #clockConfig .gradients {
-  display: flex;
-  flex-direction: column;
   justify-content: stretch;
   align-items: stretch;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
 }
 #clockConfig .gradients > div {
   cursor: pointer;
@@ -9188,6 +9233,10 @@ button.img-button.framed:before {
 }
 .clock-drawer:hover .button-holder {
   display: block;
+}
+
+.cyphersystem.sheet.actor.npc .clock-drawer {
+  position: relative;
 }
 
 #clock-display,
@@ -10004,7 +10053,7 @@ button.img-button.framed:before {
   border-top-left-radius: 0;
 }
 
-.app-child {
+.app-child:not(.inset-display) {
   display: block;
   position: absolute;
   z-index: -10;
@@ -10012,14 +10061,42 @@ button.img-button.framed:before {
   transform: translateX(0);
   right: 0;
 }
-.app-child.expanded {
+.app-child:not(.inset-display).expanded {
   transform: translateX(100%);
 }
-.app-child .clock-container {
+.app-child:not(.inset-display) .clock-container {
   box-shadow: var(--tui-shadow);
 }
 
 .window-app.sheet.minimized .app-child {
+  display: none;
+}
+
+.cyphersystem.sheet.actor.npc .app-child.inset-display {
+  position: relative !important;
+  transform: unset;
+  top: unset !important;
+  width: 100% !important;
+  max-width: unset !important;
+  width: 100%;
+  left: unset;
+  right: unset;
+}
+.cyphersystem.sheet.actor.npc .app-child.inset-display,
+.cyphersystem.sheet.actor.npc .app-child.inset-display * {
+  max-height: unset !important;
+}
+.cyphersystem.sheet.actor.npc .app-child.inset-display .clock-container {
+  width: 100%;
+}
+.cyphersystem.sheet.actor.npc .app-child.inset-display .clockCategory {
+  width: 100%;
+  overflow-x: scroll;
+}
+.cyphersystem.sheet.actor.npc .app-child.inset-display .clockCategory__wrapper, .cyphersystem.sheet.actor.npc .app-child.inset-display .clockCategory__inner {
+  width: 100%;
+}
+.cyphersystem.sheet.actor.npc .app-child.inset-display button[data-action=showClocks], .cyphersystem.sheet.actor.npc .app-child.inset-display button[data-action=expand] {
   display: none;
 }
 

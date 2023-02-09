@@ -1,6 +1,7 @@
-<form id="{{ourId}}" class="clockApp" data-id="{{ourId}}" {{#if miniDisplay}}title="click to open clock" {{/if}}>
+<form id="{{ourId}}" class="clockApp" data-id="{{ourId}}" {{#if miniDisplay}} data-tooltip="{{description}}" {{/if}}>
 	<div class="headerWrapper">
 		<h3 class="clockName" name="clockName" contenteditable="true">{{name}}</h3>
+
 		{{#if miniDisplay}}
 		<div class="userBadge" style="background-color: {{getUserData creator "color"}};"><span class="userBadge__name">{{getFirstTwoLetters (getUserData creator "name")}}</span></div>
 		{{/if}}
@@ -58,6 +59,9 @@
 			{{/each}}
 		</div>
 	</div>
+ {{#unless miniDisplay}}
+		<p class="clockDescription" name="clockDescription" contenteditable="true">{{description}}</p>
+        {{/unless}}
 	{{#unless miniDisplay}}
 	<div class="entityLinkWrapper">
 		{{#each linkedEntities}}

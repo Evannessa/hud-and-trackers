@@ -1,12 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap");
 
 #clock-display,
-#clock-display > .window-content,
-#clock-display .window-content > form {
+#clock-display>.window-content,
+#clock-display .window-content>form {
     background-color: transparent;
 }
 
-#clock-display .window-content > form > section {
+#clock-display .window-content>form>section {
     background-color: rgba(19, 22, 26, 0.603);
 }
 
@@ -86,7 +86,7 @@
             display: flex;
 
             input {
-                + label {
+                +label {
                     margin-left: 0.25rem;
                 }
             }
@@ -122,7 +122,7 @@
                 // background-image: url("/modules/hud-and-trackers/images/Aurora-Lights.jpg");
                 // background-size: cover;
 
-                + .clockCategory {
+                +.clockCategory {
                     // padding-left: 0.5rem;
                     margin-left: 0.25rem;
                     // border-left: 1px solid rgba(255, 255, 255, 0.486);
@@ -139,7 +139,7 @@
                     border-top-right-radius: 5px;
                     border-bottom-right-radius: 5px;
 
-                    > button.open {
+                    >button.open {
                         border-top-right-radius: unset !important;
                         border-bottom-right-radius: unset !important;
                     }
@@ -462,7 +462,7 @@
                 display: flex;
                 flex-direction: row;
 
-                + .innerWrapper {
+                +.innerWrapper {
                     margin: 1em;
                 }
             }
@@ -490,7 +490,7 @@
                     border-top-right-radius: 8px;
                     border-bottom-right-radius: 8px;
 
-                    & + .clockSection {
+                    &+.clockSection {
                         border-top-left-radius: 8px;
                         border-bottom-left-radius: 8px;
                     }
@@ -566,7 +566,7 @@
                     }
 
                     &[data-break],
-                    & + .clockSection {
+                    &+.clockSection {
                         border-top-left-radius: 0;
                         border-bottom-left-radius: 0;
                         border-radius: 50%;
@@ -603,12 +603,12 @@
                     }
 
                     &[data-break],
-                    & + .clockSection {
+                    &+.clockSection {
                         border-top-left-radius: 5px;
                         border-bottom-left-radius: 5px;
                     }
 
-                    + .clockSection {
+                    +.clockSection {
                         margin-left: 2px;
                     }
 
@@ -632,7 +632,7 @@
     }
 }
 
-.app-child {
+.app-child:not(.inset-display) {
     display: block;
     position: absolute;
     z-index: -10;
@@ -658,6 +658,49 @@
                 // min-height: max-content;
                 // top: 0;
                 // padding: 0.1rem;
+            }
+        }
+    }
+}
+
+.cyphersystem.sheet.actor.npc {
+    .app-child.inset-display {
+        // overflow-x: scroll;
+        position: relative !important;
+        transform: unset;
+        top: unset !important;
+        width: 100% !important;
+        max-width: unset !important;
+        width: 100%;
+
+        &,
+        * {
+            max-height: unset !important;
+        }
+
+        .clock-container {
+            width: 100%;
+        }
+
+        .clockCategory {
+            width: 100%;
+            overflow-x: scroll;
+
+            &__wrapper,
+            &__inner {
+
+                width: 100%;
+            }
+        }
+
+        left: unset;
+        right: unset;
+
+        button {
+
+            &[data-action="showClocks"],
+            &[data-action="expand"] {
+                display: none;
             }
         }
     }

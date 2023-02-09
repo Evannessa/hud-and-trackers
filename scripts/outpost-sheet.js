@@ -1,10 +1,28 @@
 import { HelperFunctions as HF } from "./helper-functions.js";
 import { PhaseHandlerApp } from "./phase-handler.js";
-
+import { AspectSheet } from "./classes/AspectSheet.js";
+Hooks.once("init", () => {
+    loadTemplates([`modules/hud-and-trackers/templates/aspects/AspectSheet.hbs`]);
+});
 Hooks.on("ready", () => {
 
     // game.phaseHandlerApp = new PhaseHandlerApp().render(true)
 })
+
+// Hooks.on("renderActorSheet", (app, html) => {
+//     if (app.object.type === "npc") {
+//         console.log(html.find(".sheet-body"))
+//         let body = html.find(".sheet-body")[0]
+//     }
+// });
+// Hooks.once("init", function () {
+//     Actors.registerSheet("cypher", AspectSheet, {
+//         types: ["npc"],
+//         makeDefault: true,
+//     });
+// });
+
+
 Hooks.on("renderSidebarTab", (app, html) => {
     if (app.options.id === "chat") {
         let button = $("<button class='hat-chat-button' style='margin-bottom: 10px'>Outpost Manager</button>");

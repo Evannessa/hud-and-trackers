@@ -102,6 +102,7 @@ async function loadHandleBarTemplates() {
         "modules/hud-and-trackers/templates/inner-scene-display/partials/edit-list-item.hbs",
         "modules/hud-and-trackers/templates/hud-partials/button-partial.hbs",
         "modules/hud-and-trackers/templates/hud-partials/hud-item-partial.hbs",
+        `modules/hud-and-trackers/templates/aspects/AspectSheet.hbs`
     ];
     return loadTemplates(templatePaths);
 }

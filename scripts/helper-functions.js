@@ -285,6 +285,20 @@ export function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight
         height: srcHeight * ratio,
     };
 }
+/**
+ * Inject template into app
+ */
+export async function injectHTML(app, template, data) {
+
+    let newHTML = await renderTemplate(template, data);
+
+    //convert it to a jquery object
+    newHTML = $(newHTML);
+
+    //get the app's element and append this
+    app.element.append(newHTML);
+
+}
 
 export function selectMyCharacter() {
     let actor = getActorFromUser(game.user);

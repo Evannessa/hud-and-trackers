@@ -1,50 +1,97 @@
 <form class="flexcol">
+  <section class="form-group__wrapper">
     <div class="form-group">
-        <label for="clockName">Clock Name</label>
-        <input type="text" name="name" placeholder="Enter a name" value="{{name}}" />
+      <label for="clockName">
+        Clock Name
+      </label>
+      <input
+        type="text"
+        name="name"
+        placeholder="Enter a name"
+        value="{{name}}"
+      />
     </div>
     <div class="form-group">
-        <label for="sectionCount">How Many Sections</label>
-        <input type="number" name="sectionCount" value="{{sectionCount}}" />
+      <label for="clockDescription">
+        Clock Description
+      </label>
+      <input type="text" name="description" value="{{description}}" />
+    </div>
+  </section>
+  <section class="form-group__wrapper">
+    {{! Section Count }}
+    <div class="form-group" id="section-count">
+      <label for="sectionCount">
+        How Many Sections
+      </label>
+      <p class="note hint">
+        How many sections/boxes should this clock have?
+      </p>
+      <input
+        type="number"
+        name="sectionCount"
+        value="{{sectionCount}}"
+        data-tooltip="How many sections should this clock have?"
+      />
     </div>
     <div class="form-group">
-        <label for="break">Include Breaks At</label>
-        <p>After which sections should you insert a break?</p>
-        <p>Format Example: "2,3,4" (w/out quotes)</p>
-        <input type="text" name="breaks" value="{{breaks}}" />
-    </div>
-    <div class="form-group">
-        <p>Would you like waypoints between breaks?</p>
-        <label for="showWaypoints">
-            <input type="checkbox" name="showWaypoints" value="{{showWaypoints}}" />
-            Show Waypoints
-        </label>
-    </div>
-
-    <div class="form-group">
-        <p>Should this clock start with all of its sections filled in?</p>
+      <p class="note hint">
+        Should this clock start with all of its sections filled in?
+      </p>
+      <div class="input-and-label-wrapper">
+        <input
+          type="checkbox"
+          name="startFilled"
+          id="startFilled"
+          value="{{startFilled}}"
+        />
         <label for="startFilled">
-            <input type="checkbox" name="startFilled" value="{{startFilled}}" />
-            Start Filled
+          Start Filled
         </label>
+      </div>
     </div>
-    {{#if isClone}}
     <div class="form-group">
-        <p>
-            Copy fill from original clock? <br />(Note: This will override the "Start
+      <label for="break" data-tooltip="Format Example: '2,3,4' (w/out quotes)">
+        Break Positions
+      </label>
+      <p class="note hint">
+        After which sections should you insert a break?
+      </p>
+      <input type="text" name="breaks" value="{{breaks}}" placeholder="2,3,4" />
+    </div>
+    <div class="form-group">
+      <p class="note hint">
+        Would you like waypoints between breaks?
+      </p>
+      <div class="input-and-label-wrapper">
+        <input type="checkbox" name="showWaypoints" value="{{showWaypoints}}" />
+        <label for="showWaypoints">
+          Show Waypoints
+        </label>
+      </div>
+    </div>
+  </section>
+  {{#if isClone}}
+    <div class="form-group">
+      <p>
+        Copy fill from original clock?
+        <br />
+        (Note: This will override the "Start
             Filled" value)
-        </p>
-        <label for="copyFill">
-            <input type="checkbox" name="copyFill" value="false" />
-            Copy Fill</label
-        >
+      </p>
+      <label for="copyFill">
+        <input type="checkbox" name="copyFill" value="false" />
+        Copy Fill
+      </label>
     </div>
     <div class="form-group">
-        <p>Copy labels from original clock?</p>
-        <label for="copyLabels">
-            <input type="checkbox" name="copyLabels" value="false" />
-            Copy Labels</label
-        >
+      <p>
+        Copy labels from original clock?
+      </p>
+      <label for="copyLabels">
+        <input type="checkbox" name="copyLabels" value="false" />
+        Copy Labels
+      </label>
     </div>
     <!-- <div class="form-group">
         <p>Delete original clock?</p>
@@ -53,46 +100,76 @@
             <i class="fas fa-exclamation-triangle"></i> Delete Original?</label
         >
     </div> -->
-    {{/if}}
-
+  {{/if}}
+  <section class="form-group__wrapper vertical">
+    <label>
+      Choose Gradient
+    </label>
     <div class="form-group gradients">
-        <label>Choose Gradient</label>
-        <div class="reddish">
-            <input type="radio" id="reddish" name="gradient" value="reddish" checked />
-            <label for="reddish">Reddish</label>
-        </div>
-
-        <div class="purple">
-            <input type="radio" id="purple" name="gradient" value="purple" />
-            <label for="purple">Purple</label>
-        </div>
-
-        <div class="bluePink">
-            <input type="radio" id="bluePink" name="gradient" value="bluePink" />
-            <label for="bluePink">Blue Pink</label>
-        </div>
-        <div class="turquoise">
-            <input type="radio" id="turquoise" name="gradient" value="turquoise" />
-            <label for="turquoise">Turquoise</label>
-        </div>
-        <div class="pinkLemonade">
-            <input type="radio" id="pinkLemonade" name="gradient" value="pinkLemonade" />
-            <label for="pinkLemonade">Pink Lemonade</label>
-        </div>
-        <div class="fire">
-            <input type="radio" id="fire" name="gradient" value="fire" />
-            <label for="fire">Fire</label>
-        </div>
-        <div class="magic">
-            <input type="radio" id="magic" name="gradient" value="magic" />
-            <label for="magic">Magic</label>
-        </div>
-        <div class="pastel">
-            <input type="radio" id="pastel" name="gradient" value="pastel" />
-            <label for="pastel">Pastel</label>
-        </div>
+      <div class="reddish">
+        <input
+          type="radio"
+          id="reddish"
+          name="gradient"
+          value="reddish"
+          checked
+        />
+        <label for="reddish">
+          Reddish
+        </label>
+      </div>
+      <div class="purple">
+        <input type="radio" id="purple" name="gradient" value="purple" />
+        <label for="purple">
+          Purple
+        </label>
+      </div>
+      <div class="bluePink">
+        <input type="radio" id="bluePink" name="gradient" value="bluePink" />
+        <label for="bluePink">
+          Blue Pink
+        </label>
+      </div>
+      <div class="turquoise">
+        <input type="radio" id="turquoise" name="gradient" value="turquoise" />
+        <label for="turquoise">
+          Turquoise
+        </label>
+      </div>
+      <div class="pinkLemonade">
+        <input
+          type="radio"
+          id="pinkLemonade"
+          name="gradient"
+          value="pinkLemonade"
+        />
+        <label for="pinkLemonade">
+          Pink Lemonade
+        </label>
+      </div>
+      <div class="fire">
+        <input type="radio" id="fire" name="gradient" value="fire" />
+        <label for="fire">
+          Fire
+        </label>
+      </div>
+      <div class="magic">
+        <input type="radio" id="magic" name="gradient" value="magic" />
+        <label for="magic">
+          Magic
+        </label>
+      </div>
+      <div class="pastel">
+        <input type="radio" id="pastel" name="gradient" value="pastel" />
+        <label for="pastel">
+          Pastel
+        </label>
+      </div>
     </div>
-    <div class="buttonWrapper">
-        <button class="submit" data-action="submit">Submit</button>
-    </div>
+  </section>
+  <div class="buttonWrapper">
+    <button class="submit" data-action="submit">
+      Submit
+    </button>
+  </div>
 </form>

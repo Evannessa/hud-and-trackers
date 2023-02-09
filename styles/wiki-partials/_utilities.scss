@@ -220,6 +220,12 @@ input[type="radio"].hidden-input {
     }
 }
 
+a.content-link,
+a.inline-roll {
+    background: hsl(240deg 49% 44%);
+    border: none;
+}
+
 fieldset.toggle-button-group {
     max-width: fit-content;
     box-shadow: var(--box-shadow);
