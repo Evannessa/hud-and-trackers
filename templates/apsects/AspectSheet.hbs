@@ -1,0 +1,95 @@
+    <section class="ratings-wrapper">
+            {{#each aspects as |rating|}}
+              <div
+                class="rating-container"
+                data-tooltip="{{lookup
+                    (lookup @root.ratingDescriptions @key)
+                    "description"
+                  }}"
+              >
+                <div
+                  class="wrapper"
+                  data-name="{{outpost.name}}.ratings.{{@key}}"
+                  data-pool-name="{{outpost.name}}.pointPool"
+                >
+                  <label
+                    for="{{@key}}"
+                    class="rating-label"
+                    data-click-action="changeRating"
+                    data-name="{{@key}}"
+                    data-type="rating"
+                  >
+                    {{rating.name}}
+                  </label>
+                  <input
+                    data-name="{{@key}}"
+                    class="rating displayNumber"
+                    type="number"
+                    name="{{@key}}"
+                    id="{{@key}}"
+                    min="0"
+                    max="9"
+                    value="{{rating.value}}"
+                    disabled
+                    data-change-action="changePool"
+                  />
+                </div>
+                <div
+                  class="points-display"
+                  data-click-action="changeRating"
+                  data-name="{{@key}}"
+                  data-type="rating"
+                >
+                  <div class="underlay">
+                    {{#times 9}}
+                      <span class="point"></span>
+                    {{/times}}
+                  </div>
+                  <div class="fill">
+                    {{#times rating.value}}
+                      <span class="point"></span>
+                    {{/times}}
+                  </div>
+                </div>
+                {{! This is the button for the ActionPhase }}
+                <div class="button-wrapper">
+                  <button
+                    type="button"
+                    class="roll-rating"
+                    data-click-action="rollRating"
+                    data-minimum="1"
+                    {{ternary
+                      (eq @root.currentPhase "actionPhase")
+                      ""
+                      "disabled"
+                    }}
+                    {{ternary (lt rating.value 3) "disabled" ""}}
+                  >
+                    <i class="fas fa-level-up"></i>
+                  </button>
+                  {{! This is the button for the ReactionPhase }}
+                  <button
+                    type="button"
+                    class="roll-rating"
+                    data-click-action="rollRating"
+                    data-minimum="1"
+                    {{ternary
+                      (eq @root.currentPhase "reactionPhase")
+                      ""
+                      "disabled"
+                    }}
+                  >
+                    <i class="fas fa-shield-alt"></i>
+                  </button>
+                </div>
+              </div>
+            {{/each}}
+            <button
+              type="button"
+              data-click-action="rollEach"
+              data-type="rating"
+              {{ternary (eq @root.currentPhase "eventPhase") "disabled" ""}}
+            >
+              Roll All Ratings
+            </button>
+          </section>

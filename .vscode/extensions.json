@@ -1,5 +1,7 @@
 {
     "recommendations": [
-        "alexkev.clg"
+        "alexkev.clg",
+        "eamodio.gitlens",
+        "byi8220.indented-block-highlighting"
     ]
 }

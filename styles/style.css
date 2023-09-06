@@ -52,6 +52,11 @@
   --color-info-light: hsl(200deg, 80%, 60%);
 }
 
+#tooltip {
+  text-align: left !important;
+  line-height: 1.8;
+}
+
 .flow > * + * {
   margin-top: var(--flow-space, 1em);
 }
@@ -263,6 +268,12 @@ input[type=radio].hidden-input:checked + label .tooltip {
   transition: opacity 150ms ease-out backdrop-filter 150ms ease-out;
 }
 
+a.content-link,
+a.inline-roll {
+  background: hsl(240deg, 49%, 44%);
+  border: none;
+}
+
 fieldset.toggle-button-group {
   max-width: -webkit-fit-content;
   max-width: -moz-fit-content;
@@ -271,10 +282,12 @@ fieldset.toggle-button-group {
   pointer-events: auto;
   display: flex;
   flex-direction: row;
+  justify-content: stretch;
+  align-items: stretch;
   border: none;
   color: currentColor;
   padding: 0rem 0rem;
-  min-width: 50%;
+  min-width: unset;
 }
 
 fieldset.toggle-button-group * {
@@ -284,6 +297,11 @@ fieldset.toggle-button-group * {
 fieldset.toggle-button-group legend {
   background-color: inherit;
   padding: 0.5rem;
+}
+
+fieldset.toggle-button-group label {
+  border-radius: unset;
+  flex: 1;
 }
 
 fieldset.toggle-button-group label:first-of-type {
@@ -2247,6 +2265,11 @@ button.icon-button {
   --color-info-light: hsl(200deg, 80%, 60%);
 }
 
+#tooltip {
+  text-align: left !important;
+  line-height: 1.8;
+}
+
 .flow > * + * {
   margin-top: var(--flow-space, 1em);
 }
@@ -2458,6 +2481,12 @@ input[type=radio].hidden-input:checked + label .tooltip {
   transition: opacity 150ms ease-out backdrop-filter 150ms ease-out;
 }
 
+a.content-link,
+a.inline-roll {
+  background: hsl(240deg, 49%, 44%);
+  border: none;
+}
+
 fieldset.toggle-button-group {
   max-width: -webkit-fit-content;
   max-width: -moz-fit-content;
@@ -2466,10 +2495,12 @@ fieldset.toggle-button-group {
   pointer-events: auto;
   display: flex;
   flex-direction: row;
+  justify-content: stretch;
+  align-items: stretch;
   border: none;
   color: currentColor;
   padding: 0rem 0rem;
-  min-width: 50%;
+  min-width: unset;
 }
 
 fieldset.toggle-button-group * {
@@ -2479,6 +2510,11 @@ fieldset.toggle-button-group * {
 fieldset.toggle-button-group legend {
   background-color: inherit;
   padding: 0.5rem;
+}
+
+fieldset.toggle-button-group label {
+  border-radius: unset;
+  flex: 1;
 }
 
 fieldset.toggle-button-group label:first-of-type {
@@ -4568,27 +4604,20 @@ button.icon-button {
   display: flex;
   flex-direction: column;
 }
+#outpost-sheet {
+  background-color: var(--color-neutral-darkest);
+}
+#outpost-sheet .window-content {
+  background: unset;
+  background-color: var(--color-neutral-darkest);
+}
+
 .outpost-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 0.5rem;
   max-width: 80vw;
-}
-.outpost-container .phase-container fieldset {
-  display: flex;
-  border-radius: 8px;
-  overflow: hidden;
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
-  height: -webkit-fit-content;
-  height: -moz-fit-content;
-  height: fit-content;
-}
-.outpost-container .phase-container fieldset label {
-  border-radius: unset;
-  border: unset !important;
 }
 .outpost-container input {
   color: white;
@@ -4608,15 +4637,23 @@ button.icon-button {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: var(--color-neutral-darkest);
+  background-color: var(--color-neutral-800);
   border-color: var(--color-neutral-darkest);
   color: white;
   padding: 0.75em 1em;
   border-radius: 12px;
   gap: 1rem;
 }
-.individual-outpost > h2 {
+.individual-outpost div.form-group {
   margin-right: auto;
+  border: unset;
+  border-bottom: 1px solid var(--color-primary-200);
+}
+.individual-outpost div.form-group input {
+  border-color: transparent;
+}
+.individual-outpost div.form-group input:hover, .individual-outpost div.form-group input:focus {
+  border-color: var(--color-primary-300);
 }
 .individual-outpost header {
   width: 100%;
@@ -4635,6 +4672,11 @@ button.icon-button {
   border: 1px solid var(--color-primary-300);
   color: var(--color-primary-300);
   white-space: nowrap;
+}
+.individual-outpost header .station-wrapper button:first-of-type {
+  color: var(--color-primary-darkest);
+  background-color: var(--color-primary-300);
+  font-weight: bold;
 }
 .individual-outpost section {
   border-radius: 5px;
@@ -4655,6 +4697,9 @@ button.icon-button {
 .individual-outpost details[open] summary {
   color: var(--color-neutral-400);
 }
+.individual-outpost details[open] summary::after {
+  content: "−";
+}
 .individual-outpost details[open] ul {
   opacity: 0%;
   pointer-events: none;
@@ -4672,6 +4717,9 @@ button.icon-button {
   width: 100%;
   cursor: pointer;
   padding: 0.5rem 0.45rem;
+}
+.individual-outpost details summary::after {
+  content: "＋";
 }
 .individual-outpost details summary ul {
   opacity: 100%;
@@ -4819,6 +4867,12 @@ button.icon-button {
 .individual-outpost .clocks-wrapper .rating-container .button-wrapper button,
 .individual-outpost .clocks-wrapper .clock-container .button-wrapper button {
   flex: 1;
+}
+.individual-outpost .ratings-wrapper .rating-container .button-wrapper button:disabled,
+.individual-outpost .ratings-wrapper .clock-container .button-wrapper button:disabled,
+.individual-outpost .clocks-wrapper .rating-container .button-wrapper button:disabled,
+.individual-outpost .clocks-wrapper .clock-container .button-wrapper button:disabled {
+  opacity: 60%;
 }
 .individual-outpost .ratings-wrapper .rating-container .roll-button,
 .individual-outpost .ratings-wrapper .rating-container .roll-rating,
@@ -5746,7 +5800,8 @@ button.icon-button {
   --color-wiki-accent-2-600: hsl(266deg, 100%, 55%);
   --color-wiki-accent-2-base: hsl(266deg, 100%, 65%);
   --color-wiki-accent-2-400: hsl(266deg, 100%, 75%);
-  --color-neutral-darkest: hsl(240deg, 17%, 20%);
+  --color-neutral-darkest: hsl(240deg, 27%, 10%);
+  --color-neutral-800: hsl(240deg, 24%, 24%);
   --color-neutral-700: hsl(240deg, 17%, 30%);
   --color-neutral-base: hsl(240deg, 12%, 50%);
   --color-neutral-300: hsl(240deg, 17%, 70%);
@@ -8854,6 +8909,9 @@ button.img-button.framed:before {
 .clockHud .window-content .clockName {
   flex: 0;
 }
+.clockHud .window-content .clockDescription {
+  max-width: 45ch;
+}
 .clockHud .window-content .contentWrapper {
   display: grid;
   width: -webkit-max-content;
@@ -8863,6 +8921,8 @@ button.img-button.framed:before {
   grid-template-columns: max-content;
   grid-template-rows: 2rem 1fr -webkit-max-content;
   grid-template-rows: 2rem 1fr max-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 .clockHud .window-content .contentWrapper .frameWrapper,
 .clockHud .window-content .contentWrapper .clockWrapper {
@@ -9041,6 +9101,24 @@ button.img-button.framed:before {
   flex: 0;
 }
 
+#clockConfig {
+  max-width: 500px;
+}
+#clockConfig .flexcol {
+  display: flex;
+  gap: 0.5rem;
+}
+#clockConfig .form-group__wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  row-gap: 0.5rem;
+  -moz-column-gap: 0.25rem;
+       column-gap: 0.25rem;
+}
+#clockConfig .form-group__wrapper.vertical {
+  grid-template-columns: unset;
+  grid-template-rows: 1rem 1fr;
+}
 #clockConfig .form-group {
   display: flex;
   flex-direction: column;
@@ -9051,8 +9129,17 @@ button.img-button.framed:before {
   border-radius: 5px;
   padding: 0.5rem 0.5rem;
 }
+#clockConfig .form-group .input-and-label-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+#clockConfig .form-group .hint {
+  flex: unset;
+}
 #clockConfig .form-group label {
   color: #8597c5;
+  vertical-align: middle;
 }
 #clockConfig .form-group label.delete {
   color: rgba(233, 65, 65, 0.841);
@@ -9064,10 +9151,11 @@ button.img-button.framed:before {
   background-color: #35456d;
 }
 #clockConfig .gradients {
-  display: flex;
-  flex-direction: column;
   justify-content: stretch;
   align-items: stretch;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
 }
 #clockConfig .gradients > div {
   cursor: pointer;
@@ -9145,6 +9233,10 @@ button.img-button.framed:before {
 }
 .clock-drawer:hover .button-holder {
   display: block;
+}
+
+.cyphersystem.sheet.actor.npc .clock-drawer {
+  position: relative;
 }
 
 #clock-display,
@@ -9961,7 +10053,7 @@ button.img-button.framed:before {
   border-top-left-radius: 0;
 }
 
-.app-child {
+.app-child:not(.inset-display) {
   display: block;
   position: absolute;
   z-index: -10;
@@ -9969,14 +10061,42 @@ button.img-button.framed:before {
   transform: translateX(0);
   right: 0;
 }
-.app-child.expanded {
+.app-child:not(.inset-display).expanded {
   transform: translateX(100%);
 }
-.app-child .clock-container {
+.app-child:not(.inset-display) .clock-container {
   box-shadow: var(--tui-shadow);
 }
 
 .window-app.sheet.minimized .app-child {
+  display: none;
+}
+
+.cyphersystem.sheet.actor.npc .app-child.inset-display {
+  position: relative !important;
+  transform: unset;
+  top: unset !important;
+  width: 100% !important;
+  max-width: unset !important;
+  width: 100%;
+  left: unset;
+  right: unset;
+}
+.cyphersystem.sheet.actor.npc .app-child.inset-display,
+.cyphersystem.sheet.actor.npc .app-child.inset-display * {
+  max-height: unset !important;
+}
+.cyphersystem.sheet.actor.npc .app-child.inset-display .clock-container {
+  width: 100%;
+}
+.cyphersystem.sheet.actor.npc .app-child.inset-display .clockCategory {
+  width: 100%;
+  overflow-x: scroll;
+}
+.cyphersystem.sheet.actor.npc .app-child.inset-display .clockCategory__wrapper, .cyphersystem.sheet.actor.npc .app-child.inset-display .clockCategory__inner {
+  width: 100%;
+}
+.cyphersystem.sheet.actor.npc .app-child.inset-display button[data-action=showClocks], .cyphersystem.sheet.actor.npc .app-child.inset-display button[data-action=expand] {
   display: none;
 }
 
@@ -10885,7 +11005,8 @@ li .hover-controls button {
   --color-wiki-accent-2-600: hsl(266deg, 100%, 55%);
   --color-wiki-accent-2-base: hsl(266deg, 100%, 65%);
   --color-wiki-accent-2-400: hsl(266deg, 100%, 75%);
-  --color-neutral-darkest: hsl(240deg, 17%, 20%);
+  --color-neutral-darkest: hsl(240deg, 27%, 10%);
+  --color-neutral-800: hsl(240deg, 24%, 24%);
   --color-neutral-700: hsl(240deg, 17%, 30%);
   --color-neutral-base: hsl(240deg, 12%, 50%);
   --color-neutral-300: hsl(240deg, 17%, 70%);
@@ -12333,7 +12454,8 @@ li .hover-controls button {
   --color-wiki-accent-2-600: hsl(266deg, 100%, 55%);
   --color-wiki-accent-2-base: hsl(266deg, 100%, 65%);
   --color-wiki-accent-2-400: hsl(266deg, 100%, 75%);
-  --color-neutral-darkest: hsl(240deg, 17%, 20%);
+  --color-neutral-darkest: hsl(240deg, 27%, 10%);
+  --color-neutral-800: hsl(240deg, 24%, 24%);
   --color-neutral-700: hsl(240deg, 17%, 30%);
   --color-neutral-base: hsl(240deg, 12%, 50%);
   --color-neutral-300: hsl(240deg, 17%, 70%);

@@ -2,6 +2,7 @@
 @import "wiki-partials/character-popout.scss";
 
 @import "partials/outpost";
+@import "partials/phase_handler";
 
 @import "partials/mixins";
 
@@ -47,15 +48,18 @@
     opacity: 0;
     // bottom: -999px !important;
 }
+
 //This should overtake the above
 .window-app .window-header.minimal-window-header {
     // flex: 0 0 0.75rem;
     display: none;
+
     &.invisible {
         display: none;
         width: fit-content;
         height: auto;
-        > span {
+
+        >span {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -85,21 +89,26 @@
     border-radius: 5px;
     padding: 0rem 0rem;
     min-width: 50%;
+
     label {
         border: 2px solid var(--clr-dark-base);
     }
+
     label:not(:first-of-type, :last-of-type) {
         border-left: none;
         border-right: none;
     }
+
     label:first-of-type {
         border-top-left-radius: 8px;
         border-bottom-left-radius: 8px;
     }
+
     label:last-of-type {
         border-top-right-radius: 8px;
         border-bottom-right-radius: 8px;
     }
+
     input[type="radio"] {
         transform: scale(0);
         position: absolute;
@@ -111,7 +120,7 @@
         padding: 0;
         border: 0;
 
-        & + label {
+        &+label {
             background-color: var(--color-primary-base);
             padding: 0.25rem 0.5rem;
             --hover-color: var(--color-primary-400);
@@ -123,23 +132,27 @@
             align-items: center;
             transition: background-color 150ms ease-out;
             background-color: var(--color-primary-base);
+
             &:hover {
                 cursor: pointer;
                 background-color: var(--hover-color);
                 color: #212121;
             }
         }
-        &:checked + label {
+
+        &:checked+label {
             --hover-color: var(--color-primary-base);
             color: white;
             transition: background-color 250ms ease-out;
             box-shadow: var(--box-shadow);
+
             &:not(:hover) {
                 background-color: var(--color-primary-darkest);
             }
         }
     }
 }
+
 // .interactive {
 //     background-color: var(--tui-black4);
 //     border-radius: 8px;
@@ -183,8 +196,7 @@
 
         &:hover,
         &:active,
-        &:focus {
-        }
+        &:focus {}
     }
 
     &-ghost {

@@ -1,79 +1,85 @@
 .clock-drawer {
-	$drawer: &;
-	position: absolute;
-	top: 1rem;
-	left: -2rem;
-	width: 2rem;
-	min-height: 10rem;
-	max-height: max-content;
-	background-color: #1e2130f1;
-	border-top-left-radius: 10px;
-	border-bottom-left-radius: 10px;
-	writing-mode: vertical-lr;
-	text-orientation: mixed;
-	text-align: center;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
-	overflow: hidden;
+    $drawer: &;
+    position: absolute;
+    top: 1rem;
+    left: -2rem;
+    width: 2rem;
+    min-height: 10rem;
+    max-height: max-content;
+    background-color: #1e2130f1;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+    overflow: hidden;
 
-	&.pop-out {
-		left: 0rem;
-		border-top-left-radius: 0px;
-		border-bottom-left-radius: 0px;
-		border-top-right-radius: 10px;
-		border-bottom-right-radius: 10px;
+    &.pop-out {
+        left: 0rem;
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
 
-		&:hover {
-			left: 0rem;
-		}
-	}
+        &:hover {
+            left: 0rem;
+        }
+    }
 
-	&__header {
-		letter-spacing: 3px;
-		font-size: 1rem;
-		text-transform: uppercase;
-		// transform-origin: 0 0;
-		transform: rotate(180deg);
-	}
-
-
-	.button-holder {
-		width: 10rem;
-		display: none;
-
-		button {
-			text-align: left;
-			border-radius: 0px;
-			padding-left: 1.5rem;
-			background-color: none;
-
-			+button {
-				padding-top: 0.5rem;
-			}
-
-			// border: 1px solid rgb(253, 112, 136);
-		}
-	}
-
-	&:hover {
-		padding: 0.5rem 0rem;
-		left: -10rem;
-		width: 10rem;
-		writing-mode: inherit;
-		text-orientation: inherit;
-		justify-content: flex-start;
-		align-items: center;
-
-		.clock-drawer__header {
-			transform: rotate(0deg);
-		}
+    &__header {
+        letter-spacing: 3px;
+        font-size: 1rem;
+        text-transform: uppercase;
+        // transform-origin: 0 0;
+        transform: rotate(180deg);
+    }
 
 
-		.button-holder {
-			display: block;
-		}
-	}
+    .button-holder {
+        width: 10rem;
+        display: none;
 
+        button {
+            text-align: left;
+            border-radius: 0px;
+            padding-left: 1.5rem;
+            background-color: none;
+
+            +button {
+                padding-top: 0.5rem;
+            }
+
+            // border: 1px solid rgb(253, 112, 136);
+        }
+    }
+
+    &:hover {
+        padding: 0.5rem 0rem;
+        left: -10rem;
+        width: 10rem;
+        writing-mode: inherit;
+        text-orientation: inherit;
+        justify-content: flex-start;
+        align-items: center;
+
+        .clock-drawer__header {
+            transform: rotate(0deg);
+        }
+
+
+        .button-holder {
+            display: block;
+        }
+    }
+
+}
+
+.cyphersystem.sheet.actor.npc {
+    .clock-drawer {
+        position: relative;
+    }
 }

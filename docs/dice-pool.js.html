@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: dice-pool.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: dice-pool.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import * as HelperFunctions from "./helper-functions.js";
+
+Hooks.on("ready", () => {
+    // game.dicePool = new AmbientDicePool().render(true);
+    // game.ambientRollPrompt = new PromptAmbientRoll().render(true);
+    // var originalAllInOne = game.cyphersystem.allInOneRollMacro;
+    // game.cyphersystem.allInOneRollDialog = function(actor, title, info, cost, pool, modifier, teen){
+});
+
+Hooks.on("renderDialog", (app, html) => {
+    if (app.data.title === "All-in-One Roll") {
+        let button = $("&lt;button style='width: 30%'>Ambient Roll&lt;/button>");
+        button.click((event) => {
+            game.ambientRollPrompt = new PromptAmbientRoll().render(true);
+        });
+        app._element.find(".dialog-content").prepend(button);
+        app._element.height("max-content");
+    }
+});
+
+async function setUserRollMode(rollMode) {
+    ui.notifications.notify(`Your roll mode is set to ${rollMode}`);
+    await game.settings.set("core", "rollMode", rollMode);
+}
+Hooks.on("renderSidebarTab", (app, html) => {
+    if (app.options.id == "chat") {
+        let button = $("&lt;button style='margin-bottom: 10px'>Ambient Roll&lt;/button>");
+        button.click((event) => {
+            game.ambientRollPrompt = new PromptAmbientRoll().render(true);
+        });
+        html.find("#chat-controls").prepend(button);
+    }
+});
+
+Hooks.on("preCreateChatMessage", (msg, options, userId) => { });
+Hooks.on("createChatMessage", (data, data1, data2) => {
+    // data._element.find(".ambient-div");
+});
+
+//TODO: Make this check the previous rolls
+function checkPreviousRolls() {
+    let diceToCheck = 20;
+    let chatLog = game.messages;
+
+    //TODO: maybe only consider the ones from specific user too
+    //turn chatLog into an array, and only consider the last 10 rolls
+    chatLog = Array.from(chatLog).slice(-10);
+
+    let rolls = 0;
+    let total = 0;
+    chatLog = chatLog.filter((entry) => {
+        return entry.data.blind == true;
+    });
+
+    //? How to handle rerolls?
+    let lastEntry = chatLog.pop();
+    return lastEntry;
+}
+
+Hooks.on("closeApplication", (app, html) => {
+    if (app.id === "ambient-prompt") {
+        console.log("closing ambient prompt!");
+        //set the roll mode back to normal
+        setUserRollMode("roll");
+    }
+});
+
+/**
+ * Define your class that extends FormApplication
+ */
+export class PromptAmbientRoll extends FormApplication {
+    constructor() {
+        setUserRollMode("blindroll");
+        super();
+    }
+
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            classes: ["form", "hud-and-trackers"],
+            popOut: true,
+            template: `modules/hud-and-trackers/templates/dice-pool/ambient-prompt.hbs`,
+            id: "ambient-prompt",
+            title: "Prompt Ambient Roll",
+        });
+    }
+
+    getData() {
+        return {};
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html);
+        html.on("click", "[data-action]", this.handleButtonClick.bind(this));
+    }
+
+    async handleButtonClick(event) {
+        let clickedElement = $(event.currentTarget); //this will return the form itself?
+        let action = clickedElement.data().action;
+        switch (action) {
+            case "addBnB": {
+                game.dicePool = new AmbientDicePool().render(true);
+                break;
+            }
+            case "selectCharacter": {
+                event.preventDefault();
+                await HelperFunctions.selectMyCharacter();
+                break;
+            }
+            case "swapCharacter": {
+                event.preventDefault();
+                await HelperFunctions.callMacro("Swap-Characters");
+                break;
+            }
+            case "defaultAllInOne": {
+                event.preventDefault();
+                await HelperFunctions.callMacro("All-in-One Roll");
+                break;
+            }
+            case "openSheet": {
+                event.preventDefault();
+                let actor = HelperFunctions.getActorFromUser(game.user);
+                actor.sheet.render(true);
+                break;
+            }
+        }
+    }
+
+    async _updateObject(event, formData) { }
+}
+
+export class AmbientDicePool extends FormApplication {
+    constructor(poolData = {}) {
+        super(poolData);
+        this.data = poolData;
+        //if the object is empty, initialize it
+        if (Object.keys(this.data).length == 0) {
+            this.data = this.initializeData();
+        }
+    }
+
+    initializeData() {
+        setUserRollMode("roll");
+        return {
+            boonNumber: 1,
+            baneNumber: 1,
+            appliedBoons: [],
+            appliedBanes: [],
+            boons: {
+                approach: 0,
+                bonds: 0,
+                conditions: 0,
+                tools: 0,
+                environment: 0,
+            },
+            banes: {
+                approach: 0,
+                bonds: 0,
+                conditions: 0,
+                tools: 0,
+                environment: 0,
+            },
+        };
+    }
+
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            classes: ["form", "hud-and-trackers"],
+            popOut: true,
+            template: `modules/hud-and-trackers/templates/dice-pool/dice-pool.hbs`,
+            id: "ambient-dice-pool",
+            title: "Ambient Dice Pool",
+        });
+    }
+
+    getData() {
+        // Send data to the template
+        return {
+            data: this.data,
+        };
+    }
+
+    handleBoonBaneButtons(which) {
+        $(`#ambient-dice-pool .${which}Div button[data-number]`).mousedown((event) => {
+            event.preventDefault();
+            let button = event.currentTarget;
+            let changeBy = 1;
+            if (event.which === 3) {
+                //right mouse button subtract instead
+                changeBy = -1;
+            }
+            //add the new number that's going to show for the boon and bane number
+            let newNumber = this.data[`${which}s`][button.name];
+            newNumber += changeBy;
+
+            //make sure it doesn't go less than 0
+            if (newNumber &lt;= 0) {
+                newNumber = 0;
+            }
+
+            //add the new number that's going to show above the boon and bane category
+            this.data[`${which}s`][button.name] = newNumber;
+
+            //make sure it doesn't go less than zero
+            this.data[`${which}Number`] += changeBy;
+            if (this.data[`${which}Number`] &lt;= 1) {
+                this.data[`${which}Number`] = 1;
+            }
+
+            button.dataset.number = newNumber.toString();
+            this.render();
+        });
+    }
+    handleBoonBaneNumbers(which) {
+        for (let b in this.data[`${which}s`]) {
+            let number = this.data[`${which}s`][b];
+            let button = $(`#ambient-dice-pool .${which}Div button[name='${b}']`);
+            button.data("number", number);
+            if (number > 0) {
+                button.append(`&lt;div class="displayNumber">${number}&lt;/div>`);
+            }
+        }
+    }
+    getBoonBaneTotals(which) {
+        let string = ``;
+        for (let b in this.data[`${which}s`]) {
+            let number = this.data[`${which}s`][b];
+            if (number > 0) {
+                string += `&lt;li> ${number} ${which}(s) from ${b}&lt;/li>`;
+            }
+        }
+        return string;
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html);
+
+        //find all boons and banes and update their data
+        this.handleBoonBaneNumbers("boon");
+        this.handleBoonBaneNumbers("bane");
+
+        this.handleBoonBaneButtons("boon");
+        this.handleBoonBaneButtons("bane");
+        html.on("click", "[data-action]", this.rollBoonsAndBanes.bind(this));
+    }
+
+    async rollBoonsAndBanes() {
+        let boonString = this.getBoonBaneTotals("boon");
+        let baneString = this.getBoonBaneTotals("bane");
+
+        let rollValue = $("#ambient-dice-pool .rollValue").val();
+        let ambientRoll = await new Roll(rollValue).evaluate({ async: true });
+
+        // console.log(ambientRoll);
+        // console.log(ambientRoll.dice.map((dice) => dice.results));
+
+        //add strings for the individual rolls for the boons and banes
+        let boonBaneResultString = "&lt;span class='boonSpan'> Boons: ";
+        ambientRoll.terms.forEach((term) => {
+            if (term.number) {
+                boonBaneResultString += "&lt;span class='boonBane'>" + term.number + "&lt;/span>";
+                // for (let o of term.results) {
+                //     boonBaneResultString +=
+                //         "&lt;span class='boonBane'>" + o.result + "&lt;/span>";
+                // }
+            }
+            if (term.operator) {
+                boonBaneResultString += "&lt;/span> " + term.operator + " &lt;span class='baneSpan'>Banes: ";
+            }
+        });
+        boonBaneResultString += "&lt;/span>";
+        let skillRoll = checkPreviousRolls();
+        let ambientResult = ambientRoll._total;
+
+        let flavor = skillRoll.flavor;
+        flavor += `&lt;div class="ambient-div">&lt;h3 style='font-weight: bold'>Boons &amp; Banes Result&lt;/h3>
+		&lt;div style='font-size: 0.85rem; margin-bottom: 0.25rem'>${boonString + baneString
+            }&lt;li style="margin-top: 0.2rem">${boonBaneResultString}&lt;/li>
+		&lt;li style='margin-top: 0.2rem'>&lt;span style='font-weight: bold' class='ambientTotal'>Ambient Roll Total&lt;/span>: &lt;span class='ambientResult'>${ambientResult} &lt;/span>&lt;/li>&lt;/div>`;
+
+        if (ambientResult &lt;= 0) {
+            flavor +=
+                "&lt;div style='font-size: 1rem'>&lt;span style='color: #fe4a49'>Banes win.&lt;/span> Mixed Success or Failure&lt;/div>";
+        } else {
+            flavor +=
+                "&lt;div style='font-size: 1rem'>&lt;span style='color:turquoise'>Boons win!&lt;/span> Triumph or Mercy&lt;/div>";
+        }
+        flavor += `&lt;/div>`;
+
+        skillRoll.rolls[0].toMessage({
+            flavor: flavor,
+        });
+    }
+
+    async _updateObject(event, formData) { }
+}
+
+window.AmbientDicePool = AmbientDicePool;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Clock.html">Clock</a></li><li><a href="ClockApplication.html">ClockApplication</a></li><li><a href="ClockConfig.html">ClockConfig</a></li><li><a href="ClockViewer.html">ClockViewer</a></li><li><a href="CombatHudObject.html">CombatHudObject</a></li><li><a href="FullProfile.html">FullProfile</a></li><li><a href="InnerSceneDisplayConfig.html">InnerSceneDisplayConfig</a></li><li><a href="OutpostSheet_OutpostSheet.html">OutpostSheet</a></li><li><a href="PromptAmbientRoll.html">PromptAmbientRoll</a></li><li><a href="module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#actorsToTokenData">actorsToTokenData</a></li><li><a href="global.html#addCombatant">addCombatant</a></li><li><a href="global.html#addNewButton">addNewButton</a></li><li><a href="global.html#addNewCharacter">addNewCharacter</a></li><li><a href="global.html#addNewTag">addNewTag</a></li><li><a href="global.html#askIfPlayerWantsToAddToken">askIfPlayerWantsToAddToken</a></li><li><a href="global.html#characterFactory">characterFactory</a></li><li><a href="global.html#checkIfSceneHasToken">checkIfSceneHasToken</a></li><li><a href="global.html#colorfulLog">colorfulLog</a></li><li><a href="global.html#convertAllToObjects">convertAllToObjects</a></li><li><a href="global.html#convertArrayIntoObjectById">convertArrayIntoObjectById</a></li><li><a href="global.html#convertToArrayOfIDs">convertToArrayOfIDs</a></li><li><a href="global.html#convertToArrayOfTokens">convertToArrayOfTokens</a></li><li><a href="global.html#createMarkerOnToken">createMarkerOnToken</a></li><li><a href="global.html#createRepTokens">createRepTokens</a></li><li><a href="global.html#createRepresentativeActors">createRepresentativeActors</a></li><li><a href="global.html#createTokenFromActor">createTokenFromActor</a></li><li><a href="global.html#defaultOptions">defaultOptions</a></li><li><a href="global.html#deleteClock">deleteClock</a></li><li><a href="global.html#filterOutDuplicates">filterOutDuplicates</a></li><li><a href="global.html#getAllClocks">getAllClocks</a></li><li><a href="global.html#getAllTags">getAllTags</a></li><li><a href="global.html#getButton">getButton</a></li><li><a href="global.html#getCharacter">getCharacter</a></li><li><a href="global.html#getClocksByUser">getClocksByUser</a></li><li><a href="global.html#getClocksLinkedToEntity">getClocksLinkedToEntity</a></li><li><a href="global.html#getCombatantsWithInitiative">getCombatantsWithInitiative</a></li><li><a href="global.html#getEntityById">getEntityById</a></li><li><a href="global.html#getEntityFromAll">getEntityFromAll</a></li><li><a href="global.html#getGlobalClockDisplayData">getGlobalClockDisplayData</a></li><li><a href="global.html#getImage">getImage</a></li><li><a href="global.html#getRolledInitiative">getRolledInitiative</a></li><li><a href="global.html#getSharedClocks">getSharedClocks</a></li><li><a href="global.html#getTileNameFromFlag">getTileNameFromFlag</a></li><li><a href="global.html#getTokensOfType">getTokensOfType</a></li><li><a href="global.html#makeElementDraggable">makeElementDraggable</a></li><li><a href="global.html#populateSelectData">populateSelectData</a></li><li><a href="global.html#processTagData">processTagData</a></li><li><a href="global.html#reRenderLinkedEntity">reRenderLinkedEntity</a></li><li><a href="global.html#renderNewClockFromData">renderNewClockFromData</a></li><li><a href="global.html#rollNonCombatInitiative">rollNonCombatInitiative</a></li><li><a href="global.html#setDraggable">setDraggable</a></li><li><a href="global.html#setTokenImage">setTokenImage</a></li><li><a href="global.html#showClockDrawer">showClockDrawer</a></li><li><a href="global.html#startCombat">startCombat</a></li><li><a href="global.html#tokenFromExternalData">tokenFromExternalData</a></li><li><a href="global.html#uniqBy">uniqBy</a></li><li><a href="global.html#unlinkClockFromEntity">unlinkClockFromEntity</a></li><li><a href="global.html#updateAndFocusClock">updateAndFocusClock</a></li><li><a href="global.html#updateCharacter">updateCharacter</a></li><li><a href="global.html#updateClock">updateClock</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Sun Jan 22 2023 19:07:23 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -59,6 +59,7 @@ export class ClockConfig extends FormApplication {
             name: `NewClock`,
             sectionCount: 3,
             breaks: "",
+            description: "",
             showWaypoints: false,
             startFilled: false,
         };

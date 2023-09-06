@@ -667,7 +667,7 @@ export class Clock extends FormApplication {
 //registers the hooks for journal sheets, actor sheets, item sheets
 function registerHooks(hookName) {
     Hooks.on(hookName, async (app, html) => {
-        if (app.element.find(".app-child").length == 0) {
+        if (app.element.find(".app-child").length === 0) {
             console.log("No app child. showing drawer");
             await showClockDrawer(app);
         } else {
@@ -680,7 +680,7 @@ function registerHooks(hookName) {
  * @param {*} app - the application instance
  */
 async function showClockDrawer(app) {
-    let entity = app.object;
+    const entity = app.object;
     let element = app.element;
     let linkedClocks = await getClocksLinkedToEntity(entity.id);
 
@@ -725,12 +725,19 @@ async function showClockDrawer(app) {
     drawerHtml = $(drawerHtml);
 
     //get the app's element and append this
-    app.element.append(drawerHtml);
-    let wrapString = "<div class='clock-display app-child'><section class='clock-container'></section></div>";
+    if (entity.type === "npc") {
+        console.log(app.element.find(".sheet-body"), app.element)
+        app.element.find(".sheet-body").prepend(drawerHtml)
+    } else {
+
+        app.element.append(drawerHtml);
+    }
+    let classString = entity.type === "npc" ? 'inset-display' : ''
+    let wrapString = `<div class='clock-display app-child ${classString}'><section class='clock-container'></section></div>`;
 
     //if the drawer was expanded, we want it to be expanded when we refresh too
     if (await entity.getFlag("hud-and-trackers", "clockDrawerExpanded")) {
-        wrapString = "<div class='clock-display app-child expanded'><section class='clock-container'></section></div>";
+        wrapString = `<div class='clock-display app-child expanded ${classString}'><section class='clock-container'></section></div>`;
     }
     drawerHtml.wrapAll(wrapString);
 

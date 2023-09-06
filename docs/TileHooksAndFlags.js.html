@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: TileHooksAndFlags.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: TileHooksAndFlags.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>Hooks.on("renderTileConfig", async (app, element) => {
+    let currentScene = game.scenes.viewed;
+    let flaggedTiles = await currentScene.getFlag("journal-to-canvas-slideshow", "slideshowTiles");
+    let value = "";
+    if (flaggedTiles) {
+        value = await getTileNameFromFlag(app.object.data._id, flaggedTiles);
+    }
+    let html = `&lt;div class="form-group">
+			&lt;label htmlFor="displayName">Display Name&lt;/label>
+			&lt;input type="text" name="displayName" id="displayName" placeholder="displayName" value="${value}"/>
+		&lt;/div>`;
+    const target = $(element).find(`[name="tint"]`).parent().parent();
+    target.after(html);
+});
+
+//when the tile config is closed, check to see if the name has changed
+Hooks.on("closeTileConfig", async (app, element) => {
+    let displayData = $(app.form).find(`#displayName`);
+    let tileData = app.object.data;
+    let displayName = displayData[0].value;
+    if (displayName) {
+        await updateSceneTileFlags(displayName, tileData._id);
+    }
+});
+
+/**
+ * filter out the tile to be deleted
+ */
+Hooks.on("preDeleteTile", async (app, element) => {
+    let currentScene = game.scenes.viewed;
+    let tileId = app.object.data._id;
+    let flaggedTiles = await currentScene.getFlag("journal-to-canvas-slideshow", "slideshowTiles");
+    if (flaggedTiles) {
+        //filter out the tile that is to be deleted;
+        flaggedTiles = flaggedTiles.filter((tileData) => tileData.id !== tileId);
+        await currentScene.setFlag("journal-to-canvas-slideshow", "slideshowTiles", flaggedTiles);
+    }
+});
+
+/**
+ *
+ * @param {string} tileId - the id of the tile in scene we're looking to filter
+ * @param {Array} flaggedTiles - the flagged tiles
+ * @returns the flag data
+ */
+async function getTileNameFromFlag(tileId, flaggedTiles) {
+    if (!flaggedTiles) {
+        return "";
+    }
+
+    let flaggedTile = flaggedTiles.find((tileData) => tileData.id === tileId);
+
+    //if we find a tile
+    if (flaggedTile) {
+        return flaggedTile.displayName;
+    } else {
+        return "";
+    }
+}
+
+async function updateSceneTileFlags(displayName, tileId) {
+    let currentScene = game.scenes.viewed;
+    let tiles = (await currentScene.getFlag("journal-to-canvas-slideshow", "slideshowTiles")) || [];
+
+    if (tiles.find((tile) => tile.id === tileId)) {
+        tiles = tiles.map((tileData) => {
+            // if the ids match, update the matching one with the new displayName
+            return tileData.id === tileId ? { ...tileData, displayName: displayName } : tileData; //else just return the original
+        });
+    } else {
+        tiles.push({ id: tileId, displayName: displayName });
+    }
+    await currentScene.setFlag("journal-to-canvas-slideshow", "slideshowTiles", tiles);
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Clock.html">Clock</a></li><li><a href="ClockApplication.html">ClockApplication</a></li><li><a href="ClockConfig.html">ClockConfig</a></li><li><a href="ClockViewer.html">ClockViewer</a></li><li><a href="CombatHudObject.html">CombatHudObject</a></li><li><a href="FullProfile.html">FullProfile</a></li><li><a href="InnerSceneDisplayConfig.html">InnerSceneDisplayConfig</a></li><li><a href="OutpostSheet_OutpostSheet.html">OutpostSheet</a></li><li><a href="PromptAmbientRoll.html">PromptAmbientRoll</a></li><li><a href="module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#actorsToTokenData">actorsToTokenData</a></li><li><a href="global.html#addCombatant">addCombatant</a></li><li><a href="global.html#addNewButton">addNewButton</a></li><li><a href="global.html#addNewCharacter">addNewCharacter</a></li><li><a href="global.html#addNewTag">addNewTag</a></li><li><a href="global.html#askIfPlayerWantsToAddToken">askIfPlayerWantsToAddToken</a></li><li><a href="global.html#characterFactory">characterFactory</a></li><li><a href="global.html#checkIfSceneHasToken">checkIfSceneHasToken</a></li><li><a href="global.html#colorfulLog">colorfulLog</a></li><li><a href="global.html#convertAllToObjects">convertAllToObjects</a></li><li><a href="global.html#convertArrayIntoObjectById">convertArrayIntoObjectById</a></li><li><a href="global.html#convertToArrayOfIDs">convertToArrayOfIDs</a></li><li><a href="global.html#convertToArrayOfTokens">convertToArrayOfTokens</a></li><li><a href="global.html#createMarkerOnToken">createMarkerOnToken</a></li><li><a href="global.html#createRepTokens">createRepTokens</a></li><li><a href="global.html#createRepresentativeActors">createRepresentativeActors</a></li><li><a href="global.html#createTokenFromActor">createTokenFromActor</a></li><li><a href="global.html#defaultOptions">defaultOptions</a></li><li><a href="global.html#deleteClock">deleteClock</a></li><li><a href="global.html#filterOutDuplicates">filterOutDuplicates</a></li><li><a href="global.html#getAllClocks">getAllClocks</a></li><li><a href="global.html#getAllTags">getAllTags</a></li><li><a href="global.html#getButton">getButton</a></li><li><a href="global.html#getCharacter">getCharacter</a></li><li><a href="global.html#getClocksByUser">getClocksByUser</a></li><li><a href="global.html#getClocksLinkedToEntity">getClocksLinkedToEntity</a></li><li><a href="global.html#getCombatantsWithInitiative">getCombatantsWithInitiative</a></li><li><a href="global.html#getEntityById">getEntityById</a></li><li><a href="global.html#getEntityFromAll">getEntityFromAll</a></li><li><a href="global.html#getGlobalClockDisplayData">getGlobalClockDisplayData</a></li><li><a href="global.html#getImage">getImage</a></li><li><a href="global.html#getRolledInitiative">getRolledInitiative</a></li><li><a href="global.html#getSharedClocks">getSharedClocks</a></li><li><a href="global.html#getTileNameFromFlag">getTileNameFromFlag</a></li><li><a href="global.html#getTokensOfType">getTokensOfType</a></li><li><a href="global.html#makeElementDraggable">makeElementDraggable</a></li><li><a href="global.html#populateSelectData">populateSelectData</a></li><li><a href="global.html#processTagData">processTagData</a></li><li><a href="global.html#reRenderLinkedEntity">reRenderLinkedEntity</a></li><li><a href="global.html#renderNewClockFromData">renderNewClockFromData</a></li><li><a href="global.html#rollNonCombatInitiative">rollNonCombatInitiative</a></li><li><a href="global.html#setDraggable">setDraggable</a></li><li><a href="global.html#setTokenImage">setTokenImage</a></li><li><a href="global.html#showClockDrawer">showClockDrawer</a></li><li><a href="global.html#startCombat">startCombat</a></li><li><a href="global.html#tokenFromExternalData">tokenFromExternalData</a></li><li><a href="global.html#uniqBy">uniqBy</a></li><li><a href="global.html#unlinkClockFromEntity">unlinkClockFromEntity</a></li><li><a href="global.html#updateAndFocusClock">updateAndFocusClock</a></li><li><a href="global.html#updateCharacter">updateCharacter</a></li><li><a href="global.html#updateClock">updateClock</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Sun Jan 22 2023 19:07:23 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

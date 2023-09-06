@@ -1,33 +1,34 @@
 <form>
   <section class="outpost-container">
     <section class="phase-container">
-      <fieldset class="button-group">
-        <legend>
-          Phases
-        </legend>
+      <fieldset class="button-group toggle-button-group">
         {{#each phases as |phase|}}
-          <span class="">
-            <input
-              class="hidden-input"
-              type="radio"
-              name="{{@key}}"
-              id="{{@key}}"
-              value="{{@key}}"
-              data-change-action="changePhase"
-              {{ternary (eq @root.currentPhase @key) "checked" ""}}
-            />
-            <label for="{{@key}}">
-              {{phase.name}}
-            </label>
-          </span>
+          <input
+            class="hidden-input"
+            type="radio"
+            name="{{@key}}"
+            id="{{@key}}"
+            value="{{@key}}"
+            data-change-action="changePhase"
+            {{ternary (eq @root.currentPhase @key) "checked" ""}}
+          />
+          <label for="{{@key}}">
+            {{phase.name}}
+          </label>
         {{/each}}
       </fieldset>
     </section>
     {{#each outposts as |outpost|}}
-      <section class="individual-outpost" id="{{@key}}">
-        <h2>
-          {{outpost.name}}
-        </h2>
+      <section class="individual-outpost" id="{{@key}}" data-id="{{@key}}">
+        <div class="form-group">
+          <input
+            type="text"
+            name="{{@key}}.name"
+            id="{{@key}}-name"
+            data-change-action="changeName"
+            value="{{outpost.name}}"
+          />
+        </div>
         <header>
           <label for="pointPool" class="point-pool-label">
             Point Pool
@@ -57,7 +58,8 @@
               </button>
             {{/if}}
             <button type="button" data-click-action="linkSheet">
-              Link Actor Sheet
+              {{ternary outpost.linkedActorSheet "Change" "Link"}}
+              Actor Sheet
             </button>
           </div>
         </header>
@@ -84,7 +86,13 @@
           </summary>
           <section class="ratings-wrapper">
             {{#each outpost.ratings as |rating|}}
-              <div class="rating-container">
+              <div
+                class="rating-container"
+                data-tooltip="{{lookup
+                    (lookup @root.ratingDescriptions @key)
+                    "description"
+                  }}"
+              >
                 <div
                   class="wrapper"
                   data-name="{{outpost.name}}.ratings.{{@key}}"
@@ -141,6 +149,7 @@
                       ""
                       "disabled"
                     }}
+                    {{ternary (lt rating.value 3) "disabled" ""}}
                   >
                     <i class="fas fa-level-up"></i>
                   </button>

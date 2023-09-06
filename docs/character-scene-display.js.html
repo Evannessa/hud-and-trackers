@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: character-scene-display.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: character-scene-display.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import * as HelperFunctions from "./helper-functions.js";
+let clanTags;
+let categoryIndividualTags;
+let basePath = "/Idyllwild/Art/Characters";
+
+fetch("/Idyllwild/Test JSON Data/tags.json")
+    .then((response) => {
+        return response.json();
+    })
+    .then((data) => {
+        categoryIndividualTags = data.find((tags) => {
+            return tags.tag.includes("category/individual");
+        });
+        clanTags = data.filter((tags) => {
+            return tags.tag.includes("clans/");
+        });
+    });
+
+Hooks.on("ready", () => {
+    // console.log("Our tags", characterTags, processTagData());
+    game.characterTags = processTagData();
+
+    let data = {
+        mode: "display",
+    };
+
+    // game.innerSceneDisplayConfig = new InnerSceneDisplayConfig(data).render(true, { data });
+});
+
+Hooks.on("canvasReady", async (canvas) => {
+    // game.innerSceneDisplayConfig.data.temporaryCharacters = await HelperFunctions.getAllActorsInScene();
+    // game.innerSceneDisplayConfig.currentScene = canvas.scene;
+    // if (game.innerSceneDisplayConfig) {
+    //     console.log(game.innerSceneDisplayConfig.data);
+    //     game.innerSceneDisplayConfig.render(true);
+    // }
+});
+
+Hooks.on("createTile", async (tile) => {
+    let tileID = tile.id;
+    let sceneTiles = await game.JTCS.tileUtils.getSceneSlideshowTiles("", true);
+    let foundTileData = await game.JTCS.tileUtils.getTileDataFromFlag(tileID, sceneTiles);
+
+    if (foundTileData &amp;&amp; game.innerSceneDisplayConfig) {
+        // game.innerSceneDisplayConfig.render(true);
+    }
+});
+Hooks.on("deleteTile", async (tile) => {
+    let tileID = tile.id;
+
+    let sceneTiles = await game.JTCS.tileUtils.getSceneSlideshowTiles("", true);
+    let foundTileData = await game.JTCS.tileUtils.getTileDataFromFlag(tileID, sceneTiles);
+
+    if (foundTileData &amp;&amp; game.innerSceneDisplayConfig) {
+        // game.innerSceneDisplayConfig.render(true);
+    }
+});
+
+Hooks.once("init", () => {
+    loadTemplates([`modules/hud-and-trackers/templates/character-scene-display/actor-list-template.hbs`]);
+});
+Hooks.on("renderInnerSceneDisplayConfig", (app, html) => {
+    let windowApp = html.closest(".window-app");
+    $(windowApp).css({
+        height: "-moz-max-content",
+        height: "fit-content",
+        width: "fit-content",
+    });
+    HelperFunctions.setInvisibleHeader(html, true);
+});
+
+/**
+ * Take the data from the JSON file, and convert it into usable data
+ * @returns processed array of objects
+ */
+function processTagData() {
+    let individuals = categoryIndividualTags.relativePaths;
+    return clanTags.map((tagObject) => {
+        let characterPaths = tagObject.relativePaths.filter((charPath) => individuals.includes(charPath));
+        return {
+            tagName: tagObject.tag,
+            characters: characterPaths.map((path, index) => {
+                let clanName = tagObject.tag.split("/").pop();
+                clanName = clanName.charAt(0).toUpperCase() + clanName.slice(1);
+                //get character name from file path
+                let name = path.split("/").pop().replace(".md", "");
+                let firstName = name.split(" ").shift();
+                if (!name.toLowerCase().includes(clanName.toLowerCase())) {
+                    firstName = name.split(" ").pop();
+                }
+                let pathName = name.split(" ").join("-").toLowerCase();
+
+                return {
+                    name: name,
+                    pathName: pathName,
+                    imagePath: `${basePath}/${clanName}/${firstName}.webp`,
+                };
+            }),
+        };
+    });
+}
+
+/**
+ * Will display scenes I don't want to make entire scenes for
+ * Along with characters
+ */
+class InnerSceneDisplayConfig extends Application {
+    constructor(data) {
+        super();
+        this.getSceneDisplayData();
+        this.data = { ...data };
+        if (!game.user.isGM) {
+            this.data.mode === "display";
+        }
+        if (this.data.mode === "display") {
+            this.element.addClass("transparent");
+        }
+    }
+
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            classes: ["transparent", "hud-and-trackers"],
+            popOut: true,
+            template: `/modules/hud-and-trackers/templates/inner-scene-display/scene-map.hbs`,
+            id: "inner-scene-display",
+            title: "Inner Scene Display",
+            resizable: true,
+        });
+    }
+
+    async getSceneDisplayData() {
+        let currentScene = game.scenes.viewed;
+        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
+        if (!sceneDisplayData || !sceneDisplayData.characters || !sceneDisplayData.innerScenes) {
+            let data = {
+                mode: "edit",
+                characters: [],
+                innerScenes: [],
+            };
+            sceneDisplayData = await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", data);
+        }
+        return sceneDisplayData;
+    }
+
+    async setSceneDisplayData(data) {
+        await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", data);
+    }
+
+    async getSceneDisplayTiles() {
+        let flaggedTiles = await game.JTCS.tileUtils.getSceneSlideshowTiles("art", true);
+        // let currentScene = game.scenes.viewed;
+        // let flaggedTiles = (await currentScene.getFlag("journal-to-canvas-slideshow", "slideshowTiles")) || [];
+        return flaggedTiles;
+    }
+
+    async panToTile(tile) {
+        let scale = game.scenes.viewed._viewPosition;
+        let tileObject = tile.object;
+
+        game.canvas.animatePan({ x: tileObject.center.x, y: tile.object.center.y, scale: scale });
+    }
+
+    async removeCharacter(character) {
+        let currentScene = game.scenes.viewed;
+        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
+        let characters = sceneDisplayData.characters;
+        characters = characters.filter((ch) => ch.name !== character.name);
+        sceneDisplayData = { ...sceneDisplayData, characters: [...characters] };
+        await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", sceneDisplayData);
+        this.render(true);
+    }
+
+    async updateSceneDisplayData(newData, type) {
+        let currentScene = game.scenes.viewed;
+        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
+        if (type === "character") {
+            let characters = sceneDisplayData.characters;
+            //make sure we don't already hve a character with this name before pushing
+            if (!characters.some((cha) => cha.name === newData.name)) {
+                characters.push(newData);
+                sceneDisplayData = { ...sceneDisplayData, characters: [...characters] };
+            }
+        } else if (type === "innerScene") {
+            let innerScenesArray = sceneDisplayData.innerScenes;
+            let foundSceneData = innerScenesArray.find((sceneData) => sceneData.id === newData.id);
+            //see if the id already exists
+            if (!foundSceneData) {
+                innerScenesArray.push(newData);
+            } else {
+                let index = innerScenesArray.indexOf(foundSceneData);
+                let updatedData = { ...foundSceneData, ...newData };
+                innerScenesArray.splice(index, 1, updatedData);
+            }
+            sceneDisplayData = { ...sceneDisplayData, innerScenes: [...innerScenesArray] };
+        } else if (type === "mode") {
+            sceneDisplayData = { ...sceneDisplayData, mode: newData };
+        }
+        await currentScene.setFlag("hud-and-trackers", "sceneDisplayData", sceneDisplayData);
+        this.render(true);
+    }
+
+    setStyles(mode) {
+        switch (mode) {
+            case "display":
+                this.element.addClass("transparent");
+                break;
+            case "edit":
+                this.element.removeClass("transparent");
+                break;
+            default:
+                break;
+        }
+    }
+
+    async getData() {
+        // Send data to the template
+        let currentScene = game.scenes.viewed;
+        let displayTiles = await this.getSceneDisplayTiles(); //TODO: Update to fit API
+        let sceneDisplayData = await currentScene.getFlag("hud-and-trackers", "sceneDisplayData");
+        if (!sceneDisplayData) {
+            this.getSceneDisplayData();
+        }
+        this.setStyles(sceneDisplayData.mode);
+        let clans = game.characterTags
+            .filter((tag) => tag.tagName !== "clans/")
+            .map((obj) => {
+                return {
+                    name: obj.tagName.split("/").pop(),
+                    value: obj.tagName,
+                };
+            });
+
+        clans = clans.filter((clan) => clan.name !== " " || "");
+        let options = [];
+
+        //get any character tags that fit the tag name
+        if (this.data.clanSelect) {
+            options = game.characterTags.find((el) => el.tagName === this.data.clanSelect).characters;
+        }
+        // filter out any that are included in the selected characters already
+        options = options.filter((opt) => {
+            return !sceneDisplayData.characters.map((char) => char.name).includes(opt.name);
+        });
+        options.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+        clans.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+
+        sceneDisplayData = {
+            ...sceneDisplayData,
+            clans: clans,
+            clanSelect: this.data.clanSelect || "none",
+            options: options,
+            displayTiles: displayTiles,
+            isGM: game.user.isGM,
+            basePath: basePath,
+        };
+
+        return sceneDisplayData;
+    }
+    _handleHover(event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    async _handleButtonClick(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        let clickedElement = $(event.currentTarget); //$(event.target.closest("li"));
+
+        let action = clickedElement.data().action;
+        let name = clickedElement.data().name;
+        let imagePath = clickedElement.data().imagePath;
+        let value = event.currentTarget.value;
+        let data = { name: name, imagePath: imagePath };
+
+        switch (action) {
+            case "select":
+                this.updateSceneDisplayData(data, "character", false);
+                break;
+            case "toggleMode":
+                this.updateSceneDisplayData(value, "mode", false);
+                break;
+            case "toggle-fold":
+                let targetId = clickedElement.data().target;
+
+                let targetElement = document.querySelector(`#${targetId}`);
+                targetElement = $(targetElement);
+                if (targetElement.hasClass("minimize")) {
+                    //show the target element and style button as active
+                    targetElement.removeClass("minimize");
+                    clickedElement.addClass("open");
+                    $(clickedElement[0].querySelector("img")).addClass("open");
+                    clickedElement[0].setAttribute("title", "Minimize controls");
+                } else {
+                    //hide the target element and style button as inactive
+                    targetElement.addClass("minimize");
+                    clickedElement.removeClass("open");
+                    $(clickedElement[0].querySelector("img")).removeClass("open");
+                    clickedElement[0].setAttribute("title", "Show controls");
+                }
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+            // clickedElement.toggleClass("holdOpen");
+            case "remove":
+                this.removeCharacter(data);
+                break;
+            case "browse":
+                // let img = clickedElement[0].src;
+                let parentLi = clickedElement[0].closest("li");
+
+                let name = parentLi.querySelector("input[type='text']").value || parentLi.dataset.name;
+                let id = parentLi.dataset.id;
+                console.log(parentLi, parentLi.dataset, id);
+
+                let filepicker = new FilePicker({
+                    type: "image",
+                    callback: async (path) => {
+                        data.imagePath = path;
+                        if (!id) {
+                            //if this is a tile that hasn't been created yet
+                            data.name = name;
+                            data.id = foundry.utils.randomID();
+                        }
+                        await this.updateSceneDisplayData(data, "innerScene");
+                        // this.addInnerScene({ name: name, imagePath: path });
+                    },
+                }).render(true);
+                break;
+            case "pan":
+                let imagePath = event.currentTarget.dataset.img;
+                let tile = game.scenes.viewed.tiles.contents.find((tile) => {
+                    return tile.data.img.toLowerCase().includes(imagePath.toLowerCase());
+                });
+                if (tile) {
+                    this.panToTile(tile);
+                }
+                break;
+            case "switch":
+                let targetTileId = clickedElement.data().target;
+                if (event.ctrlKey) {
+                    game.JTCS.tileUtils.selectTile(targetTileId);
+                    break;
+                }
+                let boundingTileID = clickedElement.data().frame;
+                let imageElement = event.currentTarget.closest(".character, .innerScene").querySelector("img");
+                if (game.JTCS) {
+                    await game.JTCS.tileUtils.displayImageInScene(imageElement, targetTileId, boundingTileID);
+                }
+                // displayImageInScene(imageElement, targetTileId, boundingTileID);
+                break;
+        }
+    }
+    dragHandler(html) {
+        let ancestorElement = html[0].closest(".window-app");
+
+        HelperFunctions.addDragHandle(html, ancestorElement, "#sceneMap-controls");
+        const dragHandle = $(ancestorElement).find("#drag-handle")[0];
+        const drag = new Draggable(this, html, dragHandle, false);
+
+        HelperFunctions.handleDrag(drag);
+    }
+
+    activateListeners(html) {
+        delete ui.windows[this.appId];
+
+        this.dragHandler(html);
+
+        let windowContent = html.closest(".window-content");
+        windowContent.off("click").on("click", "[data-action]", this._handleButtonClick.bind(this));
+
+        this.handleChange();
+        this.handleHover();
+
+        // let img = html[0].querySelector(".frame-image");
+        // let iFrame = html[0].querySelector("iframe");
+        // console.log(iFrame);
+        // iFrame.addEventListener("load", () => {
+        //     console.log(iFrame.children);
+        //     let source = iFrame.contentWindow.document.querySelector(".featured-image").src;
+        //     img.src = source;
+        // });
+    }
+
+    async handleDrag(drag) {
+        //referenced SmallTime to figure this out
+        drag._onDragMouseMove = function _newOnDragMouseMove(event) {
+            event.preventDefault();
+            // Limit dragging to 60 updates per second.
+            const now = Date.now();
+            if (now - this._moveTime &lt; 1000 / 60) return;
+            this._moveTime = now;
+
+            this.app.setPosition({
+                left: this.position.left + (event.clientX - this._initial.x),
+                top: this.position.top + (event.clientY - this._initial.y),
+            });
+        };
+
+        drag._onDragMouseUp = async function _newOnDragMouseUp(event) {
+            event.preventDefault();
+
+            window.removeEventListener(...this.handlers.dragMove);
+            window.removeEventListener(...this.handlers.dragUp);
+            // let windowPos = $("#smalltime-app").position();
+            // let newPos = { top: windowPos.top, left: windowPos.left };
+            // await game.settings.set("smalltime", "position", newPos);
+            // await game.settings.set("smalltime", "pinned", false);
+        };
+    }
+    async handleHover() {
+        let api = game.JTCS;
+        // Have to override this because of the non-standard drag handle, and
+        // also to manage the pin lock zone and animation effects.
+
+        $(".hover-controls button").on("mouseenter mouseleave", async (event) => {
+            let isLeave = event.type === "mouseleave" || event.type === "mouseout";
+            let button = $(event.currentTarget);
+            let tileID = button.data().target;
+            let frameID = button.data().frame;
+            let tile = await api?.getTileByID(tileID);
+            let frame = await api?.getTileByID(frameID);
+            if (!isLeave) {
+                api?.indicatorUtils.showTileIndicator(tile);
+                if (frame) api?.indicatorUtils.showTileIndicator(frame, 0.5);
+            } else {
+                api?.indicatorUtils.hideTileIndicator(tile);
+                if (frame) api?.indicatorUtils.hideTileIndicator(frame);
+            }
+        });
+    }
+
+    handleChange() {
+        $("select, input[type='checkbox'], input[type='radio'], input[type='text']").on(
+            "change",
+            async function (event) {
+                let { value, name, checked, type } = event.currentTarget;
+
+                let ourType = event.currentTarget.dataset.type;
+                let ourId = event.currentTarget.dataset.id;
+                game.innerSceneDisplayConfig.data[name] = type == "checkbox" ? checked : value;
+
+                let data = {
+                    id: ourId,
+                    name: value,
+                };
+                if (type === "text") {
+                    await game.innerSceneDisplayConfig.updateSceneDisplayData(data, ourType);
+                } else {
+                    game.innerSceneDisplayConfig.render(true, { renderData: game.innerSceneDisplayConfig.data });
+                }
+
+                //update the flags
+
+                //re-render
+            }
+        );
+    }
+
+    async _updateObject(event, formData) {}
+}
+//TODO: Refactor this to actually access this method from the JTCS module
+async function displayImageInScene(imageElement, selectedTileID, boundingTileID) {
+    let url = imageElement.getAttribute("src");
+
+    let displayTile = game.scenes.viewed.tiles.get(selectedTileID);
+
+    //get the tile data from the selected tile id;
+
+    let boundingTile = game.scenes.viewed.tiles.get(boundingTileID);
+
+    await updateTileInScene(displayTile, boundingTile, game.scenes.viewed, url);
+}
+
+async function updateTileInScene(displayTile, boundingTile, ourScene, url) {
+    //load the texture from the source
+    const tex = await loadTexture(url);
+    var imageUpdate;
+
+    if (!boundingTile) {
+        imageUpdate = await scaleToScene(displayTile, tex, url);
+    } else {
+        imageUpdate = await scaleToBoundingTile(displayTile, boundingTile, tex, url);
+    }
+
+    const updated = await ourScene.updateEmbeddedDocuments("Tile", [imageUpdate]);
+}
+
+async function scaleToScene(displayTile, tex, url) {
+    let displayScene = game.scenes.viewed;
+    var dimensionObject = calculateAspectRatioFit(
+        tex.width,
+        tex.height,
+        displayScene.data.width,
+        displayScene.data.height
+    );
+    //scale down factor is how big the tile will be in the scene
+    //make this scale down factor configurable at some point
+    var scaleDownFactor = 200;
+    dimensionObject.width -= scaleDownFactor;
+    dimensionObject.height -= scaleDownFactor;
+    //half of the scene's width or height is the center -- we're subtracting by half of the image's width or height to account for the offset because it's measuring from top/left instead of center
+
+    //separate objects depending on the texture's dimensions --
+    //create an 'update' object for if the image is wide (width is bigger than height)
+    var wideImageUpdate = {
+        _id: displayTile.id,
+        width: dimensionObject.width,
+        height: dimensionObject.height,
+        img: url,
+        x: scaleDownFactor / 2,
+        y: displayScene.data.height / 2 - dimensionObject.height / 2,
+    };
+    //create an 'update' object for if the image is tall (height is bigger than width)
+    var tallImageUpdate = {
+        _id: displayTile.id,
+        width: dimensionObject.width,
+        height: dimensionObject.height,
+        img: url, // tex.baseTexture.resource.url,
+        y: scaleDownFactor / 2,
+        x: displayScene.data.width / 2 - dimensionObject.width / 2,
+    };
+    //https://stackoverflow.com/questions/38675447/how-do-i-get-the-center-of-an-image-in-javascript
+    //^used the above StackOverflow post to help me figure that out
+
+    //Determine if the image or video is wide, tall, or same dimensions and update depending on that
+    let testArray = [tallImageUpdate, wideImageUpdate];
+
+    if (dimensionObject.height > dimensionObject.width) {
+        //if the height is longer than the width, use the tall image object
+        return tallImageUpdate;
+        // return await displayScene.updateEmbeddedDocuments("Tile", [tallImageUpdate]);
+    } else if (dimensionObject.width > dimensionObject.height) {
+        //if the width is longer than the height, use the wide image object
+        return wideImageUpdate;
+        // return await displayScene.updateEmbeddedDocuments("Tile", [wideImageUpdate]);
+    }
+
+    //if the image length and width are pretty much the same, just default to the wide image update object
+    return wideImageUpdate;
+    // return await displayScene.updateEmbeddedDocuments("Tile", [wideImageUpdate]);
+}
+
+async function scaleToBoundingTile(displayTile, boundingTile, tex, url) {
+    var dimensionObject = calculateAspectRatioFit(
+        tex.width,
+        tex.height,
+        boundingTile.data.width,
+        boundingTile.data.height
+    );
+
+    var imageUpdate = {
+        _id: displayTile.id,
+        width: dimensionObject.width,
+        height: dimensionObject.height,
+        img: url,
+        y: boundingTile.data.y,
+        x: boundingTile.data.x,
+    };
+    //Ensure image is centered to bounding tile (stops images hugging the top left corner of the bounding box).
+    var boundingMiddle = {
+        x: boundingTile.data.x + boundingTile.data.width / 2,
+        y: boundingTile.data.y + boundingTile.data.height / 2,
+    };
+
+    var imageMiddle = {
+        x: imageUpdate.x + imageUpdate.width / 2,
+        y: imageUpdate.y + imageUpdate.height / 2,
+    };
+
+    imageUpdate.x += boundingMiddle.x - imageMiddle.x;
+    imageUpdate.y += boundingMiddle.y - imageMiddle.y;
+    // var updateArray = [];
+    // updateArray.push(imageUpdate);
+    return imageUpdate;
+}
+// V Used snippet from the below stackOverflow answer to help me with proportionally resizing the images
+/*https://stackoverflow.com/questions/3971841/how-to-resize-images-proportionally-keeping-the-aspect-ratio*/
+function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
+    var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
+    return {
+        width: srcWidth * ratio,
+        height: srcHeight * ratio,
+    };
+}
+export class FullProfile extends Application {
+    constructor(data = {}) {
+        super();
+        this.data = data;
+    }
+    getData() {}
+
+    activateListeners(html) {
+        //remove app from "ui.windows" to not let it close with the escape key
+        delete ui.windows[this.appId];
+        super.activateListeners(html);
+        html.on("click", "[data-action]", this._handleButtonClick.bind(this));
+
+        $("#tag-input").keypress(async (e) => {
+            if (e.keyCode == 13) {
+                this.saveTags.bind(this);
+                await this.saveTags(e.currentTarget);
+            }
+        });
+    }
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            resizeable: false,
+            popOut: true,
+            template: `modules/hud-and-trackers/templates/character-scene-display/iframe-display.hbs`,
+            id: "character-full-profile",
+            title: "Character Profile",
+        });
+    }
+
+    async _updateObject(event, formData) {}
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Clock.html">Clock</a></li><li><a href="ClockApplication.html">ClockApplication</a></li><li><a href="ClockConfig.html">ClockConfig</a></li><li><a href="ClockViewer.html">ClockViewer</a></li><li><a href="CombatHudObject.html">CombatHudObject</a></li><li><a href="FullProfile.html">FullProfile</a></li><li><a href="InnerSceneDisplayConfig.html">InnerSceneDisplayConfig</a></li><li><a href="OutpostSheet_OutpostSheet.html">OutpostSheet</a></li><li><a href="PromptAmbientRoll.html">PromptAmbientRoll</a></li><li><a href="module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#actorsToTokenData">actorsToTokenData</a></li><li><a href="global.html#addCombatant">addCombatant</a></li><li><a href="global.html#addNewButton">addNewButton</a></li><li><a href="global.html#addNewCharacter">addNewCharacter</a></li><li><a href="global.html#addNewTag">addNewTag</a></li><li><a href="global.html#askIfPlayerWantsToAddToken">askIfPlayerWantsToAddToken</a></li><li><a href="global.html#characterFactory">characterFactory</a></li><li><a href="global.html#checkIfSceneHasToken">checkIfSceneHasToken</a></li><li><a href="global.html#colorfulLog">colorfulLog</a></li><li><a href="global.html#convertAllToObjects">convertAllToObjects</a></li><li><a href="global.html#convertArrayIntoObjectById">convertArrayIntoObjectById</a></li><li><a href="global.html#convertToArrayOfIDs">convertToArrayOfIDs</a></li><li><a href="global.html#convertToArrayOfTokens">convertToArrayOfTokens</a></li><li><a href="global.html#createMarkerOnToken">createMarkerOnToken</a></li><li><a href="global.html#createRepTokens">createRepTokens</a></li><li><a href="global.html#createRepresentativeActors">createRepresentativeActors</a></li><li><a href="global.html#createTokenFromActor">createTokenFromActor</a></li><li><a href="global.html#defaultOptions">defaultOptions</a></li><li><a href="global.html#deleteClock">deleteClock</a></li><li><a href="global.html#filterOutDuplicates">filterOutDuplicates</a></li><li><a href="global.html#getAllClocks">getAllClocks</a></li><li><a href="global.html#getAllTags">getAllTags</a></li><li><a href="global.html#getButton">getButton</a></li><li><a href="global.html#getCharacter">getCharacter</a></li><li><a href="global.html#getClocksByUser">getClocksByUser</a></li><li><a href="global.html#getClocksLinkedToEntity">getClocksLinkedToEntity</a></li><li><a href="global.html#getCombatantsWithInitiative">getCombatantsWithInitiative</a></li><li><a href="global.html#getEntityById">getEntityById</a></li><li><a href="global.html#getEntityFromAll">getEntityFromAll</a></li><li><a href="global.html#getGlobalClockDisplayData">getGlobalClockDisplayData</a></li><li><a href="global.html#getImage">getImage</a></li><li><a href="global.html#getRolledInitiative">getRolledInitiative</a></li><li><a href="global.html#getSharedClocks">getSharedClocks</a></li><li><a href="global.html#getTileNameFromFlag">getTileNameFromFlag</a></li><li><a href="global.html#getTokensOfType">getTokensOfType</a></li><li><a href="global.html#makeElementDraggable">makeElementDraggable</a></li><li><a href="global.html#populateSelectData">populateSelectData</a></li><li><a href="global.html#processTagData">processTagData</a></li><li><a href="global.html#reRenderLinkedEntity">reRenderLinkedEntity</a></li><li><a href="global.html#renderNewClockFromData">renderNewClockFromData</a></li><li><a href="global.html#rollNonCombatInitiative">rollNonCombatInitiative</a></li><li><a href="global.html#setDraggable">setDraggable</a></li><li><a href="global.html#setTokenImage">setTokenImage</a></li><li><a href="global.html#showClockDrawer">showClockDrawer</a></li><li><a href="global.html#startCombat">startCombat</a></li><li><a href="global.html#tokenFromExternalData">tokenFromExternalData</a></li><li><a href="global.html#uniqBy">uniqBy</a></li><li><a href="global.html#unlinkClockFromEntity">unlinkClockFromEntity</a></li><li><a href="global.html#updateAndFocusClock">updateAndFocusClock</a></li><li><a href="global.html#updateCharacter">updateCharacter</a></li><li><a href="global.html#updateClock">updateClock</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Sun Jan 22 2023 19:07:23 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

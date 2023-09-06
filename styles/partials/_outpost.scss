@@ -38,6 +38,17 @@
     }
 }
 
+#outpost-sheet {
+
+    background-color: var(--color-neutral-darkest);
+
+
+    .window-content {
+        background: unset;
+        background-color: var(--color-neutral-darkest);
+    }
+}
+
 .outpost-container {
     display: flex;
     flex-direction: column;
@@ -46,19 +57,19 @@
 
     max-width: 80vw;
 
-    .phase-container fieldset {
-        display: flex;
-        border-radius: 8px;
-        overflow: hidden;
-        width: fit-content;
-        height: fit-content;
+    // .phase-container fieldset {
+    //     display: flex;
+    //     border-radius: 8px;
+    //     overflow: hidden;
+    //     width: fit-content;
+    //     height: fit-content;
 
-        label {
-            border-radius: unset;
-            border: unset !important;
-        }
+    //     label {
+    //         border-radius: unset;
+    //         border: unset !important;
+    //     }
 
-    }
+    // }
 
     input {
         color: white;
@@ -74,7 +85,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: var(--color-neutral-darkest);
+    background-color: var(--color-neutral-800);
     border-color: var(--color-neutral-darkest);
     color: white;
     padding: 0.75em 1em;
@@ -82,8 +93,19 @@
     gap: 1rem;
 
     // padding-top: 2rem;
-    >h2 {
+    div.form-group {
         margin-right: auto;
+        border: unset;
+        border-bottom: 1px solid var(--color-primary-200);
+
+        input {
+            border-color: transparent;
+
+            &:hover,
+            &:focus {
+                border-color: var(--color-primary-300);
+            }
+        }
     }
 
     header {
@@ -104,7 +126,12 @@
                 color: var(--color-primary-300);
                 white-space: nowrap;
 
-                // background-color: var(--color-primary-300);
+                &:first-of-type {
+                    color: var(--color-primary-darkest);
+                    background-color: var(--color-primary-300);
+                    font-weight: bold;
+                }
+
             }
         }
     }
@@ -131,6 +158,10 @@
         &[open] {
             summary {
                 color: var(--color-neutral-400);
+
+                &::after {
+                    content: "−";
+                }
             }
 
             ul {
@@ -140,6 +171,10 @@
         }
 
         summary {
+            &::after {
+                content: "＋";
+            }
+
             list-style-type: armenian;
             display: flex;
             font-size: 1rem;
@@ -326,6 +361,10 @@
 
                 button {
                     flex: 1;
+
+                    &:disabled {
+                        opacity: 60%;
+                    }
                 }
             }
 

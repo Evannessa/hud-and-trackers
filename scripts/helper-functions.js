@@ -144,7 +144,7 @@ export class HelperFunctions {
      * @param {String} flagName - the name of the flag
      * @param {String} nestedKey - a string of nested properties separated by dot notation that we want to set
      * @param {*} returnIfEmpty - a value to return if the flag is undefined
-     * @returns
+     * @returns the data stored within the flag
      */
     static async getFlagValue(document, flagName, nestedKey = "", returnIfEmpty = []) {
         let flagData = await document.getFlag(MODULE_ID, flagName);
@@ -206,7 +206,7 @@ export class HelperFunctions {
         await ChatMessage.create(data)
 
     }
-    static async createRoll(diceNumber, flavor, keepHighest = false) {
+    static async createRoll(diceNumber, flavor,) {
         const rollObject = new Roll(`${diceNumber}d6kh`)
         const roll = await rollObject.roll()
         const string = HelperFunctions.evaluateRollResult(rollObject.total)
@@ -218,7 +218,6 @@ export class HelperFunctions {
 
     static evaluateRollResult(value) {
         let string = "Triumph; Acquire or process resources or information with no consequences."
-        console.log("Value is", value)
         if (value > 3 && value <= 5) {
             string = `Conflict; Acquire or process the normal amount of resources, but GM may apply negative tag/downside, or mark track on "Consequence" clock relevant to the action`
         } else if (value <= 3) {
@@ -285,6 +284,20 @@ export function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight
         width: srcWidth * ratio,
         height: srcHeight * ratio,
     };
+}
+/**
+ * Inject template into app
+ */
+export async function injectHTML(app, template, data) {
+
+    let newHTML = await renderTemplate(template, data);
+
+    //convert it to a jquery object
+    newHTML = $(newHTML);
+
+    //get the app's element and append this
+    app.element.append(newHTML);
+
 }
 
 export function selectMyCharacter() {
@@ -556,20 +569,7 @@ export async function createTokenFromTokenData(tokenData, localPosition) {
     await game.scenes.viewed.createEmbeddedDocuments("Token", tokenDataArray); // await Token.create(tk);
 }
 
-//https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
-/**
- *
- * @param {a} a - the array we're filtering
- * @param {key} key - the key by which we want to filter it
- * @returns
- */
-export function uniqBy(a, key) {
-    var seen = {};
-    return a.filter(function (item) {
-        var k = key(item);
-        return seen.hasOwnProperty(k) ? false : (seen[k] = true);
-    });
-}
+
 
 /**
  * this will create a token on the viewed scene

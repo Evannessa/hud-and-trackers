@@ -1,7 +1,7 @@
 "use strict";
 import Search from "./Search.js";
 import { popoutActions } from "./PopoutActions.js";
-import { setInvisibleHeader, handleDrag, addDragHandle, HelperFunctions, uniqBy } from "../helper-functions.js";
+import { setInvisibleHeader, handleDrag, addDragHandle, HelperFunctions } from "../helper-functions.js";
 const MODULE_ID = "hud-and-trackers";
 import { InSceneEntityManager as CharacterManager, InSceneEntityManager } from "../classes/InSceneCharacterManager.js";
 import * as ProcessWikiData from "../classes/ProcessWikiData.js";

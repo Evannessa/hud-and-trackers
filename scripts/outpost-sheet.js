@@ -1,4 +1,28 @@
 import { HelperFunctions as HF } from "./helper-functions.js";
+import { PhaseHandlerApp } from "./phase-handler.js";
+import { AspectSheet } from "./classes/AspectSheet.js";
+Hooks.once("init", () => {
+    loadTemplates([`modules/hud-and-trackers/templates/aspects/AspectSheet.hbs`]);
+});
+Hooks.on("ready", () => {
+
+    // game.phaseHandlerApp = new PhaseHandlerApp().render(true)
+})
+
+// Hooks.on("renderActorSheet", (app, html) => {
+//     if (app.object.type === "npc") {
+//         console.log(html.find(".sheet-body"))
+//         let body = html.find(".sheet-body")[0]
+//     }
+// });
+// Hooks.once("init", function () {
+//     Actors.registerSheet("cypher", AspectSheet, {
+//         types: ["npc"],
+//         makeDefault: true,
+//     });
+// });
+
+
 Hooks.on("renderSidebarTab", (app, html) => {
     if (app.options.id === "chat") {
         let button = $("<button class='hat-chat-button' style='margin-bottom: 10px'>Outpost Manager</button>");
@@ -187,6 +211,13 @@ const outpostActions = {
         }
     },
     change: {
+        changeName: {
+            handler: async (event, currentTarget) => {
+                const OM = OutpostManager
+                const value = currentTarget.value
+                await OM.setOutpostData(currentTarget, "name", value)
+            }
+        },
         changePhase: {
             handler: async (event, currentTarget, options = {}) => {
                 if (currentTarget.checked) {
@@ -252,7 +283,27 @@ Hooks.once("socketlib.ready", () => {
 
 class OutpostManager {
 
+    static async getOutpostData(element, propertyKey, id = "") {
+        if (!id) {
+            id = await OutpostManager.getOutpostID(element)
+        }
+        let key = `outposts.${id}`
+        if (propertyKey) key += `.${propertyKey}`
+        return await HF.getSettingValue("outpostData", key)
+    }
+    static async setOutpostData(element, propertyKey, value, id = "") {
+        if (!id) {
+            id = await OutpostManager.getOutpostID(element)
+        }
+        let key = `outposts.${id}`
+        if (propertyKey) key += `.${propertyKey}`
+        await HF.setSettingValue("outpostData", value, key)
+        await refreshOutpostSheet();
+    }
+    static async getOutpostID(element) {
 
+        return element.closest(".individual-outpost").dataset.id
+    }
     /**
      * Create dice pool with dice = to point in each rating & roll
      * @param {Array} ratingElements - an array of rating elements
@@ -314,47 +365,7 @@ export const allOutposts = [
     outpostFactory("two"),
     outpostFactory("three"),
 ]
-const defaultData = {
-    one: {
-        name: "one",
-        pointPool: 9,
-        ratings: {
-            comfort: {
-                value: 0, name: "Comfort"
-            },
-            destruction: { value: 0, name: "Destruction" },
-            defenseSupport: { value: 3, name: "Defense/Support" },
-            dataProcessing: { value: 6, name: "Data Processing & Automation" },
-            resourceProcessing: { value: 0, name: "Resource Processing" },
-        }
-    },
-    two: {
-        name: "two",
-        pointPool: 9,
-        ratings: {
-            comfort: {
-                value: 0, name: "Comfort"
-            },
-            destruction: { value: 0, name: "Destruction" },
-            defenseSupport: { value: 3, name: "Defense/Support" },
-            dataProcessing: { value: 6, name: "Data Processing & Automation" },
-            resourceProcessing: { value: 0, name: "Resource Processing" },
-        }
-    },
-    three: {
-        name: "three",
-        pointPool: 9,
-        ratings: {
-            comfort: {
-                value: 0, name: "Comfort"
-            },
-            destruction: { value: 0, name: "Destruction" },
-            defenseSupport: { value: 3, name: "Defense/Support" },
-            dataProcessing: { value: 6, name: "Data Processing & Automation" },
-            resourceProcessing: { value: 0, name: "Resource Processing" },
-        }
-    },
-}
+
 export function outpostFactory(name) {
     return {
         name: name,
@@ -556,11 +567,10 @@ const tooltipText = {
 
 
 }
-export const outpostData = {
-    "Comfort": {
-        value: 0,
+const ratingDescriptions = {
+    comfort: {
         description: `accommodations and entertainment, making the outpost feel like home.
-. Roll this rating to determine how comfortable a living environment the outpost is as a living environment for anyone living within it for at least a week.`,
+<br/> Roll this rating to determine how comfortable a living environment the outpost is as a living environment for anyone living within it for at least a week.`,
         activePhase: {
             examples: ``
         },
@@ -573,8 +583,9 @@ export const outpostData = {
             9: "choose to Indulge your Vice to clear a point of Mire as you would back in town."
         }
     },
-    "Defense/Support": {
-        description: "Roll this rating for situations to defend the outpost against attack with shields or deterring blasts, to provide urgent medical treatment for multiple individuals, or if the outpost must endure dangerous environmental conditions",
+    defenseSupport: {
+        description: `Roll this rating for situations to defend the outpost against attack with shields or deterring blasts,
+        <br/> to provide urgent medical treatment for multiple individuals, or if the outpost must endure dangerous environmental conditions`,
         activePhase: "",
         reactivePhase: "",
         ratingBonus: {
@@ -582,12 +593,10 @@ export const outpostData = {
 This is to represent how constant security checks, barriers, lack of windows, bulkheads, airlocks, etc. restricting movement, flexibility and general ease will act as a constant reminder that you're in a dangerous environment that needs to be 'bunkered' against, rather than in a safe, cozy place like home)`
 
         },
-        value: 0
     },
-    "Destruction": {
-        description: `weapons to fight creatures and destructive tools to carve or blast through environments
+    destruction: {
+        description: `Weapons to fight creatures and destructive tools to carve or blast through environments. <br/>
 Roll this rating for situations where the outpost uses offensive weaponry and devices, be that to attack a living creature, remove an environmental obstruction, or attempt to explosively break down a massive vein of raw resources.`,
-        value: 0,
         activePhase: {
             examples: `Hunt and kill a rare creature for its meat or blood.
 Remove a nearby environmental obstruction to allow individuals or vehicles to pass through
@@ -601,7 +610,7 @@ Reactive Destruction Tasks can be defensive in nature, however if they fail and 
 `
         }
     },
-    "Data Processing/Automation": {
+    dataProcessing: {
         description: `technological tools for observing, recording, and processing knowledge, including the room and power requirements for the necessary hardware, and automating installations. Roll this to receive, store, and process information, and provide limited automation to the actions of ratings.
 `,
         activePhase: {
@@ -618,11 +627,10 @@ Receive information from other outposts #wip/🟧 .
 Research knowledge about an unknown illness that is spreading through town/the outpost.
 `
         },
-        value: 0
     },
-    "Resource Processing": {
-        description: `tools for processing and containing resources inside the outpost, like workbenches, transports, and appropriate storage. ability
-        Roll this to successfully process or contain things like minerals, plant specimens, exotic animals, etc.
+    resourceProcessing: {
+        description: `Tools for processing and containing resources inside the outpost, like workbenches, transports, and appropriate storage. ability
+        <br/> Roll this to successfully process or contain things like minerals, plant specimens, exotic animals, etc.
         `,
         activePhase: {
             examples: `Refine large masses of raw materials to potentially sift veins of out more rare materials like iotum.
@@ -631,7 +639,6 @@ Transport salvage or specimens to another Outpost, or perhaps back to Copper Gro
         reactivePhase: {
             examples: `Successfully contain an wild animal that sought to breach its containment inside of the outpost.`
         },
-        value: 0
     }
 }
 
@@ -745,7 +752,16 @@ export class OutpostSheet extends Application {
 
         let outpostSheets = game.folders.getName("Outposts").contents
         if (!currentPhase) currentPhase = "actionPhase"
-        return { outposts: outposts, phases: phases, currentPhase: currentPhase, isGM: game.user.isGM, outpostSheets: outpostSheets, ratingIcons: ratingIcons, collapsibleStates: collapsibleStates }
+        return {
+            outposts: outposts,
+            phases: phases,
+            currentPhase: currentPhase,
+            isGM: game.user.isGM,
+            outpostSheets: outpostSheets,
+            ratingIcons: ratingIcons,
+            collapsibleStates: collapsibleStates,
+            ratingDescriptions: ratingDescriptions
+        }
     }
 
     async activateListeners(html) {
@@ -777,7 +793,6 @@ async function renderOutpostSheet() {
 
 async function refreshOutpostSheet() {
     await renderOutpostSheet()
-    console.log("Sheet updated")
     await socket.executeForOthers("renderOutpostSheet", "");
 }
 
