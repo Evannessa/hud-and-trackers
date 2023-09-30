@@ -2,7 +2,7 @@
     "id": "hud-and-trackers",
     "title": "HUD and Trackers",
     "description": "A collection of trackers, clocks, and HUD utilities",
-    "version": "1.6.3",
+    "version": "1.6.4",
     "compatibility": {
         "minimum": "9",
         "verified": "10.120",
