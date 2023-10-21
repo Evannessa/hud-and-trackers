@@ -189,6 +189,8 @@ export class CharacterPopout extends Application {
     }
 
     async activateListeners(html) {
+
+        delete ui.windows[this.appId];
         this.dragHandler(html);
         // super.activateListeners(html);
         html = $(html[0].closest(".window-content"));
@@ -377,10 +379,10 @@ export class CharacterPopout extends Application {
             }
 
             let updateData = {
-                _id: wikiDisplayJournal.id,
-                content: currentTarget[0].outerHTML,
+                // _id: wikiDisplayJournal.id,
+                "text.content": currentTarget[0].outerHTML,
             };
-            await wikiDisplayJournal.update(updateData);
+            await wikiDisplayJournal.pages.contents[0].update(updateData);
             if (!wikiDisplayJournal.sheet.rendered) {
                 wikiDisplayJournal.sheet.render(true);
             }
